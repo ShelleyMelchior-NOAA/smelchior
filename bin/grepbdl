@@ -1,0 +1,48 @@
+# Quickly determine which networks dump a provided dump name
+# Greps through ex*_dump.sh.ecf and bufr_dumplist
+
+# Usage and incoming var information
+test $# -lt 1 && echo "Usage: $0 <dump name>"
+test $# -lt 1 && exit
+
+# define version directories 
+verdir=$NWROOT/versions
+verdirhps=$NWROOThps/versions
+
+#Define network array
+netarr=(global nam rap rtma urma cdas dump_monitor)
+
+# grep for dump name in ex*_dump.sh.ecf scripts
+for net in "${netarr[@]}"
+do
+  if [[ "$net" == "rap" ]]; then
+    source $verdirhps/obsproc_${net}.ver
+  else
+    source $verdir/obsproc_${net}.ver
+  fi
+  [ "$net" == "global" ] && ver=${obsproc_global_ver}
+  [ "$net" == "nam" ] && ver=${obsproc_nam_ver}
+  [ "$net" == "rap" ] && ver=${obsproc_rap_ver}
+  [ "$net" == "rtma" ] && ver=${obsproc_rtma_ver}
+  [ "$net" == "urma" ] && ver=${obsproc_urma_ver}
+  [ "$net" == "cdas" ] && ver=${obsproc_cdas_ver}
+  [ "$net" == "dump_monitor" ] && ver=${obsproc_dump_monitor_ver}
+  echo ----- $net @ $ver -----
+  if [[ "$net" == "rap" ]]; then
+    grep $1 $NWROOThps/obsproc_${net}.${ver}/scripts/ex${net}_dump.sh.ecf
+  elif [[ "$net" == "dump_monitor" ]]; then
+    grep $1 $NWROOT/obsproc_${net}.${ver}/scripts/ex${net}.sh.ecf
+  else
+    grep $1 $NWROOT/obsproc_${net}.${ver}/scripts/ex${net}_dump.sh.ecf
+  fi
+  echo
+done
+
+# Provide latest bufr_dumplist information
+latestbdldir=$(ls -dr $NWROOT/obsproc_shared/bufr_dumplist.v* | head -1)
+latestbdl=$(basename $latestbdldir)
+echo ---- ${latestbdl} ----
+grep $1 ${latestbdldir}/fix/bufr_dumplist
+
+# Done
+exit

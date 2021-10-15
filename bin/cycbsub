@@ -1,0 +1,22 @@
+lsf_file=${1:?}
+jtyp=${jtyp:gdas}
+
+shift
+bsub_opts=$@
+
+# if file to be submitted contains string(s) %HHMM%, modify to stamp with 
+# current hour and minute
+[ -n "$desc" ] && _desc="_$desc"
+[ -n "$PDY" ] && _PDY="_$PDY"
+if [ -n "$bsub_opts" ]; then
+ bsub_command="bsub $bsub_opts"
+else
+ bsub_command=bsub
+fi
+
+#sed "s/%HHMM%/`date -u +\%H\%M`/;s/%CC%/$cyc/;s/%YYYYMMDD%/`date -u +\%Y\%m\%d`/;s/%DESC%/$desc/" $1 | bsub
+#sed "s/%HHMM%/`date -u +\%H\%M`/;s/%CC%/$cyc/;s/%YYYYMMDD%/`date -u +\%Y\%m\%d`/;s/%PDY%/$PDY/;s/%_PDY%/$_PDY/;s/%DESC%/$desc/;s/%_DESC%/$_desc/" $1 | bsub
+
+#sed "s/%HHMM%/`date -u +\%H\%M`/;s/%CC%/$cyc/;s/%JTYP%/$jtyp/;s/%YYYYMMDD%/`date -u +\%Y\%m\%d`/;s/%PDY%/$PDY/;s/%_PDY%/$_PDY/;s/%DESC%/$desc/;s/%_DESC%/$_desc/" $lsf_file | $bsub_command
+#sed "s/%HHMM%/`date -u +\%H\%M`/;s/%CC%/$cyc/;s/%JTYP%/$jtyp/;s/%YYYYMMDD%/`date -u +\%Y\%m\%d`/;s/%PDY%/$PDY/;s/%_PDY%/$_PDY/;s/%TMMARK%/$tmmark/;s/%DESC%/$desc/;s/%_DESC%/$_desc/" $lsf_file | $bsub_command
+sed "s/%HHMM%/`date -u +\%H\%M`/;s/%CC%/$cyc/;s/%CCM%/$cycM/;s/%JTYP%/$jtyp/;s/%YYYYMMDD%/`date -u +\%Y\%m\%d`/;s/%PDY%/$PDY/;s/%_PDY%/$_PDY/;s/%TMMARK%/$tmmark/;s/%DESC%/$desc/;s/%_DESC%/$_desc/" $lsf_file | $bsub_command

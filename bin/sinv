@@ -1,0 +1,4 @@
+set -eua
+ln -sf $(dirname $0)/saidlist fort.8
+echo $1|$(dirname $0)/sinv.x
+

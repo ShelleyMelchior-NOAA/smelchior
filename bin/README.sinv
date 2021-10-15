@@ -1,0 +1,11 @@
+Abstract: Provides a list of satellite platform IDs and observations counts within a provided dump file
+Requires: local file called saidlist
+Note:     Needs to be run from a writeable directory
+
+To compile:
+
+> ifort sinv.f -o sinv.x /gpfs/dell1/nco/ops/nwprod/lib/bufr/v11.3.0/ips/18.0.1/libbufr_v11.3.0_4_64.a
+
+To use:
+
+> sinv /full/path/to/bufr/file

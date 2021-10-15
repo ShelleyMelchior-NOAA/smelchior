@@ -1,0 +1,8 @@
+dmpdif ../ccs/aircar.ibm ../wcs/aircar.ibm
+
+# ph1/ph2
+ifort readmp.f -o readmp.x /nwprod/lib/libbufr_v10.2.3_4_64.a
+
+# ph3
+ifort readmp.f -o readmp.x /gpfs/dell1/nco/ops/nwprod/lib/bufr/v$bver/ips/18.0.1/libbufr_v${bver}_4_64.a /gpfs/dell1/nco/ops/nwprod/lib/w3nco/v2.0.6/ips/18.0.1/libw3nco_v2.0.6_4.a
+where bver=11.3.0

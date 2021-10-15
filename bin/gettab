@@ -1,0 +1,6 @@
+set -eua 
+file=$1
+PATH=$PATH:/u/Jack.Woollen/bin
+ln -sf $file fort.20
+gettab.x
+
