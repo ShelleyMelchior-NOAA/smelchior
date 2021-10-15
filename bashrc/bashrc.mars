@@ -1,0 +1,136 @@
+# .bashrc
+
+if [ "$PS1" ]; then
+  echo "here in .bashrc"
+  PS1="[\H \w]\$ "
+fi
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+export PATH=./:$PATH:/usr/bin:/usr/sbin:/etc:$HOME/bin
+
+# help tab completion behave normally on Dell
+shopt -s direxpand
+
+# mail
+export PATH=$PATH:/bin/mail
+export PATH=$PATH:/bin/mailx
+
+# svn
+export SVN_EDITOR=vi
+
+# git
+export GIT_SSH=$HOME/ssh-mine
+
+# User specific aliases and functions
+#alias ls='ls --color=auto'
+alias ll='ls -l'
+alias lltr='ls -ltr'
+alias llp='ls -ltrp'
+alias lla='ls -a'
+alias cpp='cp -p'
+alias his='history'
+alias ptmp='cd /gpfs/dell2/ptmp/Shelley.Melchior'
+alias stmp='cd /gpfs/dell2/stmp/Shelley.Melchior'
+#alias ptmp2='cd /ptmpp2/Shelley.Melchior'
+#alias stmp2='cd /stmpp2/Shelley.Melchior'
+#alias cdjobs='cd /meso/save/Shelley.Melchior/jobs'
+#alias cdfix='cd /meso/save/Shelley.Melchior/fix'
+alias cdbin='cd /u/Shelley.Melchior/bin'
+#alias cdexe='cd /meso/save/Shelley.Melchior/exe'
+#alias cdmisc='cd /meso/save/Shelley.Melchior/misc'
+#alias cdparm='cd /meso/save/Shelley.Melchior/parm'
+#alias cdshared='cd /meso/save/Shelley.Melchior/shared'
+#alias cdsrc='cd /meso/save/Shelley.Melchior/src'
+#alias cdush='cd /meso/save/Shelley.Melchior/ush'
+#alias cdsvn='cd /meso/save/Shelley.Melchior/svn2'
+#alias cddk='cd /meso/save/Dennis.Keyser'
+alias cdjw='cd /u/Jeff.Whiting'
+alias cdds='cd /u/Diane.Stokes'
+alias cdjwo='cd /u/Jack.Woollen'
+alias cdsvnwkspc='cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/svnwkspc'
+alias cdgitwkspc='cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitwkspc'
+alias cdgitstatic='cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic'
+#alias cdcrons='cd /meso/save/Shelley.Melchior/crons'
+alias cdnoscrub='cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior'
+alias prod='cat /etc/prod'
+alias dev='cat /etc/dev'
+alias NOTES='cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitwkspc/EMC_obsproc'
+alias com='cd /gpfs/dell1/nco/ops/com'
+alias nwprod='cd /gpfs/dell1/nco/ops/nwprod'
+alias nwpara='cd /gpfs/dell1/nco/ops/nwpara'
+alias grso='git remote show origin'
+alias nwprod1='cd /gpfs/tp1/nco/ops/nwprod'
+alias nwprod2='cd /gpfs/tp2/nco/ops/nwprod'
+alias nwprod3='cd /gpfs/dell1/nco/ops/nwprod'
+alias nwpara3='cd /gpfs/dell1/nco/ops/nwpara'
+alias viewcron='view /u/Shelley.Melchior/cron/mycrontab'
+alias vicron='vi /u/Shelley.Melchior/cron/mycrontab'
+alias gda='cd /gpfs/dell3/emc/global/dump/'
+alias to='vi /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/to'
+alias doecho='(n=0 ; while true ; do ((n+=1)) ; echo "hello $(date)" ; sleep 600 ; done)'
+
+# utilities
+export PATH=$PATH:/u/Jack.Woollen/bin
+export PATH=$PATH:/u/Jeff.Whiting/bin
+export PATH=$PATH:/u/Diane.Stokes/bin
+export PATH=$PATH:/nwprod/util/exec
+export PATH=$PATH:/usrx/local/dev/packages/git
+
+# set colors
+#clrfl=.dircolors.lgt
+#[ -s $clrfl ] && eval $(dircolors $clrfl)
+
+# make sure /stmpp1 and /ptmpp1 spaces exist
+if [ ! -d /gpfs/dell2/stmp/$USER ]; then
+  mkdir -p /gpfs/dell2/stmp/$USER
+fi
+if [ ! -d /gpfs/dell2/ptmp/$USER ]; then
+  mkdir -p /gpfs/dell2/ptmp/$USER
+fi
+
+# dump me in the /gpfs/gd1/emc/meso/save/Shelley.Melchior space as default
+cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior
+
+# modules
+# -- make modules not strict match
+export LMOD_EXACT_MATCH=no
+module load EnvVars/1.0.3
+#module load ips/18.0.1.163
+module load ips/18.0.5.274
+module load impi/18.0.1
+#module load smpi/10.1.1.0
+module load prod_util/1.1.6
+module use /usrx/local/dev/modulefiles
+module load git/2.14.3
+module load subversion/1.7.16
+module load prod_envir/1.1.0
+module load GrADS/2.2.0
+module load w3nco/2.0.6
+module load w3emc/2.4.0
+module load HDF5-parallel/1.10.6
+module load NetCDF-parallel/4.7.4
+module load lsf/10.1
+module load bufr_util/1.0.0
+module load bufr/11.3.0
+module use /usrx/local/nceplibs/dev/hpc-stack/libs/hpc-stack/modulefiles/stack/
+module load hpc/1.1.0
+module load HPSS/5.0.2.5
+
+# Weather --> https://github.com/chubin/wttr.in
+alias fcst44333='curl wttr.in/44333'
+alias wx44333='curl wttr.in/44333?format="%l:%c+%C+%t"'
+alias fcstcp='curl wttr.in/20740'
+alias wxcp='curl wttr.in/20740?format="%l:%c+%C+%t"'
+
+# passwordless ssh/scp notes
+# client = computer looking to connect w/ a host
+# client = FROM computer (scp FROM client TO host)
+# host = computer being connected to
+# host = TO computer (scp FROM client TO host)

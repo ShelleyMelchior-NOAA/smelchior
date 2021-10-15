@@ -1,0 +1,13 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific aliases and functions
+alias obsdumpmon='cd /var/www/html/smelchior/obsdumpmonitor'
+alias lltr='ls -ltr'
+
+# export svn editor
+export SVN_EDITOR=vi

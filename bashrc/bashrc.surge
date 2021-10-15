@@ -1,0 +1,59 @@
+ample .bashrc for SuSE Linux
+# Copyright (c) SuSE GmbH Nuernberg
+
+# There are 3 different types of shells in bash: the login shell, normal shell
+# and interactive shell. Login shells read ~/.profile and interactive shells
+# read ~/.bashrc; in our setup, /etc/profile sources ~/.bashrc - thus all
+# settings made here will also take effect in a login shell.
+#
+# NOTE: It is recommended to make language settings in ~/.profile rather than
+# here, since multilingual X sessions would not work properly if LANG is over-
+# ridden in every subshell.
+
+# Some applications read the EDITOR variable to determine your favourite text
+# editor. So uncomment the line below and enter the editor of your choice :-)
+export EDITOR=/usr/bin/vim
+
+test -s ~/.alias && . ~/.alias || true
+
+# Set path shell variable
+PATH=$PATH:.
+
+# utilities
+export PATH=$PATH:/u/Diane.Stokes/bin
+export PATH=$PATH:/u/Jeff.Whiting/bin
+export PATH=$PATH:/u/Jack.Woollen/bin
+
+# User specific aliases and functions
+alias ptmp='cd /gpfs/hps/ptmp/Shelley.Melchior'
+alias stmp='cd /gpfs/hps/stmp/Shelley.Melchior'
+alias lltr='ls -ltr'
+alias llp='ls -ltrp'
+alias lla='ls -a'
+alias cpp='cp -p'
+alias his='history'
+alias cdmeso='cd /gpfs/hps/emc/meso/save/Shelley.Melchior'
+alias cdnoscrub='cd /gpfs/hps/emc/meso/noscrub/Shelley.Melchior'
+alias cdsvnwkspc='cd /gpfs/hps/emc/meso/noscrub/Shelley.Melchior/svn'
+alias cddcom='cd /gpfs/gp1/nco/ops/dcom/us007003'
+
+# make sure /stmpp and /ptmpp spaces exist
+if [ ! -d /gpfs/hps/stmp/$USER ]; then
+  mkdir -p /gpfs/hps/stmp/$USER
+fi
+if [ ! -d /gpfs/hps/ptmp/$USER ]; then
+  mkdir -p /gpfs/hps/ptmp/$USER
+fi
+
+# svn
+export SVNROOT=https://svnemc.ncep.noaa.gov
+export SVN_EDITOR='vi'
+
+# modules
+module load prod_envir
+
+# prompt
+if [ "$PS1" ]; then
+#  PROMPT_COMMAND='printf "\033]0;%s\007" luna'
+  PS1="[\H \w]\$ "
+fi

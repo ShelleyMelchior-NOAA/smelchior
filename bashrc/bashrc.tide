@@ -1,0 +1,118 @@
+# .bashrc
+
+if [ "$PS1" ]; then
+  echo "here in .bashrc"
+  PS1="[\H \w]\$ "
+fi
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+export PATH=./:$PATH:/usr/bin:/usr/sbin:/etc:$HOME/bin
+
+# mail
+
+export PATH=$PATH:/bin/mail
+export PATH=$PATH:/bin/mailx
+
+# modules
+
+module use -a /nwprod/lib/modulefiles
+module load ibmpe ics lsf cfp
+module load GrADS 
+module load sigio 
+module load svn
+module load hpss
+module load prod_envir
+module load prod_util
+module use -a /nwprod2/modulefiles
+module load bufr_dumplist/1.4.0
+module load dumpjb/4.0.0
+module load python/2.7.14
+module use /usrx/local/dev/modulefiles
+
+# svn
+
+export SVN_EDITOR=vi
+
+# git
+
+export GIT_SSH=$HOME/ssh-mine
+
+# User specific aliases and functions
+
+alias ls='ls --color=auto'
+alias ll='ls -l'
+alias lltr='ls -ltr'
+alias llp='ls -ltrp'
+alias lla='ls -a'
+alias cpp='cp -p'
+alias his='history'
+alias ptmp='cd /ptmpp1/Shelley.Melchior'
+alias stmp='cd /stmpp1/Shelley.Melchior'
+alias ptmp2='cd /ptmpp2/Shelley.Melchior'
+alias stmp2='cd /stmpp2/Shelley.Melchior'
+alias cdjobs='cd /meso/save/Shelley.Melchior/jobs'
+alias cdfix='cd /meso/save/Shelley.Melchior/fix'
+alias cdbin='cd /meso/save/Shelley.Melchior/bin'
+alias cdexe='cd /meso/save/Shelley.Melchior/exe'
+alias cdmisc='cd /meso/save/Shelley.Melchior/misc'
+alias cdparm='cd /meso/save/Shelley.Melchior/parm'
+alias cdshared='cd /meso/save/Shelley.Melchior/shared'
+alias cdsrc='cd /meso/save/Shelley.Melchior/src'
+alias cdush='cd /meso/save/Shelley.Melchior/ush'
+alias cdsvn='cd /meso/save/Shelley.Melchior/svn'
+alias cddk='cd /meso/save/Dennis.Keyser'
+alias cdyl='cd /u/Yangrong.Ling'
+alias cdjw='cd /u/Jeff.Whiting'
+alias cdds='cd /u/Diane.Stokes'
+alias cdjwo='cd /u/Jack.Woollen'
+alias cdmeso='cd /gpfs/td1/emc/meso/save/Shelley.Melchior'
+alias cdsvnwkspc='cd /gpfs/td1/emc/meso/save/Shelley.Melchior/svnwkspc'
+alias cdgitwkspc='cd /gpfs/td1/emc/meso/save/Shelley.Melchior/gitwkspc'
+alias cdda='cd /da/save/Shelley.Melchior'
+alias cdcrons='cd /gpfs/td1/emc/meso/save/Shelley.Melchior/crons'
+alias cdtraining='cd /gpfs/td1/emc/meso/save/Shelley.Melchior/training'
+alias cdnoscrub='cd /gpfs/td1/emc/meso/noscrub/Shelley.Melchior'
+alias prod='cat /etc/prod'
+alias dev='cat /etc/dev'
+#alias shNOTES='vi /meso/save/Shelley.Melchior/svnwkspc/melchior/training/shell/NOTES'
+#alias bfNOTES='vi /meso/save/Shelley.Melchior/svnwkspc/melchior/training/bufr/NOTES'
+alias shNOTES='vi /gpfs/td1/emc/meso/save/Shelley.Melchior/gitwkspc/EMC_obsproc/training/shell/NOTES'
+alias bfNOTES='vi /gpfs/td1/emc/meso/save/Shelley.Melchior/gitwkspc/EMC_obsproc/training/bufr/NOTES'
+alias grso='git remote show origin'
+alias nwprod1='cd /gpfs/tp1/nco/ops/nwprod'
+alias nwprod2='cd /gpfs/tp2/nco/ops/nwprod'
+alias nwprodhps='cd /gpfs/hps/nco/ops/nwprod'
+alias nwprod3='cd /gpfs/dell1/nco/ops/nwprod'
+alias nwpara3='cd /gpfs/dell1/nco/ops/nwpara'
+
+# utilities
+export PATH=$PATH:/u/Jack.Woollen/bin
+export PATH=$PATH:/u/Jeff.Whiting/bin
+export PATH=$PATH:/u/Diane.Stokes/bin
+export PATH=$PATH:/nwprod/util/exec
+
+# set colors
+clrfl=.dircolors.lgt
+[ -s $clrfl ] && eval $(dircolors $clrfl)
+
+# dump me in the /meso/save/Shelley.Melchior space as default
+cd /meso/save/Shelley.Melchior
+
+# make sure /stmpp1 and /ptmpp1 spaces exist
+if [ ! -d /stmpp1/$USER ]; then
+  mkdir -p /stmpp1/$USER
+fi
+if [ ! -d /ptmpp1/$USER ]; then
+  mkdir -p /ptmpp1/$USER
+fi
+
+# passwordless ssh/scp notes
+# client = computer looking to connect w/ a host
+# client = FROM computer (scp FROM client TO host)
+# host = computer being connected to
+# host = TO computer (scp FROM client TO host)
+
