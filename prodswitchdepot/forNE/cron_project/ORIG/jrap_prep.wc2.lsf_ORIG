@@ -1,0 +1,122 @@
+#BSUB -J %JTYP%_prep_%DESC%_%CC%
+#BSUB -o /gpfs/hps3/ptmp/Shelley.Melchior/%JTYP%_prep_%PDY%_%CC%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/hps3/ptmp/%U
+#BSUB -W 00:15
+#BSUB -P OBSPROC-T2O
+##BSUB -q dev
+#BSUB -q debug
+#BSUB -M 3000
+#BSUB -extsched 'CRAYLINUX[]'
+
+#####################################################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun bash -l /u/Shelley.Melchior/bin/cycbsub jrap_*.wc2.lsf
+# For latest/current PDY:
+# > jtyp=rap cyc=00 cycbsub jrap_prep.cray.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Shelley.Melchior/bin
+#####################################################################
+
+set -xu
+
+userROOT=/gpfs/hps3/emc/meso/noscrub/$USER
+
+sourcedir="/gpfs/hps3/emc/meso/noscrub/$USER/svn/melchior/misc"
+echo "begin source"
+. $sourcedir/proddevchk.sh
+echo "end source"
+
+export NODES=1
+#export NODES=3
+#export NODES=4
+
+export envir=prod
+export cyc=%CC%
+JTYP=%JTYP%
+type=%DESC%
+if [ $JTYP = "rap_e" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_prep_erly_$cyc
+elif [ $JTYP = "rap_p" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_prep_pcyc_$cyc
+else
+export job=${JTYP}_prep_$cyc
+fi
+export jobid=$job.$LSB_JOBID
+
+export PDY=%PDY%
+
+# added to find module command with "BSUB -L"
+#[ -d /opt/modules ] && . /opt/modules/default/init/sh
+[ -d /opt/modules ] && . /opt/modules/default/init/sh > /dev/null 2>&1
+
+module load prod_envir
+module load prod_util
+#module load cfp-intel-sandybridge/$cfp_intel_sandybridge_ver
+module load cfp-intel-sandybridge/1.1.0
+
+# These were used by the NetCDF build:
+#module load PrgEnv-intel
+#module switch intel/15.0.3.187 intel/18.1.163
+#module use /gpfs/hps3/emc/meso/noscrub/Samuel.Trahan/rap-obsproc/modulefiles
+#module load NetCDF-serial-intel-sandybridge/4.7.4
+module load NetCDF-intel-sandybridge/4.7.4
+
+#VERSION_FILE=$NWROOThps/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+ echo Need version info...  Exiting...
+ exit 7
+fi
+
+#ulimit -s unlimited
+#export OMP_STACKSIZE=128M
+
+export SENDECF=NO  # developer
+export SENDSDM=NO  # developer
+export SENDDBN=YES; export DBNROOT="echo test " # developer
+
+export DEBUG_LEVEL=3
+
+export DATAROOT=/gpfs/hps3/ptmp/$USER
+export jlogfile=/gpfs/hps3/ptmp/$USER/rap.${PDY}.jlogfile
+
+#export HOMEobsproc=$NWROOThps/obsproc.${obsproc_ver}
+# !!! git branch EMC_obsproc: wcoss2
+export HOMEobsproc=${userROOT}/gitstatic/EMC_obsproc_wcoss2
+
+#export COMIN_ROOT=/gpfs/hps/nco/ops/com   # $COMROOThps
+export COMIN_ROOT=/gpfs/hps3/ptmp/$USER/com
+export tstsp=/gpfs/hps3/ptmp/$USER/com/obsproc/${JTYP}.${PDY}/${JTYP}.t${cyc}z.
+
+export COMINgdas=/gpfs/dell1/nco/ops/com/gfs/prod/gdas.${PDY}/${cyc}/atmos  # prod GFSv16
+export COMINgfs=/gpfs/dell1/nco/ops/com/gfs/prod/gfs.${PDY}/${cyc}/atmos    # prod GFSv16
+
+# setting for rapcron; make new setting for non-cron runs - e.g.,
+# /gpfs/hps3/ptmp/$USER/com/comout.${job}_${PDY}.$$
+export COMOUT_ROOT=/gpfs/hps3/ptmp/$USER/com
+#export COMOUT=/gpfs/hps3/ptmp/$USER/com/comout.${type}_${PDY}.$$
+
+#export IOBUF_DEBUG=open
+export KEEPDATA=YES
+export POE=NO
+export BACK=NO
+export NSPLIT=1
+#export PREPDATAtpn=1
+#export PREPDATAprocs=3
+#export PREPDATAprocs=4
+
+$HOMEobsproc/jobs/JRAP_PREP
+
+exit
+
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP \
+  desc=$type \
+  bash -l /u/$USER/bin/cycbsub ${userROOT}/gitstatic/EMC_obsproc_melchior/jobs/jrap_prep_post.ph3.lsf
+fi

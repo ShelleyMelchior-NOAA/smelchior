@@ -1,0 +1,13 @@
+#/*===================================================================================================================================================================================*/
+##/* Sample crontab entries with best practices:                                                                                                                                       */
+##/*                                                                                                                                                                                   */
+##/* 1. TEST to make sure target script exists BEFORE executing, and                                                                                                                   */
+##/*                                                                                                                                                                                   */
+##/* 2. Be sure to handle STDOUT/STEDERR appropriately.                                                                                                                                */
+##/*                                                                                                                                                                                   */
+##/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+##10 * * * * test -f /gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.ksh && /gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.ksh 1>/gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.log 2>&1
+##20 * * * * test -f /gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.ksh && /gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.ksh 1>/gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.log 2>&1
+##30 * * * * test -f /gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.ksh && /gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.ksh 1>/gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.log 2>&1
+##/*===================================================================================================================================================================================*/
+

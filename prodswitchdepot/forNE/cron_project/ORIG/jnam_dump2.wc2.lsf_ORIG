@@ -1,0 +1,108 @@
+#BSUB -J %JTYP%_dump2_%DESC%_%CC%_%TMMARK%
+#BSUB -o /gpfs/dell2/ptmp/Shelley.Melchior/%JTYP%_dump2_%PDY%_%CC%_%TMMARK%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -q dev
+#BSUB -R "span[ptile=3]"
+#BSUB -n 3
+#BSUB -R rusage[mem=6000]
+#BSUB -R affinity[core]
+#BSUB -W 00:15
+#BSUB -P OBSPROC-T2O
+
+##############################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=nam cyc=00 PDY=20170126 tmmark=tm00 desc=somethingfun cycbsub jnam_*.wc2.lsf
+# For latest/current PDY:
+# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun cycbsub jnam_*.wc2.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Shelley.Melchior/bin
+##############################################
+
+set -xu
+
+sourcedir="/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush"
+echo "begin source"
+. $sourcedir/devprodtest.sh $$
+echo "end source"
+
+export NODES=1
+
+export envir=prod
+export cyc=%CC%
+DESC=%DESC%
+JTYP=%JTYP%
+export job=${JTYP}_dump2_$cyc
+export jobid=$job.$LSB_JOBID
+export tmmark=%TMMARK%
+
+export PDY=%PDY%
+
+export job=nam_dump2_${tmmark}_${cyc}
+
+export DUMPJBprocdate=1900123100
+export KEEPDATA=YES
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+
+#VERSION_FILE=$NWROOT/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+
+if [ -f $VERSION_FILE ]; then
+  . $VERSION_FILE
+else
+  echo Need version info...  Exiting...
+  exit 7
+fi
+
+#module use ${NWROOT}/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver}/modulefiles
+module use ${userROOT}/EMC_obsproc_bufr_util/modulefiles
+module load bufr_dumplist/2.3.1
+module load dumpjb/5.1.1
+module load grib_util/1.0.6
+
+export SENDECF=NO   # developer
+export SENDDBN=NO   # developer
+export SENDSDM=NO   # developer
+
+export DATAROOT=/gpfs/dell2/ptmp/$USER
+export jlogfile=/gpfs/dell2/ptmp/$USER/${JTYP}_dump2.$PDY.jlogfile
+
+export DEBUG_LEVEL=3
+
+#export HOMEobsproc=$NWROOT/obsproc.${obsproc_ver}
+# !!! git branch EMC_obsproc_obsproc: wcoss2
+export HOMEobsproc=${userROOT}/gitstatic/EMC_obsproc_wcoss2
+
+export HOMEbufr_util=$NWROOT/bufr_util.${bufr_util_ver}
+# !!! git branch EMC_obsproc_obsproc: bufr_util
+export HOMEbufr_util=${userROOT}/gitstatic/EMC_obsproc_bufr_util
+
+export COMOUT_ROOT=/gpfs/dell2/ptmp/$USER/com  # if unspecified, defaults to DATAROOT
+
+
+$HOMEobsproc/jobs/JNAM_DUMP2
+
+
+
+# Kick off dump_post job
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycbsub \
+  /gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump_post.wc2.lsf
+fi
+
+
+# Kick off prep job
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycbsub \
+  /gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.wc2.lsf
+fi

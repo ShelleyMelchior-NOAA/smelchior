@@ -1,0 +1,166 @@
+######################################################
+##
+##  #BSUB -q dev2       run on compute nodes, uses full node(s)
+##                      #BSUB -x is forced regardless if in LSF cards
+##                         (running NOT shared)
+##
+##  #BSUB -q dev2_shared
+##                      run on compute nodes, doesn't use full node(s)
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##
+##  #BSUB -q transfer   run on interactive nodes
+##                      use only for small jobs - can cause memory issues
+##                      can run ftp, ssh & mail
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##  #BSUB -L /bin/sh should be commented out if importing variables from
+##    executing script, make sure ~Dennis.Keyser/host.list exists
+##
+######################################################
+#BSUB -J %JTYP%_%DESC%_%CC%
+#BSUB -o /gpfs/dell2/stmp/Shelley.Melchior/%JTYP%_%PDY%_%CC%_%DESC%.o%J
+#BSUB -e /gpfs/dell2/stmp/Shelley.Melchior/%JTYP%_%PDY%_%CC%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -q dev
+#BSUB -R "span[ptile=7]"
+#BSUB -n 7
+##BSUB -M 5000
+##BSUB -R rusage[mem=7000]
+#BSUB -R affinity[core]
+#BSUB -W 00:30
+#BSUB -P OBSPROC-T2O
+
+##############################################
+## Submit notes:
+## For specific PDY:
+## > jtyp=dump_monitor cyc=00 PDY=20170126 desc=somethingfun cycbsub jdump_monitor.wc2.lsf
+## For latest/current PDY:
+## > jtyp=dump_monitor cyc=00 desc=somethingfun cycbsub jdump_monitor.wc2.lsf
+## cycbsub location: /u/Diane.Stokes/bin
+## cycbsub location: /u/Shelley.Melchior/bin
+###############################################
+
+cat /etc/motd
+echo;echo "*************************************************************"
+###[ -z "????" ] || echo "LSF command:  " $???
+[ -z "$LSB_JOBNAME" ] || echo "LSF job name:         " $LSB_JOBNAME
+[ -z "$LSFUSER" ] ||     echo "User:                 " $LSFUSER
+[ -z "$LSB_QUEUE" ] ||   echo "Queue:                " $LSB_QUEUE
+[ -z "$LSB_HOSTS" ] ||   echo "Submitted to Node(s): " $LSB_HOSTS
+echo "*************************************************************";echo
+
+set -xa
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+
+# --> these are normally not changed and should always be exported here first
+
+export DATAROOT=/gpfs/dell2/stmp/${USER}
+
+envir=prod # scripts point to production files as default
+
+#####export launcher=background_threads # if not running this under LSF at this time
+                                        # (in this case also submit using bash)
+
+export DEBUG_LEVEL=3
+
+export KEEPDATA=YES
+
+export SENDECF=NO
+export SENDDBN=NO
+
+export COPY=NO  # This should usually be set to NO in checkout because we do
+                # not have permission to write to $OBCNTarch if it is pointing
+                # to production location (which we usually want so we can get
+                # the full 30-days of status files for data count averaging)
+                # (today's and yesterday's status files will not be written to
+                # $OBCNTarch when COPY=NO)
+
+export HOMEarch=/gpfs/dell2/stmp/${USER}/com # The unilateral move of RTDM files for all
+#export HOMEarch=$COMROOTp1/arch/${envir} # The unilateral move of RTDM files for all
+                                   # models from /com to /com2 is expected to
+                                   # come at a later date
+
+export TIME_CHECK=NO   # Don't worry about the time check for checkout runs
+
+
+
+# --> these must normally be set based on the particular run you are making
+
+export cyc=%CC%
+DESC=%DESC%
+JTYP=%JTYP%
+export job=${JTYP}_${cyc} # normally not changed, but needs $cyc
+
+export PDY=%PDY% # Add this to force in a different date than in /com2/date
+
+# uncomment line below if previously made a complete set of past DUMP status
+#  files (for use by avgdata) that differ from ops
+export COMIN_ROOT=$DATAROOT/com
+#####export COMIN_ROOT=/com # need this until DUMP_MONITOR moves to Phase 2 (if
+                       # pointing to past ops DUMP status files)
+export COMOUT=$DATAROOT/com/obsproc/dump.${PDY}
+
+#######export PROCESS_DUMP=NO
+#######export PROCESS_AVGTABLES=NO
+
+#export SCRIPTSobsproc_dump_monitor=/ptmpp2/Dennis.Keyser/DEV/obsproc_dump_monitor.tkt-230.background_to_poe/scripts
+
+###export TANK=/stmpp2/Dennis.Keyser/dcom/us007003
+###export TANK_005090=/ptmpp2/Dennis.Keyser/dcom_satwnd/us007003
+###export TANK_012160=/ptmpp2/Dennis.Keyser/dcom_goes_radsnd/us007003
+
+#export LOUD=on
+##export LIST=/meso/save/Dennis.Keyser/fix/bufr_dumplist
+####export DUMP=/meso/save/Dennis.Keyser/ush/dumpjb
+
+export HOMEarch=$COMROOT/dump/prod/sdm_rtdm
+####export AVGDarch=/ptmpp2/Dennis.Keyser/datacount/AVG
+export AVGDarch_IN=$HOMEarch/avgdata
+export AVGDarch_OUT=/gpfs/dell2/stmp/$USER/com/dump/prod/sdm_rtdm/avgdata
+
+##export DUMPLIST=/meso/save/Dennis.Keyser/fix/bufr_dumplist
+###export AVGX=/meso/save/Dennis.Keyser/HOME/exec/bufr_avgdata
+##export USHobsproc_shared_bufr_avgdata=... # path to data count averaging script
+export comin=$DATAROOT/com/dump/prod/dump.${PDY} # used by bufr_avgdata.sh
+PDYm1=$(date -d "-1 days" +"%Y%m%d")
+export comin_m1=$DATAROOT/com/dump/prod/dump.${PDYm1} # used by bufr_avgdata.sh
+####mkdir -p $comin_m1
+
+#  Obtain OBSPROC version number (obsproc_ver)
+#  Obtain BUFR_UTIL version number used by this job (bufr_util_ver)
+#  Obtain version number of module grib_util used by this job
+#   (grib_util_ver)
+#  -----------------------------------------------------------------------------
+#VERSION_FILE=$NWROOT/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+
+#export HOMEobsproc=$NWROOT/obsproc.${obsproc_ver}
+# !!! git branch EMC_obsproc: wcoss2
+export HOMEobsproc=${userROOT}/gitstatic/EMC_obsproc_wcoss2
+
+
+#export HOMEbufr_util=$NWROOT/bufr_util.${bufr_util_ver}
+# !!! git branch EMC_obsproc: bufr_util
+export HOMEbufr_util=${userROOT}/gitstatic/EMC_obsproc_bufr_util
+
+
+
+# Execute the Environmental Equivalence form of the job-script
+# ------------------------------------------------------------
+$HOMEobsproc/jobs/JDUMP_MONITOR
+
+exit
+
+common_com=$DATAROOT/dump_monitor_prod/com/dump/prod/dump.${PDY}
+mkdir -p ${common_com}
+cp $DATAROOT/dump_monitor_${cyc}.*/com/dump/prod/dump.${PDY}/dump.t${cyc}z.status.tm00.bufr_d ${common_com}

@@ -1,0 +1,106 @@
+#BSUB -J %JTYP%_dump_post_%CC%
+#BSUB -o /gpfs/dell2/ptmp/Nicholas.Esposito/%JTYP%_dump_post_%PDY%_%CC%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -q dev
+#BSUB -M 3000
+#BSUB -W 00:15
+#BSUB -P OBSPROC-T2O
+
+#####################################################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun cycbsub jrap_dump_post.wc1.lsf
+# For latest/current PDY:
+# > jtyp=rap cyc=00 cycbsub jrap_dump_post.wc1.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Shelley.Melchior/bin
+#####################################################################
+
+set -xu
+
+sourcedir="/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush"
+echo "begin source"
+#. $sourcedir/devprodtest.sh $$
+echo "end source"
+
+export NODES=1
+
+export envir=prod
+export cyc=%CC%
+type=%DESC%
+JTYP=%JTYP%
+if [ $JTYP = "rap_e" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_dump_post_erly_$cyc
+elif [ $JTYP = "rap_p" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_dump_post_pcyc_$cyc
+else
+  export job=${JTYP}_dump_post_$cyc
+fi
+export jobid=$job.$LSB_JOBID
+
+export PDY=%PDY%
+PDYm1=$(date -d "${PDY} 1 day ago" +%Y%m%d)
+
+export DUMPJBprocdate=1900010100
+#export PROCESS_GRIBFLDS=NO
+export KEEPDATA=YES
+#export MPMD=NO  # uncomment if you do not provide poe BSUB cards
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+
+#VERSION_FILE=$NWROOT/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+ echo Need version info...  Exiting...
+ exit 7
+fi
+
+
+export SENDECF=NO  # developer
+export SENDDBN=NO  # developer
+export SENDSDM=NO  # developer
+
+export DATAROOT=/gpfs/dell2/ptmp/$USER
+export jlogfile=/gpfs/dell2/ptmp/$USER/${JTYP}_dump_post.$PDY.jlogfile
+
+export DEBUG_LEVEL=3
+
+#export HOMEobsproc=$NWROOT/obsproc.${obsproc_ver}
+# !!! git branch EMC_obsproc: wcoss2
+##export HOMEobsproc=${userROOT}/gitstatic/EMC_obsproc_wcoss2
+export HOMEobsproc=${userROOT}/wcoss1_gitwkspc/EMC_obsproc_wcoss2
+
+#export HOMEbufr_util=$NWROOT/bufr_util.${bufr_util_ver}
+# !!! git branch EMC_obsproc: bufr_util
+##export HOMEbufr_util=${userROOT}/gitstatic/EMC_obsproc_bufr_util
+export HOMEbufr_util=/gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_bufr_util/
+
+# Need these settings only when cyc=23 and have local set of dump status 
+# files to process
+export COPY=YES
+export HOMEarch=/gpfs/dell2/emc/obsproc/noscrub/$USER/HOMEarch/com/rap/prod/sdm_rtdm
+export AVGDarch_OUT=$HOMEarch/avgdata
+export OBCNTarch=$HOMEarch/obcount_30day
+
+export COMIN_ROOT=/gpfs/dell2/ptmp/$USER/com
+#export comin_m1=/gpfs/gp1/stmp/Shelley.Melchior/rap/prod/rap_e.20170903
+#export comin_m1=/gpfs/dell2/ptmp/$USER/rapcron2/com/rap/prod/${JTYP}.${PDYm1}
+#export comin_m1=/gpfs/tp2/nco/ops/com/rap/prod/${type}.${PDYm1}
+#export COMOUT=/gpfs/hps3/ptmp/Shelley.Melchior/com/comout.${job}%_PDY%.$$
+export COMOUT=/gpfs/dell2/ptmp/$USER/com/obsproc/${JTYP}.%PDY%
+
+$HOMEobsproc/jobs/JRAP_DUMP_POST
+
+# Kick off prep job
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP cyc=${cyc} PDY=${PDY} desc=${JTYP}_prep bash -l /u/$USER/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Nicholas.Esposito/wcoss1_gitwkspc/cron_project/jrap_prep.wc1.lsf
+fi

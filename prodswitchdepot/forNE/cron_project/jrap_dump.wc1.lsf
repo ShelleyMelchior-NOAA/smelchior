@@ -1,0 +1,130 @@
+#BSUB -J %JTYP%_dump_%DESC%_%CC%
+#BSUB -o /gpfs/dell2/ptmp/Nicholas.Esposito/%JTYP%_dump_%PDY%_%CC%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -q dev
+#BSUB -R "span[ptile=3]"
+#BSUB -n 3
+#BSUB -R rusage[mem=6000]
+#BSUB -R affinity[core]
+#BSUB -W 00:30
+#BSUB -P OBSPROC-T2O
+
+#####################################################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun cycbsub jrap_dump.wc1.lsf
+# For latest/current PDY:
+# > jtyp=rap cyc=00 cycbsub jrap_dump.ph3.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Nicholas.Esposito/bin
+#####################################################################
+
+set -xu
+
+# test if this is the prod machine; exit if prod; continue if dev
+# pass in $pid
+pid=$$
+ushdir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush
+#sh $ushdir/devprodtest.sh ${pid}
+#returnfile=/gpfs/dell2/stmp/$USER/devprodtest.${pid}.out
+#rc=$(cat $returnfile)
+#if [[ $rc != 0 ]]; then
+#  echo 'prod machine - exit'
+#  rm $returnfile
+#  exit
+#fi
+#rm $returnfile
+
+
+export NODES=1
+
+export envir=prod
+export cyc=%CC%
+type=%DESC%
+JTYP=%JTYP%
+DESC=%DESC%
+if [ $JTYP = "rap_e" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_dump_erly_$cyc
+elif [ $JTYP = "rap_p" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_dump_pcyc_$cyc
+else
+  export job=${JTYP}_dump_$cyc
+fi
+export jobid=$job.$LSB_JOBID
+
+export PDY=%PDY%
+
+export DUMPJBprocdate=1900123100
+export KEEPDATA=YES
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+
+#VERSION_FILE=$NWROOT/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+ echo Need version info...  Exiting...
+ exit 7
+fi
+
+#module use ${NWROOThps}/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver}/modulefiles
+module use ${userROOT}/EMC_obsproc_bufr_util/modulefiles
+module load bufr_dumplist/2.4.0
+module load dumpjb/5.2.0
+module load grib_util/$grib_util_ver
+
+export SENDECF=NO   # developer
+export SENDSDM=NO   # developer
+export SENDDBN=NO   # developer
+
+export DATAROOT=/gpfs/dell2/ptmp/$USER
+export jlogfile=/gpfs/dell2/ptmp/$USER/${JTYP}_dump.$PDY.jlogfile
+
+export DEBUG_LEVEL=3
+
+#export HOMEobsproc=$NWROOT/obsproc.${obsproc_ver}
+# !!! git branch EMC_obsproc: wcoss2
+###export HOMEobsproc=${userROOT}/gitstatic/EMC_obsproc_wcoss2
+export HOMEobsproc=${userROOT}/wcoss1_gitwkspc/EMC_obsproc_wcoss2
+
+#export HOMEbufr_dump=$NWROOT/bufr_util.${bufr_util_ver}
+# !!! git branch EMC_obsproc: bufr_util
+###export HOMEbufr_util=${userROOT}/gitstatic/EMC_obsproc_bufr_util
+export HOMEbufr_util=/gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_bufr_util
+
+export COMOUT_ROOT=/gpfs/dell2/ptmp/$USER/com
+mkdir -p $COMOUT_ROOT
+
+
+$HOMEobsproc/jobs/JRAP_DUMP
+
+
+# Kick off dump_post job
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP PDY=${PDY} desc=$DESC bash -l /u/$USER/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Nicholas.Esposito/wcoss1_gitwkspc/cron_project/jrap_dump_post.wc1.lsf
+fi
+exit
+# Kick off prep job from Cray
+
+# Test for prepbufr file, then kick off prep_post from Dell-p3
+testfile=$COMOUT_ROOT/obsproc/${JTYP}.${PDY}/where_t${cyc}z_${JTYP}_prep_ran
+if [ -f $testfile ]; then
+  echo "kick off jrap_prep_post.wc1.lsf job"
+fi
+ 
+exit
+
+# Kick off prep job
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP PDY=${PDY} desc=$DESC bash -l /u/$USER/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Nicholas.Esposito/wcoss1_gitwkspc/cron_project/jrap_prep.wc1.lsf
+fi

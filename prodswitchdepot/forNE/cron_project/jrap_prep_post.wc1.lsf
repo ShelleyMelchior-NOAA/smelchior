@@ -1,0 +1,91 @@
+#BSUB -J %JTYP%_prep_post_%CC%
+#BSUB -o /gpfs/dell2/ptmp/Nicholas.Esposito/%JTYP%_prep_post_%PDY%_%CC%_%DESC%.o%J
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -q dev
+#BSUB -R rusage[mem=1000]
+#BSUB -W 00:15
+#BSUB -P OBSPROC-T2O
+
+##########################################################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun cycbsub jrap_prep_post.cray.lsf
+# For latest/current PDY:
+# > jtyp=rap cyc=00 desc=somethingfun cycbsub jrap_prep_post.cray.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Shelley.Melchior/bin
+##########################################################################
+
+set -xu
+
+# test if this is the prod machine; exit if prod; continue if dev
+# pass in $pid
+pid=$$
+#ushdir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush
+#sh $ushdir/devprodtest.sh ${pid}
+#returnfile=/gpfs/dell2/stmp/$USER/devprodtest.${pid}.out
+#rc=$(cat $returnfile)
+#if [[ $rc != 0 ]]; then
+#  echo 'prod machine - exit'
+#  rm $returnfile
+#  exit
+#fi
+#rm $returnfile
+
+export envir=prod
+export cyc=%CC%
+type=%DESC%
+JTYP=%JTYP%
+if [ $JTYP = "rap_e" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_prep_post_erly_$cyc
+elif [ $JTYP = "rap_p" ]; then
+  export job=$(echo $JTYP | cut -c1-3)_prep_post_pcyc_$cyc
+else
+  export job=${JTYP}_prep_post_$cyc
+fi
+
+export PDY=%PDY%
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+
+VERSION_FILE=${NWROOThps}/versions/obsproc_rap.ver
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+  echo Need version info...  Exiting...
+ exit 7
+fi
+
+export SENDECF=NO
+export SENDDBN=NO
+export SENDSDM=NO
+#export DBNROOT="echo dcs test "; export SENDDBN=YES
+
+export KEEPDATA=YES
+export DATAROOT=/gpfs/dell2/ptmp/$USER
+export jlogfile=/gpfs/dell2/ptmp/$USER/${JTYP}_prep_post.$PDY.jlogfile
+
+
+#export HOMEobsproc_rap=${userROOT}/gitstatic/EMC_obsproc_rap-GSDcron
+export HOMEobsproc_rap=${userROOT}/wcoss1_gitwkspc/EMC_obsproc_wcoss2
+export HOMEobsproc=${userROOT}/wcoss1_gitwkspc/EMC_obsproc_wcoss2
+export HOMEobsproc_network=$HOMEobsproc_rap
+export HOMEobsproc_prep_post=$NWROOThps/obsproc_prep_post.${obsproc_prep_post_ver}
+export HOMEobsproc_shared_bufr_remorest=$NWROOThps/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver}
+
+export COMIN_ROOT=/gpfs/dell2/ptmp/$USER/com
+#export DEBUG_LEVEL=3
+
+#export COMOUT=/gpfs/hps3/ptmp/$USER/com/comout.${job}%_PDY%.$$
+#export COMOUT=/gpfs/dell2/ptmp/$USER/com/rap/prod/${JTYP}.%PDY%
+export COMOUT=/gpfs/dell2/ptmp/$USER/com/rap/${JTYP}.%PDY%
+
+$HOMEobsproc_rap/jobs/JRAP_PREP_POST
+
+err=$?
+echo $err

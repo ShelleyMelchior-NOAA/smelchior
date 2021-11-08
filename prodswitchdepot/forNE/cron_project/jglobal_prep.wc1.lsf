@@ -1,0 +1,149 @@
+#BSUB -J %JTYP%_prep_%DESC%_%CC%
+#BSUB -o /gpfs/dell2/ptmp/Nicholas.Esposito/%JTYP%_prep%_PDY%_%CC%_%DESC%.o%J
+#BSUB -R "span[ptile=2]"          # tile 2 per node (1 node)
+#BSUB -n 4                        # 4 tasks/processes 
+#BSUB -R affinity[core(1)]
+##BSUB -R rusage[mem=6000]
+##BSUB -a poe
+#BSUB -L /bin/sh
+#BSUB -cwd /gpfs/dell2/stmp/%U
+#BSUB -W 00:35
+#BSUB -P OBSPROC-T2O
+#BSUB -q dev
+##BSUB -M 18000
+##BSUB -extsched 'CRAYLINUX[]'
+
+##############################################
+# Submit notes:
+# For specific PDY:
+# > jtyp=gdas cyc=00 PDY=20170126 desc=somethingfun cycbsub jglobal_prep.ph3.lsf
+# For latest/current PDY:
+# > jtyp=gdas cyc=00 desc=somethingfun cycbsub jglobal_prep.ph3.lsf
+# cycbsub location: /u/Diane.Stokes/bin
+# cycbsub location: /u/Shelley.Melchior/bin
+##############################################
+
+set -xu
+
+sourcedir="/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush"
+echo "begin source"
+#. $sourcedir/devprodtest.sh $$
+echo "end source"
+
+export NODES=1
+
+export envir=prod
+export cyc=%CC%
+DESC=%DESC%
+JTYP=%JTYP%
+export job=${JTYP}_prep_$cyc
+export jobid=$job.$LSB_JOBID
+
+export PDY=%PDY%
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+# source moduleload file
+. $userROOT/gitstatic/fix/moduleload
+
+module load w3emc/2.4.0
+module load HDF5-parallel/1.10.6
+module load NetCDF-parallel/4.7.4
+
+#VERSION_FILE=$NWROOT/versions/obsproc.ver
+VERSION_FILE=${userROOT}/gitstatic/obsproc.ver
+
+if [ -f $VERSION_FILE ]; then
+   . $VERSION_FILE
+else
+ echo Need version info...  Exiting...
+ exit 7
+fi
+
+# Force prepobs_makeprepbufr.sh to use prepobs_errtable.global from
+# gfs.v*/fix/fix_gsi instead of from obsproc_global.v*/fix
+VERSION_FILE_gfs=$NWROOT/versions/gfs.ver
+if [ -f $VERSION_FILE_gfs ]; then
+   . $VERSION_FILE_gfs
+else
+ echo Need version info...  Exiting...
+ exit 7
+fi
+
+#export util_shared_ver=1.0.5  # ???????????
+
+export SENDECF=NO   # developer
+export SENDSDM=NO   # developer
+export SENDDBN=NO   # developer
+
+export DATAROOT=/gpfs/dell2/ptmp/$USER
+export jlogfile=/gpfs/dell2/ptmp/$USER/%JTYP%.$PDY.jlogfile
+
+#export HOMEobsproc=$NWROOT/obsproc.${obsproc_ver}
+# git branch EMC_obsproc: wcoss2
+export HOMEobsproc=${userROOT}/wcoss1_gitwkspc/EMC_obsproc_wcoss2
+
+# HOMEgfs on Dell
+export HOMEgfs=$NWROOT/gfs.${gfs_ver}
+
+export COMIN_ROOT=/gpfs/dell2/ptmp/$USER/com
+export COMINgdas=${COMROOT}/gfs/${envir}/${JTYP}.${PDY}/${cyc}/atmos
+export COMINgfs=${COMROOT}/gfs/${envir}/${JTYP}.${PDY}/${cyc}/atmos
+#export tstsp=/gpfs/dell2/ptmp/$USER/com/gfs/prod/${JTYP}.${PDY}/${cyc}/${JTYP}.t${cyc}z.
+export COMOUT_ROOT=/gpfs/dell2/ptmp/$USER/com
+
+export envir_getges=${envir}
+export PRVT=${HOMEgfs}/fix/fix_gsi/prepobs_errtable.global
+export launcher_PREP=mpirun
+#export POE=NO
+export DEBUG_LEVEL=3
+
+$HOMEobsproc/jobs/JGLOBAL_PREP
+
+##exit
+
+# Kick off prep_post job
+#
+# To run prep_post for gdas, need to pre-stage previous cycle's
+# upa_his_twinwind.* and gdas.t${cyc}z.gsistat files in $COMOUT
+
+if [ $JTYP = "gdas" ]; then
+  ppdy=$PDY
+  if [ "$cyc" = "00" ]; then
+    pcyc=18
+    ppdy=$(date +%Y\%m\%d -d "${PDY} -1 day")
+  elif [ "$cyc" = "06" ]; then
+    pcyc=00
+  elif [ "$cyc" = "12" ]; then
+    pcyc=06
+  elif [ "$cyc" = "18" ]; then
+    pcyc=12
+  else
+    echo "not a valid cycle time"
+  fi
+  pCOMOUT=/gpfs/dell2/ptmp/$USER/global_shipsb/com/gfs/prod/gdas.${ppdy}/${pcyc}/atmos
+  comin_prod=$COMROOT/gfs/prod/gdas.${ppdy}/${pcyc}/atmos
+
+  cd $pCOMOUT
+  for f in $(ls $comin_prod/upa_his_twinwind.*)  # link upa files
+  do
+    echo "$f"
+    if [ ! -f "${pCOMOUT}/$(basename $f)" ]; then
+      ln -s $f
+    fi
+  done
+
+  for f in $(ls $comin_prod/*gsistat)            # link gsistat file
+  do
+    echo "$f"
+    if [ ! -f "${pCOMOUT}/$(basename $f)" ]; then
+      ln -s $f
+    fi
+  done
+fi
+err=$?
+if [ $err -eq 0 ]; then
+  unset LSB_SUB_RES_REQ
+  jtyp=$JTYP desc=$DESC bash -l /u/$USER/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Nicholas.Esposito/wcoss1_gitwkspc/cron_project/jglobal_prep_post.wc1.lsf
+fi
+
