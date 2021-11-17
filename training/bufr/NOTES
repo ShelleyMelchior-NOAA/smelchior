@@ -1,0 +1,502 @@
+Notes on utilities I use to interrogate BUFR files (dump files and prepbufr
+files)
+
+-------------------------------------------------------------------------------
+bfrdif
+----
+> bfrdif [prepbufr file 1] [prepbufr file 2] [data group]
+
+Compares counts between two prepbufr files for: POB, QOB, TOB, ZOB, UOB, VOB.
+Optional 3rd argument - can specify data group (e.g., SFCSHP or ADPSFC).
+
+output returned to screen
+
+source:
+/u/Jack.Woollen/bin/bfrdif
+
+-------------------------------------------------------------------------------
+bdif
+----
+usage:
+> bdif [bufr file 1] [bufr file 2]
+
+output:
+Output is written to /stmpp1/$USER/dd.$pid.
+Output contains files "dump1" and "dump2" that are complete ascii dumps of the *bufr_d files used as the 2 args.  Utilize tkdiff to to compare the 2 files to see the differences.
+
+interactive usage (example):
+cd to local com dir where "f" resides
+> for f in rap.t19z.*bufr_d.nr ; do bdif $f /com/rap/prod/rap.20130326/$f ; done
+
+source:
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/bdif
+
+-------------------------------------------------------------------------------
+binv
+----
+usage:
+> binv [bufr file]
+
+output:
+Table/list to standard out indicating the datasets that make up the bufr file.
+The number of messages and subsets that make up each dataset is listed as well as the total size (in bytes) for that dataset.
+This output is similar to go_chkdat.
+
+source:
+/u/Jack.Woollen/bin
+
+-------------------------------------------------------------------------------
+cmpbqm
+-------
+usage: cmpbqm [prepbufr file]
+
+output: (to stdout unless redirected to file)
+Table of report counts, both total and arranged by QMs for main state variables (T, P, V, Q, Z)
+
+source:
+/u/Jack.Woollen/bin
+
+-------------------------------------------------------------------------------
+debufr
+------
+usage:
+> /nwprod/util/exec/debufr [options] outputfile path/to/bufrfile
+> /nwprod2/util_shared.v1.0.1/debufr_v2.2.0/exec/debufr [options] outputfile path/to/bufrfile
+> debufr -o /ptmpp1/Shelley.Melchior/tac2bufr/db.out.pibal.20141001 /dcom/us007003/20141001/b002/xx005
+> $NWROOTp3/util_shared.v1.1.0/exec/debufr -o outputfile input-bufr-file
+> $DEBUFR -o outputfile input-bufr-file ... (how to use when module is loaded)
+
+[options]:
+ -v
+ -b
+ -m
+ -o path/filename of output file
+ -t path/filename of tables directory
+ -f filename of DX tables file in tables directory
+ -h usage info
+
+output:
+large ascii file that writes to specified output file; if not specified, 
+then writes to cwd: debufr.out
+The last section of the ascii output is the embedded bufr table.
+
+source: $NWROOTp2/util_shared.vX.Y.Z/debufr_vX.Y.Z
+source: $NWROOTp3/util_shared.v1.1.0/sorc/debufr.fd
+-------------------------------------------------------------------------------
+dumpjb
+------
+usage:
+> /gpfs/hps/nco/ops/nwprod/obsproc_dump.v*/ush/dumpjb <dtg><cyc> <dump radius> <tank name>
+> /gpfs/hps/nco/ops/nwprod/obsproc_dump.v*/ush/dumpjb 2018061812 1.5 amdar
+
+Handy JeffW script/command:
+> ( module load bufr_dumplist
+module load dumpjb
+$DUMPJB 2018061812 1.5 amdar
+) |& tee d.out
+
+e.g. b000/xx007 = metar
+Look up tank names in /nwprod/fix/bufr_dumplist
+> grep 000007 /nwprod/fix/bufr_dumplist
+
+output:
+$tank_name.out - ascii log output for dumpjb program
+$tank_name.ibm - bufr dump of the metar tank
+-------------------------------------------------------------------------------
+dumpmp
+------
+usage:
+> dumpmp [bufr file]
+
+output:
+Interrogative listing of bufr file to standard out. Best to write output to
+file (beware: file will be LARGE). 
+
+source:
+/u/Jack.Woollen/bin/dumpmp
+
+----------------------------------------------------------------------------
+get_nems
+---------
+usage:
+> gn pibal '' desc > /ptmpp1/Shelley.Melchior/tac2bufr/gn.out.pibal
+'' or dc will retrieve default prod bufr table
+> gn pibalb dev desc > /ptmpp1/Shelley.Melchior/tac2bufr/gn.out.pibalb
+dev=/nco/sib/decdev/decod_shared/fix/*; this will retrieve the default dev bufr table 
+> gn amdarb /nwprod/decoders/decod_shared/fix/bufrtab.004 desc > /ptmpp1/Shelley.Melchior/gn.out.amdarb
+(issued from any dir) When you want to specify non-default bufr table
+> gn acars /nwprod/decoders/decod_shared/fix/bufrtab.004 desc > /ptmpp1/Shelley.Melchior/gn.out.acars
+> gn msonet pb > /ptmpp1/Shelley.Melchior/gn.msonet.out
+(to expand prepbufr table)
+> export LIST=/path/to/specific/bufr_dumplist file
+> gn nonxrd dev desc > /ptmpp1/Shelley.Melchior/gn.nonxrd
+(where dev=/nco/sib/decdev/decod_shared/fix/*)
+To use specific bufr_dumplist file
+> gn crisf4 /gpfs/gp1/nco/ops/nwprod/obsproc_satingest.v3.7.2/fix/bufrtab.021 desc > /meso/noscrub/Shelley.Melchior/gn.crisf4
+To use obsproc bufr table
+
+*NOTE: dump group name for individual tank (e.g. NC255007 = msoiow is retrieved
+from bufr_dumplist file.
+*NOTE: default bufr_dumplist file is /u/Jeff.Whiting/doc/bufr_dumplist (l. 67).  If you wish to
+use a different bufr_dumplist file, export $LIST to point to desired bufr_dumplist file.
+e.g.)
+> export LIST=/meso/save/Shelley.Melchior/svnwkspc/obsproc_shared_bufr_dumplist.tkt-222.TAC2BUFR_SYNOP/fix/bufr_dumplist
+> env | egrep LIST
+LIST=/meso/save/Shelley.Melchior/svnwkspc/obsproc_shared_bufr_dumplist.tkt-222.TAC2BUFR_SYNOP/fix/bufr_dumplist
+
+output:
+Parses BUFR tables, listing mnemonics and sequences by message type.
+The two sample commands above list pibal and pibalb definitions from /dcom and /decomdev tables w/ descriptions of mnemonics included.
+To find the datatype ($1, e.g., pibal) look in section 3 of bufr_dumplist.
+
+source:
+/u/Jeff.Whiting/bin/gn
+EMC_obsproc DB:whiting wcs/util/gn
+
+----------------------------------------------------------------------------
+gettab
+------
+usage:
+> gettab <full path to bufr file> 
+
+output:
+Prints to screen (or can redirect to file) the bufr table embedded in the
+bufr data file.
+
+source:
+/u/Shelley.Melchior/bin
+/u/Jack.Woollen/bin
+
+----------------------------------------------------------------------------
+go_chkdat
+---------
+usage:
+> go_chkdat <full path to bufr file> [foreign bufr table] 
+
+output:
+Lists the datasets (e.g. ADPUPA, AIRCAR, AIRCFT, etc...) present in the bufr
+file and how many reports and messages make up that dataset.  Also provides
+a date range for the data in that dataset.
+
+source:
+/u/Shelley.Melchior/bin
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/chkdat
+----------------------------------------------------------------------------
+go_chklate
+> go_chklate <full path to tank>
+
+output:
+Table summarizing the recept and latency of reports coming into the tank.
+
+NOTE: presently only on ccs
+
+source:
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/chklate
+
+----------------------------------------------------------------------------
+go_dmp
+------
+usage: 
+> go_dmp <full path to bufr file> [foreign bufr table]
+
+output:
+Takes you to an interactive screen that shows the first report of the bufr
+file.
+ q - quit that report
+next interactive menu:
+ q - quit program
+ d - reports in more verbose display
+ t - go to data type (e.g. ADPSFC)
+ g - go to report number (each report in a bufr file is numbered sequentially
+
+source:
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/dmpbfr
+
+-------------------------------------------------------------------------------
+grabbufr
+--------
+usage:
+> grabbufr [bufr file]
+
+output:
+Extracts all bufr messages from the file and writes back out to different file.
+Converts the blocking structure of bufr file to standard unix fortran format.
+Converts any bufr edition 0 or 1 messages to edition 2 before writing to
+outfile.
+
+source:
+/u/wx20jw
+
+-------------------------------------------------------------------------------
+gsb
+---
+Splits a prepbufr file into its various unique message types (e.g. ADPSFC, MSONET, etc)
+Splits a bufr file into its various unique tank constituents (e.g. NC004003, NC004006, etc)
+
+usage:
+> gsb [(prep)bufr file]
+
+output:
+/stmpp1/$USER/sb/split_*
+/gpfs/dell2/stmp/$USER/sb/split_*
+
+source:
+/u/Shelley.Melchior/bin
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/splitbufr
+
+-------------------------------------------------------------------------------
+grepbdl
+---
+Searches through $NWROOT/obsproc_*/scripts/ex*_dump.sh.ecf for a specified dump group
+Searches through bufr_dumplist for dump group name
+
+usage:
+> grepbdl [dump group name]
+
+output:
+interactive to screen
+
+source:
+/u/Shelley.Melchior/bin
+
+-------------------------------------------------------------------------------
+read_prepbufr.sh
+----------------
+usage:
+> read_prepbufr.sh [full path to bufr file] [dataset]
+example:
+> read_prepbufr.sh [full path to bufr file] ADPSFC
+> read_prepbufr.sh [full path to bufr file] MSONET 
+> read_prepbufr.sh [full path to bufr file] ALL 
+
+output:
+Directory created in stmpp1: "read_prepbufr.$dataset".
+Files inside this directory are a tabular ascii representation of some of the
+basic data present in the bufr file.
+
+source:
+/meso/save/Dennis.Keyser/HOME/prepbufr
+
+-------------------------------------------------------------------------------
+readbp
+------
+usage:
+> readbp [bufr file]
+
+Note: do not provide full path to [bufr file]; must be in cwd of [bufr file]
+output:
+Interactive interrogation of bufr file.  Lists all reports in the bufr file 
+and you can page through the reports one by one w/ the "enter" key.  
+d = verbose --> e.g.) d <enter> allows you to see a fully expanded report
+e = verbose --> e.g.) e <enter> variation on "d". 
+k = report type --> e.g.) k <enter> TYP <enter> skips to all reports of that
+type (e.g. 1/283, 1/288, 1/295) 
+m = msgtype --> e.g.) m <enter> MSONET <enter> skips to the msonet data set
+and allows you to scroll through those reports.
+s = station --> e.g.) s <enter> STNID <enter> skips to that station report
+q = quit --> e.g.) s <enter> exits program 
+
+source:
+/u/Jack.Woollen/bin
+
+-------------------------------------------------------------------------------
+readmp
+------
+usage:
+> readmp [bufr file]
+
+output:
+Interactive interrogation of bufr file.  Lists all reports in the bufr file
+and you can page through them one by one w/ the "enter" key.  Display is
+verbose. 'q' to quit.
+
+source:
+/u/Jack.Woollen/bin
+
+-------------------------------------------------------------------------------
+rmdumpdummy.sh
+--------------
+Removes 2nd message from dump file; a rough cut to remove dump date stamp to
+allow easier comparison of two dump files.
+
+usage:
+> rmdumpdummy.sh [input bufr dump file] [output bufr dump file] 
+
+e.g.)
+> rmdumpdummy.sh tide_file tide_file.nodum
+> rmdumpdummy.sh luna_file luna_file.nodum
+> cmp tide_file.nodum luna_file.nodum
+
+output:
+/ptmpp1/$USER/rmdumpdummy.$host.$$
+
+source:
+/u/Dianes.Stokes/save/bufr/ush
+
+----------------------------------------------------------------------------
+sinv
+----
+usage:
+> sinv <full path to bufr file> 
+
+output:
+Prints to screen (or can redirect to file) a list of satellite platform IDs
+and observation counts withn a provided dump file.
+Requires local file called saidlist.
+Must be run from a writeable directory.
+
+source:
+/u/Shelley.Melchior/bin
+/u/Jack.Woollen/bin
+
+----------------------------------------------------------------------------
+Section 1 info
+--------------
+
+Reads Section 1 and Section 3 from a bufr tank file.  Returns Section 1
+quantities and Section 3 descriptors.  Particularly useful to find receipt
+information for satellite data that is processed by obsproc_satingest
+(those data that do not go through the LDM decoders).
+
+usage:
+> sec1_sec3dump.foreign <full tank directory> <output file suffix>
+
+output:
+/stmpp1/$USER/sec1_sec3dump.foreign
+
+source:
+/meso/save/Shelley.Melchior/svnwkspc/melchior/misc/sec1_sec3dump.foreign
+----------------------------------------------------------------------------
+tablextractor
+-------------
+
+Extracts the embedded bufr table from a bufr data file.
+You can also see the table at the bottom of debufr output.
+
+usage:
+> run_tblextrtr
+or
+> sh tablextractor.sh <input NCEP BUFR file, with full path> <output text file containing table>
+
+output:
+stdout and /stmpp1/$USER/tablextractor
+
+source:
+/meso/save/Shelley.Melchior/svnwkspc/melchior/misc/tablextractor
+
+----------------------------------------------------------------------------
+ue (ufbtab_example)
+--
+usage:
+> ue [full path to bufr file] [mnemonic string] quiet
+example:
+> ue [full path to bufr file] "SID | SOB DDO" quiet
+
+output:
+A file is generated in _cwd_ (best to run utility from ptmpp1 or stmpp1) 
+that lists out the values for the identified mnemonics for the entire
+bufr file. Also prints out sequential report numbers (helpful for usage
+in go_dmp).  
+NOTE: the "|" character is imperative to separate a character string from an
+integer or float value.
+
+source:
+/u/Shelley.Melchior/bin
+/u/Jeff.Whiting/bin
+EMC_obsproc DB:whiting wcs/util/ue
+----------------------------------------------------------------------------
+Decoder Dictionaries
+--------------------
+dev: /gpfs/dell2/emc/obsproc/noscrub/decdev/decod_shared
+
+prod: $NWROOT/decoders/decod_shared
+----------------------------------------------------------------------------
+DS module
+---------
+usage:
+> module display /u/Diane.Stokes/privatemodules/bufr/dev11.0.0
+
+This will simply print out the environment variable settings for v11.0.0 of bufrlib.
+
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+LIBRARY INFO
+------------
+*_4 --> 4-byte INT, 4-byte REAL
+*_8 --> 8-byte INT, 8-byte REAL
+*_d --> 4-byte INT, 8-byte REAL
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+REPLICATIONS
+------------
+"< >" = 1-bit replication (2^1 = 2) (on or off)
+"{ }" = 8-bit replication (2^8 = 256)
+"( )" = 16-bit replcation (2^16 = 65536)
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+SCALE / REFERENCE / BIT
+-----------------------
+Near the bottom of a bufrtable for each defined mnemonic there are other
+tidbits of information, like this:
+| CLAT     |    2 |       -9000 |  15 | DEGREES
+This is how to use that inforamtion to determine an expected range of values
+for the given mnemonic (e.g. CLAT).
+scale = 10^2 = 100
+lo_range = -9000/scale = -9000/100 = -90
+hi_range = (((2^15) - 2 ) + (-9000)) / scale = 23766/100 = 237.66
+[-90,237.66]
+***note: using (2^15) - 1 will yield the MISSING value (all bits set to 1); so 
+the missing value for CLAT is 237.67
+Symbolic example:
+scale = 10^SCALE
+lo_range = REFENCE/scale
+hi_range = (((2^BIT) - 2) + (REFERENCE)) / scale
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+ARRAYS
+------
+For a multi-dimensional array, order matters!
+Think of it like reading from left to right: For array (m,n) go through all 
+of the m words holding the n words constant.  Then increment n, holding it
+constant, and work through the m words again.  Etc ...
+
+For example: (2,9) size=18
+(1,1),(2,1)
+(1,2),(2,2)
+(1,3),(2,3)
+(1,4),(2,4)
+...
+(1,8),(2,8)
+(1,9),(2,9)
+
+For example: (6,9) size=54
+(1,1),(2,1),(3,1),(4,1),(5,1),(6,1)
+(1,2),(2,2),(3,2),(4,2),(5,2),(6,2)
+(1,3),(2,3),(3,3),(4,3),(5,3),(6,3)
+...
+(1,8),(2,8),(3,8),(4,8),(5,8),(6,8)
+(1,9),(2,9),(3,9),(4,9),(5,9),(6,9)
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+TO COMPILE OBSPROC_PREP ON THEIA (R&D SERVER)
+---------------------------------------------
+WCOSS build.sh :
+module load ics/12.1
+module load ibmpe
+source ./load_libs.rc  # use modules to set library related environment variables
+THEIA build.sh :
+module load impi/4.1.3.048
+module load intel/14.0.2
+source ./load_libs.rc_theia  # use modules to set library related environment variables
+
+WCOSS load_libs.rc :
+module load bufr/$bufr_ver
+THEIA load_libs.rc :
+#module load bufr/$bufr_ver
+export BUFR_LIB4=/scratch4/NCEPDEV/global/save/glopara/svn/nceplibs/bufr/${bufr_ver}/libbufr_${bufr_ver}_4_64.a
+----------------------------------------------------------------------------

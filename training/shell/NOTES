@@ -1,0 +1,774 @@
+This document contains helpful shell tricks and notation that I have learned 
+and come across in EMC obs processing applications.
+
+-------------------------------------------------------------------------------
+OPTIONS
+-----
+file:
+  -d   tests if file is a directory
+  -e   tests if file exists
+  -f   tests if file is ordinary
+  -r   tests if file is readable
+  -s   tests if file has non-zero length
+  -w   tests if file is writeable
+  -x   tests if file is executable
+  -L   tests if file is a symbolic link
+
+logical:
+  -a   AND logical operator
+  -o   OR logical operator
+
+string:
+  -n   string is not null
+  -z   string is null (zero length)
+
+mkdir:
+  -p   creates any parent directories that may not yet exist
+
+-------------------------------------------------------------------------------
+HERE DOCUMENT
+-------------
+A type of redirection instructs the shell to read input from the current source
+until a line containing ONLY "inputEOF" is encountered.
+e.g.) cat <<\inputEOF > read_prepbufr.f
+{see REDIRECTION}
+
+NOTE: "\" reads everything into the source as a literal.  Omitting the "\"
+      allows you to carry a shell variable into the source.
+
+To skip large blocks of code use here doc redirected to dummy function arg, ":"
+: <<"SKIP"
+lines of code
+lines of code
+lines of code
+lines of code
+lines of code
+SKIP
+
+-------------------------------------------------------------------------------
+REDIRECTION
+-----------
+output:
+  >    redirect to file; if file doesn't exist, it is created; if file exists,
+                         it is overwritten
+  >!   redirect to file and explicitly overwrites file even if script directs
+       to protect it
+  >>   redirect to file; append
+  >>!  redirect to file; appends output to file even if script directs 
+                         otherwise; if file doesn't exist, it is created
+  >&   redirect both stdout and stderr to file
+  0>   redirect to standard in
+  1>   redirect to stdout
+  2>   redirect to stderr
+  2>&1 redirect errors to stderr and stdout
+input:
+  <    sends input to a command from a file
+  <<   sends intput to a command from standard input until a particular text 
+       string is encountered
+
+-------------------------------------------------------------------------------
+SHELL VARIABLES
+---------------
+  $?   holds exit status of previous command; 0 = successful command
+  $@   pulls in and uses (lists) all incoming args from parent
+  $*   references all (in list) incoming args (does not recognize "" delimiting)
+  $#   holds number of incoming args into shell script
+  $$   holds the process id (pid) of the current process
+  $!   holds the pid of the process last sent to the background for execution
+  $0   holds the name of the program running
+  ${n} holds the n-th arg passed into the script
+
+-------------------------------------------------------------------------------
+$PATH
+-----
+To view $PATH in readable format:
+
+> echo -e ${PATH//:/\\n}
+
+-------------------------------------------------------------------------------
+SHELL SCRIPT NOTATION
+---------------------
+
+For setting a var equal to a command line execution:
+` ... ` is the same as $( ... )
+e.g.:
+realvar1=`printf "%.0f\n" $realvar`
+realvar1=$(printf "%.0f\n" $realvar)
+Same result!!! (rounds away the decimal portion of a real number to make it 
+an integer)
+
+Create empty array:
+array=()
+
+To print contents of array:
+echo ${array[@]}
+
+Copy contents of array into new array:
+newarray=("${array[@]}")
+
+See length of an array (# of elements):
+echo ${#array[@]}
+
+-------------------------------------------------------------------------------
+awk
+---
+To parse a string based on a defined delimiter/seperator
+  echo $string | awk -F'/' '{print $number}'
+where $number is the field number for the nth field element
+
+while loop:
+awk '{i=1; while (i<=3) {print $i; i++;}}'
+
+NF:
+Total count of fields in awk result.
+  echo $string | awk -F'/' '{print NF}'
+Print the last field after parsing on an awk delimiter.
+  echo $string | awk -F'/' '{print $NF}'
+
+To print the string immediately following a string delimiter
+e.g., delimiter = HAS
+> grep HAS $file | awk '{for(i=1;i<=NF;i++) if ($i=="HAS") print $(i+1)}'
+or
+> awk '{for(i=1;i<=NF;i++) if ($i=="HAS") print $(i+1)}' $file
+
+-------------------------------------------------------------------------------
+cut
+---
+To parse a string based on a defined delimiter/seperator
+  echo $string | cut -d'/' -f6
+where '/' is the delimiter and -f6 is the 6th field element
+To specify a range of field elements:
+  echo $string | cut -d'/' -f6-7
+To specify multiple field elements, but not in range/sequence:
+  echo $string | cut -d'/' -f-6,8
+
+-------------------------------------------------------------------------------
+sed
+---
+sed '1,100p;d' filename > filename2
+
+     This will take lines 1-100 of filename and print (p) them to a new file,
+     filename2.  d is required to delete all of the other lines that sed will
+     print by default.
+     - alternatively -
+sed '2,4!d' filename > filename2
+     - alternatively -
+sed -n 2,4p filename > filename2
+
+sed 's/day/night/' <file1 >file2
+
+     This will search for and replace all occurrences of "day" in file1 to 
+     "night" and save the result in file2.
+
+sed "/write(.*,'[1-9a-z]/ s/')/)')/" file1.sh | sed "/write(.*,'[1-9a-z]/ s/,'/,'(/" > file2.sh
+
+     This will reformat occurrences resembling line1 in file1.sh to line2:
+     line1: write(12,'1x,a,$') 'q = '
+     line2: write(12,'(1x,a,$)') 'q = '
+     and save the resultant changes into file2.sh
+     ** for more sed notes see 12/30/13 Jeff Whiting email: "fixing fortran 
+        write format errors"
+
+sed -e '/2=   18/d' ufbtab_example.out.phs2 > ufbtab_example.out.phs2.28x-only
+
+     This will delete the following string: "2=   18" from file1 and write the 
+     resultant output into file2.  File1 will remain intact and original.
+
+sed -e '/2=   287/d;/2=   281/d' ufbtab_example.out.phs2 > ufbtab_example.out.phs2.284-only
+
+     This will delete both of the following strings: "2=   287" and "2=   281" 
+     from file 1 and write the resultant output into file2.  File 1 will remain
+     intact and original.
+
+sed -ne '/1=   245.00/p' ufbtab_example.out > ufbtab_example.out.TYP245
+
+     This will copy lines that contain the search string "1=   245.00" from 
+     File1 and paste those lines into File 2.
+
+sed '/howdy/p;d' filename
+
+     This will grep "howdy" from filename when filename has some binary
+     characters in it.
+
+echo $stringwithleadingspaces | sed 's/^ *//g'
+
+     This will remove leading white space from a string
+
+echo $stringwithtrailingspaces | sed 's/ *$//g'
+
+     This will remove trailing white space from a string
+
+sed 's/^......//' file1 > file2
+
+     This will remove the first 6 characters from every line of file1
+
+sed "s/replacestring/$withvar/" <file1 >file2
+
+     This will replace a known string with a defined variable.  Double quotes 
+    (") are needed to use a variable within sed.
+
+sed "s/ 1b..../  /g"
+
+     This will replace any 7-character string that begins with " 1b" with 2 blanks (spaces).
+
+sed "s/ [0-9][a-z]..../  /g"
+
+     This will replace any 7-character string that begins with a space followed by any 
+     numeral followed by any letter and any 4 remaining characters with 2 blanks (spaces).
+     See: obsproc_dump_post*/ush/bufr_datacount.sh
+
+-------------------------------------------------------------------------------
+tee
+---
+The 'tee' command copies standard input to stadard output and also to any 
+files given as arguments.
+options:
+  -a ==> append
+
+-------------------------------------------------------------------------------
+ls
+--
+> ls -ltr | tail -n1
+
+     This returns the final line in a directory listing
+
+> ls -ltr | head -nl
+
+     This reutrns the first line in a directory listing
+
+-------------------------------------------------------------------------------
+vi
+--
+cw            clear word and edit to end of word/string ($)
+o             opens a new line below cursor in insert mode 
+O             opens a new line above cursor in insert mode 
+b             navigate backward one word
+e             navigate forward one word
+1G            skip up to the top of file
+M             navigate to middle of screen
+L             navigate to bottom of screen
+G             skip to bottom of file
+ctrl+f        scroll forward one screen
+"Page Down"   scroll forward one screen
+ctrl+b        scroll backward one screen
+"Page Up"     scroll backward one screen
+ctrl+g        tells you where the cursor is in the file
+:%s/old/new/g global replace
+yy            copy line
+dd            cut / delete line
+pp            paste line
+xx            cut / delete character
+/string       search forward for "string"
+?string       search backward for "string"
+:w            write/save
+:q            quit
+:wq           save then quit
+:x            save then quit
+:e!           Refresh an open file
+:e            open another file in current vi session
+:e#           alternate between open files
+:f            view the file name currently open
+vi [files]*   open several files at once in a single vi session
+:n            flip forward through the set of opened files
+              -OR-
+              progress forward through search string
+              more help on multiple file editing:
+              http://www.bo.infn.it/alice/alice-doc/mll-doc/linux/vi-ex/node27.html
+:N            progress backward (opposite direction) through search string
+:set ignorecase   search a file as case insensitive
+:set noignorecase search a file as case sensitive 
+:set smartcase    automatically switch to a case-sensitive search if you use any 
+                  capital letters
+ -- To make this permanent, from home dir issue the following command:
+ set ignorcase >> .exrc
+:![cmd]       Allows you to perform a shell command from w/n vi session
+:syntax off   During a vi session this will remove any colored font
+:noh          During vi session this will remove the highlight of a recently
+              searched string
+             
+vi cheat sheet: http://www.lagmonster.org/docs/vi2.html#shell
+
+-------------------------------------------------------------------------------
+wc
+--
+To determine word count of a file (counts lines): 
+  cat file | wc -l 
+To determine the length of a string (counts characters):
+  echo $string | wc -c
+NOTE: subtract 1 to get true length b/c "wc -c" includes line break
+-OR-
+echo ${#string} will reveal length of a string (# of chars in a string)
+
+-------------------------------------------------------------------------------
+bc
+--
+This is a calculator function built into the shell that can perform non-integer
+math calculations.  By default scale=0 (integer).  You can set scale=2 for
+floating point numbers (w/ hundredths precision).
+
+> echo "2/3" | bc
+0
+> echo "scale=2; 2/3" | bc
+.66
+
+-------------------------------------------------------------------------------
+ps auxwww
+---------
+To view all the processes currently being run by me:
+> ps auxwww | grep Shelley.Melchior
+ - OR -
+> ps -ef | grep Shelley.Melchior
+
+-------------------------------------------------------------------------------
+kill loop
+---------
+To kill all processes of mine that contain "bash", for example:
+
+> for PIDID in `ps auxwww | grep bash | grep wx24sm | cut -d'' -f4`; do
+> kill $PIDID
+> done
+
+To kill a specific process id
+
+> kill -9 pid
+-------------------------------------------------------------------------------
+file
+----
+> file filename
+This command will tell you if filename is ascii or binary.
+
+-------------------------------------------------------------------------------
+htar
+-------
+To pull a dcom tank off of runhistory
+
+Be in the tank directory where you wish to populate the archive data
+> module load hpss
+> htar -xvf /NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/dcom_us007003_YYYYMMDD.tar ./bTTT/xxSSS
+
+
+-------------------------------------------------------------------------------
+hpsstar
+-------
+This is a program that wraps around hsi to allow you to interface w/ vapor
+
+> hpsstar man
+For help 
+
+> hpsstar dir directorypath
+To list on a directory to see tarballs
+
+> hpsstar inv tarfile
+To list contents of a tarball file
+for example:
+> hpsstar inv /NCEPPROD/hpssprod/runhistory/rh2013/201307/20130718/com_gfs_prod_gdas.2013071800.tar
+OR to look for a specific string in a file name:
+> hpsstar inv /NCEPPROD/hpssprod/runhistory/rh2013/201307/20130718/com_gfs_prod_gdas.2013071800.tar | egrep status 
+OR
+> hpsstar inv /NCEPPROD/hpssprod/runhistory/rh2021/202107/20210701/dcom_prod_20210701.tar |  egrep GBB
+
+> hpsstar get tarfile [file ...]
+To pull files from a tarball file back to wcoss 
+
+> hpsstar getnostage tarfile [file ...]
+To pull files from a tarball file back to wcoss MUCH MORE QUICKLY!
+
+This example pulls every file that contains "bufr_d" in its name.
+> hpsstar get /NCEPPROD/hpssprod/runhistory/rh2013/201307/20130718/com_gfs_prod_gdas.2013071818.tar $(hpsstar inx /NCEPPROD/hpssprod/runhistory/rh2013/201307/20130718/com_gfs_prod_gdas.2013071818.tar | grep bufr_d)
+
+General HPSS dir structure:
+/NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/com_net_prod_*YYYYMMDDHH.tar
+
+Tanks are located in this structure:
+/NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/dcom_us007003_YYYYMMDD.tar
+/NCEPPROD/hpssprod/runhistory/rhYYYY/YYYYMM/YYYYMMDD/dcom_prod_YYYYMMDD.tar
+
+To pull disired tank (example):
+> hpsstar getnostage /NCEPPROD/hpssprod/runhistory/rh2017/201704/20170411/dcom_us007003_20170411.tar hpsstar getnostage ./b004/xx103
+> hpsstar getnostage /NCEPPROD/hpssprod/runhistory/rh2017/201704/20170411/dcom_prod_20170411.tar hpsstar getnostage ./b004/xx103
+> hpsstar getnostage /NCEPPROD/hpssprod/runhistory/rh2017/201704/20170411/dcom_prod_20170411.tar ./b004/xx103
+> hpsstar getnostage /NCEPPROD/hpssprod/runhistory/rh2021/202107/20210701/dcom_prod_20210701.tar ./b001/xx103
+
+INFO:
+http://ibmdocs.ncep.noaa.gov/userman5/index_files/body.htm#hpssstart
+http://www2.emc.ncep.noaa.gov/wiki/index.php/Global_Forecast_System/Running_experiments#Finding_GDAS_and_GFS_production_run_files
+
+-------------------------------------------------------------------------------
+id
+--
+This function will list information about a user
+
+> id username
+
+-------------------------------------------------------------------------------
+lsuser
+------
+This function will list information about a user
+
+> lsuser username
+
+-------------------------------------------------------------------------------
+cat /etc/passwd
+---------------
+This command will list a file filled with user information
+
+> cat /etc/passwd | grep username 
+
+-------------------------------------------------------------------------------
+PS4
+---------
+To view a trace in a log file of which script and which line you are viewing, add the following 2 lines just before your first "set" command.
+
+# set execution trace prompt.  ${0##*/} adds the script's basename
+PS4=" \${SECONDS} ${0##*/} L\${LINENO} + "
+
+-------------------------------------------------------------------------------
+Command line navigation
+-----------------------
+
+Ctrl+A
+Move prompt to the start of the command line
+
+Ctrl+E
+Move prompt to the end of the command line
+
+-------------------------------------------------------------------------------
+cd
+--
+> cd -
+  takes you back to previous pwd
+
+-------------------------------------------------------------------------------
+diff
+-----
+Recursive diff through two directories
+> diff -r dir1 dir2
+
+Recursive diff through two directories ignoring hidden git directory
+> diff -r -x ".git" dir1 dir2
+
+-------------------------------------------------------------------------------
+sdiff
+-----
+> sdiff -lBb file1 file2 > out.file
+
+b - ignores white space differences
+B - ignores blank line differences
+l - prints common lines only in left column
+
+-------------------------------------------------------------------------------
+vimdiff
+-------
+Visual diff with highlighted side-by-side tiles (up to 4 files)
+
+> vimdiff file1 file2
+
+"ctrl+w w" = jumps between tiles
+"ctrl+w =" = centers divider in the window
+"]c" = jump to next change
+"[c" = jump to previous change
+"do" = get changes from other window into current window
+"dp" = put changes from current window into other window
+http://amjith.blogspot.in/2008/08/quick-and-dirty-vimdiff-tutorial.html
+
+-------------------------------------------------------------------------------
+tar
+---
+> tar -xvf file.tar
+
+extracts a tar file to the cwd.
+
+> tar -xvf tarball.tar path/to/file
+
+extracts a specific file from a tar file to cwd.
+
+-------------------------------------------------------------------------------
+tar with ssh
+------------
+
+> tar cf - gfs/prod/g*s.201*/*.bufr_d | ssh mars 'cd /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/GFSdropout/com ; tar xvf -'
+
+create tar of specific files then ssh to remote server then cd to destination then extract the tar
+
+-------------------------------------------------------------------------------
+scp
+---
+passwordless ssh/scp
+client = computer looking to connect w/ a host
+client = FROM computer (scp FROM client TO host)
+host = computer being connected to
+host = TO computer (scp FROM client TO host)
+
+Copy a file from client (remote server)  to host (current server)
+scp userid@remote.server:/path/to/remote/file /path/to/local/file
+ 
+Copy a file from host (current server) to client (remote server)
+scp /path/to/local/file userid@remote.server:/path/to/remote/file
+
+** For more info please see google doc: "passwordless ssh"
+
+-------------------------------------------------------------------------------
+find
+---------
+To find files in cwd tree that have been touched/modified in the last N mins:
+
+> find ./ -mmin -600
+
+-------------------------------------------------------------------------------
+soft/symbolic link
+------------------
+Refer to a symbolic path indicating the abstract location of another file
+
+> ln -s {actual/dir/and/file} {symbolic/dir/and/file}
+
+-------------------------------------------------------------------------------
+stmp, ptmp
+----------
+/stmp is now /stmpp[1][2]; 24 hour storage; 16 hr storage as of 5/11/17
+/ptmp is now /ptmpp[1][2]; 7 day storage; 3 day storage as of 5/11/17
+
+-------------------------------------------------------------------------------
+bqueues (lsf batch queues)
+-------------------------
+To view all available queues to see status (closed vs. open):
+> bqueues
+
+To view all available queues for your user permissions:
+> bqueues -u all
+or
+> bqueues -u Shelley.Melchior
+
+
+-------------------------------------------------------------------------------
+Read a file line-by-line
+------------------------
+cat path/to/file.txt |
+while read line
+do
+  functions on $line
+done
+
+-------------------------------------------------------------------------------
+grep
+----
+To grep for many different patterns:
+> grep -e pattern1 -e pattern2 -e pattern3 $file
+-or-
+> egrep 'pattern1 | pattern2 | pattern3' $file (NOTE: spaces *are* relevant)
+-or-
+> grep -f file.list $file (NOTE: one pattern per line in file.list)
+-or-
+> cat <<EOL > file.list
+pattern1
+pattern2
+pattern3
+EOL
+> grep -f file.list $file
+
+To get a sorted uniq list of grep results
+> grep "pattern" file | sort | uniq
+
+To get a sorted uniq list of grep results and counts of each occurrence
+> grep "pattern" file | sort | uniq -c
+
+To get sorted uniq list of grep results and a sum Total
+> grep "pattern" file | sort | uniq -c | awk '{SUM+=$1}END{print SUM}'
+OR
+> grep "pattern" file | sort | wc -l
+
+To view several lines (eg. 5) following a grep result
+> grep -A 5 string $filename
+
+To view several lines (eg. 4) prior to a grep result
+> grep -B 4 string $filename
+
+To combine before and after grep results
+> grep -A 5 -B 4 string $filename
+
+To combine before and after grep results when the span is symmetric
+> grep -C 5 string $filename
+
+To search for Diane's files on surge or luna:
+> grep Stokes /gpfs/hps/ptmp/fsets/surge.file.listing.hps3-emc-climate-* | awk '{print $5}' | egrep "j.+\.lsf" | xargs ls -ltrog
+-------------------------------------------------------------------------------
+if
+--
+To test on string w/ substitution:
+if [[ $var == NC000* ]] ; then
+  stuff
+fi
+
+To test if file exists (see OPTIONS section):
+if [ -f $file ]
+then
+  stuff
+fi
+[ ! -f $file ] && continue
+
+To test numerical comparisons:
+if [ $n -eq 1] ; then
+  stuff
+fi
+if [ $n -eq 1]
+then
+  stuff
+fi
+if [ $n = 1]
+then
+  stuff
+fi
+[ $n -eq 0 ] && echo yes || echo no
+
+-------------------------------------------------------------------------------
+for
+---
+To operate on file listing:
+for f in $dir/*somepattern
+do
+  stuff
+done
+for f in `ls $dir/*somepattern`; do
+  stuff
+done
+
+-------------------------------------------------------------------------------
+TR (translate)
+---
+To determine the absolute value:
+> echo ${val} | tr -d -
+
+-------------------------------------------------------------------------------
+DATE
+----
+To format date for seconds since 1970:
+> date +%s
+
+To format date for day of the year:
+> date +%j
+
+To get the last modified time from a reference file:
+> date -r $ file            (optional formatting e.g., +%s, can trail)
+
+To format a designated date string:
+> date -d "May 12" +%s
+
+-------------------------------------------------------------------------------
+bjobs
+----
+To view wide format with no columnar truncating:
+> bjobs -w
+
+-------------------------------------------------------------------------------
+modules
+-------
+To view all available and default modules:
+> module avail
+
+To view all modules:
+> module display
+To view a specific module:
+> module display prod_util
+> module display prod_envir
+
+To load a module:
+> module load [module_name]
+
+-------------------------------------------------------------------------------
+du (disk usage)
+--
+To find out the size of a directory
+> du -ah [path/to/directory]
+To find out the size of a directory in human readable format
+> du -sh [path/to/directory] (or w/n pwd)
+To find total size of specific file type within a directory
+> find [path/to/directory] -type f -name '*bufr_d' -exec du -ch {} + | grep total$
+-or-
+> du -ch path/and/file/pattern/* | grep total ... for example ...
+> du -ch $COMROOT/cdas/prod/cdas.20200115/cdas.*radwnd*bufr_d | grep total
+
+-------------------------------------------------------------------------------
+runtimes
+--------
+To see run time for certain jobs/processes on prod
+NOTE: use from WCOSS-IBM (phase 1 or 2)
+NOTE: cray run time info written to logs stored on WCOSS-IBM
+
+e.g.) gdas_dump_00 for September 20-27 2016:
+
+> grep gdas_dump /com/logs/runtime/2016092[0-7].log | grep prod00 | egrep -v "alert|post"
+
+Output is wallclock time for start and stop.
+/prod00/ndas06/time_minus_06hr/dump/jndas_dump   3.10.2016 04:40:05  3.10.2016 04:44:36
+
+> grep gdas_dump /com/logs/runtime2/2016092[0-7].log | grep prod00 | egrep -v "alert|post"
+
+Output is completion time in seconds in the last segment b/t <AC> and </AC> tags.
+<N>/prod06/nam/dump/jnam_dump</N><S>19700101000000</S><A>20161003071506</A><C>20161003071748</C><SA>0</SA><AC>162</AC>
+
+> grep gdas_dump /com/logs/runtime/daily/2016092[0-7].daily | grep prod00 | egrep -v "alert|post"
+
+Output is start date, start time (hh:mm), end date, end time (hh:mm), submit
+to active time (seconds), and active to complete time (minutes).
+/com/logs/runtime/daily/20160927.daily:/prod00/gdas/dump/jgdas_dump   20160927 05:50 20160927 05:58    0    8.0
+
+-------------------------------------------------------------------------------
+compath.py
+----------
+To see the actual full path for a system relative path
+For usage help:
+> compath.py -h
+
+Usage:
+> compath.py [-h] [-o] [-e envir] [-v] relpath
+
+For example,
+> compath.py /com/nam/prod/nam.20161020
+
+NOTE: "module load prod_util" is required to run this w/o leading path
+
+-------------------------------------------------------------------------------
+getsystem.pl
+------------
+To see which system you are running on
+
+Usage:
+> getsystem.pl
+Tide
+> getsystem.pl -p
+Tide-p1
+> getsystem.pl -t
+IBM
+
+NOTE: "module load prod_util" is required to run this w/o leading path
+-------------------------------------------------------------------------------
+System Paths
+------------
+/gpfs/hps/nco/[dcomdev][idsb][noscrub][sdb][tmpnwprd]
+/gpfs/hps/nco/ops/nwprod
+/gpfs/tp2/nco/ops/com
+/gpfs/dell1/ncop/ops/com ($COMROOT)
+/gpfs/[g][t]p2/[ptmp][stmp]
+/gpfs/hps/ptmp
+/gpfs/hps/stmp
+/gpfs/hps2/ptmp
+/gpfs/hps2/stmp
+/gpfs/hps3/ptmp
+/gpfs/hps3/stmp
+/gpfs/dell2/ptmp
+/gpfs/dell2/stmp
+/gpfs/hps3/emc/da/[noscrub][save]
+/gpfs/hps3/emc/meso/[noscrub][save]
+/gpfs/[g][t]d1/emc/meso/[noscrub][save]
+/gpfs/dell2/emc/obsproc/noscrub
+-------------------------------------------------------------------------------
+Permissions
+------------
+#  r  w  x
+0  0  0  0   755 = rwxr-xr-x
+1  0  0  1   744 - rwxr--r--
+2  0  1  0   644 = rw-r--r--
+3  0  1  1
+4  1  0  0
+5  1  0  1
+6  1  1  0
+7  1  1  1

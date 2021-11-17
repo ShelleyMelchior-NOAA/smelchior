@@ -1,0 +1,29 @@
+# Notes about the current servers
+
+WCOSS (IBM)
+-----
+Tide (location: Reston, VA)
+Gyre (location: Orlando, FL)
+
+Cray
+----
+Luna (location: Reston, VA)
+Surge (location: Orlando, FL)
+
+login nodes are Sandybridge
+comput nodes are Haswell
+
+-------------------------------------------------------------------------------
+getsystem.pl
+------------
+To see which system you are running on
+
+Usage:
+> getsystem.pl
+Tide
+> getsystem.pl -p
+Tide-p1
+> getsystem.pl -t
+IBM
+
+NOTE: "module load prod_util" is required to run this w/o leading path

@@ -1,0 +1,34 @@
+GLOBAL (GDAS)
+-------------
+
+JGDAS_PREP.sms.prod
+|
+ --> exglobal_makeprepbufr.sh
+    |
+     --> prepobs_makeprebufr.sh
+        |
+         --> prepobs_mpcopybufr.fd
+        |
+         --> prepobs_prepdata.fd
+        |
+         --> prepobs_listheaders.fd
+        |
+         --> prepobs_monoprepbufr.fd
+
+... a series of QC programs if turned on .....
+        |
+         --> prepobs_prevents.fd
+        |
+         --> prepobs_cqcbufr.sh
+        |
+         --> prepobs_profcqc.sh
+        |
+         --> prepobs_cqcvad.sh
+        |
+         --> prepobs_prepacqc.sh
+        |
+         --> prepobs_acarsqc.sh
+        |
+         --> prepobs_nrlacqc.sh
+        |
+         --> prepobs_oiqcbufr.sh 

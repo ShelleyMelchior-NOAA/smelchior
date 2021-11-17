@@ -1,0 +1,100 @@
+This file contains fortran tricks and tips I have learned while working with
+Obs Processing code at EMC.
+
+-------------------------------------------------------------------------------
+Code Notes
+----------
+--ARRAYS--
+Not specifying an array element defaults it to the first element.
+e.g.) HDR_8 = HDR_8(1)
+
+--BUFRLIB--
+UFBINT call using "HDR_8(13), 9" means start with the 13th element of the
+array and continue for 9 elements.
+
+
+Compiler Options
+----------------
+-O
+           Specifies whether to optimize code during compilation and, if so,
+           at which level.  For each release of XL Fortran, -O enables the 
+           level of optimization that represents the best combination of
+           compilation speed and run-time performance.  If you need a specific 
+           level of optimization, specify the appropriate numeric value.
+           Currently, -O is equivalent to -O2.
+-O2
+           Performs a set of optimizations that are intended to offer
+           improved performance w/o an unreasonable increase in time or
+           storage that is required for compilation.
+-qattr
+           Specifies whether to produce the attribute component of the
+           attribute and corss-reference section of the listing.
+           Default: -qnoattr
+-qcheck
+           Checks each reference to an array element, array section, or
+           character substring for correctness.  Out-of-bounds references are
+           reported as severe errors if found at compile time and generate
+           SIGTRAP signals at run time.
+           Default: -qnocheck
+-qextchk
+           Sets up type-checking information for common blocks, procedure
+           definitions, procedure references, and module data.  Later, the 
+           linker can detect mismatches across compilation units by using
+           this information.
+           Default: -qnoextchk
+-qflttrap[=suboptions]
+           Determines what types of floating-point exception conditions to
+           detect at run time.  The program receives a SIGTRAP signal when
+           the corresponding exception occurs.
+           Default: -qnoflttrap
+-qinitauto[=hex_value] (e.g., FF)
+           Initializes each byte or word (4 bytes) of storage for automatic
+           vairables to a specific value, depending on the length of the
+           hex_value.  This helps you to locate variables that are 
+           referenced before being defined. For example, by using both the
+           -qinitauto option to initialize REAL variables with a NaNS value
+           and the -qflttrap option, it is possible to identify references to
+           uninitialized REAL variables at run tieme.
+           Default: -qnoinitauto.  If you specify -qinitauto w/o a hex_value,
+                    the compiler initializes the value of each byte of 
+                    automatic storage to zero. 
+ 
+-qlist
+           Specifies whether to produce the object section of hte listing.
+           Default: -qnolist
+-qmaxmem
+           Limits the amount of memory that the compiler allocates while
+           performing specific, memory-intensive optimizations to the 
+           specified number of kilbytes.  A value of -1 allows optimization
+           to take as much memory as it needs w/o checking for limits.
+           Default: -qmaxmem=2048; -qmaxmem=-1 under -O3. 
+-qsigtrap
+           Installs xl_ _trce or a predefined or user-written trap handler in
+           a main program.
+           Default: No trap handler installed; program core dumps when a trap
+                    instruction is executed.
+-qsource
+           Determines whether to produce the source section of the listing.
+           Default: -qnosource
+-qsuffix
+           Specifies the source-file suffix on the command line instead of in
+           the xlf.cfg file.  This options saves time for the user by 
+           permitting files to be used as named w/ minimal makefile 
+           modifications and removes the risk of problems associated w/
+           modifying the xlf.cfg file.  Only one setting is supported at any
+           one time for any particular file type.
+
+-qxlf77
+           Provides backward compatibility w/ the language from XL Fortran
+           Versions 1 and 2 of aspects of language semantics and I/) data
+           format that have changed.  Most of these changes are required by 
+           the Fortran 90 standard.
+           Default: Default suboptions are blankpad, nogedit77, nointarg,
+                    nointxor, leadzero, nooldboz, nopersistent, and 
+                    nosofteof for the xlf90, xlf90_r, xlf90_r7, xlf95, xlf95_r,
+                    and the xlf95_r7 commands and are the exact opposite for
+                    the xlf, xlf_r, xlf_r7, and f77 commands.
+-qxref
+           Determines whether to produce the cross-reference component of
+           the attribute and cross-reference section of the listing.
+           Default: -qnoxref
