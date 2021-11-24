@@ -1,0 +1,45 @@
+# Quickly determine which networks dump a provided dump name
+# Greps through ex*_dump.sh.ecf and bufr_dumplist
+
+# Usage and incoming var information
+test $# -lt 1 && echo "Usage: $0 <dump name>"
+test $# -lt 1 && exit
+
+# Note: module bufr_dump must be loaded
+# See if pre-loaded module variable is defined or empty
+test=$(echo $BUFR_DUMPLIST)
+if [[ -z $test ]]; then
+  echo "module bufr_dump must be loaded"
+  echo "exiting"
+  exit
+fi
+
+# Provide latest bufr_dumplist information
+echo "BUFR_DUMPLIST used:"
+echo $BUFR_DUMPLIST
+echo "RESULTS:"
+
+grep $1 $BUFR_DUMPLIST
+echo 
+
+# Define obsproc root
+# until $PACKAGEROOT installation exists, use obsproc github installation
+obsprocROOT=/lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/install/obsproc
+
+# Define network array
+netarr=(global nam rap rtma urma cdas dump_monitor)
+
+# grep for dump name in ex*_dump.sh.ecf scripts
+for net in "${netarr[@]}"
+do
+  echo ----- $net -----
+  if [[ "$net" == "dump_monitor" ]]; then
+    grep $1 $obsprocROOT/scripts/ex${net}.sh.ecf
+  else
+    grep $1 $obsprocROOT/scripts/ex${net}_dump.sh.ecf
+  fi
+done
+
+# Done
+exit
+
