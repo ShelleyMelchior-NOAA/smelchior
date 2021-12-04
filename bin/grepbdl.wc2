@@ -13,6 +13,10 @@ if [[ -z $test ]]; then
   echo "exiting"
   exit
 fi
+# Another test to try from DS
+# if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)bufr_dump/") -eq 0 ]]; then echo "nope!"; fi
+# or
+# if [[ $(module list 2>&1 | grep "bufr_dump/") -eq 1 ]]; then echo "nope!"; fi
 
 # Provide latest bufr_dumplist information
 echo "BUFR_DUMPLIST used:"
