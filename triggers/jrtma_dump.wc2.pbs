@@ -13,9 +13,9 @@
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 ## For specific PDY:
-## > jtyp=urma cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump.wc2.pbs
+## > jtyp=rtma cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_dump.wc2.pbs
 ## For latest/current PDY:
-## > jtyp=urma cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump.wc2.pbs
+## > jtyp=rtma cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_dump.wc2.pbs
 ## cycqsub location: /u/Shelley.Melchior/bin
 ###############################################
 
@@ -23,9 +23,15 @@ set -xa
 
 envir=prod
 export cyc=%CC%
+export cycM=%CCM%
 DESC=%DESC%
 JTYP=%JTYP%
-export job=${JTYP}_${cyc}
+# Test if this is an hourly RTMA run or a Rapid Update RTMA run; assign job accordingly
+if [ -z "$cycM" ]; then
+  export job=${JTYP}_dump_$cyc
+else
+  export job=${JTYP}_ru_dump_${cyc}${cycM}
+fi
 export PDY=%PDY%
 
 userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
@@ -78,16 +84,23 @@ export SENDSDM=NO
 export TANK=$DCOMROOT
 
 export DATAROOT=/lfs/h2/emc/stmp/${USER}
-export jlogfile=/lfs/h2/emc/stmp/${USER}/${JTYP}.${PDY}.jlogfile
+if [ -z "$cycM" ]; then
+  export jlogfile=/lfs/h2/emc/stmp/${USER}/${JTYP}.${PDY}.jlogfile
+else
+  export jlogfile=/lfs/h2/emc/stmp/${USER}/${JTYP}_ru.${PDY}.jlogfile
+fi
 
-export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}.${PDY}
+if [ -z "$cycM" ]; then
+  export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}.${PDY}
+else
+  export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}_ru.${PDY}
+fi
 
 export LOUD=on
 export DEBUG_LEVEL=3
 export KEEPDATA=YES
 
-$HOMEobsproc/jobs/JOBSPROC_URMA_DUMP
-err=$?
+$HOMEobsproc/jobs/JOBSPROC_RTMA_DUMP
 
 # When run from cron, the stdout is written to /u/$USER
 # mv to stmp
@@ -95,14 +108,6 @@ pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
 cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
 if [ -f "$cronlogfile" ]; then
   mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/output/$PBS_JOBNAME.o$pbsjobid
-fi
-
-
-# Kick off dump_post job
-if [ $err -eq 0 ]; then
-  echo "submit jurma_dump_post:"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jurma_dump_post.wc2.pbs
 fi
 
 exit
