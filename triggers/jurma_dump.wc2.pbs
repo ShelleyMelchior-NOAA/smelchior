@@ -1,19 +1,21 @@
 #!/bin/bash
 #PBS -N obsproc_%JTYP%_%PDY%_%CC%_%DESC%
 #PBS -j oe
-#PBS -l walltime=1:00:00
+#PBS -S /bin/bash
+#PBS -l walltime=00:15:00
 #PBS -A OBSPROC-DEV
 #PBS -q dev 
-#PBS -l select=1:ncpus=2:mem=4gb
+#PBS -l place=vscatter,select=1:ncpus=3:mem=4gb
+#PBS -l debug=true
 
 ##############################################
 ## Submit notes:
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 ## For specific PDY:
-## > jtyp=mods cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
+## > jtyp=urma cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump.wc2.pbs
 ## For latest/current PDY:
-## > jtyp=mods cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
+## > jtyp=urma cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump.wc2.pbs
 ## cycqsub location: /u/Shelley.Melchior/bin
 ###############################################
 
@@ -71,6 +73,7 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is 
 
 export SENDECF=NO
 export SENDDBN=NO
+export SENDSDM=NO
 
 export TANK=$DCOMROOT
 
@@ -78,12 +81,12 @@ export DATAROOT=/lfs/h2/emc/stmp/${USER}
 export jlogfile=/lfs/h2/emc/stmp/${USER}/${JTYP}.${PDY}.jlogfile
 
 export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}.${PDY}
-export MODSDIR=${DATAROOT}/CRON/dcom/${JTYP}
 
+export LOUD=on
 export DEBUG_LEVEL=3
 export KEEPDATA=YES
 
-$HOMEobsproc/jobs/JOBSPROC_MODS
+$HOMEobsproc/jobs/JOBSPROC_URMA_DUMP
 
 # When run from cron, the stdout is written to /u/$USER
 # mv to stmp
