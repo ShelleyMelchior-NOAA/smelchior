@@ -95,6 +95,7 @@ err=$?
 pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
 cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
 if [ -f "$cronlogfile" ]; then
+  mkdir -p /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
   mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output/$PBS_JOBNAME.o$pbsjobid
 fi
 
