@@ -81,7 +81,7 @@ export TANK=$DCOMROOT
 export DATAROOT=/lfs/h2/emc/stmp/$USER
 export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}_dump.$PDY.jlogfile
 
-export COMOUT_ROOT=${DATAROOT}/CRON/com
+export COMOUT_ROOT=${DATAROOT}/CRON/${DESC}/com
 export COMOUT=${COMOUT_ROOT}/obsproc/${obsproc_ver}/${model}.${PDY}
 mkdir -p $COMOUT_ROOT
 
@@ -97,7 +97,7 @@ echo "the err is $err"
 pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
 cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
 if [ -f "$cronlogfile" ]; then
-  mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/output/$PBS_JOBNAME.o$pbsjobid
+  mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output/$PBS_JOBNAME.o$pbsjobid
 fi
 
 exit

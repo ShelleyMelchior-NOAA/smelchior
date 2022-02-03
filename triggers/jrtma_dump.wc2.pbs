@@ -21,6 +21,8 @@
 
 set -xa
 
+echo "NCPUS=$NCPUS"
+
 envir=prod
 export cyc=%CC%
 export cycM=%CCM%
@@ -91,9 +93,9 @@ else
 fi
 
 if [ -z "$cycM" ]; then
-  export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}.${PDY}
+  export COMOUT=${DATAROOT}/CRON/${DESC}/com/${obsNET}/$obsproc_ver/${JTYP}.${PDY}
 else
-  export COMOUT=${DATAROOT}/CRON/com/${obsNET}/$obsproc_ver/${JTYP}_ru.${PDY}
+  export COMOUT=${DATAROOT}/CRON/${DESC}/com/${obsNET}/$obsproc_ver/${JTYP}_ru.${PDY}
 fi
 
 export LOUD=on
@@ -108,7 +110,7 @@ err=$?
 pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
 cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
 if [ -f "$cronlogfile" ]; then
-  mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/output/$PBS_JOBNAME.o$pbsjobid
+  mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output/$PBS_JOBNAME.o$pbsjobid
 fi
 
 # Kick off dump_post job
