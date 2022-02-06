@@ -1,0 +1,7 @@
+To see which tanks are dumped for a given job:
+$ grep "Dumping " /lfs/h1/ops/prod/output/YYYYMMDD/obsproc_*_dump.o* | grep -v "+" | awk '{print $2}' | sort -u
+For example:
+$ grep "Dumping " /lfs/h1/ops/prod/output/YYYYMMDD/obsproc_gdas_atmos_dump.o* | grep -v "+" | awk '{print $2}' | sort -u
+
+To retain dump group or dump mnemonic information:
+$ grep "Dumping " /lfs/h1/ops/prod/output/YYYYMMDD/obsproc_gdas_atmos_dump.o* | grep -v "+" | sort -u
