@@ -33,7 +33,8 @@ userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
 export obsproc_ver=v1.0.0
 export obsNET=obsproc
 PACKAGEROOTpara=/lfs/h1/ops/para/packages
-export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO
+#export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO para
+export HOMEobsproc=${PACKAGEROOT}/obsproc.${obsproc_ver}       # NCO prod
 #export HOMEobsproc=${userROOT}/install/obsproc-rel.v1.0.0     # local
 
 #VERSION_FILE=${HOMEobsproc}/versions/run.ver
@@ -94,9 +95,10 @@ err=$?
 # mv to stmp
 pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
 cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
+outputdir=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
 if [ -f "$cronlogfile" ]; then
-  mkdir -p /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
-  mv $cronlogfile /lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output/$PBS_JOBNAME.o$pbsjobid
+  mkdir -p $outputdir 
+  mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
 exit

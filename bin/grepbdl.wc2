@@ -17,6 +17,8 @@ fi
 # if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)bufr_dump/") -eq 0 ]]; then echo "nope!"; fi
 # or
 # if [[ $(module list 2>&1 | grep "bufr_dump/") -eq 1 ]]; then echo "nope!"; fi
+# or
+# if module is-loaded module_name ; then echo "Desired module is loaded"; else "Desired module is NOT loaded"; fi
 
 # Provide latest bufr_dumplist information
 echo "BUFR_DUMPLIST used:"
