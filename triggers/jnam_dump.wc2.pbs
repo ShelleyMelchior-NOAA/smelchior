@@ -1,5 +1,4 @@
 #!/bin/bash
-#########################
 #PBS -N obsproc_%JTYP%_dump_%PDY%_%CC%_%TMMARK%_%DESC%
 #PBS -j oe
 #PBS -S /bin/bash
@@ -106,8 +105,6 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
-
-exit
 
 # Kick off dump_post job
 if [ $err -eq 0 ]; then
