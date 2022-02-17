@@ -16,20 +16,33 @@
 ###
 ### JOBSPROC_DUMP_MONITOR prod para for WCOSS2
 # runs hourly at HH:30
-# started on:
+# started on: 20220209
 # turned off:
 # ---------------
-#30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_monitor.wc2.pbs > /dev/null 2>&1
+30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_monitor.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_GLOBAL prod para for WCOSS2
-# started on:
+# started on: 20220211 (dump, dump_post)
 # turned off:
 # ---------------
+47 2,8,14,20 * * * jtyp=gfs cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
+50 5,11,17,23 * * * jtyp=gdas cyc=`date --date="-5 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_RAP prod para for WCOSS2
-# started on:
+# started on: 20220212 (dump, dump_post)
 # turned off:
 # ---------------
+00 7,19 * * * jtyp=rap_p cyc=`date --date="-4 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date="-3 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+00 9,21 * * * jtyp=rap_p cyc=`date --date="-1 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_RTMA prod para for WCOSS2
 # runs hourly at HH:30 for cycle time HH
@@ -56,9 +69,21 @@
 # ---------------
 ###
 ### JOBSPROC_NAM prod para for WCOSS2
-# started on:
+# started on: 20220215 (dump, dump_post)
 # turned off:
 # ---------------
+18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+15 1,7,13,19 * * * jtyp=nam cyc=`date --date="-1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+41 3,9,15 * * * jtyp=nam cyc=`date --date="+3 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+01 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+00 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+30 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+23 5,11,17 * * * jtyp=nam cyc=`date --date="+1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+41 21 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm06 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+01 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm05 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+00 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm04 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+30 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm03 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+23 23 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm02 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_AIRNOW prod para for WCOSS2
 # runs daily at 21:00
