@@ -69,7 +69,7 @@
 # ---------------
 ###
 ### JOBSPROC_NAM prod para for WCOSS2
-# started on: 20220215 (dump, dump_post)
+# started on: 20220215 (dump, dump2, dump_post)
 # turned off:
 # ---------------
 18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
