@@ -1,0 +1,3 @@
+set -eua
+echo $1
+echo $1|/u/Shelley.Melchior/bin/binv.x
