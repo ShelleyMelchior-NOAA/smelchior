@@ -14,8 +14,8 @@
 # For specific PDY:
 # > jtyp=nam cyc=00 PDY=20170126 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycbsub /path/to/triggers/jnam_dump.wc2.pbs
-# cycbsub location: /u/Shelley.Melchior/bin
+# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
+# cycqsub location: /u/Shelley.Melchior/bin
 ##############################################
 
 set -xu
@@ -105,6 +105,13 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+
+# Kick off dump2 job
+if [ $err -eq 0 ]; then
+  echo "submit jnam_dump_post"
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
+  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump2.wc2.pbs
+fi
 
 # Kick off dump_post job
 if [ $err -eq 0 ]; then

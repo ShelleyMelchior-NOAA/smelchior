@@ -1,24 +1,25 @@
 #!/bin/bash
-#PBS -N obsproc_%JTYP%_dump_%PDY%_%CC%_%DESC%
+#PBS -N obsproc_%JTYP%_dump2_%PDY%_%CC%_%TMMARK%_%DESC%
 #PBS -j oe
-#PBS -l walltime=1:00:00
-#PBS -A OBSPROC-DEV
+#PBS -S /bin/bash
 #PBS -q dev
-#PBS -l place=vscatter,select=1:ncpus=3:mem=8gb
-#BPS -l debug=true
-
+#PBS -A OBSPROC-DEV
+#PBS -l walltime=00:20:00
+#PBS -l place=vscatter,select=1:ncpus=3:mem=6000MB
+#PBS -l debug=true
 ##############################################
 # Submit notes:
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=cdas cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
+# > jtyp=nam cyc=00 PDY=20170126 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump2.wc2.pbs
 # For latest/current PDY:
-# > jtyp=cdas cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
+# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycbsub /path/to/triggers/jnam_dump2.wc2.pbs
 # cycqsub location: /u/Shelley.Melchior/bin
 ##############################################
 
 set -xu
+
 
 export envir=prod
 export cyc=%CC%
@@ -26,6 +27,7 @@ DESC=%DESC%
 JTYP=%JTYP%
 export job=${JTYP}_dump_$cyc
 export jobid=$job.$PBS_JOBID
+export tmmark=%TMMARK%
 export PDY=%PDY%
 
 userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
@@ -39,12 +41,12 @@ export HOMEobsproc=${PACKAGEROOT}/obsproc.${obsproc_ver}        # NCO prod
 #export HOMEobsproc=${userROOT}/install/obsproc-rel.v1.0.0      # local
 
 VERSION_FILE=$HOMEobsproc/versions/run.ver                            # NCO prod
-#VERSION_FILE=${userROOT}/install/obsproc-rel.v1.0.0/versions/run.ver # local
+#VERSION_FILE=${userROOT}/install/obsproc-rel.v1.0.0/versions/run.ver #local
 if [ -f $VERSION_FILE ]; then
-   . $VERSION_FILE
+  . $VERSION_FILE
 else
   echo Need version info...  Exiting...
- exit 7
+  exit 7
 fi
 
 # Load the modules specified in $VERSION_FILE
@@ -74,7 +76,6 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-mpich/") -eq 0 ]]; then echo "
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-pals/") -eq 0 ]]; then echo "cray-pals is not loaded!"; fi
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is not loaded!"; fi
 
-
 export SENDECF=NO   # developer
 export SENDDBN=NO   # developer
 export SENDSDM=NO   # developer
@@ -84,18 +85,15 @@ export TANK=$DCOMROOT
 export DATAROOT=/lfs/h2/emc/stmp/$USER
 export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}.$PDY.jlogfile
 
-export DEBUG_LEVEL=3
+export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com  
+export COMOUT=${COMOUT_ROOT}/${obsNET}/${obsproc_ver}/${JTYP}.${PDY}
+
 export LOUD=ON
 export KEEPDATA=YES
+export DEBUG_LEVEL=3
 
 
-#export COM_ENGICE=$CANCOMROOT/omb/v4.4/sice
-#export COM_SSTOI=$CANCOMROOT/gfs/v16.2/sst
-#export COMIN=$COMROOT/obsproc/${JTYP}.${PDY}
-export COMIN_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
-export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com 
-
-$HOMEobsproc/jobs/JOBSPROC_CDAS_DUMP
+$HOMEobsproc/jobs/JOBSPROC_NAM_DUMP2
 err=$?
 
 # When run from cron, the stdout is written to /u/$USER
@@ -109,10 +107,3 @@ if [ -f "$cronlogfile" ]; then
 fi
 
 exit
-
-# Kick off dump_post job
-if [ $err -eq 0 ]; then
-  echo "submit jcdas_dump_post"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_dump_post.wc2.pbs
-fi
