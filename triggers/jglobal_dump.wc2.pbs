@@ -114,4 +114,11 @@ if [ $err -eq 0 ]; then
   /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs
 fi
 
+# Kick off prep job
+if [ $err -eq 0 ]; then
+  echo "submit jglobal_prep"
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
+  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep.wc2.pbs
+fi
+
 exit
