@@ -1,39 +1,37 @@
 #!/bin/bash
-#PBS -N obsproc_%JTYP%_prep_%PDY%_%CC%_%DESC%
-#PBS -j oe 
+#PBS -N obsproc_%JTYP%_prep_post_%PDY%_%CC%_%DESC%
+#PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
 #PBS -A OBSPROC-DEV
 #PBS -l walltime=00:15:00
-#PBS -l place=vscatter,select=1:ncpus=1:mem=40gb:prepost=true
+#PBS -l place=vscatter,select=1:ncpus=1:mem=3gb
 #PBS -l debug=true
 
-#####################################################################
+##########################################################################
 # Submit notes:
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_prep.wc2.pbs
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_prep_post.wc2.pbs
 # For latest/current PDY:
-# > jtyp=rap cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_prep.wc2.pbs
+# > jtyp=rap cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_prep_post.wc2.pbs
 # cycqsub location: /u/Shelley.Melchior/bin
-#####################################################################
+##########################################################################
 
 set -xu
 
 export envir=prod
 export cyc=%CC%
-JTYP=%JTYP%
-type=%DESC%
 DESC=%DESC%
+JTYP=%JTYP%
 if [ $JTYP = "rap_e" ]; then
-  export job=$(echo $JTYP | cut -c1-3)_prep_erly_$cyc
+  export job=$(echo $JTYP | cut -c1-3)_prep_post_erly_$cyc
 elif [ $JTYP = "rap_p" ]; then
-  export job=$(echo $JTYP | cut -c1-3)_prep_pcyc_$cyc
+  export job=$(echo $JTYP | cut -c1-3)_prep_post_pcyc_$cyc
 else
-export job=${JTYP}_prep_$cyc
+  export job=${JTYP}_prep_post_$cyc
 fi
-export jobid=$job.$PBS_JOBID
 export PDY=%PDY%
 
 userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
@@ -79,31 +77,23 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-mpich/") -eq 0 ]]; then echo "
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-pals/") -eq 0 ]]; then echo "cray-pals is not loaded!"; fi
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is not loaded!"; fi
 
-
-export SENDECF=NO  # developer
-export SENDSDM=NO  # developer
-#export SENDDBN=YES; export DBNROOT="echo test " # developer
-
+export SENDECF=NO
+export SENDDBN=NO
+export SENDSDM=NO
+#export DBNROOT="echo dcs test "; export SENDDBN=YES
 
 export DATAROOT=/lfs/h2/emc/stmp/$USER
 export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}.${PDY}.jlogfile
 
-export COMIN_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
-#export COMINgdas=/lfs/h1/ops/canned/com/gfs/${gfs_ver}/gdas.${PDY}/${cyc}/atmos
-#export COMINgfs=/lfs/h1/ops/canned/com/gfs/${gfs_ver}/gfs.${PDY}/${cyc}/atmos
-#export GETGES_COM=/lfs/h1/ops/canned/com/gfs/${gfs_ver}/
-#export GESROOT=/lfs/h1/ops/canned/com/gfs/${gfs_ver}/
-export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com/
+export COMIN_ROOT=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/com/
+export COMOUT_ROOT=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/com/
 
-export KEEPDATA=YES
 export DEBUG_LEVEL=3
+export KEEPDATA=YES
 export LOUD=ON
 
-#export POE=NO        # use these settings
-#export BACK=NO       # when want to force
-#export NSPLIT=1      # serial run
 
-$HOMEobsproc/jobs/JOBSPROC_RAP_PREP
+$HOMEobsproc/jobs/JOBSPROC_RAP_PREP_POST
 err=$?
 
 # When run from cron, the stdout is written to /u/$USER
@@ -114,13 +104,6 @@ outputdir=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
 if [ -f "$cronlogfile" ]; then
   mkdir -p $outputdir
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
-fi
-
-# Kick off prep_post job
-if [ $err -eq 0 ]; then
-  echo "submit jrap_prep_post:"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_prep_post.wc2.pbs
 fi
 
 exit
