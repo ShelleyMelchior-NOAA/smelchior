@@ -103,5 +103,12 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+# Kick off prep_post job
+if [ $err -eq 0 ]; then
+  echo "submit jglobal_prep_post:"
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
+  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs
+fi
+
 exit
 
