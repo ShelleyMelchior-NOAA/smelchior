@@ -22,14 +22,14 @@
 30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_monitor.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_GLOBAL prod para for WCOSS2
-# started on: 20220211 (dump, dump_post)
+# started on: 20220211 (dump, dump_post, prep, prep_post)
 # turned off:
 # ---------------
 47 2,8,14,20 * * * jtyp=gfs cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
 50 5,11,17,23 * * * jtyp=gdas cyc=`date --date="-5 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_RAP prod para for WCOSS2
-# started on: 20220212 (dump, dump_post)
+# started on: 20220212 (dump, dump_post, prep, prep_post)
 # turned off:
 # ---------------
 00 7,19 * * * jtyp=rap_p cyc=`date --date="-4 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
@@ -46,7 +46,7 @@
 ###
 ### JOBSPROC_RTMA prod para for WCOSS2
 # runs hourly at HH:30 for cycle time HH
-# started on: 20220124 (dump, dump_post)
+# started on: 20220124 (dump, dump_post, prep, prep_post)
 # turned off:
 # ---------------
 08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
@@ -57,7 +57,7 @@
 ###
 ### JOBSPROC_URMA prod para for WCOSS2
 # runs hourly at HH:30 for cycle time HH-6
-# started on: 20220124 (dump, dump_post)
+# started on: 20220124 (dump, dump_post, prep, prep_post)
 # turned off:
 # ---------------
 30 6-23 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
@@ -71,7 +71,7 @@
 10 04,10 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_NAM prod para for WCOSS2
-# started on: 20220215 (dump, dump2, dump_post)
+# started on: 20220215 (dump, dump2, dump_post, prep, prep_post)
 # turned off:
 # ---------------
 18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
