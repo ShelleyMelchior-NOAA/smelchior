@@ -1,23 +1,23 @@
 #!/bin/bash
-#PBS -N obsproc_%JTYP%_prep1_%PDY%_%CC%_%DESC%
+#PBS -N obsproc_%JTYP%_prep1_post_%PDY%_%CC%_%DESC%
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -l walltime=0:30:00
 #PBS -q dev
 #PBS -A OBSPROC-DEV
-#PBS -l place=vscatter,select=1:ncpus=12:mem=6gb
+#PBS -l select=1:ncpus=1:mem=1500mb
 #PBS -l debug=true
 
-##############################################
+#####################################################################
 # Submit notes:
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=cdas cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_prep1.wc2.pbs
+# > jtyp=cdas cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_prep1_post.wc2.pbs
 # For latest/current PDY:
-# > jtyp=cdas cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_prep1.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
-##############################################
+# > jtyp=cdas cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_prep1_post.wc2.pbs
+# cycbsub location: /u/Shelley.Melchior/bin
+#####################################################################
 
 set -xa
 
@@ -25,15 +25,14 @@ export envir=prod
 export cyc=%CC%
 DESC=%DESC%
 JTYP=%JTYP%
-export job=${JTYP}_prep1_$cyc
-export jobid=$job.$PBS_JOBID
+export job=${JTYP}_prep1_post_$cyc
 export PDY=%PDY%
 
 userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
 
 export obsproc_ver=v1.0.0
-export prepobs_ver=1.0.0
 export obsNET=obsproc
+export prepobs_ver=1.0.0
 PACKAGEROOTpara=/lfs/h1/ops/para/packages
 #export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO para
 #export HOMEobsproc=${PACKAGEROOT}/obsproc.${obsproc_ver}       # NCO prod
@@ -73,20 +72,26 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-pals/") -eq 0 ]]; then echo "c
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is not loaded!"; fi
 
 export SENDECF=NO   # developer
-export SENDSDM=NO   # developer
 export SENDDBN=NO   # developer
+export SENDSDM=NO   # developer
+#export DBNROOT="echo dcs test "; export SENDDBN=YES
 
-export DATAROOT=/lfs/h2/emc/stmp/${USER}
-export jlogfile=/lfs/h2/emc/stmp/${USER}/${JTYP}.$PDY.jlogfile
+export DATAROOT=/lfs/h2/emc/stmp/$USER
+export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}.$PDY.jlogfile
 
 export COMIN_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
 export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
+
+#export DATCOMIN=$COMROOT/gfs/prod/gdascounts
+#export SATCOMIN=$COMROOT/gfs/prod/gdascounts
+#export ARCHCOMIN=$COMROOT/gfs/prod/gdascounts
+#export DATCOM1_IN=$COMROOT/gfs/prod/gdascounts
 
 export DEBUG_LEVEL=3
 export KEEPDATA=YES
 export LOUD=ON
 
-$HOMEobsproc/jobs/JOBSPROC_CDAS_PREP1
+$HOMEobsproc/jobs/JOBSPROC_CDAS_PREP1_POST
 err=$?
 
 # When run from cron, the stdout is written to /u/$USER
@@ -99,13 +104,4 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
-
-# Kick off prep1_post job
-if [ $err -eq 0 ]; then
-  echo "submit jcdas_prep1_post:"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_prep1_post.wc2.pbs
-fi
-
 exit
-
