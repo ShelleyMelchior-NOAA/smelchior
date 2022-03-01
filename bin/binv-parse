@@ -1,0 +1,102 @@
+# Parse binv results to compare dump counts in dev vs. prod
+
+devdirroot=/lfs/h2/emc/stmp/Shelley.Melchior/CRON/wc2para/com/obsproc/v1.0.0
+prddirroot=/lfs/h1/ops/prod/com/obsproc/v1.0
+
+PDY=20220228
+
+#arrayNET=('urma')
+#arrayNET=('rtma')
+#arrayNET=('rap')
+#arrayNET=('cdas')
+#arrayNET=('gdas')
+#arrayNET=('gfs')
+arrayNET=('nam')
+
+for NET in "${arrayNET[@]}"
+do
+  echo $NET
+  if [[ "$NET" = "urma" ]] || [[ "$NET" = "rtma" ]] || [[ "$NET" = "rap" ]]; then
+    # Set up cycle array
+    arrayCYC=('00' '01' '02' '03' '04' '05' '06' '07' '08' '09' '10' '11' \
+              '12' '13' '14' '15' '16' '17' '18' '19' '20' '21' '22' '23')
+    # set up dump file array
+    if [[ "$NET" = "urma" ]]; then
+      arrayDUMP=('adpsfc' 'ascatt' 'ascatw' 'efclam' 'msonet' 'satmar' 'satwnd' 'sfcshp' 'tideg')
+    elif [[ "$NET" = "rtma" ]]; then
+      arrayDUMP=('adpsfc' 'ascatt' 'ascatw' 'efclam' 'msonet' 'satwnd' 'sfcshp' 'tideg')
+    elif [[ "$NET" = "rap" ]]; then
+      arrayDUMP=('1bamua' '1bhrs4' '1bmhs'  'adpsfc' 'adpupa' 'aircar' 'aircft' 'airsev' 'amsr2'  \
+                 'ascatt' 'ascatw' 'atmsdb' 'atms'   'crisf4' 'crsfdb' 'esamua' 'esatms' 'eshrs3' \
+                 'esiasi' 'esmhs'  'gpsipw' 'gpsro'  'gsrasr' 'gsrcsr' 'iasidb' 'lghtng' 'lgycld' \
+                 'msonet' 'mtiasi' 'nexrad' 'osbuv8' 'proflr' 'rassda' 'saphir' 'satwnd' 'sevasr' \
+                 'sevcsr' 'sfcshp' 'ssmisu' 'tideg'  'vadwnd')
+    fi
+    # set up binv
+    whichbinv=$(which binv)
+    for DUMP in "${arrayDUMP[@]}"
+    do
+      for CYC in "${arrayCYC[@]}"
+      do
+        echo "---- ${NET}.t${CYC}z.${DUMP}.tm00.bufr_d"
+        # Run binv for dev and parse
+        parse_dev=$(${whichbinv} ${devdirroot}/${NET}.${PDY}/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        echo "dev: $parse_dev"
+        # Run binv for prod and parse
+        parse_dev=$(${whichbinv} ${prddirroot}/${NET}.${PDY}/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        echo "prd: $parse_dev"
+        # Compare counts
+      done
+    done
+  elif [[ "$NET" = "nam" ]] || [[ "$NET" = "gfs" ]] || [[ "$NET" = "gdas" ]] || [[ "$NET" = "cdas" ]]; then
+    # Set up cycle array
+    arrayCYC=('00' '06' '12' '18')
+    # Set up dump file array
+    if [[ "$NET" = "cdas" ]]; then
+      arrayDUMP=('1bamua' '1bhrs4' '1bmhs'  'adpsfc' 'adpupa' 'aircar' 'aircft' 'airsev' 'ascatt' \
+                 'ascatw' 'atms'   'atovs'  'avcsam' 'avcspm' 'bathy'  'esamua' 'eshrs3' 'esmhs'  \
+                 'geoimr' 'gome'   'gpsipw' 'gpsro'  'lghtng' 'lgycld' 'msonet' 'mtiasi' 'nexrad' \
+                 'omi'    'osbuv8' 'proflr' 'rassda' 'satwnd' 'sevcsr' 'sfcshp' 'ssmisu' 'tesac'  \
+                 'tideg ' 'trkob' 'vadwnd')
+    elif [[ "$NET" = "gdas" ]] || [[ "$NET" = "gfs" ]]; then
+      arrayDUMP=('1bamua' '1bhrs4' '1bmhs'  'adpsfc' 'adpupa' 'ahicsr' 'aircar' 'aircft' 'airsev' \
+                 'amsr2'  'ascatt' 'ascatw' 'atmsdb' 'atms'   'atovs'  'avcsam' 'avcspm' 'bathy'  \
+                 'crisf4' 'crsfdb' 'esamua' 'esatms' 'eshrs3' 'esiasi' 'esmhs'  'geoimr' 'gome'   \
+                 'gpsipw' 'gpsro'  'gsrasr' 'gsrcsr' 'hdob'   'iasidb' 'mtiasi' 'omi'    'ompslp' \
+                 'ompsn8' 'ompst8' 'osbuv8' 'proflr' 'rassda' 'saphir' 'satwnd' 'sevasr' 'sevcsr' \
+                 'sfcshp' 'ssmisu' 'sstvcw' 'sstvpw' 'tesac'  'tideg'  'trkob'  'vadwnd')
+    else  # [[ "$NET" = "nam" ]]; then
+      arrayDUMP=('1bamua' '1bhrs4' '1bmhs'  'adpsfc' 'adpupa' 'aircar' 'aircft' 'airsev' 'ascatt' \
+                 'ascatw' 'atms'   'cris'   'esamua' 'eshrs3' 'esmhs'  'goesfv' 'goesnd' 'gpsipw' \
+                 'gpsro'  'lghtng' 'lgycld' 'msonet' 'mtiasi' 'nexrad' 'osbuv8' 'proflr' 'rassda' \
+                 'satwnd' 'sevcsr' 'sfcshp' 'ssmisu' 'tideg'  'vadwnd')
+    fi
+    # set up binv
+    whichbinv=$(which binv)
+    for DUMP in "${arrayDUMP[@]}"
+    do
+      for CYC in "${arrayCYC[@]}"
+      do
+        echo "---- ${NET}.t${CYC}z.${DUMP}.tm00.bufr_d"
+        # Run binv for dev and parse
+        if [[ "$NET" = "gdas" ]] || [[ "$NET" = "gfs" ]]; then
+          parse_dev=$(${whichbinv} ${devdirroot}/${NET}.${PDY}/${CYC}/atmos/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        else 
+          parse_dev=$(${whichbinv} ${devdirroot}/${NET}.${PDY}/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        fi
+        echo "dev: $parse_dev"
+        # Run binv for prod and parse
+        if [[ "$NET" = "gdas" ]] || [[ "$NET" = "gfs" ]]; then
+          parse_dev=$(${whichbinv} ${prddirroot}/${NET}.${PDY}/${CYC}/atmos/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        else 
+          parse_dev=$(${whichbinv} ${prddirroot}/${NET}.${PDY}/${NET}.t${CYC}z.${DUMP}.tm00.bufr_d | grep TOTAL)
+        fi
+        echo "prd: $parse_dev"
+        # Compare counts
+      done
+    done
+  fi  # if $NET
+done  # for $NET
+
+
+exit
