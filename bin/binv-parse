@@ -94,6 +94,8 @@ elif [[ "$NET" = "nam" ]] || [[ "$NET" = "gfs" ]] || [[ "$NET" = "gdas" ]] || [[
       # Compare counts
     done
   done
+else
+  echo "invalid network: $NET"
 fi  # if $NET
 
 
