@@ -20,7 +20,7 @@ set -xu
 
 echo "NCPUS=$NCPUS"
 
-envir=prod
+export envir=prod
 export cyc=%CC%
 export cycM=%CCM%
 DESC=%DESC%
