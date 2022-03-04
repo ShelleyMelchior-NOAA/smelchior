@@ -16,7 +16,7 @@
 ## cycqsub location: /u/Shelley.Melchior/bin
 ###############################################
 
-set -xa
+set -xu
 
 envir=prod
 export cyc=%CC%
