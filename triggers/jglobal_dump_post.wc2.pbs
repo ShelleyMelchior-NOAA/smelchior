@@ -116,4 +116,14 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+# If you wish to only run dump_post, un-comment the exit line below
+#exit
+
+# Kick off the dump_alert job
+if [ $err -eq 0 ]; then
+  echo "submit jdump_alert"
+  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
+  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_alert.wc2.pbs
+fi
+
 exit

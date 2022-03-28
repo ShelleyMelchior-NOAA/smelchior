@@ -111,6 +111,9 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+# If you wish to only run the prep job, un-comment the exit line below
+#exit
+
 # Kick off prep_post job
 if [ $err -eq 0 ]; then
   echo "submit jurma_prep_post:"

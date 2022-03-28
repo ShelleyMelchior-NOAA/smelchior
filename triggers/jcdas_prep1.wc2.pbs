@@ -99,6 +99,8 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+# If you wish to only run the prep1 job, un-comment the exit line below
+#exit
 
 # Kick off prep1_post job
 if [ $err -eq 0 ]; then

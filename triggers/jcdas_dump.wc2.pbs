@@ -109,6 +109,9 @@ if [ -f "$cronlogfile" ]; then
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
 
+# If you wish to only run the dump job, un-comment the exit line below
+#exit
+
 # Kick off dump_post job
 if [ $err -eq 0 ]; then
   echo "submit jcdas_dump_post"
