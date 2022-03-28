@@ -12,9 +12,9 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=nam cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump_post.wc2.pbs
+# > jtyp=nam cyc=00 PDY=20170126 tmmark=tm04 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump_post.wc2.pbs
 # For latest/current PDY:
-# > jtyp=nam cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump_post.wc2.pbs
+# > jtyp=nam cyc=00 tmmark=tm04 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump_post.wc2.pbs
 # cycqsub location: /u/Shelley.Melchior/bin
 #####################################################################
 
@@ -115,6 +115,18 @@ outputdir=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
 if [ -f "$cronlogfile" ]; then
   mkdir -p $outputdir
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
+fi
+
+# If you wish to stop at the dump_post job, un-comment the exit line below
+#exit
+
+# Kick off dump_alert job
+if [ $err -eq 0 ]; then
+  if [ "$tmmark" = "tm00" ]; then
+    echo "submit jdump_alert"
+    jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
+    /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_alert.wc2.pbs
+  fi
 fi
 
 exit
