@@ -37,7 +37,7 @@ export prepobs_ver=1.0.0
 PACKAGEROOTpara=/lfs/h1/ops/para/packages
 #export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO para
 #export HOMEobsproc=${PACKAGEROOT}/obsproc.${obsproc_ver}       # NCO prod
-export HOMEobsproc=${userROOT}/install/obsproc-rmprep           # local
+export HOMEobsproc=${userROOT}/install/obsproc-rel.v1.0.0           # local
 
 #VERSION_FILE=${HOMEobsproc}/versions/run.ver
 VERSION_FILE=${userROOT}/install/obsproc-rmprep/versions/run.ver
