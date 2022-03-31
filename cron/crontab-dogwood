@@ -64,7 +64,7 @@
 30 0-5 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_CDAS prod para for WCOSS2
-# started on: 20220217 (dump, dump_post, prep1, prep1_post)
+# started on: 20220217 (dump, dump_post, prep1, prep1_post, prep2, pre2_post)
 # turned off:
 # ---------------
 10 16,22 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
@@ -93,6 +93,17 @@
 # turned off:
 # ---------------
 00 21 * * * jtyp=airnow cyc=12 PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jairnow_dump.wc2.pbs > /dev/null 2>&1
+###
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
+## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
+### started on: 20220324
+### turned off:
+### -----------------------------
+26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
+26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
+26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
 ###
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
