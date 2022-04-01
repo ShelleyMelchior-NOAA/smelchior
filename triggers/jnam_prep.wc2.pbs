@@ -5,7 +5,8 @@
 #PBS -q dev
 #PBS -A OBSPROC-DEV
 #PBS -l walltime=00:20:00
-#PBS -l place=vscatter,select=1:ncpus=3:mem=100gb:prepost=true
+##PBS -l place=vscatter,select=1:ncpus=3:mem=100gb:prepost=true
+#PBS -l place=vscatter,select=1:ncpus=3:mem=150gb:prepost=true
 #PBS -l debug=true
 
 ##############################################
@@ -41,7 +42,7 @@ export obsNET=obsproc
 PACKAGEROOTpara=/lfs/h1/ops/para/packages
 #export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO para
 #export HOMEobsproc=${PACKAGEROOT}/obsproc.${obsproc_ver}       # NCO prod
-export HOMEobsproc=${userROOT}/install/obsproc-rmprep           # local
+export HOMEobsproc=${userROOT}/install/obsproc-rel.v1.0.0           # local
 
 #VERSION_FILE=${HOMEobsproc}/versions/run.ver
 VERSION_FILE=${userROOT}/install/obsproc-rmprep/versions/run.ver
@@ -111,9 +112,6 @@ if [ -f "$cronlogfile" ]; then
   mkdir -p $outputdir
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
-
-# If you wish to only run the prep job, un-comment the exit line below
-#exit
 
 # Kick off prep_post job
 if [ $err -eq 0 ]; then
