@@ -94,6 +94,162 @@ export DEBUG_LEVEL=3
 export LOUD=ON
 export KEEPDATA=YES
 
+# Set up special DUMP time windows for hourly GDAS runs
+export DTIM_earliest_1bamua="-0.50"
+export DTIM_latest_1bamua="+0.50"
+
+export DTIM_earliest_1bhrs4="-0.50"
+export DTIM_latest_1bhrs4="+0.50"
+
+export DTIM_earliest_1bmhs="-0.50"
+export DTIM_latest_1bmhs="+0.50"
+
+export DTIM_earliest_osbuv8="-0.50"
+export DTIM_latest_osbuv8="+0.50"
+
+export DTIM_earliest_mtiasi="-0.50"
+export DTIM_latest_mtiasi="+0.50"
+
+export DTIM_earliest_avcsam="-0.50"
+export DTIM_latest_avcsam="+0.50"
+
+export DTIM_earliest_avcspm="-0.50"
+export DTIM_latest_avcspm="+0.50"
+
+export DTIM_earliest_esamua="-0.50"
+export DTIM_latest_esamua="+0.50"
+
+export DTIM_earliest_eshrs3="-0.50"
+export DTIM_latest_eshrs3="+0.50"
+
+export DTIM_earliest_esmhs="-0.50"
+export DTIM_latest_esmhs="+0.50"
+
+export DTIM_earliest_airsev="-0.50"
+export DTIM_latest_airsev="+0.50"
+
+export DTIM_earliest_gome="-0.50"
+export DTIM_latest_gome="+0.50"
+
+export DTIM_earliest_sfcshp="-0.50"
+export DTIM_latest_sfcshp="+0.50"
+
+export DTIM_earliest_atovs="-0.50"
+export DTIM_latest_atovs="+0.50"
+
+export DTIM_earliest_adpsfc="-0.50"
+export DTIM_latest_adpsfc="+0.50"
+
+export DTIM_earliest_wndsat="-0.50"
+export DTIM_latest_wndsat="+0.50"
+
+export DTIM_earliest_adpupa="-0.50"
+export DTIM_latest_adpupa="+0.50"
+
+export DTIM_earliest_gpsipw="-0.50"
+export DTIM_latest_gpsipw="+0.50"
+
+export DTIM_earliest_hdob="-0.50"
+export DTIM_latest_hdob="+0.50"
+
+export DTIM_earliest_ascatt="-0.50"
+export DTIM_latest_ascatt="+0.50"
+
+export DTIM_earliest_vadwnd="-0.50"
+export DTIM_latest_vadwnd="+0.50"
+
+export DTIM_earliest_rassda="-0.50"
+export DTIM_latest_rassda="+0.50"
+
+export DTIM_earliest_msonet="-0.50"
+export DTIM_latest_msonet="+0.50"
+
+export DTIM_earliest_nexrad="-0.50"
+export DTIM_latest_nexrad="+0.50"
+
+export DTIM_earliest_omi="-0.50"
+export DTIM_latest_omi="+0.50"
+
+export DTIM_earliest_ssmisu="-0.50"
+export DTIM_latest_ssmisu="+0.50"
+
+export DTIM_earliest_sevcsr="-0.50"
+export DTIM_latest_sevcsr="+0.50"
+
+export DTIM_earliest_bathy="-0.50"
+export DTIM_latest_bathy="+0.50"
+
+export DTIM_earliest_tesac="-0.50"
+export DTIM_latest_tesac="+0.50"
+
+export DTIM_earliest_trkob="-0.50"
+export DTIM_latest_trkob="+0.50"
+
+export DTIM_earliest_goesfv="-0.50"
+export DTIM_latest_goesfv="+0.50"
+
+export DTIM_earliest_gpsro="-0.50"
+export DTIM_latest_gpsro="+0.50"
+
+export DTIM_earliest_atms="-0.50"
+export DTIM_latest_atms="+0.50"
+
+export DTIM_earliest_cris="-0.50"
+export DTIM_latest_cris="+0.50"
+
+export DTIM_earliest_mls="-0.50"
+export DTIM_latest_mls="+0.50"
+
+export DTIM_earliest_satwnd="-0.50"
+export DTIM_latest_satwnd="+0.50"
+
+export DTIM_earliest_geoimr="-0.50"
+export DTIM_latest_geoimr="+0.50"
+
+export DTIM_earliest_aircar="-0.50"
+export DTIM_latest_aircar="+0.50"
+
+export DTIM_earliest_aircft="-0.50"
+export DTIM_latest_aircft="+0.50"
+
+export DTIM_earliest_proflr="-0.50"
+export DTIM_latest_proflr="+0.50"
+
+export DTIM_earliest_saphir="-0.50"
+export DTIM_latest_saphir="+0.50"
+
+export DTIM_earliest_esatms="-0.50"
+export DTIM_latest_esatms="+0.50"
+
+export DTIM_earliest_crisfs="-0.50"
+export DTIM_latest_crisfs="+0.50"
+
+export DTIM_earliest_atmsdb="-0.50"
+export DTIM_latest_atmsdb="+0.50"
+
+export DTIM_earliest_escris="-0.50"
+export DTIM_latest_escris="+0.50"
+
+export DTIM_earliest_crisf4="-0.50"
+export DTIM_latest_crisf4="+0.50"
+
+export DTIM_earliest_esiasi="-0.50"
+export DTIM_latest_esiasi="+0.50"
+
+export DTIM_earliest_crisdb="-0.50"
+export DTIM_latest_crisdb="+0.50"
+
+export DTIM_earliest_iasidb="-0.50"
+export DTIM_latest_iasidb="+0.50"
+
+export DTIM_earliest_sevasr="-0.50"
+export DTIM_latest_sevasr="+0.50"
+
+export DTIM_earliest_amsr2="-0.50"
+export DTIM_latest_amsr2="+0.50"
+
+# Turn on time-window trimming for ALL types
+TIME_TRIM=on
 
 $HOMEobsproc/jobs/JOBSPROC_GLOBAL_DUMP
 err=$?
@@ -107,6 +263,9 @@ if [ -f "$cronlogfile" ]; then
   mkdir -p $outputdir
   mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
 fi
+
+exit
+
 
 # Kick off dump_post job
 if [ $err -eq 0 ]; then
