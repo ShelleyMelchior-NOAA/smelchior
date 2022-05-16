@@ -69,3 +69,4 @@ export PATH=$PATH:/u/Diane.Stokes/bin
 # DCOMROOT=/lfs/h1/ops/canned/dcom
 # COMROOT=/lfs/h1/ops/canned/com
 # To find machine name: cat /etc/cluster_name
+# To find prod vs dev machine: cat /lfs/h1/ops/prod/config/prodmachinefile
