@@ -106,15 +106,6 @@ export OBCNTarch=$HOMEarch/obcount_30day
 $HOMEobsproc/jobs/JOBSPROC_NAM_DUMP_POST
 err=$?
 
-# When run from cron, the stdout is written to /u/$USER
-# mv to stmp
-pbsjobid=$(echo $PBS_JOBID | cut -d'.' -f1)
-cronlogfile=/u/$USER/$PBS_JOBNAME.o$pbsjobid
-outputdir=/lfs/h2/emc/stmp/${USER}/CRON/${DESC}/output
-if [ -f "$cronlogfile" ]; then
-  mkdir -p $outputdir
-  mv $cronlogfile ${outputdir}/$PBS_JOBNAME.o$pbsjobid
-fi
 
 # If you wish to stop at the dump_post job, un-comment the exit line below
 #exit
