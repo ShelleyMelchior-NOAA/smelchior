@@ -29,6 +29,7 @@ alias gitbrancha='git --no-pager branch -a'
 alias grso='git remote show origin'
 alias qq='qstat -u $USER'
 alias qqw='qstat -tu $USER -w'
+alias sysconfig='cat /lfs/h1/ops/prod/config/prodmachinefile'
 
 # modules
 module load PrgEnv-intel/8.1.0
