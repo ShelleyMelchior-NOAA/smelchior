@@ -109,9 +109,14 @@
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
 # ---------------
-47 4,10,16,22 * * * jtyp=gfs cyc=`date --date="-4 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
-50 7,13,19 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
-50 1 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
+53 7,13,19 * * * jtyp=gfs cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
+52 7,13,19 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
+53 1 * * * jtyp=gfs cyc=`date --date="-7 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
+52 1 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
+08 8,14,20 * * * jtyp=gfs cyc=`date --date="-8 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
+07 8,14,20 * * * jtyp=gdas cyc=`date --date="-8 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
+08 2 * * * jtyp=gdas cyc=`date --date="-8 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
+07 2 * * * jtyp=gfs cyc=`date --date="-8 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep_post.wc2.pbs.nr-33
 ###
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
