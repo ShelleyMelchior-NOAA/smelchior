@@ -1,13 +1,12 @@
 #!/bin/sh  
-#PBS -N obsproc_%JTYP%_dump_post_%PDY%_%CC%_%DESC%
+#PBS -N obsproc_scp_dump_post
 #PBS -j oe
 #PBS -S /bin/bash
-#PBS -q dev
-#PBS -l walltime=00:15:00
+#PBS -q dev_transfer
+#PBS -l walltime=00:05:00
 #PBS -A OBSPROC-DEV
-#PBS -l place=vscatter,select=1:ncpus=3:mem=4gb
+#PBS -l place=vscatter,select=1:ncpus=1:mem=1gb
 #PBS -l debug=true
-
 
 #####################################################################
 # Submit notes:
@@ -77,18 +76,8 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-mpich/") -eq 0 ]]; then echo "
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-pals/") -eq 0 ]]; then echo "cray-pals is not loaded!"; fi
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is not loaded!"; fi
 
-export SENDECF=NO  # developer
-export SENDDBN=NO  # developer
-export SENDSDM=NO  # developer
-
-export TANK=$DCOMROOT
-
 export DATAROOT=/lfs/h2/emc/stmp/$USER 
 export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}.$PDY.jlogfile
-
-export DEBUG_LEVEL=3
-export LOUD=ON
-export KEEPDATA=YES
 
 export COMPONENT=atmos
 #export COMIN_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com 
@@ -97,18 +86,6 @@ export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
 export comin=${COMIN_ROOT}/${obsNET}/${obsproc_ver}/${JTYP}.${PDY}/${cyc}/${COMPONENT}
 export comin_m1=${COMIN_ROOT}/${obsNET}/${obsproc_ver}/${JTYP}.${PDYm1}/${cyc}/${COMPONENT}
 
-export COPY=YES
-export HOMEarch=${COMOUT_ROOT}/${obsNET}/${obsproc_ver}/sdm_rtdm/gfs
-export AVGDarch_IN=$HOMEarch/avgdata
-export AVGDarch_OUT=$HOMEarch/avgdata
-export OBCNTarch=$HOMEarch/obcount_30day
-
-export PROCESS_REMOREST_dm2=YES
-
-$HOMEobsproc/jobs/JOBSPROC_GLOBAL_DUMP_POST
-
-err=$?
-echo $err
 
 # scp re-processed aircar and aircft bufr_d.nr files to emcrzdm
 user=smelchior
@@ -116,19 +93,10 @@ system=emcrzdm.ncep.noaa.gov
 localdir=${COMOUT_ROOT}/${obsNET}/${obsproc_ver}/${JTYP}.${PDYm2}/${cyc}/${COMPONENT}
 remotedir=/home/ftp/emc/users/smelchior/wcoss2/GDAS_NON_RESTRICTED_48HRS
 if [ -f $localdir/${JTYP}.t${cyc}z.aircar.tm00.bufr_d.nr ]; then
-  echo "submit ssh and scp job"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jscp_dump_post.wc2.pbs.nr-33
-fi
-
-# If you wish to only run dump_post, un-comment the exit line below
-exit
-
-# Kick off the dump_alert job
-if [ $err -eq 0 ]; then
-  echo "submit jdump_alert"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jdump_alert.wc2.pbs
+  ssh -l $user $system "mkdir -p $remotedir"
+  scp -p $localdir/${JTYP}.t${cyc}z.airc*.tm00.bufr_d.nr $user@$system:$remotedir
+  ssh -l $user $system "mv $remotedir/${JTYP}.t${cyc}z.aircft.tm00.bufr_d.nr $remotedir/${PDYm2}_${JTYP}.t${cyc}z.aircft.tm00.bufr_d.nr"
+  ssh -l $user $system "mv $remotedir/${JTYP}.t${cyc}z.aircar.tm00.bufr_d.nr $remotedir/${PDYm2}_${JTYP}.t${cyc}z.aircar.tm00.bufr_d.nr"
 fi
 
 exit

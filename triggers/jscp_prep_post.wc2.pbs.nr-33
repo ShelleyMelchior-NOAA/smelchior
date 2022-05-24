@@ -1,11 +1,11 @@
 #!/bin/sh  
-#PBS -N obsproc_%JTYP%_prep_post_%PDY%_%CC%_%DESC%
+#PBS -N obsproc_scp_prep_post
 #PBS -j oe
 #PBS -S /bin/bash
-#PBS -q dev
+#PBS -q dev_transfer
 #PBS -l walltime=00:05:00
 #PBS -A OBSPROC-DEV
-#PBS -l place=vscatter,select=1:ncpus=1:mem=2gb
+#PBS -l place=vscatter,select=1:ncpus=1:mem=1gb
 #PBS -l debug=true
 
 #####################################################################
@@ -33,7 +33,7 @@ userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
 
 export obsNET=obsproc
 export obsproc_ver=v1.0
-export obsproc_ver_install=v1.0.0
+export obsproc_ver_pckg=v1.0.0
 export prepobs_ver=1.0.0
 PACKAGEROOTpara=/lfs/h1/ops/para/packages
 #export HOMEobsproc=${PACKAGEROOTpara}/obsproc.${obsproc_ver}   # NCO para
@@ -44,7 +44,7 @@ VERSION_FILE=${HOMEobsproc}/versions/run.ver
 if [ -f $VERSION_FILE ]; then
    . $VERSION_FILE
 else
-  echo Need version info...  Exiting...
+ echo Need version info...  Exiting...
  exit 7
 fi
 
@@ -73,43 +73,24 @@ if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-mpich/") -eq 0 ]]; then echo "
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cray-pals/") -eq 0 ]]; then echo "cray-pals is not loaded!"; fi
 if [[ $(echo $LOADEDMODULES | egrep -c "(^|:)cfp/") -eq 0 ]]; then echo "cfp is not loaded!"; fi
 
-export SENDECF=NO   # developer
-export SENDDBN=NO   # developer
-export SENDSDM=NO   # developer
-
 export DATAROOT=/lfs/h2/emc/stmp/$USER 
 export jlogfile=/lfs/h2/emc/stmp/$USER/${JTYP}.$PDY.jlogfile
 
+export COMPONENT=atmos
 #export COMIN_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com 
 export COMIN_ROOT=$COMROOT
 export COMOUT_ROOT=/lfs/h2/emc/stmp/$USER/CRON/${DESC}/com
 
-export DEBUG_LEVEL=3
-export KEEPDATA=YES
-export LOUD=ON
-
-export PROCESS_REMOREST_dm2=YES
-
-#export DATCOMIN=/lfs/h1/ops/canned/com/gfs/v16.2/gdascounts
-#export SATCOMIN=/lfs/h1/ops/canned/com/gfs/v16.2/gdascounts
-#export ARCHCOMIN=/lfs/h1/ops/canned/com/gfs/v16.2 
-#export DATCOM1_IN=/lfs/h1/ops/canned/com/gfs/v16.2/gdascounts
-#export COMIN1=/lfs/h1/ops/canned/com/gfs/v16.2/$JTYP.
-
-$HOMEobsproc/jobs/JOBSPROC_GLOBAL_PREP_POST
-
-err=$?
-
 # scp re-processed aircar and aircft bufr_d.nr files to emcrzdm
 user=smelchior
-COMPONENT=atmos
+system=emcrzdm.ncep.noaa.gov
 localdir=${COMOUT_ROOT}/${obsNET}/${obsproc_ver}/${JTYP}.${PDYm2}/${cyc}/${COMPONENT}
-remotedir=/home/ftp/emc/users/$user/wcoss2/GDAS_NON_RESTRICTED_48HRS
+remotedir=/home/ftp/emc/users/smelchior/wcoss2/GDAS_NON_RESTRICTED_48HRS
 if [ -f $localdir/${JTYP}.t${cyc}z.prepbufr.nr ]; then
-  echo "submit ssh and scp job"
-  jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jscp_prep_post.wc2.pbs.nr-33
+  ssh -l $user $system "mkdir -p $remotedir"
+  scp -p $localdir/${JTYP}.t${cyc}z.prepbufr*.nr $user@$system:$remotedir
+  ssh -l $user $system "mv $remotedir/${JTYP}.t${cyc}z.prepbufr.nr $remotedir/${PDYm2}_${JTYP}.t${cyc}z.prepbufr.nr"
+  ssh -l $user $system "mv $remotedir/${JTYP}.t${cyc}z.prepbufr_pre-qc.nr $remotedir/${PDYm2}_${JTYP}.t${cyc}z.prepbufr_pre-qc.nr"
 fi
-
 
 exit
