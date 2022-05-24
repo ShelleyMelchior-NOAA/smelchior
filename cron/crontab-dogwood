@@ -44,7 +44,7 @@
 #---
 58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
 ###
-## JOBSPROC_RTMA prod para for WCOSS2
+### JOBSPROC_RTMA prod para for WCOSS2
 # runs hourly at HH:30 for cycle time HH
 # started on: 20220124 (dump, dump_post, prep, prep_post)
 # turned off:
@@ -97,10 +97,10 @@
 ### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
 ### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
 ### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
-## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
+### (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
 # started on: 20220324
 # turned off:
-### -----------------------------
+# ---------------
 26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
 26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
 26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
@@ -108,6 +108,8 @@
 ### JOBSPROC_GLOBAL_DUMP_POST trigger for making 48-hour old aircft and aircar dumps which are 100% non-restricted
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
+# started on: 20220524
+# turned off:
 # ---------------
 53 7,13,19 * * * jtyp=gfs cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
 52 7,13,19 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/Shelley.Melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
