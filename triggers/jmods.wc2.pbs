@@ -11,10 +11,10 @@
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 ## For specific PDY:
-## > jtyp=mods cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
+## > jtyp=mods cyc=14 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
 ## For latest/current PDY:
-## > jtyp=mods cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
-## cycqsub location: /u/Shelley.Melchior/bin
+## > jtyp=mods cyc=14 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jmods.wc2.pbs
+## cycqsub location: /u/shelley.melchior/bin
 ###############################################
 
 set -xa

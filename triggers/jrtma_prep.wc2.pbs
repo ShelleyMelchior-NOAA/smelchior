@@ -12,10 +12,10 @@
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 ### For specific PDY:
-### > jtyp=rtma cyc=00 PDY=20190520 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_prep.wc2.pbs
+### > jtyp=rtma cyc=00 PDY=20190520 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrtma_prep.wc2.pbs
 ### For latest/current PDY:
-### > jtyp=rtma cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_prep.wc2.pbs
-### cycqsub location: /u/Shelley.Melchior/bin
+### > jtyp=rtma cyc=00 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrtma_prep.wc2.pbs
+### cycqsub location: /u/shelley.melchior/bin
 ################################################
 
 set -xa
@@ -119,7 +119,7 @@ err=$?
 if [ $err -eq 0 ]; then
   echo "submit jrtma_prep_post:"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrtma_prep_post.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_prep_post.wc2.pbs
 fi
 
 exit

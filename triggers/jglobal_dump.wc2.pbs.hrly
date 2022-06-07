@@ -13,10 +13,10 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=[gdas][gfs] cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jglobal_dump.wc2.pbs
+# > jtyp=[gdas][gfs] cyc=00 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jglobal_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=[gdas][gfs] cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jglobal_dump.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin 
+# > jtyp=[gdas][gfs] cyc=00 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jglobal_dump.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin 
 ##############################################
 
 set -xu
@@ -258,14 +258,14 @@ exit
 if [ $err -eq 0 ]; then
   echo "submit jglobal_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_dump_post.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump_post.wc2.pbs
 fi
 
 # Kick off prep job
 if [ $err -eq 0 ]; then
   echo "submit jglobal_prep"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jglobal_prep.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_prep.wc2.pbs
 fi
 
 exit

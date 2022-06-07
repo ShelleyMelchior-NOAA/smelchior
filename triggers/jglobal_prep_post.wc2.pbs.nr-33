@@ -13,10 +13,10 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=gdas cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jglobal_prep_post.wc2.pbs
+# > jtyp=gdas cyc=00 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jglobal_prep_post.wc2.pbs
 # For latest/current PDY:
-# > jtyp=gdas cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jglobal_prep_post.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=gdas cyc=00 /u/shelley.melchior/bin/cycqsub /path/to/triggers/jglobal_prep_post.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin
 #####################################################################
 
 set -xu
@@ -108,7 +108,7 @@ remotedir=/home/ftp/emc/users/$user/wcoss2/GDAS_NON_RESTRICTED_48HRS
 if [ -f $localdir/${JTYP}.t${cyc}z.prepbufr.nr ]; then
   echo "submit ssh and scp job"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jscp_prep_post.wc2.pbs.nr-33
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jscp_prep_post.wc2.pbs.nr-33
 fi
 
 

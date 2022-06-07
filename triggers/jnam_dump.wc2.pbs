@@ -13,10 +13,10 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=nam cyc=00 PDY=20170126 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
+# > jtyp=nam cyc=00 PDY=20170126 tmmark=tm00 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=nam cyc=00 tmmark=tm00 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jnam_dump.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin
 ##############################################
 
 set -xu
@@ -101,21 +101,21 @@ err=$?
 if [ $err -eq 0 ]; then
   echo "submit jnam_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump2.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump2.wc2.pbs
 fi
 
 # Kick off dump_post job
 if [ $err -eq 0 ]; then
   echo "submit jnam_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_dump_post.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump_post.wc2.pbs
 fi
 
 # Kick off prep job
 if [ $err -eq 0 ]; then
   echo "submit jnam_prep"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jnam_prep.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_prep.wc2.pbs
 fi
 
 exit

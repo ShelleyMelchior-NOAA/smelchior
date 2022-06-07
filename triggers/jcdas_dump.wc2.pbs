@@ -12,10 +12,10 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=cdas cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
+# > jtyp=cdas cyc=00 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=cdas cyc=00 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=cdas cyc=00 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jcdas_dump.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin
 ##############################################
 
 set -xu
@@ -103,14 +103,14 @@ err=$?
 if [ $err -eq 0 ]; then
   echo "submit jcdas_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_dump_post.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_dump_post.wc2.pbs
 fi
 
 # Kick off prep1 job
 if [ $err -eq 0 ]; then
   echo "submit jcdas_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jcdas_prep1.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_prep1.wc2.pbs
 fi
 
 exit

@@ -12,10 +12,10 @@
 # Run from [ps]tmp when running manually
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_dump.wc2.pbs
+# > jtyp=rap|rap_e|rap_p cyc=00 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrap_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=rap cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrap_dump.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=rap cyc=00 /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrap_dump.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin
 #####################################################################
 
 set -xu
@@ -106,14 +106,14 @@ err=$?
 if [ $err -eq 0 ]; then
   echo "submit jrap_dump_post"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_dump_post.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump_post.wc2.pbs
 fi
 
 # Kick off prep job
 if [ $err -eq 0 ]; then
   echo "submit jrap_prep"
   jtyp=$JTYP PDY=$PDY desc=$DESC bash -l /u/$USER/bin/cycqsub \
-  /lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/triggers/jrap_prep.wc2.pbs
+  /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_prep.wc2.pbs
 fi
 
 exit

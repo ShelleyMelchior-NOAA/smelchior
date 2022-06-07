@@ -13,10 +13,10 @@
 # output log file assumes name as assigned in "# PBS -N" with unique jobid suffix
 # When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=airnow cyc=00 PDY=20211219 desc=somethingfun bash -l /u/Shelley.Melchior/bin/cycqsub /full/path/to/jairnow_dump.wc2.pbs
+# > jtyp=airnow cyc=00 PDY=20211219 desc=somethingfun bash -l /u/shelley.melchior/bin/cycqsub /full/path/to/jairnow_dump.wc2.pbs
 # For latest/current PDY:
-# > jtyp=airnow cyc=00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jairnow_dump.wc2.pbs
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=airnow cyc=00 /u/shelley.melchior/bin/cycqsub /path/to/triggers/jairnow_dump.wc2.pbs
+# cycqsub location: /u/shelley.melchior/bin
 #####################################################################
 
 set -xa

@@ -12,10 +12,10 @@
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 # For specific PDY:
-# > jtyp=rtma cyc=00 tmmark=tm00 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_prep_post.wc2.pbs
+# > jtyp=rtma cyc=00 tmmark=tm00 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrtma_prep_post.wc2.pbs
 # For latest/current PDY:
-# > jtyp=rtma cyc=00 tmmark=tm00 /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jrtma_*.ph3.lsf
-# cycqsub location: /u/Shelley.Melchior/bin
+# > jtyp=rtma cyc=00 tmmark=tm00 /u/shelley.melchior/bin/cycqsub /path/to/triggers/jrtma_*.ph3.lsf
+# cycqsub location: /u/shelley.melchior/bin
 #####################################################################
 
 set -xa

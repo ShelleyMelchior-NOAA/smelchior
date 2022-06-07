@@ -13,10 +13,10 @@
 ## Run from [ps]tmp when running manually
 ## When running from cron, output is written to /u/$USER. Bottom of trigger mv's to stmp
 ## For specific PDY:
-## > jtyp=urma cyc=14 PDY=20170126 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump_post.wc2.pbs
+## > jtyp=urma cyc=14 PDY=20170126 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jurma_dump_post.wc2.pbs
 ## For latest/current PDY:
-## > jtyp=urma cyc=14 desc=somethingfun /u/Shelley.Melchior/bin/cycqsub /path/to/triggers/jurma_dump_post.wc2.pbs
-## cycqsub location: /u/Shelley.Melchior/bin
+## > jtyp=urma cyc=14 desc=somethingfun /u/shelley.melchior/bin/cycqsub /path/to/triggers/jurma_dump_post.wc2.pbs
+## cycqsub location: /u/shelley.melchior/bin
 ###############################################
 
 set -xu
