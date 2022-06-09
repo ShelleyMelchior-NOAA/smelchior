@@ -108,6 +108,7 @@
 ### JOBSPROC_GLOBAL_DUMP_POST trigger for making 48-hour old aircft and aircar dumps which are 100% non-restricted
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
+### https://ftp.emc.ncep.noaa.gov/users/smelchior/wcoss2/GDAS_NON_RESTRICTED_48HRS/
 # started on: 20220524
 # turned off:
 # ---------------
