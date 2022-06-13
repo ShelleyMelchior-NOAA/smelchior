@@ -28,7 +28,7 @@ echo "RESULTS:"
 # Define obsproc root
 # until $PACKAGEROOT installation exists, use obsproc github installation
 #obsprocROOT=/lfs/h2/emc/obsproc/noscrub/Shelley.Melchior/install/obsproc
-obsprocROOT=$PACKAGEROOT/obsproc.v1.0.0
+obsprocROOT=$PACKAGEROOT/obsproc.v1.0.1
 
 # Define network array
 netarr=(global nam rap rtma urma cdas dump_monitor airnow)
