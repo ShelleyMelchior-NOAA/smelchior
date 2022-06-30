@@ -1,0 +1,3857 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.4.3 --> released Mar 09, 2022,
+                             --> implemented Mar ??, 2022
+
+files:
+   obsproc_global/fix/prepobs_oiqc.oberrs
+   obsproc_global/jobs/JGLOBAL_DUMP
+   obsproc_global/jobs/JGLOBAL_DUMP_POST
+   obsproc_global/jobs/JGLOBAL_PREP
+   obsproc_global/jobs/JGLOBAL_PREP_POST
+   obsproc_global/parm/prepobs_cqcbufr.gdas.parm
+   obsproc_global/parm/prepobs_cqcbufr.gfs.parm
+   obsproc_global/parm/prepobs_prepacqc.gdas.parm
+   obsproc_global/parm/prepobs_prepacqc.gfs.parm
+   obsproc_global/parm/prepobs_prepdata.gdas.parm
+   obsproc_global/parm/prepobs_prepdata.gfs.parm
+   obsproc_global/parm/prepobs_prepssmi.gdas.parm
+   obsproc_global/parm/prepobs_prepssmi.gfs.parm
+   obsproc_global/parm/prepobs_profcqc.gdas.parm
+   obsproc_global/parm/prepobs_profcqc.gfs.parm
+   obsproc_global/parm/syndat_syndata.gdas.parm
+   obsproc_global/parm/syndat_syndata.gfs.parm
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+   obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Modifed to enable the dumping of 002017 component of vadwnd dump
+      group.
+      BENEFIT: SCN 21-96 disabled "NEXRAD Vel Azm Dsp(VAD) winds via radar
+               coded msg" (b002/xx008) data. In order to continue processing 
+               global vadwnd dump files, the processing of "NEXRAD Vel Azm 
+               Dsp(VAD) winds via Level 2 decoder" (b002017) data needs to
+               be enabled. This will allow for vadwnd data to continue to be
+               encoded into prepbufr files.
+
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    - As a result of updates to exglobal_dump.sh.ecf:
+       $COMROOT/gfs/prod/g*s.YYYYMMDD/CC/atmos/g*s.tCCz.vadwnd.tm00.bufr_d,
+       will contain observations from the "NEXRAD Vel Azm Dsp (VAD) winds
+       via Level 2 deocder (002017) subset. These data are higher volume,
+       resulting in each cycle's vadwnd bufr_d file being larger than 
+       current operations by ~ 1 Mb. 
+
+ Compute Resource Information:
+ -----------------------------
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wall clock time.
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/gfs/prod/gdas.YYYYMMDD/CC/atmos:
+     gdas.tCCz.vadwnd.tm00.bufr_d* files increase by 4 Mb per day
+   $COMROOT/gfs/prod/gfs.YYYYMMDD/CC/atmos:
+     gfs.tCCz.vadwnd.tm00.bufr_d* files increase by 4 Mb per day
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0
+    - obsproc_prep.v5.5.0
+    - obsproc_dump_post.v3.6.0
+    - obsproc_prep_post.v3.2.0
+    - obsproc_shared/bufr_avgdata.v2.1.1
+    - obsproc_shared/bufr_remorest.v2.1.3
+    - obsproc_shared/bufr_dumplist.v2.4.1
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.6, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.4.1
+    dumpjb/5.2.0
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.4.0
+    w3nco/2.0.6
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all 4 production jobs for all gdas and gfs cycles.
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+ Dissemination:
+ --------------
+   no change
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.3.2.
+   This must be installed on WCOSS Dell phase 3.
+
+   This must be implemented simultaneously with the implementations of:
+      v2.5.4 of obsproc_cdas,
+      v16.1.6 of GFS,
+      v2.2.16 of cfs.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20220315_OBSPROC_v16.3.2/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.4.2 --> released Jul 16, 2021,
+                             --> implemented Aug 18, 2021
+
+files:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Modified dump group 2 subtype counts to keep aligned with the
+      updated bufr_dumplist at v2.4.0.
+      BENEFIT: sfcshp dump file includes BUFR format ships and cman data.
+    - Modified dump group 2 to generate a separate tideg dump file, no
+      longer included in the sfcshp dump file.
+      BENEFIT: Eliminates duplicate reports complications between the
+               two separate data streams: tideg and cmanb.
+    - Added logic to copy bufr_dumplist file to $COMOUT.
+      BENEFIT: per NCO SPA request.
+
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    - As a result of updates to exglobal_dump.sh.ecf:
+       - The sfcshp dump file,
+          $COMROOT/gfs/prod/g*s.YYYYMMDD/CC/atmos/g*s.tCCz.sfcshp.tm00.bufr_d,
+         will have the tideg subset (NC001005) removed.
+       - The tideg dump file,
+          $COMROOT/gfs/prod/g*s.YYYYMMDD/CC/atmos/g*s.tCCz.tideg.tm00.bufr_d,
+         will be new.
+    - As a result of updates in obsproc_shared/bufr_dumplist.v2.4.0:
+      - The following subsets are now included in the sfcshp dump file:
+          "SHIPSB" [Ship - manual and automatic, restricted (BUFR)]
+           (001.101)
+          "SHIPUB" [Ship - manual and automatic, unrestricted (BUFR)]
+           (001.113)
+          "CMANB" [Surface Marine CMAN rpts decided from BUFR format]
+           (001.104)
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wall clock time.
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/gfs/prod/gdas.YYYYMMDD/CC/atmos:
+     gdas.tCCz.sfcshp.tm00.bufr_d* files increase by 32 Mb per day
+     gdas.tCCz.tideg.tm00.bufr_d introduce 5 Mb per day
+     gdas.tCCz.prepbufr* files increase by 17 Mb per day
+     gfs.tCCz.sfcshp.tm00.bufr_d* files increase by 30 Mb per day
+     gfs.tCCz.tideg.tm00.bufr_d introduce 4 Mb per day
+     gfs.tCCz.prepbufr* files increase by 16 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0
+    - obsproc_prep.v5.5.0
+    - obsproc_dump_post.v3.6.0
+    - obsproc_prep_post.v3.2.0
+    - obsproc_shared/bufr_avgdata.v2.1.1
+    - obsproc_shared/bufr_remorest.v2.1.3
+    - obsproc_shared/bufr_dumplist.v2.4.0
+
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.6, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.4.0
+    dumpjb/5.2.0
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.4.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all 4 production jobs for all gdas and gfs cycles.
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+ Dissemination:
+ --------------
+   - tideg dump files will be pushed to NOMADS.
+      g*s.tCCz.tideg.tm00.bufr_d
+   - sfcshp dump files will continue to be pushed to NOMADS, but will no
+     longer contain the tideg data (subset NC001005).
+      g*s.tCCz.sfcshp.tm00.bufr_d
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.1.0.
+   This must be installed on WCOSS Dell phase 3.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_nam,
+      v3.2.3 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.5.0 of obsproc_prep,
+      v2.1.3 of obsproc_shared_bufr_remorest,
+      v2.4.0 of obsproc_shared_bufr_dumplist.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20210712_OBSPROC_v16.1.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.4.1 --> released Feb 10, 2021,
+                             --> implemented Apr 14, 2021
+
+files:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Disabled DBN alerts for gpsro dump files.  These gpsro
+      dump files potentially contain commercial (restricted)
+      data.  The non-restricted gpsro dump files are alerted
+      instead.
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    - The gpsro dump file will be slightly larger with the
+      addition of commercial GPS-RO data:
+       g*s.tCCz.gpsro.tm00.bufr_d
+    - The gpsro dump file will add ~59 Mb to $COMROOT per day.
+    - The gpsro dump file will no longer be available on NOMADS.
+   Job JGLOBAL_DUMP_POST:
+    - A new non-restricted gpsro dump file will be generated:
+       g*s.tCCz.gpsro.tm00.bufr_d.nr
+    - The non-restricted gpsro dump file will add ~180 Mb to
+      $COMROOT per day.
+    - The non-restricted gpsro dump file will be available on
+      NOMADS.
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wall clock time.
+
+ Disk Space Changes:
+ -------------------
+    For gdas network:
+    - gpsro bufr_d files will increase by ~29 Mb per day
+    - new gpsro nr bufr_d files will total ~94 Mb per day
+    For gfs netowrk:
+    - gpsro bufr_d files will increase by less then 29 Mb per day
+    - new gpsro nr bufr_d files will total less than 94 Mb per day
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.1
+    - obsproc_prep.v5.3.0
+    - obsproc_dump_post.v3.5.0
+    - obsproc_prep_post.v3.1.1
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.2
+    - obsproc_shared/bufr_dumplist.v2.3.1
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.4, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.3.1
+    dumpjb/5.1.1
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JGLOBAL_DUMP and JGLOBAL_DUMP_POST jobs for gdas and gfs cycles.
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+ Dissemination:
+ --------------
+   - gpsro dump files will no longer be pushed to NOMADS.
+      g*s.tCCz.gpsro.tm00.bufr_d
+   - gpsro non-restricted dump files will be pushed to NOMADS instead.
+      g*s.tCCz.gpsor.tm00.bufr_d.nr
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.1.0.
+   This must be implemented simultaneously with the implementations of:
+      v4.0.0 of decod_dcrocc,
+      v3.4.2 of obsproc_nam,
+      v5.1.1 of obsproc_dump,
+      v3.5.0 of obsproc_dump_post,
+      v2.1.2 of obsproc_shared_bufr_remorest,
+      v2.3.1 of obsproc_shared_bufr_dumplist.
+   This must be implemented on Dell-p3.
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20210201_OBSPROC_v15.1.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.4.0 --> released Oct 09, 2020,
+                             --> implemented ??? ??, 2021
+
+files:
+   obsproc_global/fix/prepobs_oiqc.oberrs
+ M obsproc_global/jobs/JGLOBAL_DUMP
+ M obsproc_global/jobs/JGLOBAL_DUMP_POST
+ M obsproc_global/jobs/JGLOBAL_PREP
+ M obsproc_global/jobs/JGLOBAL_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+ D obsproc_global/sorc/bufr_latlonqc.fd/latlonqc.f
+ D obsproc_global/sorc/bufr_latlonqc.fd/makefile
+ D obsproc_global/sorc/build.sh
+ D obsproc_global/sorc/load_libs.rc
+ D obsproc_global/sorc/clean.sh
+ D obsproc_global/sorc/clobber.sh
+ D obsproc_global/sorc/install.sh
+ D obsproc_global/sorc/setlibs.rc
+ D obsproc_global/ush/bufr_latlonqc.sh
+
+( A - added,  M - modified, D - deleted)
+
+ JOB script changes:
+   JGLOBAL_DUMP, JGLOBAL_DUMP_POST:
+   - Modified to use the new $COMPONENT subdirectory structure.
+     BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+   JGLOBAL_PREP:
+   - Modified to use the new $COMPONENT subdirectory structure.
+   - Modified to integrate the NETCDF_IN switch for encoding the
+      first guess information into the prepbufr file.
+     BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+   - Modified default setting for NSPLIT from 3 to 4.
+     BENEFIT: Needed to help reduce wall clock processing time.
+   JGLOBAL_PREP_POST:
+   - Modified to use the new $COMPONENT subdirectory structure.
+   - Modified to source GFS version file, $NWROOT/versions/gfs.ver.
+     BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Removed setting for legacy VIIRS AMV data.
+    - Updated dump group #1 to add:
+      - processing for GOES-16/17 Clear Sky Radiance data (gsrcsr).
+      - processing for Himawari-8 Clear Sky Radiance data (ahicsr).
+      - processing for VIIRS SST radiance clear and over water
+        data (sstvcw).
+    - Updated dump group #4 to add processing for High Density
+      observations from reconnaissance aircraft (hdob).
+    - Updated dump group #8 to:
+      - include LEO-GEO, subset 005072, in the satwnd dump processing.
+      - remove GOES-15 subsets: 005010, 005011, 005012, and 005019
+        from the satwnd dump processing.
+    - Updated dump group #10 to add:
+      - processing for GOES-16/17 All Sky Radiance data (gsrasr).
+      - processing for NPP OMPS Limb Profiler data (ompslp).
+      - processing for VIIRS SST radiance probably clear and over
+        water data (sstvpw).
+   exglobal_makeprepbufr.sh:
+    - Removed processing that cats mbuoyb and dbuoyb to the nsstbufr
+      file.  This functionality was rendered obsolete with the
+      implementation of obsproc_global.v3.3.0.
+    - Code added to copy global guess files in NetCDF format to
+      $COMOUT when $NETCDF_IN=.true..
+    - Code added to run dbn_alert for NetCDF format global guess
+      files when $NETCDF_IN=.true..
+
+ Source code changes:
+   sorc/: bufr_latlonqc.fd, build,sh, load_libs.rc, clean.sh, clobber.sh,
+   install.sh, setlibs.rc:
+   - Removed; functionality rendered obsolete with implementation of
+     obsproc_global.v3.3.0.
+
+
+ USH script file changes:
+   ush/: bufr_latlonqc.sh:
+   - Removed; functionality rendered obsolete with implementation of
+     obsproc_global.v3.3.0.
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    The following new bufr dump files will populate $COMROOT, and
+    will be alerted:
+     g*s.t00z.ahicsr.tm00.bufr_d
+     g*s.t00z.gsrasr.tm00.bufr_d
+     g*s.t00z.gsrcsr.tm00.bufr_d
+     g*s.t00z.hdob.tm00.bufr_d
+     g*s.t00z.ompslp.tm00.bufr_d
+     g*s.t00z.sstvcw.tm00.bufr_d
+     g*s.t00z.sstvpw.tm00.bufr_d
+    The following dump file will contain a new subset, NC005072:
+     g*s.t00z.satwnd.tm00.bufr_d
+    The following dump file will no longer contain GOES-15
+    subsets (NC005010, NC005011, NC005012, NC005019):
+     g*s.t00z.satwnd.tm00.bufr_d
+
+ Compute Resource Information:
+ -----------------------------
+   Job cards:
+    JGLOBAL_DUMP, JGLOBAL_DUMP_POST, JGLOBAL_PREP_POST:
+     - no change
+    JGLOBAL_PREP:
+     #BSUB -R "span[ptile=2]"
+     #BSUB -n 4
+     #BSUB -R affinity[core(1)]
+     ##BSUB -M 18000
+   Memory:
+    gfs_dump increases memory usage ~3116 Mb per cycle
+    gdas_dump increases memory usage ~3359 Mb per cycle
+    gfs_dump_post: no change
+    gdas_dump_post: no change
+    gfs_prep increases memory usage ~12816 Mb per cycle
+    gdas_prep increases memory usage ~11765 Mb per cycle
+    gfs_prep_post: no change
+    gdas_prep_post: no change
+   Wall clock run time:
+    gfs_dump increases ~18 s per cycle
+    gdas_dump increases ~18 s per cycle
+    gfs_dump_post: no change
+    gdas_dump_post: increases ~8 s per cycle
+    gfs_prep increases ~159 s per cycle
+    gdas_prep increases ~156 s per cycle
+    gfs_prep_post: no change
+    gdas_prep_post: no change
+
+ Disk Space Changes:
+ -------------------
+    For gdas network:
+    - satwnd bufr_d files will increase by ~10.3 Mb per day
+    - new ahicsr bufr_d files will add ~ 53 Mb per day
+    - new gsrasr bufr_d files will add ~ 978 Mb per day
+    - new gsrcsr bufr_d files will add ~ 705 Mb per day
+    - new hdob bufr_d files will add ~ 0.67 Mb per day
+    - new ompslp bufr_d files will add ~ 2.6 Mb per day
+    - new sstvcw bufr_d files will add ~ 7155 Mb per day
+    - new sstvpw bufr_d files will add ~ 1235 Mb per day
+    For gfs network:
+    - satwnd bufr_d files will increase by ~4.0 Mb per day
+    - new ahicsr bufr_d files will add ~ 44 Mb per day
+    - new gsrasr bufr_d files will add ~ 897 Mb per day
+    - new gsrcsr bufr_d files will add ~ 645 Mb per day
+    - new hdob bufr_d files will add ~ 0.63 Mb per day
+    - new ompslp bufr_d files will add ~ 0.3 Mb per day
+    - new sstvcw bufr_d files will add ~ 4950 Mb per day
+    - new sstvpw bufr_d files will add ~ 852 Mb per day
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0
+    - obsproc_prep.v5.4.0
+    - obsproc_dump_post.v3.4.0
+    - obsproc_prep_post.v3.2.0
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.1
+    - obsproc_shared/bufr_dumplist.v2.3.0
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.4, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.3.0
+    dumpjb/5.1.0
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.4.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all 4 JGLOBAL_* jobs for all gdas and gfs cycles.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+     v16.0.0 of GFS,
+      v3.4.1 of obsproc_nam,
+      v3.2.1 of obsproc_rap,
+      v3.3.2 of obsproc_rtma,
+      v3.2.2 of obsproc_urma,
+      v5.4.0 of obsproc_prep,
+      v3.2.0 of obsproc_prep_post.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20201009_OBSPROC_v15.0.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.3.0 --> released Aug 28, 2020,
+                             --> implemented Oct 22, 2020
+
+files:
+ M obsproc_global/jobs/JGLOBAL_DUMP
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+ M obsproc_global/sorc/load_libs.rc
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JGLOBAL_DUMP:
+   - Corrected default value for DCOMROOT.
+
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - 1) Incremented the subsets for the adpsfc and sfcshp dump 
+         groups.
+         BENEFIT: coordinates adpsfc and sfcshp in dump group #2
+                  with the updated bufr_dumplist.
+    - 2) Removed dbuoyb and mbuoyb from dump group #2.
+         BENEFIT: The individual dump files for duoyb and mbuoyb
+                  are no longer required now that they are included
+                  in the sfcshp dump group.
+    - 3) Updated dump group #8 to disable the processing of legacy
+         EUMETSAT AMV subsets 005064, 005065, and 005066.  Added
+         DTIM settings for the new BUFR format EUMETSAT AMV subsets
+         005067, 005068, and 005069 in the satwnd dump group.  On
+         Oct 6, 2020, EUMETSAT AMV format changed to use new WMO
+         BUFR sequence 3-10-077.
+   exglobal_makeprepbufr.sh.ecf:
+    - 1) Set default value for MAKE_NSST_BUOYB to "NO".
+         BENEFIT: no longer need to append mbuoyb and dbuoyb dump
+                  files to nsstbufr file since those data are 
+                  included in the sfcshp dump file.
+    - 2) Added feature to use tstsp in place of COMSP when generating
+         nsstbufr files in development.
+         BENEFIT: allows for more flexible development when testing
+                  nsstbufr file generation.
+
+
+ Source code changes:
+   load_libs.rc:
+    - update to use bufrlib version 11.3.0
+    - remove settings for IBM phase 1/2. 
+
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v2.3.0:
+       - Dump files $COMROOT/gfs/prod/g*s.$PDY/$cyc/g*s.t${cyc}z.adpsfc.tm00.bufr_d
+         now contain restriced, fixed, and mobile synoptic reports in BUFR format
+         from b000/xx100, b000/xx101, and b000/xx102 tanks respectively. 
+       - Dump files $COMROOT/gfs/prod/g*s.$PDY/$cyc/g*s.t${cyc}z.sfcshp.tm00.bufr_d
+         now contain drifting and moored buoy reports in BUFR format from b001/xx102
+         and b001/xx103 tanks respectively.
+   Job JGLOBAL_PREP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v2.3.0:
+       - BUFR formatted synoptic (report types 181/281, 183, 192/292, 284) and buoy
+         (report types 180/280, 282, 183, 284, 194/294) reports are encoded into
+         PREPBUFR files and are available for assimilation.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Wallclock run time increases:
+       - gdas dump: ~10s increase per cycle
+       - gfs dump : ~28s increase per cycle
+       - gdas prep: ~ 8s increase per cycle
+       - gfs prep : ~16s increase per cycle
+
+
+ Disk Space Changes:
+ -------------------
+    For gdas network:
+    - adpsfc bufr_d files will increase by ~6.4 Mb per day
+    - sfcshp bufr_d files will increase by ~9.4 Mb per day 
+    - prepbufr files will increase by ~5.8 Mb per day 
+    For gfs netowrk:
+    - adpsfc bufr_d files will increase by ~6.1 Mb per day
+    - sfcshp bufr_d files will increase by ~9.5 Mb per day 
+    - prepbufr files will increase by ~5.8 Mb per day 
+ 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0
+    - obsproc_prep.v5.3.0
+    - obsproc_dump_post.v3.4.0
+    - obsproc_prep_post.v3.1.1
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.1
+    - obsproc_shared/bufr_dumplist.v2.3.0
+
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.4, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.3.0
+    dumpjb/5.1.0
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all 4 JGLOBAL_* jobs for gdas and gfs cycles.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of: 
+      v4.2.0  of decod_dcelrw,
+      v2.5.2  of obsproc_cdas,
+      v3.3.1  of obsproc_rtma,
+      v3.2.1  of obsproc_urma,
+      v2.4.0  of obsproc_dump_monitor,
+      v5.1.0  of obsproc_dump,
+      v3.4.0  of obsproc_dump_post,
+      v5.3.0  of obsproc_prep,
+      v3.1.1  of obsproc_prep_post,
+      v2.2.0  of obsproc_shared_bufr_dumplist - previously released to support RTOFS,
+      v2.1.1  of obsproc_shared_bufr_remorest,
+      v15.3.3 of GFS.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20200818_OBSPROC_v14.0.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.6 --> released Apr 09, 2020,
+                             --> implemented Apr 22, 2020
+
+files:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Disabled DBN alerts for gpsro dump files.  These gpsro
+      dump files potentially contain commercial (restricted)
+      data.  The non-restricted gpsro dump files are alerted
+      instead.
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP:
+    - The gpsro dump file will be slightly larger with the
+      addition of commercial GPS-RO data:
+       g*s.tCCz.gpsro.tm00.bufr_d
+    - The gpsro dump file will add ~59 Mb to $COMROOT per day.
+    - The gpsro dump file will no longer be available on NOMADS.
+   Job JGLOBAL_DUMP_POST:
+    - A new non-restricted gpsro dump file will be generated:
+       g*s.tCCz.gpsro.tm00.bufr_d.nr
+    - The non-restricted gpsro dump file will add ~180 Mb to
+      $COMROOT per day.
+    - The non-restricted gpsro dump file will be available on
+      NOMADS.
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wall clock time/
+
+ Disk Space Changes:
+ -------------------
+    For gdas network:
+    - gpsro bufr_d files will increase by ~29 Mb per day
+    - new gpsro nr bufr_d files will total ~94 Mb per day 
+    For gfs netowrk:
+    - gpsro bufr_d files will increase by less then 29 Mb per day
+    - new gpsro nr bufr_d files will total less than 94 Mb per day 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0
+    - obsproc_prep.v5.3.0
+    - obsproc_dump_post.v3.5.0
+    - obsproc_prep_post.v3.1.1
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.2
+    - obsproc_shared/bufr_dumplist.v2.3.0
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.3, the default at the time)
+    prod_util         (tested with 1.1.4, the default at the time)
+    prod_envir        (tested with 1.1.0, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.1.1
+    bufr_dumplist/2.3.0
+    dumpjb/5.1.0
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JGLOBAL_DUMP and JGLOBAL_DUMP_POST jobs for gdas and gfs cycles.
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - gpsro dump files will no longer be pushed to NOMADS.
+      g*s.tCCz.gpsro.tm00.bufr_d
+   - gpsro non-restricted dump files will be pushed to NOMADS instead.
+      g*s.tCCz.gpsor.tm00.bufr_d.nr
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.2.0.
+   This must be implemented simultaneously with the implementations of: 
+      v4.0.0  of decod_dcrocc
+      v3.4.1  of obsproc_nam
+      v3.5.0  of obsproc_dump_post
+      v2.1.2  of obsproc_shared_bufr_remorest
+   This must be implemented on Dell-p3.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20210201_OBSPROC_v14.2.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.5 --> implemented by SPA on Feb 11, 2020
+
+ JOB script changes:
+   JGLOBAL_DUMP:
+    - updated the default COM_SSTOI assignment to use compath.py utility
+      in order to find 1-degree sst data on phase 3
+    - updated the default COM_SSTRTG assignment to use compath.py utility
+      in order to find rtgssthr data on phase 3
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.4 --> released Jan 13, 2020,
+                             --> implemented Jan 13, 2020
+
+ Model Script file changes:
+  scripts/exglobal_dump.sh.ecf
+    - Added to alert gdas.tCCz.saphir.tm00.bufr_d product to NOMADS for a NASA partner.
+
+Changes initiated and implemented by NCO SPA.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.3 --> released Oct 30, 2019,
+                             --> implemented Dec 05, 2019
+
+files:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Added dump window limits (DTIM_*) for member of satwnd dump group:
+      005091.
+      BENEFIT: The WMO v31 BUFR format NPP and NOAA-20 VIIRS wind data
+               populate a new tank, b005/xx091, as of the implementation
+               of obsproc_satingest.v3.9.0.  This change ensures that 
+               these data inherit the same dump windows that the legacy
+               NPP and NOAA-20 VIIRS wind data used.
+    - Added export variable SKIP_005090=YES to force dump processing to
+      no longer process VIIRS AMV tank b005/xx090.
+
+
+ Output changes:
+ ---------------
+   All job scripts in gdas and gfs runs:
+    - No changes
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wallclock run time.
+    NOTE: At the time of release, operational JGLOBAL_DUMP does 
+          not encode GOES-17 satellite wind observations into
+          the satwnd bufr_d file.  A para JGLOBAL_DUMP running
+          to support GFSv15.2 does process GOES-17 satellite
+          wind observations.  The modifications in
+          obsproc_satingest.v3.9.0 to process the WMO v31 BUFR
+          standard for satellite wind data will have negligible
+          impact on wallclock run time (when compared to 
+          JGLOBAL_DUMP running in para).
+
+
+ Disk Space Changes:
+ -------------------
+    Increased $COMROOT usage for the additional data to existing
+    dump files as a result of obsproc_satingest at v3.9.0.
+    For gdas network:
+    - avcsam bufr_d file ~ 155Mb per day
+    For gfs network:
+    - avcsam bufr_d file ~ 125Mb per day
+    NOTE: At the time of release, satwnd bufr_d files in production
+          $COMROOT do not contain GOES-17 data.  satwnd bufr_d files
+          populating para $COMROOT to support GFSv15.2 para do contain
+          observations from GOES-17.  The modifications in
+          obsproc_satingest.v3.9.0 to process the WMO v31 BUFR 
+          standard for satellite wind data will not impact disk
+          usage in $COMROOT once GOES-17 observations are included in
+          satwnd bufr_d files in production $COMROOT.
+ 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2
+    - obsproc_prep.v5.2.0
+    - obsproc_dump_post.v3.3.0
+    - obsproc_prep_post.v3.1.0
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.0
+    - obsproc_shared/bufr_dumplist.v2.1.0
+
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.2, the default at the time)
+    prod_util         (tested with 1.1.2, the default at the time)
+    prod_envir        (tested with 1.0.3, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.0.6
+    bufr_dumplist/2.1.0
+    dumpjb/5.0.2
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs for gdas and gfs runs.
+
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v12.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with: 
+    obsproc_satingest.v3.9.0,
+    obsproc_shared_bufr_dumplist.v2.1.0
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20191024_OBSPROC_v12.0.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.2 --> released Jun 13, 2019,
+                             --> implemented Nov 07, 2019
+
+files:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+ A obsproc_global/sorc/bufr_latlonqc.fd/latlonqc.f
+ A obsproc_global/sorc/bufr_latlonqc.fd/makefile
+ A obsproc_global/sorc/build.sh
+ A obsproc_global/sorc/load_libs.rc
+ A obsproc_global/sorc/clean.sh
+ A obsproc_global/sorc/clobber.sh
+ A obsproc_global/sorc/install.sh
+ A obsproc_global/sorc/setlibs.rc
+ A obsproc_global/ush/bufr_latlonqc.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Added dumps of BUFR-feed buoy data streams, both drifting (dbuoyb,
+       NC001102) & moored (mbuoyb, NC002103) buoys, in support of NSST 
+       processing needs.
+    - Added dump window limits on BUFR-feed buoy dumps (NC00110[23]).
+    - Disabled the copy of sstoi grib files to $COMROOT.
+
+   exglobal_makeprepbufr.sh.ecf:
+    - Added new imported environment variables to control adding new BUFR-feed
+       data dumps to the existing 'nsstbufr' data file:
+        MAKE_NSST_BUOYB:     when 'YES', enables concatenating dbuoyb & mbuoyb
+                              dumps to 'nsstbufr' file. (default: YES)
+        USHobpsroc_global:   specifies path to new ush script bufr_latlonqc.sh 
+        EXECobsproc_global:  specifies path to new bufr_latlonqc executable
+   
+    - Added logic to enable running a new script (bufr_latlonqc.sh) that
+       invokes new program (bufr_latlonqc.  This program does a quality check 
+       on the new dbuoyb & mbuoyb data dumps, removing reports with missing 
+       position (latitude & longitude) information before adding them to the 
+       'nsstbufr' file.
+
+ USH script file changes (additions):
+   ush/bufr_latlonqc.sh:
+    - A new 'ush' subdirectory was added to the obsproc_global structure to
+       contain this new script.
+    - This new ush script is enabled by default, but can be disabled by an
+      imported environment variable (ie, export MAKE_NSST_BUOYB=NO).  When
+      enabled, the script sets up and runs the new bufr_latlonqc executable to
+      quality check the dbuoyb & mbuoyb data dumps for bad reports.
+    - The filtered output from the bufr_latlonqc executable is sent to $COMOUT
+       with a filename identical to the input dump file, but with a '.llqc'
+       suffix appended.  This filtered dump file is appended to the 'nsstbufr'
+       file for use in GFS NSST processing.
+
+ Source code changes (additions):
+   bufr_latlonqc.fd/latlonqc.f:
+    - A new 'sorc' subdirectory was added to the obsproc_global structure to
+       contain this new code.
+    - This new program reads in a BUFR dump file, checks records for missing
+      position (lat/lon) information, and generates a new dump file with these
+      bad reports removed.  The filtered dump file is created with a filename
+      identical to the incoming dump file, but with a '.2' suffix appended.
+    - A makefile, build scripts and build resource files were added to the 
+      sorc/* directories, supporting build process for the executable.
+
+
+ BENEFITS of all code & script changes in this update:
+    The availability of tradition data feed (TAC) observations for drifting and
+     moored buoys has been degrading as deployed platforms switch to BUFR-feed
+     format to provide their observations.  This has essentially caused a data
+     dropout which has been seen to degrade model skill.  This upgrade enables
+     use of the BUFR-feed data with significantly larger global coverage than
+     is currently available, thereby alleviating the TAC dropout.  These
+     additional data are only provided to NSST processing with this upgrade.  A
+     future upgrade is required in order to extend these data to general GSI
+     assimilation (eg, sfc pressure data).
+
+
+ Output changes:
+ ---------------
+   Job JGLOBAL_DUMP in gdas and gfs runs:
+    - New dump files for dbuoyb (NC001102) & mbuoyb (NC001103) will be created:
+          gfs.tHHz.dbuoyb.tm00.bufr_d
+         gdas.tHHz.dbuoyb.tm00.bufr_d
+          gfs.tHHz.mbuoyb.tm00.bufr_d
+         gdas.tHHz.mbuoyb.tm00.bufr_d
+    - Removal of the following files:
+          gfs.tHHz.sstgrb
+         gdas.tHHz.sstgrb
+          gfs.tHHz.sstgrb.index
+         gdas.tHHz.sstgrb.index
+         gdas.tHHz.sstgrb.grib2
+
+
+   Job JGLOBAL_PREP_POST in gdas and gfs runs:
+    - Quality Checked copies of the dbuoyb & mbuoyb dump files will be created:
+          gfs.tHHz.dbuoyb.tm00.bufr_d.llqc
+         gdas.tHHz.dbuoyb.tm00.bufr_d.llqc
+          gfs.tHHz.mbuoyb.tm00.bufr_d.llqc
+         gdas.tHHz.mbuoyb.tm00.bufr_d.llqc
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+    Increased $COMROOT usage for the additional dump data: 
+    For each of gfs & gdas networks:
+    - dbuoyb bufr_d file (4/day) ~ 10Mb total
+    - mbuoyb bufr_d file (4/day) ~  4Mb total
+    
+     When MAKE_NSST_BUOYB=YES:
+    - dbuoyb bufr_d.llqc file (4/day) ~ 10Mb total
+    - mbuoyb bufr_d.llqc file (4/day) ~  4Mb total
+    - nsstbufr file ~ 14Mb total increase 
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2
+    - obsproc_prep.v5.2.0
+    - obsproc_dump_post.v3.3.0
+    - obsproc_prep_post.v3.1.0
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_remorest.v2.1.0
+    - obsproc_shared/bufr_dumplist.v2.0.1
+
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.2, the default at the time)
+    prod_util         (tested with 1.1.2, the default at the time)
+    prod_envir        (tested with 1.0.3, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.2, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.0.6
+    bufr_dumplist/2.0.1
+    dumpjb/5.0.2
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs for gdas and gfs runs.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.1.0.
+   This must be implemented on Dell-p3.
+
+   This can be implemented prior to, but no later than, the FV3 GFS v15.2
+    upgrade.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20190510_OBSPROC_v11.1.0/obsproc_global.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.1 --> released Aug 31, 2018,
+                             --> implemented Jun 12, 2019
+
+ M obsproc_global/jobs/JGLOBAL_DUMP
+ M obsproc_global/jobs/JGLOBAL_PREP_POST
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+
+ JOB script changes:
+   JGLOBAL_DUMP & JGLOBAL_PREP_POST:
+   - Replaced default TANK* environment variable defaults having 'us007003' (a
+      phase1/2 structure) with '${envir}', appropriate to phase3 layout.
+       BENEFIT: conforms to phase3 directory structures.
+
+   JGLOBAL_DUMP:
+    - Set ice, sst & snowdepth grib field defaults to use $COMROOTp3 env var
+       BENEFIT: conforms to phase3 directory structures.
+
+ Model Script file changes:
+   exglobal_dump.sh.ecf:
+    - Removed the dependency of snowdepth files created from isnowgrib job.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.2.0 --> released Aug 31, 2018,
+                             --> implemented as v3.2.1 to address phase3
+                                  $DCOMROOT; changes handled by NCO SPA
+                             --> implemented Jun 12, 2019
+
+files:
+ D obsproc_global/fix/prepobs_errtable.global
+ D obsproc_global/jobs/JGDAS_DUMP
+ D obsproc_global/jobs/JGDAS_DUMP_POST
+ D obsproc_global/jobs/JGDAS_PREP
+ D obsproc_global/jobs/JGDAS_PREP_POST
+ D obsproc_global/jobs/JGFS_DUMP
+ D obsproc_global/jobs/JGFS_DUMP_POST
+ D obsproc_global/jobs/JGFS_PREP
+ D obsproc_global/jobs/JGFS_PREP_POST
+ A obsproc_global/jobs/JGLOBAL_DUMP
+ A obsproc_global/jobs/JGLOBAL_DUMP_POST
+ A obsproc_global/jobs/JGLOBAL_PREP
+ A obsproc_global/jobs/JGLOBAL_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+   obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ JOB script changes:
+   JGLOBAL_DUMP, JGLOBAL_DUMP_POST, JGLOBAL_PREP, JGLOBAL_PREP_POST:
+    - New.  Created via merging of JGDAS_* and JGFS_* scripts of same trailing
+      name.
+    - These scripts were modified from original JGDAS_* and JGFS_* forms to add a
+      suffix directory containing the cycle time to default values for
+      environment variables $COMIN, $COMOUT, $comin, $comin_m1, $COMINgdas,
+      $COMINgfs and $COMINGFS.
+      BENEFIT: Necessary to handle GFS and GDAS com directory change associated
+               with FV3GFS.
+      BENEFIT: Reduces the number of job scripts and brings into alignment with
+               job script naming convention that will be used by the FV3GFS.
+   JGLOBAL_PREP:
+    - New export variable HOMEgfs is needed to define new default location for
+      fix file prepobs_errtable.global.  Default is $NWROOT/gfs.${gfs_ver}.
+   JGDAS_DUMP, JGDAS_DUMP_POST, JGDAS_PREP, JGDAS_PREP_POST, JGFS_DUMP,
+   JGFS_DUMP_POST, JGFS_PREP, JGFS_PREP_POST:
+    - Removed.  See above for more information.
+
+Script file changes:
+   exglobal_dump.sh.ecf:
+    - Updated to run on Dell-p3 (as well as Cray-XC40 and IBM iDataPlex).
+    - Updated to add dump of OMPS VSN8 nadir profile (NP) (NC008017) and total 
+      column (TC) (NC008018), Indiasat AMV's in tanks b005/xx024 b005/xx025 
+      b005/xx026.
+
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Removed.  Default location for PRVT is the GSI version of the same file.
+      ${HOMEgfs}/fix/fix_gsi
+      BENEFIT: Only one version of this file eases maintenance and alleviates
+               coordination confusion.
+
+
+ Output changes:
+ ---------------
+   All job scripts in gdas and gfs runs:
+    - No changes other than path to output GFS and GDAS files in COMOUT due to
+      added suffix directory containing cycle.
+   Job JGLOBAL_PREP in gdas and gfs runs:
+    - As a result of update to use obsproc_prep.v5.2.0:
+       - The global first guess encoded in the PREPBUFR files may come from a
+         different initial time.
+   Job JGLOBAL_DUMP in gdas and gfs runs:
+    - As a result of update to use obsproc_dump.v5.0.1:
+       - The global dump files will now include ompsn8, ompst8, and the satwnd
+         dump file will include 3 new India Sat AMV tanks:
+         005024, 005025, 005026.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+    Increased $COMROOT usage for the additional dump data: 
+    For gdas network:
+    - ompsn8 bufr_d file ~ 1.9Mb per day
+    - ompst8 bufr_d file ~ 27Mb per day
+    - satwnd bufr_d file ~ 54Mb per day
+    For gfs network:
+    - ompsn8 bufr_d file ~ 1.5Mb per day
+    - ompst8 bufr_d file ~ 22.8Mb per day
+    - satwnd bufr_d file ~ 44Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.1
+    - obsproc_prep.v5.2.0
+    - obsproc_dump_post.v3.3.0
+    - obsproc_prep_post.v3.1.0
+    - obsproc_shared/bufr_avgdata.v2.1.0
+    - obsproc_shared/bufr_dumplist.v2.0.1
+    - obsproc_shared/bufr_remorest.v2.1.0
+
+
+ Required modules:
+  All jobs require:
+    EnvVars           (tested with 1.0.2, the default at the time)
+    prod_util         (tested with 1.1.0, the default at the time)
+    prod_envir        (tested with 1.0.2, the default at the time)
+    ips               (tested with 18.0.1.163, the default at the time)
+    impi              (tested with 18.0.1, the default at the time)
+    CFP               (tested with 2.0.1, the default at the time)
+    lsf               (tested with 10.1, the default at the time)
+  JGLOBAL_DUMP requires:
+    grib_util/1.0.6
+    bufr_dumplist/2.0.1
+    dumpjb/5.0.1
+  JGLOBAL_DUMP_POST, JGLOBAL_PREP, and JGLOBAL_PREP_POST require:
+    w3emc/2.3.0
+    w3nco/2.0.6
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs for gdas and gfs runs.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.0.0.
+   This must be implemented simultaneously with the implementation of:
+      v2.1.0 of obsproc_dump_alert,
+      v3.3.0 of obsproc_nam,
+      v3.1.0 of obsproc_rap.
+   This must be implemented simultaneously with or after the implementations of:
+      v5.0.1 of obsproc_dump,
+      v3.3.0 of obsproc_dump_post,
+      v5.2.0 of obsproc_prep,
+      v3.1.0 of obsproc_prep_post,
+      v2.1.0 of obsproc_shared_bufr_avgdata,
+      v2.0.1 of obsproc_shared_bufr_dumplist,
+      v2.1.0 of obsproc_shared_bufr_remorest.
+   This can also be implemented prior to, but no later than, the FV3 GFS upgrade.
+   This must be implemented on Dell-p3.
+
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20180725_OBSPROC_v11.0.0/obsproc_global.ver $NWROOTp3/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.1.2 --> implemented Nov 13, 2018 
+
+files added, modified or deleted since last release:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - DBN alerts enabled for dump processing of crisf4 data.
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.1.1 --> implemented Jun 24, 2018 
+
+files added, modified or deleted since last release:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - DBN alerts enabled for dump processing of tesac, trkob, and bathy data.
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.1.0 --> released Nov 6, 2017,
+                                 updated Nov 15, 2017
+                             --> implemented Dec 21, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ JOB script changes:
+   All job scripts:
+    - Added $SITE to the files where_t${cyc}z_g*s_*ran.
+    - Added check on the exit status from the ex-scripts.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Corrected some typos.
+    - For runs on iDataPlex where launcher is cfp, no longer attempts to load
+      module cfp because it is already loaded.
+      BENEFIT: Avoids a non-fatal error message as this script runs under ksh.
+    - Include GOES-16 AMV's in tanks b005/xx030, b005/xx031, b005/xx032,
+      b005/xx034 and b005/xx039 as part of "satwnd" dump via use of exported
+      environment variable "ADD_satwnd". Set dump window to -3.00 to +2.99 hours
+      for these 5 new GOES-16 tanks. 
+      BENEFIT: AMV's generated from GOES-16 infrared/long-wave (processing
+               family "IRCD_DMW"), water vapor imager/deep-layer ("WVICS_DMW"),
+               visible ("VISB_DMW"), water vapor imager/cloud-top ("WVICT_DMW")
+               and infrared/short-wave ("SHRTWV_DMW") channels read from BUFR
+               /dcom database files NC005030, NC005031, NC005032, NC005034 and
+               NC005039, resp. will  will now be dumped into the "satwnd" file 
+               for testing and assimilation in the GFS and GDAS GSI (only, for
+               now).  GOES-16 is expected to replace GOES-13 as the operational
+               GOES-E satellite in mid-December 2017.
+    - Added dumps of "crisfs" [S-NPP/NOAA-20 CrIS full spectral radiances (2211
+      channels), type 021, subtype 205] and "crisf4" [S-NPP/NOAA-20 CrIS full
+      spectral radiances (431 channel subset), type 021, subtype 206] over a
+      time window of -3.00 to +2.99 hours in both GFS and GDAS.  These dumps
+      will be created only if at least one tank containing each type is present
+      over the past 10 days (these may have not yet been promoted to /dcom prior
+      to the implementation of exglobal_dump.sh.ecf).
+      BENEFIT: S-NPP "crisfs" and "crisf4" dump files will be generated now for
+               testing and eventual implementation in the GFS GSI. JPSS-1 data
+               will added into these dump files when that satellite's data is
+               available on PDA (also for testing and eventual implementation in
+               the GFS GSI).
+      =======> Note: The decision has been made to not ingest S-NPP/NOAA-20 CrIS
+                     full spectral radiance (2211 channel) data. The files it
+                     generates are too large to currently use in the GSI.  Thus
+                     "crisfs" dumps will not be generated.
+
+
+ Output changes:
+ ---------------
+   Jobs JGDAS_DUMP and JGFS_DUMP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v1.5.0:
+       - Dump files 
+         /gpfs/hps/nco/ops/com/gfs/prod/g*s.$PDY/g*s.t${cyc}z.aircft.tm00.bufr_d
+         now contain Korean AMDAR (BUFR), AMDAR-catchall (BUFR), and Panasonic
+         (AirDAT) TAMDAR (BUFR) reports from b004/xx011, b004/xx103, and
+         b004/xx010 tanks resp.  In cases where AMDAR-catchall (BUFR)
+         (b004/xx103) reports duplicate TAC-feed AMDAR (b004/xx003) reports, the
+         former will be retained.
+       - "TMDARA" [TAMDAR aircraft data-all types (from Panasonic, decoded from
+         BUFR)], "KAMDAR" [Korean AMDAR aircraft data (decoded from BUFR)], and
+         "AMDARB" [AMDAR aircraft data (decoded from BUFR)] will now appear in
+         GDAS and GFS RTDM count graphics.
+    - The GFS and GDAS "satwnd" dump files will now include the five new GOES-16
+      AMV types noted earlier.
+       - "INFUSR" (GOES-16 IR/long-wave AMV's), "H2DUSR" (GOES-16 WV imager/
+          deep-layer AMV's), "VISUSR" (GOES-16 visible AMV's), "H2TUSR" (GOES-16
+          WV imager/cloud-top AMV's), and "3P9USR" (GOES-16 IR/short-wave AMV's)
+          will now appear in GDAS and GFS RTDM count graphics.
+    - As a result of changes to exglobal_dump.sh.ecf of update to use
+      obsproc_shared/bufr_dumplist.v1.5.0:
+       - Dump file
+         /gpfs/hps/nco/ops/com/gfs/prod/g*s.$PDY/g*s.t${cyc}z.crisf4.tm00.bufr_d
+         may now be created (if at least one tank containing this type is
+         present over the past 10 days).
+   Jobs JGDAS_PREP and JGFS_PREP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v1.5.0:
+       - Korean AMDAR (BUFR) (report type 131/231), AMDAR-catchall (BUFR)
+         (report type 131/231) and Panasonic (AirDAT) TAMDAR (BUFR) (report type
+         134/234) reports now encoded into PREPBUFR files and will be available
+         for assimilation.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JGDAS_DUMP and JGFS_DUMP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v1.5.0:
+       - Processing additional aircraft data results in a ~3 second increase in
+         wallclock run time.
+    - As a result of changes to exglobal_dump.sh.ecf of update to use
+      obsproc_shared/bufr_dumplist.v1.5.0:
+       - Generation of new "crisf4" dumps results in a ~10 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+   Jobs JGDAS_PREP and JGFS_PREP:
+    - As a result of update to use obsproc_shared/bufr_dumplist.v1.5.0:
+       - Processing additional aircraft data results in a ~21 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   Initially:
+    /gpfs/hps/nco/ops/com/gfs/prod/gfs.
+                                  - "aircft": Increase ~50 Mb per day
+                                    GOES-16 "satwnd": Increase ~286 Mb per day
+                                    S-NPP "crisf4": Increase ~500 Mb per day
+    /gpfs/hps/nco/ops/com/gfs/prod/gdas.
+                                  - "aircft": Increase ~51 Mb per day
+                                    GOES-16 "satwnd": Increase ~291 Mb per day
+                                    S-NPP "crisf4": Increase ~650 Mb per day
+
+   Not currently included, but numbers here added to show what affect would be if
+   included ((increases on top of above):
+    /gpfs/hps/nco/ops/com/gfs/prod/gfs.
+                                  - JPSS-1 "crisf4": Increase ~500 Mb per day
+                                    S-NPP "crisfs": Increase ~1.5 Gb per day
+                                    JPSS-1 "crisfs": Increase ~3.2 Gb per day
+    /gpfs/hps/nco/ops/com/gfs/prod/gdas.
+                                  - JPSS-1 "crisf4": Increase ~650 Mb per day
+                                    S-NPP "crisfs": Increase ~2.0 Gb per day
+                                    JPSS-1 "crisfs": Increase ~3.8 Gb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v4.0.0
+    - obsproc_prep.v4.0.0
+    - obsproc_dump_post.v3.0.0
+    - obsproc_prep_post.v3.0.0
+    - obsproc_shared/bufr_dumplist.v1.5.0  (updated from v1.3.0)
+    - obsproc_shared/bufr_remorest.v2.0.0
+    - obsproc_shared/bufr_avgdata.v2.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util         (tested with 1.0.17, the default at the time)
+    prod_envir        (tested with 1.0.1, the default at the time)
+  JGDAS_DUMP and JGFS_DUMP require:
+    grib_util/1.0.5
+    cfp_intel_sandybridge/1.1.0
+  JGDAS_DUMP_POST and JGFS_DUMP_POST require:
+    cfp_intel_sandybridge/1.1.0
+  JGDAS_PREP and JGFS_PREP require:
+    cfp_intel_sandybridge/1.1.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.4.
+   This must be implemented simultaneously with the implementation of:
+      obsproc_shared/bufr_dumplist.v1.5.0
+   and either simultaneously with or after the implementation of:
+      v3.4.2 of obsproc_satingest.
+
+   =====>  IMPORTANT: As you can see, the new CrIS-FSR 2231 "crisfs" dumps are
+                      very large now and will more than double in size when
+                      JPSS-1 is on PDA.   The CrIS-FSR 2231 database tanks
+                      (b021/xx205) are also large (see Release_Notes.txt for new
+                      release of obsproc_satingest.v3.4.2 for more information).
+
+                      While it would be preferable to generate these, they can
+                      be left out of this implementation per Andrew Collard. NCO
+                      agrees, so tank b021/xx205 and "crisfs" dumps  will not be
+                      generated.  It should be noted that splitting up the JINPP
+                      jobs (in obsproc_satingest.v3.4.2) and the muti-processing
+                      nature of the dumping means that run time is not an issue
+                      here - only storage.
+
+                      So NCO has decided to not to generate the CrIS-FSR 2231
+                      database tanks meaning they will not initiate the new
+                      obsproc_satingest JINPP_CRIS_2211 job (see "Special
+                      Instructions" in Release_Notes.txt for
+                      obsproc_satingest.v3.4.2).  This will also prevent the GFS
+                      and GDAS dump jobs from attempting to make "crisfs" dumps
+                      since no dumps are generated if there are no b021/xx205
+                      tanks present over the past 10 days (see "Output changes"
+                      above).
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/OBSPROC-v8.0.4/obsproc_global.ver
+   and copy to /gpfs/hps/nco/ops/nwprod/versions.
+
+   Note: The files
+          /gpfs/hps/nco/ops/com/gfs/prod/[gfs][gdas].$PDY/[gfs][gfas].t${cyc}.satwnd.tm00.bufr_d.listing
+         generate garbled report listings for all GOES-16 data at this time.
+         This does not affect NCEP production.  It will be corrected at a later
+         date.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 3.0.0 --> prelim release Mar 13, 2017,
+                             --> updated Apr 13, 2017
+                             --> implemented Jul 19, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_global/fix/prepobs_errtable.global
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All job scripts:
+    - Use variable $RUN rather than $model to set the default COMIN and COMOUT
+      directory basenames for GFS job scripts because variable $model is now
+      used by NCO for another purpose.
+    - Use new variable $RUND rather than $model to set the default COMIN and
+      COMOUT directory basenames for GDAS job scripts because "$model" now used
+      by NCO for another purpose. (Use of $RUND rather than $RUN for GDAS
+      scripts is temporary to get through "gdas1" to "gdas" transition).
+    - Changed default RUN from "gdas1" to "gdas" for GDAS jobs due to new file
+      naming convention for 2017 GFS upgrade.
+    - Added shebang to use /bin/bash interpreter
+    - Reorganized to set execution trace prompt string (PS4) closer to the top
+    - Added Module package initialization so that the module function can be
+      found to list currently loaded modules when running on luna and surge
+      (which currently use a setup that does not export the module function to
+      child scripts)
+    - Made variable jobid expandable to preserve the setting exported from NCO
+      wrapper scripts.
+    - Explicitly copy needed prod utils to the working directory (in place
+      of old setup.sh)
+   JGDAS_DUMP, JGFS_DUMP:
+    - Removed load of grib_util module (latest preferred practice is to load 
+      modules in the parent environment).
+   JGDAS_PREP, JGFS_PREP:
+    - Added new variable NEMSIO_IN with default setting of ".true." to tell
+      obsproc_prep software whether to process nemsio global forecast files
+      vs the older sigio files.
+    - Added new variables COMINgdas and COMINgfs needed by new getges script.
+    - Removed load of util_shared module (no longer needed)
+    - Use variable $NWROOTp1 to find decoder dictionary directory.
+    - Removed NPROCS.  (This variable is now set if needed in obsproc_prep)
+    - Added variable PROCESS_UNBLKBUFR with default of "NO" (see related change
+      for exglobal_makeprepbufr.sh.ecf, below).
+   JGDAS_DUMP_POST and JGFS_DUMP_POST:
+    - Use new directory $COMROOT/gfs/$envir/sdm_rtdm to hold obcount_30day and
+      avgdata directories which contain dump status info to help the SDM 
+      monitor changes in data counts.
+   JGDAS_DUMP_POST:
+     - Changed default setting for PROCESS_UNBLKBUFR to "NO", turning off
+       creation of copies of bufr dump files with the "unblok" extension.
+   JGDAS_PREP_POST:
+    - Changed default location for DATACOM* variables from /com/arch/$envir to
+      $COMROOT/gfs/$envir/gdascounts.
+    - Changed default location for SATCOM* variables from $COMROOT/gfs/$envir to
+      $COMROOT/gfs/$envir/gdascounts.
+    - The naming convention for SATCOM subdirectories was also modified from
+      satcounts/$MON to satcounts.$YYYYMM to ease maintenance.
+    - The default location for the VOS ship names archive remains under
+      $COMROOTp2/arch/$envir because downstream usage is from the IBM.
+   JGDAS_PREP_POST and JGFS_PREP_POST:
+    - Added variable PROCESS_UNBLKBUFR with default of "NO".
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Run under ksh.  Necessary on luna and surge in order to create here-docs
+      if variable TMPDIR was imported in an lsf job.
+    - Added logic to determine if running on Cray-XC40 or IBM iDataPlex.
+    - Added MPMD logic for running on Cray-XC40 or IBM iDataPlex.
+    - Moved amsr2 to new dump group (11) to improve performance on Cray-XC40.
+    - Removed obsolete/commented block of logic that was added to the script by
+      SPA during WCOSS transition (to alert radiosonde related data for DDS).
+   exglobal_makeprepbufr.sh.ecf:
+    - Added step to create nsstbufr file needed for 2017 GFS upgrade analysis.  
+    - Added alert for gdas.t??Z.prepbufr.acft_profiles. (expected to go to 
+      restricted section of nomads server only)
+    - Added logic to save and alert atmospheric guess files using 2017 GFS
+      naming conventions.
+    - Added wrappers to check setting of new variable $PROCESS_UNBLKBUFR to
+      determine whether or not to create and alert a copy of the output prepbufr
+      file with extension "unblok". The default setting is NO.
+    - dbn_alerts for gdas prepbufr files will have alert subtype prefix of GDAS
+      rather than GDAS1.
+ 
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Updated wind ob errors for type 247 (GOES clear air water vapor winds)
+
+
+ Output changes:
+ ---------------
+   All job scripts:
+    - GDAS files that previously had names that started with "gdas1" will now
+      have names that start with "gdas".  Eg, gdas1.t00z.adpupa.tm00.bufr_d
+      becomes gdas.t00z.adpupa.tm00.bufr_d.
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v3.0.0:
+       - The use of mail.py rather than the mail command means the SDM should
+         start to see mail msgs about dump counts for GDAS cycles.
+    - As a result of updates to obsproc_prep_post.v3.0.0,
+      obsproc_shared/bufr_remorest.v2.0.0 & obsproc_shared/bufr_avgdata.v2.0.0:
+       - Due to the upgrade in ifort compiler version from 12.1 (on IBM) to
+         16.x.x (on Cray and IBM) some printed values in output informational
+         files (e.g., bufr_listdumps output) and dayfiles will no longer include
+         a leading zero or may reference 0.00 as -0.00.
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - New files gdas.tCCz.nsstbufr and gfs.tCCz.nsstbufr (for CC=00,06,12,18)
+      are created for downstream analysis jobs. These are simply a concatenation
+      of the sfcshp, tesac, bathy, trkob dump files for the given cycle.  They
+      are restricted because they contain restricted ship data.
+    - As a result of update to obsproc_prep.v4.0.0:
+       - Due to the upgrade in ifort compiler version from 12.1 (on IBM) to
+         16.x.x (on Cray and IBM) some printed values in output informational
+         files and dayfiles will no longer include a leading zero or may
+         reference 0.00 as -0.00.
+       - If syndat_syndata runs, increases in max number of obs that can be
+         processed in storm vicinity ensures that all obs are processed and
+         eliminates partial processing of statistics.
+   Jobs JGDAS_PREP_POST, JGFS_PREP_POST:
+    - As a result of updates to obsproc_prep_post.v3.0.0 and
+      obsproc_shared/bufr_remorest.v2.0.0:
+       - Due to the upgrade in ifort compiler version from 12.1 (on IBM) to
+         16.x.x (on Cray and IBM) some printed values in output informational
+         files and dayfiles will no longer include a leading zero or may
+         reference 0.00 as -0.00.
+   Jobs JGDAS_DUMP_POST, JGDAS_PREP, JGFS_PREP, JGDAS_PREP_POST, JGFS_PREP_POST:
+    - As noted in Dissemination section below, unblok versions of bufr_d and
+      prepbufr files will no longer be generated.
+
+
+ Compute Resource Information:
+ -----------------------------
+   With the move from IBM iDataPlex to Cray-XC40 come significant changes to the
+   job cards.  These were provide to SPA in a separate document.
+ 
+   Performance:
+     - jgfs_dump and jgdas_dump run times are about the same but with larger
+       variance on the cray.
+     - jgfs_prep and jgdas_prep runs are faster with this upgrade by ~30s.
+     - jgfs_dump_post and jgdas_dump_post jobs are slower (~30s for gfs and ~60s
+       for gdas) due to poor performance of the bufr dump file lister on the
+       cray.  (i/o buffering did not help).
+     - jgfs_prep_post runs are a few seconds slower, jgdas_prep_post runs are
+       typically ~15-30 seconds slower. Worst case is the 18z run on the 2nd of
+       the month might take an additional two to three minutes due to extra text
+       processing to compute monthly summaries of data counts.
+
+
+ Disk Space Changes:
+ -------------------
+   Roughly 6.5Gb saved per day in com (and hpss) due to retirement of "unblok"
+   files.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v4.0.0 (updated from v3.3.0)
+    - obsproc_prep.v4.0.0 (updated from v3.8.0)
+    - obsproc_dump_post.v3.0.0 (updated from v2.3.0)
+    - obsproc_prep_post.v3.0.0 (updated from v2.3.0)
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v2.0.0 (updated from v1.0.0)
+    - obsproc_shared/bufr_avgdata.v2.0.0 (updated from v1.0.1)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util         (tested with 1.0.8, the default at the time)
+    prod_envir        (tested with 1.0.1, the default at the time)
+  JGDAS_DUMP and JGFS_DUMP require:
+    grib_util/1.0.5
+    cfp_intel_sandybridge/1.1.0
+  JGDAS_DUMP_POST and JGFS_DUMP_POST require:
+    cfp_intel_sandybridge/1.1.0
+  JGDAS_PREP and JGFS_PREP require:
+    cfp_intel_sandybridge/1.1.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+   - Details provided in a separate document.
+
+
+ Downstream users:
+ ----------------
+   - The main users of this output are the GDAS and GFS networks.
+   - Dump count information produced by the dump_post jobs are used by
+     the models_realtime package.
+
+
+ Dissemination:
+ --------------
+   - All files that had filename prefix "gdas1" will be renamed with filename
+     prefix "gdas" (unless they are in the list of files to be discontinued).
+     The alert subtype is changed accordingly ("GDAS1_" will be "GDAS_")
+   - The following versions of bufr dump and prepbufr files will no longer be
+     generated and alerted for CC=00,06,12,18:
+        gdas1.tCCz.*.tm00.bufr_d.unblok
+        gdas1.tCCz.*.tm00.bufr_d.unblok.nr
+        gfs.tCCz.prepbufr.unblok
+        gfs.tCCz.prepbufr.unblok.nr
+        gdas1.tCCz.prepbufr.unblok
+        gdas1.tCCz.prepbufr.unblok.nr
+     Files with the same content will continue to be available without the
+     "unblok" filename qualifier (and with the change in prefix for gdas files).
+     Eg, file gdas1.t00z.adpupa.tm00.bufr_d.unblok will be available as
+     gdas.t00z.adpupa.tm00.bufr_d and file gfs.t00z.prepbufr.unblok.nr will be
+     available as gfs.t00z.prepbufr.nr.  There is one exception to the pattern
+     in that gdas1.tCCz.sfcshp.tm00.bufr_d.unblok will be available as
+     gdas.tCCz.sfcshp.tm00.bufr_d.nr.
+   - When JGFS_PREP is run with swich NEMSIO_IN=.true. (which is the default),
+     the atmospheric guess files alerted by this job will be gridded binary
+     (nemsio) rather than spectral coordinates (sigio). The nemsio global files
+     are 3.55Gb larger than their sigio counterparts. The filenames and
+     dbn_alert subtypes are changing as follows:
+          Old file       Old Alert           New file              New alert
+          --------       ---------           --------              ---------
+     gfs.tCCz.sgesprep GFS_sges_PREP -> gfs.tCCz.atmges.nemsio GFS_atmges_NEMSIO
+     gfs.tCCz.sgm3prep GFS_sgm3_PREP -> gfs.tCCz.atmgm3.nemsio GFS_atmgm3_NEMSIO
+     gfs.tCCz.sgp3prep GFS_sgp3_PREP -> gfs.tCCz.atmgp3.nemsio GFS_atmgp3_NEMSIO
+    
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1.
+   The following must be implemented before or simultaneously:
+      obsproc_prep.v4.0.0
+      obsproc_dump_post.v3.0.0
+      obsproc_prep_post.v3.0.0
+      obsproc_dump_alert.v2.0.0
+      obsproc_shared/bufr_avgdata.v2.0.0
+      obsproc_shared/bufr_remorest.v2.0.0
+      obsproc_nam.v3.2.0                   (simultaneous)
+      obsproc_rap.v2.5.0                   (simultaneous)
+      obsproc_rtma.v2.3.0                  (simultaneous)
+      obsproc_urma.v2.3.0                  (simultaneous)
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170413_OBSPROC-v8.0.1/obsproc_global.ver
+   and copy to /gpfs/hps/nco/ops/nwprod/versions.  This is the first
+   obsproc_global.ver file in that directory.
+
+   More detailed instructions provided in separate documents.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.4.0 --> released Jan 12, 2017, 
+                             --> implemented Feb 21, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_global/fix/prepobs_errtable.global
+ M obsproc_global/fix/prepobs_oiqc.oberrs
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/parm/prepobs_prepdata.gdas.parm
+ M obsproc_global/parm/prepobs_prepdata.gfs.parm
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All job scripts:
+    - Move check that required variables are set to top of script.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JGDAS_DUMP, JGFS_DUMP:
+    - Set default for new script variable $KEEP_NEARDUP_ACFT to "NO" to ensure
+      that near-duplicate aircraft reports will not be retained.
+      BENEFIT: Testing has shown that the inclusion of these near-duplicate
+               aircraft reports degrades the GFS forecast five days out.  The
+               GSI may need to be updated to include thinning of aircraft
+               reports before the near-duplicate aircraft reports can be
+               introduced.  This switch will allow for an easy change to
+               include these data at some future time.
+   JGDAS_PREP, JGFS_PREP:
+    - Minor comment change.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Added global dumps of "esiasi", "saphir", "crisdb", "esatms", "amsr2",
+      "iasidb", "escris", "sevasr" and "atmsdb", all with time window of -3.00
+      to +2.99 hours about center dump time. Dumps of "esatms" and "escris" will
+      be created only if at least one tank is present in the past 10 days (these
+      may have not yet been promoted to /dcom prior to the implementation of
+      exglobal_dump.sh.ecf).
+      BENEFIT: These will be tested in GFS/GDAS GSI.
+    - Added new dump group and reordered cfp commands to improve load balance,
+      needed with so many new dump types added.
+      BENEFIT: Speeds up run time (~20 sec) over original configuration where
+               new dump types were randomly added to just two dump groups.
+               [Note: Dump job run times are still slower than before due to the
+                      addition of the new dump types (see Compute Resource
+                      Information below).]
+    - Removed temporary logic added in v2.3.0 which changed "gpsipw" dump file's
+      group to "rstprod" and its permission to "640" so that it could only be
+      read by users in the rstprod group.  This is no longer needed since
+      "gpsipw" has now been added to the list of dump files for which this needs
+      to be done in obsproc_dump.v3.3.0 which is being implemented
+      simultaneously with obsproc_global.v2.4.0.
+
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Added temperature and moisture ob errors up to 100 mb for type 134
+      (TAMDAR) (was missing).
+    - Added uv wind ob errors up to 100 mb for type 234 (TAMDAR) (was missing).
+    - Added temperature ob errors at all levels for type 135 (Canadian AMDAR)
+      (was missing).
+    - Added uv wind ob errors at all levels for type 235 (Canadian AMDAR) (was
+      missing).
+    BENEFIT: These types will soon be tested for future assimilation. Use will
+             be controlled only by convinfo file.
+    - Added temperature and moisture ob errors up to 500 mb for types 181
+      (surface land SYNOP), 183 (surface with est. psfc) and 187 (surface land
+      METAR) (was missing).
+    - Added uv wind ob errors up to 500 mb for types 281 (surface land SYNOP),
+      284 (surface with est. pstn) and 287 (surface land METAR).
+    BENEFIT: These types may be tested for assimilation someday. Use will be
+             controlled only by convinfo file.
+    - Set temperature and moisture ob errors to missing above 500 mb for types
+      180 (surface marine) and 182 (splash-level dropwinsonde).
+    - Set uv wind ob errors to missing above 500 mb for types 280 (surface
+      marine), 282 (buoy with missing psfc), 283 (SSM/I) and 285 (QuikSCAT).
+    BENEFIT: Prevents any chance of assimilation if pressure is grossly bad.
+             (Types 180/280, 182, 282 used now; types 283 and 285 were used at
+              one time.)
+
+ Parm file changes:
+   prepobs_prepdata.gdas.parm, prepobs_prepdata.gfs.parm:
+    - The default overrides for AWINDO, JAMASS, JAWIND, IACFTL, AIFNOW and
+      FLACMS are extended to accommodate three additional aircraft data types:
+      Korean AMDAR (BUFR), AMDAR-catchall (BUFR) and Panasonic (AirDAT) TAMDAR
+      (BUFR).  There were six, now there are nine.  Moisture will be processed
+      (if available) for all three types, but otherwise they will get the same
+      values as previously existing AMDAR types.  These three new aircraft data
+      types, like all aircraft types, will be processed and included in the
+      PREPBUFR files if found in the "aircft" dump files.
+      BENEFIT: Korean AMDAR (BUFR) and AMDAR-catchall (BUFR) will be available
+               for assimilation by the GFS/GDAS GSI once found in "aircft" dump
+               files (they are not yet there).  Panasonic (AirDAT) TAMDAR (BUFR)
+               will be available for testing and eventual assimilation by the
+               GFS/GDAS GSI once found in "aircft" dump files (they are not yet
+               there).
+
+
+ Output changes:
+ ---------------
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - Creates new dump files
+      /com2/gfs/prod/$RUN.$PDY/$model.t${cyc}z.<file>.tm00.bufr_d ,
+      where cyc= 00, 06, 12, 18; RUN= gfs, gdas; model= gfs, gdas1; 
+      and file = esiasi, saphir, crisdb, esatms, amsr2, iasidb, escris, sevasr,
+      atmsdb. (Note "saphir" dump file is restricted.)
+    - "ESIASI" (IASI DB radiances from RARS), "SAPHIR" (MT SAPHIR btemps),
+      "CRISDB" (CrIS DB radiances from UW/SSEC), "ESATMS" (ATMS DB btemps from
+      RARS), "AMSR2" (AMSR2 btemps), "IASIDB" (IASI DB radiances from UW/SSEC),
+      "ESCRIS" (CrIS DB radiances from RARS), "SEVASR" (SEVIRI all-sky
+      radiances) and "ATMSDB" (ATMS DB btemps from UW/SSEC) will now appear in
+      GFS ("GFS") and GDAS ("GDS") RTDM count graphics.
+    - After ARINC switches to v7 BUFR for AMDAR and MDCRS, dump files
+      /com2/gfs/prod/$RUN.$PDY/$model.t${cyc}z.aircar.tm00.bufr_d
+      (where cyc= 00, 06, 12, 18; RUN= gfs, gdas; model= gfs, gdas1) can
+      potentially store lat/lon (CLAT/CLON) to 10**5 precision.
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - Creates new non-restricted dump files
+         /com2/gfs/prod/$RUN.$PDY/$model.t${cyc}z.saphir.tm00.bufr_d.nr ,
+         where cyc= 00, 06, 12, 18; RUN= gfs, gdas; model= gfs, gdas1.
+       - Creates new names for dump alert flag files:
+         /com2/gfs/prod/$RUN.$PDY/$model.t${cyc}z.dump_alert_flag.tm00 ,
+         where cyc= 00, 06, 12, 18; RUN= gfs, gdas; model= gfs, gdas1.
+         (Note: Legacy filenames
+                /com2/gfs/prod/$RUN.$PDY/$model.t${cyc}z.dump_alert_flag
+                will still be output until JDUMP_ALERT is transitioned to read
+                from new filenames.)
+       - Creates new names for dump alert log files:
+         /com2/logs/alertlog/$RUN.t${cyc}z.tm00 and
+         /com2/logs/alertlog/trend_vs_[03][06][09][12]months_ago.$RUN.t${cyc}z.tm00 ,
+         where cyc= 00, 06, 12, 18; RUN= gfs, gdas.
+         (Note: Legacy filenames
+                /com2/logs/alertlog/$RUN.t${cyc}z and
+                /com2/logs/alertlog/trend_vs_[03][06][09][12]months_ago.$RUN.t${cyc}z
+                will still be output until such time that the filename change
+                can be advertised.)
+       - Listings for "aircft", "aircar", "adpupa", "adpsfc", "sfcshp",
+         "ascatw" and "gpsipw" dumps now print lat/lon out to 0.00001 degree
+         (although actual significance is still based on precision in the BUFR
+         lat/lon encoded in each dump file).
+    - As a result of updates to obsproc_dump.v3.3.0 and obsproc_dump_post.v2.3.0:
+       - The updated status files in
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.updated.status.tm00.bufr_d
+         will now contain dump counts and 30-d avg dump counts for new data
+         types "esiasi", "saphir", "crisdb", "esatms", "amsr2", "iasidb",
+         "escris", "sevasr" and "atmsdb".
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - E-AMDAR moisture now excoded into PREPBUFR files (not considered by
+         assimilation).
+       - PREPBUFR files now store lat/lon (YOB/XOB) to 10**5 precision, this
+         will potentially be seen for the following types: AIRCFT 131/231
+         E-AMDAR (only), AIRCFT 135/235 (Canadian-AMDAR), AIRCAR 133/233 (MDCRS)
+         (after ARINC switches to v7 BUFR for AMDAR and MDCRS); as well as in
+         GPSIPW 153 since this has 10**5 precision in dumps.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - program bufr_edtbfr uses more memory due to an increase in array parameter
+         "ISTNID_MATCH":
+               previous: The maximum resident set size (KB) = 239108
+               now:      The maximum resident set size (KB) = 258952
+    - The changes in model script exglobal_dump.sh.ecf.sh.ecf (see above) result
+      in ~25-30 sec increase in run time.
+    - No change in requested resources in the job cards.
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - program bufr_listdumps uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - A couple of seconds increase in wallclock run time.
+    - No change in requested resources in the job cards.
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - program prepobs_prepdata uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+       - program prepobs_prepacqc uses more memory due to an increase in array
+         parameter MAXFLT and now passing double-precision latitude/longitude:
+               previous: The maximum resident set size (KB) = 1365088
+               now:      The maximum resident set size (KB) = 1369196
+    - No change in requested resources in the job cards.
+    - ~8 second increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/gfs/prod/gfs .  - Increase ~4.47 Gb per day
+   /com2/gfs/prod/gdas.  - Increase ~5.32 Gb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0 (updated from v3.2.1)
+    - obsproc_prep.v3.8.0 (updated from v3.7.0)
+    - obsproc_dump_post.v2.3.0 (updated from v2.2.1)
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.5, the
+               default at the time)
+  JGDAS_DUMP and JGFS_DUMP require:
+    grib_util/v1.0.1 (loaded in job script)
+  JGDAS_PREP, JGFS_PREP and JGDAS_PREP_POST require:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the GDAS and GFS networks.
+   - The following will now be alerted for cyc=00,06,12,18:
+        gfs.t${cyc}z.amsr2.tm00.bufr_d
+        gfs.t${cyc}z.atmsdb.tm00.bufr_d
+        gfs.t${cyc}z.crisdb.tm00.bufr_d
+        gfs.t${cyc}z.esatms.tm00.bufr_d
+        gfs.t${cyc}z.escris.tm00.bufr_d
+        gfs.t${cyc}z.esiasi.tm00.bufr_d
+        gfs.t${cyc}z.iasidb.tm00.bufr_d
+        gfs.t${cyc}z.saphir.tm00.bufr_d.nr
+        gfs.t${cyc}z.sevasr.tm00.bufr_d
+        gdas1.t${cyc}z.amsr2.tm00.bufr_d
+        gdas1.t${cyc}z.atmsdb.tm00.bufr_d
+        gdas1.t${cyc}z.crisdb.tm00.bufr_d
+        gdas1.t${cyc}z.esatms.tm00.bufr_d
+        gdas1.t${cyc}z.escris.tm00.bufr_d
+        gdas1.t${cyc}z.esiasi.tm00.bufr_d
+        gdas1.t${cyc}z.iasidb.tm00.bufr_d
+        gdas1.t${cyc}z.saphir.tm00.bufr_d.nr
+        gdas1.t${cyc}z.sevasr.tm00.bufr_d
+        (Note: saphir dumps in GFS and GDAS are not alerted because they are
+               restricted.)
+   - No other changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com2 noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.5.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.2.0 of obsproc_cdas,
+      v3.3.0 of obsproc_dump,
+      v2.1.0 of obsproc_dump_monitor,
+      v2.3.0 of obsproc_dump_post,
+      v2.3.0 of obsproc_nam,
+      v3.8.0 of obsproc_prep,
+      v2.3.0 of obsproc_rap,
+      v2.2.0 of obsproc_rtma,
+      v2.2.0 of obsproc_urma.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170112_OBSPROC-v6.5.0/obsproc_global.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.3.2 --> released Oct 28, 2016, 
+                             --> implemented Nov 1, 2016
+
+ only change:
+
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JGDAS_DUMP, JGFS_DUMP:
+    - Moved RTGSSTHR and SEAICE to Phase2. 
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.3.1 --> released Oct 7, 2016, 
+                             --> implemented Oct 11, 2016
+
+ only change:
+
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Resume dbn_alert ${COMSP}gpsipw.tm00.bufr_d (this restricted file goes
+      only to NASA and NESDIS access control login directory). 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump_post.v2.2.1 (updated from v2.2.0)
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.3.0 --> released Sep 1, 2016, 
+                             --> implemented Sep 27, 2016
+
+files added, modified or deleted since last release:
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JGDAS_DUMP, JGFS_DUMP:
+    - Points to latest version of obsproc_shared/bufr_dumplist in Phase 2 vs.
+      Phase 1 ($NWROOTp2 replaces $NWROOTp1; the transitional setting for
+      $NWROOTp2 added).
+    - Removed setting of temporary variable EXGRBIX.
+    - Remove exported script variable $utilparm (which defaulted to
+      /nwprod/util/parm) as it is no longer required by any child scripts.
+    - Obtains version number for module grib_util via imported environment
+      variable $grib_util_ver.  This is defined in the upstream ecflow script.
+      Current setting is grib_util_ver=v1.0.1 (thus module grib_util/v1.0.1
+      is still used here).
+      BENEFIT: Allows for more flexibility in changing version numbers for this
+               module (before this module was hardwired to a specific version
+               number).
+   JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - Points to latest version of obsproc_dump_post and
+      obsproc_shared/bufr_dumplist in Phase 2 vs. Phase 1 ($NWROOTp2 replaces
+      $NWROOTp1; the transitional setting for $NWROOTp2 added).
+    - More flexible options for specifiying variables $AVGDarch_IN,
+      $AVGDarch_OUT and $ALERTL in developer runs.
+   JGDAS_PREP, JGFS_PREP:
+    - Obtains version number for module util_shared via imported environment
+      variable $util_shared_ver.  This is defined in the upstream ecflow script.
+      Current setting is util_shared_ver=v1.0.4.
+       - Load module util_shared/v1.0.4.
+      BENEFIT: Defines prepended path now relied on to run utility ush
+               getges.sh in ush script prepobs_makeprepbufr.sh.
+    - Now sets GETGES_COM with default of "/com2" if GETGES_COM is not imported
+      from driver script.  This always overrides getges.sh default "$COMROOT".
+      Before, GETGES_COM first defaulted to "$COMROOT" and then to "/com" if
+      COMROOT was not imported from driver script (this had been put in place
+      as the GFS/CDAS was transitioning from Phase 1 to Phase 2).
+      BENEFIT: Gives more flexibility for cases when a development or test run
+               may redirect COMROOT to an alternate location. Avoids the need
+               to set GETGES_COM in the driver script in this case.  Also
+               allows GETGES_COM to be set to an alternative location in driver
+               script.
+    - Added GETGES_NWG with default of "/nwges2" if GETGES_NWG is not imported
+      from driver script.  This always overrides getges.sh default "$GESROOT".
+      BENEFIT: Gives more flexibility for cases when a development or test run
+               may redirect GESROOT to an alternate location. Avoids the need
+               to set GETGES_NWG in the driver script in this case.  Also
+               allows GETGES_NWG to be set to an alternative location in driver
+               script.
+    - Points to latest version of obsproc_prep in Phase 2 vs. Phase 1 ($NWROOTp2
+      replaces $NWROOTp1; the transitional setting for $NWROOTp1 no longer
+      needed; the transitional setting for $NWROOTp2 added).
+    - Remove exported script variable $utilexec (which defaulted to
+      /nwprod/util/exec) as it is no longer required by any child scripts.
+   JGDAS_PREP_POST:
+    - Obtains version number for module util_shared via imported environment
+      variable $util_shared_ver.  This is defined in the upstream ecflow script.
+      Current setting is util_shared_ver=v1.0.4.
+       - Load module util_shared/v1.0.4 (rather than previous hardwired
+         util_shared/v1.0.2).
+    - Split imported script variables into separate input and output
+      variable as follows:
+       - $SATCOM into $SATCOMIN and $SATCOMOUT_dir
+       - $DATCOM into $DATCOMIN and $DATCOMOUT_dir
+       - $ARCHCOM into $ARCHCOMIN and $ARCHCOMOUT
+       - $DATCOM1 into $DATCOM1_IN and $DATCOM1_OUT
+      these are all now tuned based on production vs. developer runs.
+      BENEFIT: Allows developer runs to specify a production input location and
+               a local output location.
+    - More flexible options for specifiying variables $VOSarch_IN and
+      $VOSarch_OUT in developer runs.
+    - Replaces generic $NWROOT with more specific $NWROOTp2 as root to
+      obsproc_prep_post in Phase 2 (the transitional setting for $NWROOTp2
+      added).
+   JGFS_PREP_POST:
+    - Remove exported script variable $utilexec (which defaulted to
+      /nwprod/util/exec) as it is no longer required by any child scripts.
+    - Replaces generic $NWROOT with more specific $NWROOTp2 as root to
+      obsproc_prep_post in Phase 2 (the transitional setting for $NWROOTp2
+      added).
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Replaced "/com" with full file name path beginning with ${COMSP} in
+      messages posted to jlogfile when copying 0.5 degree snow grib file, T574
+      snow grib file, engice grib file and lowres sst grib file.
+      BENEFIT: Adds more information, generalizes now that prod i/o is /com2.
+    - Moved GPSIPW from dump group #3 to dump group #4 and adjusted the window 
+      from +/- 3-hours to +/- 0.05 hours (3-min) to accommodate the new Ground
+      Based GPS-IPW/ZTD (from U.S.-ENI and foreign GNSS providers) in dump
+      message type NC012004.
+      BENEFIT: These are not yet assimilated by the Global-GSI but they are
+               monitored.  This change prevents a potential overload of reports
+               from reaching the GSI.  Only reports at cycle time will be
+               available for monitoring (similar change made in NAM and RAP,
+               networks that do assimilate these data).  (This may be tweaked in
+               the future, but done now just to be safe.)
+    - Now dumps "adpupa" after all other types are dumped if new environment
+      variable $ADPUPA_wait is set to "YES".
+      BENEFIT: Set to "YES" in GFS network to maximize RAOB, PIBAL, and,
+               especially, RECCO and DROPSONDE data availability. (Set to "NO"
+               in GDAS network where the late cutoff means this is not needed.
+               When ADPUPA_wait=NO the dump jobs will run a bit faster.
+    - Added temporary logic to change "gpsipw" dump file's group to "rstprod"
+      and its permission to "640" so that it can only be read by users in the
+      rstprod group.
+      BENEFIT: New "gpsipw" dump file is restricted.  The logic to restrict dump
+               files is done in obsproc_dump ush script bufr_dump_obs.sh, where
+               the list of files to restrict is hardwired.  Since obsproc_dump
+               is not included in this release bundle, the restriction must be
+               done here.  This temporary logic will be removed once a future
+               change to add "gpsipw" to the list of dump files to restrict is
+               made in the next obsproc_dump release.
+
+
+ Output changes:
+ ---------------
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.3.0:
+       - Dump files
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.gpsipw.tm00.bufr_d
+         now contain new U.S.-ENI and foreign-GNSS Ground Based GPS-IPW/ZTD
+         (message type NC012004) (before they contained U.S.-GSD Ground Based
+         GPS-IPW/ZTD, message type NC012003).  They will also now be restricted.
+          - As a result of above, the dump "status" files
+            /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.status.tm00.bufr_d
+            will now reflect a much lower dump count for data group "gpsipw"
+            (now in 012.004 as opposed to 012.003 before) since the dump time
+            window has been greatly reduced (see below).  This change in dump
+            counts will be reflected in the RTDM "Model Data Dump Tables - GFS"
+            and "Model Data Dump Tables - GDS" under the new data type "gnss"
+            (which replaces "gpspw" which represented the old-GSD feed).
+    - The time window for new U.S.-ENI and foreign-GNSS Ground Based
+      GPS-IPW/ZTD in dump files
+      /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.gpsipw.tm00.bufr_d
+      is +/- 3-min about cycle time (the time window for previous U.S.-GSD
+      Ground Based GPS-IPW/ZTD was +/- 3-hr about cycle time).
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.2.0:
+       - The following new files are created:
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.gpsipw.tm00.bufr_d.nr
+       - The updated status files in
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.updated.status.tm00.bufr_d
+         will now contain dump counts and 30-d avg dump counts for new data type
+         "gnss" (new-GSD feed which replaces "gpspw" which represented the old-
+         GSD feed).
+       - Dump listing files
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.gpsipw.tm00.bufr_d.listing
+         list lat and lon to nearest 0.00001 degree rather than to nearest 0.01
+         degree.  These files are now restricted.
+       - Information for 30-day average for "GOES/NESDIS infrared short-wave
+         derived cloud motion(3p9us)" is now available in files
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.updated.status.tm00.bufr_d.
+         This completes missing data in RTDMS graphics.
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - As a result of update to obsproc_prep.v3.7.0:
+       - Reports in PREPBUFR files with message type GPSIPW (report type 153)
+         will now contain new U.S.-ENI Ground Based GPS-IPW/ZTD at cycle time
+         (before they contained U.S.-GSD Ground Based GPS-IPW at 15-min past
+         each hour in the dump file).
+          - Encodes zenith total delay (when present) and its error into
+            PREPBUFR file, represented by "atmospheric path delay in satellite
+            signal" (mnemonic APDS) and "error in atmospheric path delay in
+            satellite signal" (mnemonic APDE), resp., in association with
+            hardwired azimuth angle (mnemonic BEARAZ) of 0.0 (deg) and hardwired
+            elevation angle (mnemonic ELEV) of 90.0 (deg).
+    - As a result of update to obsproc_prep.v3.6.0:
+       - Surface land METAR reports in PREPBUFR files with message type ADPSFC
+         (report type 187) will now contain a cloud ceiling field (derived from
+         cloud amount and cloud height values) represented by mnemonic CEILING.
+         This is not read by the Global-GSI.
+   Jobs JGDAS_PREP_POST, JGFS_PREP_POST:
+    - As a result of update to obsproc_prep_post.v2.3.0:
+       - Non-restricted PREPBUFR files Files
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.prepbufr.nr
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.prepbufr_pre-qc.nr
+         /com2/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.prepbufr.unblok.nr
+         no longer contain any reports in message type "GPSIPW" (as all reports
+         are restricted and stripped out)
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - ~3 second increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/gfs/prod/gfs.   - Increase ~1.1 Mb per day
+   /com/gfs/prod/gdas.  - Increase ~7.4 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.7.0 (updated from v3.5.0)
+    - obsproc_dump_post.v2.2.0 (updated from v2.1.0)
+    - obsproc_prep_post.v2.3.0 (updated from v2.2.0)
+    - obsproc_shared/bufr_dumplist.v1.3.0 (updated from v1.2.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.4, the
+               default at the time)
+  JGDAS_DUMP and JGFS_DUMP require:
+    grib_util/v1.0.1 (loaded in job script)
+  JGDAS_PREP, JGFS_PREP and JGDAS_PREP_POST require:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+   - This is part of the parallel test of the new GPS-IPW update.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the GDAS and GFS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.4.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.1.0 of obsproc_cdas,
+      v2.0.0 of obsproc_dump_monitor,
+      v2.2.0 of obsproc_dump_post,
+      v2.2.0 of obsproc_nam,
+      v3.7.0 of obsproc_prep,
+      v2.3.0 of obsproc_prep_post,
+      v2.2.0 of obsproc_rap,
+      v1.3.0 of obsproc_shared/bufr_dumplist;
+   but AFTER the implementation of v3.1.0 of obsproc_satingest.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160901_OBSPROC-v6.4.0/obsproc_global.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.2.0 --> released Jan 27, 2016, 
+                                 updated Feb 23, 2016,
+                                 updated Mar 30, 2016
+                             --> implemented May 11, 2016
+
+files added, modified or deleted since last release:
+ M obsproc_global/fix/prepobs_errtable.global
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Use NCO-established variables to point to root directories for main
+      software components and input/output directories in order to run on
+      WCOSS Phase 1 or Phase 2.  (Some util* variables remain and point to
+      /nwprod/util as required by obsproc application scripts).
+    - Use NCO-established variables to point to prod and grib utilities.
+    - Execute "module list" to echo "Currently Loaded Modulefiles" to stdout.
+    - Removed direct path to setpdy.sh utility script, relying on version
+      added to PATH (presumably by prod_util module).  Echo full path to this
+      script to stdout.
+    - Use new NCO standard variable KEEPDATA in place of CLEANUP to decide
+      whether to remove working directory at end of run.
+    - Removed NCO vs developer checks in places were we could rely on variables
+      set in ecflow environment for NCO runs. Modified remaining such wrappers
+      to check setting of NCO standard variable RUN_ENVIR in place of 
+      non-standard variables used previously.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JGDAS_DUMP and JGFS_DUMP:
+    - Load module grib_util/v1.0.1.
+      BENEFIT: Defines path now relied on to run utility programs cnvgrib and
+               grbindex in model script exglobal_dump.sh.ecf and grbindex in
+               ush script bufr_dump_obs.sh.
+   JGDAS_DUMP_POST:
+    - Added entries for variable comin and comin_m1 to override default
+      settings in shared application script bufr_avgdata.sh.
+   JGFS_DUMP_POST:
+    - Modified to perform data count averaging during 18Z runs of this job.
+      New variables include comin and comin_m1 which override default settings
+      in shared application script bufr_avgdata.sh.
+   JGDAS_PREP and JGFS_PREP:
+    - Export GETGES_COM with default of /com which is overridden by $COMROOT if
+      the latter is imported from ecflow script.
+      BENEFIT: Allows util ush script getges.sh to point to /com2 to obtain
+               first guess once GFS/GDAS (and this package) is moved to
+               Phase 2.  If this package were, for some reason, implemented
+               prior to GFS/GDAS move to Phase 2, getges.sh would continue to
+               point to /com to obtain first guess.
+   JGDAS_PREP_POST:  
+    - Load module util_shared/v1.0.2.
+      BENEFIT: Defines path now relied on to run month_name.sh utility script
+               in obsproc_prep_post v2.2.0 ush script gdas_summary.sh.
+    - Added variable PROCESS_MASTER_SHIP_STNLST to (when YES) run processing in
+      obsproc_prep_post (v2.2.0 and beyond) model script exprep_post.sh.ecf to
+      update the Master Ship Station List based on any information read from
+      the updated VOS ship list from NDBC. This defaults to (and thus is
+      exported as) YES in the 18z cycle run of this job and is hardwired to NO
+      in all other cycle runs. When set to YES, various directory paths needed
+      by this processing are set and exported.
+      BENEFIT: See changes to model script exprep_post.sh.ecf in Release Notes
+               for v2.2.0 of obsproc_prep_post.
+    - Existing variable PROCESS_ALL_REPORT_COUNTS is now hardwired to NO in all
+      cycle runs of this job except 18z.  Before, it defaulted to NO in these
+      cycle runs.
+      BENEFIT: The model script exprep_post.sh.ecf in obsproc_prep_post is
+               hardwired to not run this processing unless this is the 18z GDAS
+               run. It is not possible to override this and the job script will
+               now reflect this.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Use NCO standard variables to point to grib utilities.
+    - Rely on PATH to run finddate.sh utility script. Echo full path to this
+      script to stdout.
+    - Allow the variable TIME_TRIM for be imported as either "on" or "off"
+      (i.e., set in job script) and apply to all dump groups, overriding the
+      individual default values previously hardwired for each dump group. In
+      addition, if TIME_TRIM is not imported, allow new variables TIME_TRIM1,
+      TIME_TRIM2, etc. to be imported as either "on" or "off" (i.e., set in job
+      script) and apply to specific dump groups (e.g., TIME_TRIM1 applying to
+      dump group 1, TIME_TRIM6, applying to dump group 6, etc.), overriding the
+      default value(s) for TIME_TRIM previously hardwired for the applicable
+      dump group(s).
+      BENEFIT: Allows for more flexibility.  E.G., a case where a developer GFS
+               or GDAS run uses a time window radius with some fraction of an
+               hour (e.g., -0.50 to +0.49) rather than -3.00 to +2.99 if
+               running in hourly cycles rather than in six-hour cycles.  Here
+               time trimming is needed for all dump groups, thus TIME_TRIM
+               could be set to "on" in the job script.
+   exglobal_makeprepbufr.sh.ecf:
+    - Replace hard path to ndate utility with NCO standard variable $NDATE.
+
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Add uv wind ob errors for type 296 (RapidScat).
+      This change has no impact on current operational output.
+
+
+ Output changes:
+ ---------------
+   Job JGDAS_PREP_POST (18z cycle run only):
+    - As a result of update to obsproc_prep_post.v2.2.0:
+       - Upon implementation, new files /com2/arch/prod/VOS/activeShiprev
+         (modified NDBC active ship list) and /com2/arch/prod/VOS/ship_names
+         (Master Ship Station List) will be created and then subsequently
+         updated daily.
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.1.0, the following will be
+      done by JGFS_DUMP_POST rather than JGDAS_DUMP_POST:
+       - update files /com/arch/prod/avgdata/*gfs*
+       - update content of directory /com/arch/prod/obcount_30day/gfs
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JGDAS_PREP_POST (18z cycle run only):
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - ~10 second increase in wallclock run time.
+   All other jobs and cycles:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/arch/prod        - Increase ~5 Mb per day (in new subdirectory VOS)
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.5.0
+    - obsproc_dump_post.v2.1.0 (updated from v2.0.1)
+    - obsproc_prep_post.v2.2.0 (updated from v2.1.0)
+    - obsproc_shared/bufr_dumplist.v1.2.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.1)
+  JGDAS_DUMP and JGFS_DUMP require:
+    grib_util/v1.0.1 (loaded in job script)
+  JGDAS_PREP_POST requires:
+    util_shared/v1.0.2 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+   - This is part of the parallel test of the GFS Upgrade bundle (FY16Q3).
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the GDAS and GFS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.1.0.
+   - It is expected that this will be implemented simultaneously with the
+     implementation of the FY16Q3 GFS Upgrade bundle on Phase 2.  However, it
+     could go in sooner.  Please note, however:
+     - This must be implemented on Phase 2 simultaneously with the 
+       implementation of obsproc_dump_alert v1.1.0 on Phase 2.  
+     - This must be implemented simultaneously with the implementation of 
+       obsproc_prep_post v2.2.0 on either Phase 1 or Phase 2.
+     - This must be implemented with obsproc_dump_post.v2.1.0 and
+       obsproc_nam.v2.1.0 (both of which should be installed on Phase 1).
+   - If implementing on WCOSS Phase 1 (prior to move of GFS to run on Phase 2),
+     please export the following for all jobs:
+       NWROOT=/nwprod
+       COMROOT=/com
+   - If implementing on WCOSS Phase 2 (with move of GFS to run on Phase 2),
+     first copy the following from /com to /com2:
+       /com/logs/alertlog/*gdas*
+       /com/logs/alertlog/*gfs*
+       /com/gfs/prod/satcounts/
+       /com/gfs/prod/satcounts_archive/
+       /com/arch/prod/data_counts.??????/
+       /com/arch/prod/index.shtml
+   - The move of RTDM files for all models to /com2 is expected to come at a
+     later date. When that time comes, copy the following from /com to /com2:
+       /com/arch/prod/avgdata/*dump*
+       /com/arch/prod/avgdata/*gdas*
+       /com/arch/prod/avgdata/*gfs*
+       /com/arch/prod/avgdata/*nam*
+       /com/arch/prod/avgdata/*rap*
+       /com/arch/prod/avgdata/*rtma*
+       /com/arch/prod/avgdata/*urma*
+       /com/arch/prod/obcount_30day/dump/
+       /com/arch/prod/obcount_30day/gdas/
+       /com/arch/prod/obcount_30day/gfs/
+       /com/arch/prod/obcount_30day/nam/
+       /com/arch/prod/obcount_30day/rap/
+       /com/arch/prod/obcount_30day/rtma/
+       /com/arch/prod/obcount_30day/urma/
+     UNTIL THEN, temporarily add: 
+       export HOMEarch=/com/arch/${envir} 
+      to ecflow scripts for JGFS_DUMP_POST and JGDAS_DUMP_POST.
+
+   If implementing on WCOSS Phase 1 (prior to move of GFS to run on Phase 2):
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160127_OBSPROC-v6.1.0/obsproc_global.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+   If implementing on WCOSS Phase 2 (with move of GFS to run on Phase 2):
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160127_OBSPROC-v6.1.0/obsproc_global.ver
+   and copy to /nwprod2/versions (new file here).
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.1.1 --> released May 1, 2015, updated Jul 12, 2015
+                             --> implemented Aug 10, 2015
+
+files added, modified or deleted since last release:
+ D obsproc_global/fix/prepobs_errtable.cdas
+ M obsproc_global/fix/prepobs_errtable.global
+ D obsproc_global/fix/prepobs_oiqc.oberrs.cdas
+ D obsproc_global/jobs/JCDAS_DUMP
+ D obsproc_global/jobs/JCDAS_DUMP_POST
+ D obsproc_global/jobs/JCDAS_PREP1
+ D obsproc_global/jobs/JCDAS_PREP1_POST
+ D obsproc_global/jobs/JCDAS_PREP2
+ D obsproc_global/jobs/JCDAS_PREP2_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ D obsproc_global/parm/prepobs_cqcbufr.cdas.parm
+ D obsproc_global/parm/prepobs_prepacqc.cdas.parm
+ M obsproc_global/parm/prepobs_prepacqc.gdas.parm
+ M obsproc_global/parm/prepobs_prepacqc.gfs.parm
+ D obsproc_global/parm/prepobs_prepdata.cdas.parm
+ M obsproc_global/parm/prepobs_prepdata.gdas.parm
+ M obsproc_global/parm/prepobs_prepdata.gfs.parm
+ D obsproc_global/parm/prepobs_prepssmi.cdas.parm
+ D obsproc_global/parm/prepobs_prevents.cdas.parm
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JGDAS_PREP, JGFS_PREP:
+    - Minor comment changes.
+   JGDAS_PREP_POST:
+     - Added variables to point to gdas counts software in obsproc_prep_post.
+     - Removed EXECutil and UTILfix which are no longer needed.
+     - Allow developer to import SENDWEB setting (default is NO).
+     - Added variable used to trigger rebuild of gdas counts main page.
+   JCDAS_DUMP, JCDAS_DUMP_POST, JCDAS_PREP1, JCDAS_PREP1_POST, JCDAS_PREP2,
+   JCDAS_PREP2_POST:
+    - Removed. All of the CDAS related files were copied from
+      obsproc_global.v2.0.2 and updated in the new obsproc.cdas.v2.0.3
+      directory which was implemented prior to obsproc_global.v2.1.0.
+
+ Model script changes:
+   exglobal_dump.sh.ecf, exglobal_makeprepbufr.sh.ecf:
+    - Removed all logic and comments related to CDAS processing. These scripts
+      now tailored exclusively to GDAS and GFS.  Model scripts
+      excdas_dump.sh.ecf and excdas_makeprepbufr.sh.ecf created in new
+      obsproc.cdas.v2.0.3 directory which was implemented prior to
+      obsproc_global.v2.1.0.
+   exglobal_dump.sh.ecf:
+    - Dump window for new satwnd type NC005090 (POES VIIRS) set to -3.00 to
+      +2.99 hours about center dump time.
+      BENEFIT: These will be tested in the GSI upgrade in the next quarter.
+    - Removed ADD_satwnd="005019 005080" since these types are now part of
+      the "satwnd" dump group.
+
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Add moisture errors for ob type 133 (AIRCAR) and wind errors for ob types
+      244 (AVHRR/POES IR SATWND) and 260 (VIIRS/POES IR SATWND).
+   prepobs_errtable.cdas, prepobs_oiqc.oberrs.cdas:
+    - Removed. All of the CDAS related files were copied from
+      obsproc_global.v2.0.2 and updated in the new obsproc.cdas.v2.0.3
+      directory which was implemented prior to obsproc_global.v2.1.0.
+
+ Parm file changes:
+   prepacqc.gdas.parm, prepacqc.gfs.parm:
+    - Changed logical namelist switch "l_doprofiles" from FALSE to TRUE.
+    - Changed logical namelist switch "l_prof1lvl" from FALSE to TRUE.
+    - Added two new local namelist switches:
+         "l_mandlvl" set to FALSE
+         "tsplines"  set to TRUE
+    BENEFIT: Program PREPOBS_PREPACQC will now generate merged aircraft
+             profiles of ascending and descending flights and encode them into
+             an output PREPBUFR-like file containing only aircraft data
+             (l_doprofiles=.T.).  This profile calculation will not interpolate
+             obs data to mandatory levels (l_mandlvl=.F.).  Output PREPBUFR-
+             like file will also include merged single-level aircraft reports
+             not part of any profile (l_prof1lvl=.T.). In the profiles, the
+             vertical velocity rate is calculated using Jim Purser's tension-
+             spline interpolation utility (tsplines=.T.).  This output
+             PREPBUFR-like file will be used by the GSI to obtain aircraft bias
+             corrections.  (See Release_Notes.txt for obsproc_prep.v3.5.0 for
+             more information on the benefits of using  tension-splines to
+             obtain vertical velocity rate.  The GSI changes to use aircraft
+             bias are slated for implementation in Q1FY16.)
+   prepobs_prepdata.gdas.parm, prepobs_prepdata.gfs.parm:
+    - Minor comment changes.
+   prepobs_cqcbufr.cdas.parm, prepobs_prepacqc.cdas.parm,
+   prepobs_prepdata.cdas.parm, prepobs_prepssmi.cdas.parm,
+   prepobs_prevents.cdas.parm:
+    - Removed. All of the CDAS related files were copied from
+      obsproc_global.v2.0.2 and updated in the new obsproc.cdas.v2.0.3
+      directory which was implemented prior to obsproc_global.v2.1.0.
+
+
+ Output changes:
+ ---------------
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - Two new files will be generated in /com:
+       /com/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.prepbufr.acft_profiles
+       (PREPBUFR-like file containing merged aircraft profiles and single-level
+        reports not in profiles).
+       /com/gfs/prod/[gfs][gdas].<yyyymmdd>/[gfs][gdas1].t<cc>z.acqc_merged.prof_sorted
+       (text listing the contents in above file).
+    - As a result of update to obsproc_prep.v3.5.0:
+       - The stdout from prepobs_prepdata run will no longer contain a
+         diagnostic "invalid producer/sat combination" for every "satwnd" report
+         originating from tank NC005080 (POES AVHRR/IR/LW).
+       - Valid TSB values will be encoded into PREPBUFR file for reports in
+         message type AIRCAR.
+       - Marine reports previously, incorrectly deemed over land and flagged
+         will now be deemed over water and be available for assimilation.
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - As a result of update to obsproc_dump.v3.2.1:
+       - GOES IR/SW wind reports in "satwnd" dumps will have proper RPID
+         values.
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.2.0:
+       - "INFVR" (POES VIIRS/IR/LW) will now appear in GFS and GDAS RTDM count
+         graphics.
+       - The "satwnd" dump files will contain POES VIIRS/IR/LW winds.
+   Jobs JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.0.1:
+       - The "satwnd" dump listings for GOES IR/SW will contain the correct
+         quality information.
+   Jobs JGDAS_PREP_POST:
+    - As a result of update to obsproc_prep_post.v2.1.0:
+       - The counts for COSMIC GPS RO data will now be properly placed in new
+         monthly tables under:
+           http://www.nco.ncep.noaa.gov/pmb/nwprod/gdas/
+         and overall content sent to this web site is improved. There is also a
+         reduced risk of corruption of the layout of that site's main page.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - No change in requested resources in the job cards.
+    - program prepobs_prepacqc now uses more memory due to an increase in
+      array parameter "max_reps":
+            previous: The maximum resident set size (KB) = 1024368
+            now:      The maximum resident set size (KB) = 1366072
+    - No other changes to memory usage.
+    - ~25 second increase in wallclock run time.
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - A couple of seconds increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/gfs/prod/gfs.   - Increase ~70 Mb per day
+   /com/gfs/prod/gdas.  - Increase ~87 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1 (updated from v3.2.0)
+    - obsproc_prep.v3.5.0   (updated from v3.3.0)
+    - obsproc_dump_post.v2.0.1 (updated from v2.0.0)
+    - obsproc_prep_post.v2.1.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_dumplist.v1.2.0 (updated from v1.0.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all eight production jobs.
+      - In particular, test 18Z JGDAS_PREP_POST since it invokes the gdas counts
+        changes in obsproc_prep_post.v2.1.0.
+        Exact details depend on the timing of the test run. Try:
+          export PDY=$(date -d yesterday +%Y%m%d)
+          export monsummary_dat=$PDY
+          export SATCOM_monsum_base=/com/gfs/prod
+          export DATCOM_monsum_base=/com/arch/prod
+          export REBUILD_MAINPAGE=YES
+        Contact ObsProc Team for assistance.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the GDAS and GFS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.4 of obsproc_cdas,
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.0.3 of obsproc_nam,
+      v3.5.0 of obsproc_prep,
+      v2.1.0 of obsproc_prep_post,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_rtma,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb,
+      v1.2.0 of obsproc_shared/bufr_dumplist.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20150501_OBSPROC-fy15q2/obsproc_global.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20150501_OBSPROC.v5.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.1.0 --> released Jun 30, 2015
+                             --> implemented Jun 30, 2015
+
+ only change:
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_prep_post.v2.0.2 (updated from v2.0.1)
+
+
+(Note: NCO/PMB did not update the version number here)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.1.0 --> released Aug 10, 2014, updated Nov 04, 2014
+                             --> implemented Jan 14, 2015
+
+Note: Prior to this implementation, all of the CDAS related files were
+       copied from obsproc_global.v2.0.2 and updated in the new
+       obsproc.cdas.v2.0.3 directory which was implemented prior to
+       obsproc_global.v2.1.0.  Even though all of the CDAS files remain in
+       obsproc_global.v2.1.0 with some being changed as noted below, these
+       files will not be used by production.
+
+files added, modified or deleted since last release:
+ M obsproc_global/fix/prepobs_errtable.global
+ M obsproc_global/jobs/JCDAS_DUMP
+ M obsproc_global/jobs/JCDAS_DUMP_POST
+ M obsproc_global/jobs/JCDAS_PREP1
+ M obsproc_global/jobs/JCDAS_PREP1_POST
+ M obsproc_global/jobs/JCDAS_PREP2
+ M obsproc_global/jobs/JCDAS_PREP2_POST
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JGDAS_PREP, JGFS_PREP:
+    - Modify the setting of NSPLIT variable used to break up data for parallel
+      processing.  The (default) setting is now 3 due to the size of expected 
+      global background fields (T1534) and current memory limitations.
+    - Turn off call to PREPOBS_OIQCBUFR processing.
+    - Add comments and settings in preparation for potential upgrade to use
+      poe rather than background threads for parallel processing in
+      prepobs_makeprepbufr.sh (under development in obsproc_prep application
+      package).
+   JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - Remove reference to TRMM in comments.
+   JGDAS_PREP_POST:
+    - Allow user nwprod to import COMIN1 if needed to ease testing.
+   All J-SCRIPTS:
+    - Modified DBNet settings for NCO's non-prod runs.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Add ecFlow trigger for new surface prep job (GFS and GDAS only).
+    - Widen the dump window for hourly GOES satwnd for GFS and GDAS runs.
+    - Add the following satwnd subtypes for GFS and GDAS runs:
+      - NOAA/METOP AVHRR SATWIND infrared cloud motion vector
+      - NESDIS/GOES 3.9 micron channel derived cloud motion vector
+    - No longer dumps TRMM data.  (These data are not assimilated.  Ingest
+      will soon be discontinued as the satellite is nearing end of life).
+    - Extra warning posted for unexpectedly missing snow files.
+    - No longer fails if an expected surface grib field cannot be found for
+      GFS and GDAS runs.
+    - Remove DBNet alerts for older surface (ice, snow, sst) fields that
+      will no longer be used by operational GFS and GDAS jobs.
+    - Remove grib2 inventory generation for these same older fields.
+    - Add parallel scripting option to replace background threads for 
+      simultaneous dump group processing.
+      BENEFIT: Use of the new parallel scripting option with proper resource
+               settings reduces run time for this script and possibly that
+               for other high i/o processes running on the same node.
+    - Minor dump group shuffling to improve timing.
+
+ Fixed file changes:
+   prepobs_errtable.global:
+    - Double the observation errors for ob types 245 (GOES IR satwnd) and
+      246 (GOES imager water vapor satwnd).
+    - Add observation errors for ob type 254 (EUMETSAT imager water vapor
+      satwnd).
+   
+
+ Output changes:
+ ---------------
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - Dump files "trmm" and "sptrmm" will no longer be added to
+      /com/[cdas][gfs]/prod/... directories.
+      (Update: This particular change will no longer actually apply to
+      /com/cdas/prod because the production version of JCDAS_DUMP is now
+      managed under the obsproc_cdas package as explained above.)
+    - "TRMM" will no longer appear in GDAS and GFS RTDM count graphics.
+   Jobs JGDAS_DUMP, JGFS_DUMP:
+    - The number of GOES reports in the "satwnd" dumps will increase
+      approximately 6-fold.
+    - The "satwnd" dumps will now contain winds from both POES AVHRR and from
+      the GOES 3.9 micron channel.
+   Jobs JGDAS_PREP, JGFS_PREP:
+    - PREPBUFR files will no longer contain OIQCBUFR quality marks (these were
+      ignored by the GFS GSI).
+
+
+ Compute Resource Information:
+ -----------------------------
+  JGFS_DUMP:
+   - Was:  serial, shared, 6000 Mb.
+   - Recommend: parallel, shared, 3 tasks, ptile=3, 5000 Mb per task.
+     With above, runtime reduced from ~6min to ~4 min despite increase in data.
+  JGDAS_DUMP:
+   - Was: serial, shared, 6000 Mb
+   - Recommend: parallel, shared, 3 tasks, ptile=3, 5000 Mb per task.
+     With above, runtime reduced from ~7min to ~4 min despite increase in data.
+**** DO NOT MODIFY ANY OF THE jcdas_dump_*.ecf ECFLOW SCRIPTS - THESE ARE NOW
+**** CONTROLLED BY obsproc_cdas AND RESOURCES ARE PROPERLY SET
+**********  JCDAS_DUMP:
+**********   - Was: serial, shared, 12000 Mb
+** DISREGARD **   - Recommend: parallel, shared, 2 tasks, ptile=2, 6000 Mb per task.
+** DISREGARD **     With above, runtime reduced from from ~14 min to ~10 min 
+  JGDAS_PREP:
+   - Was: parallel, shared, 16 tasks, ptile=16, 1600 Mb per task.
+   - Recommend: parallel, exclusive, 3 tasks, ptile=3
+       (or mem=7000 per task if shared)
+     Runtime increased from ~3 minutes to ~4 minutes.
+  JGFS_PREP:
+   - Was: parallel, exclusive, 16 tasks, ptile=16.
+   - Recommend: parallel, exclusive, 3 tasks, ptile=3
+       (or mem=7000 per task if shared)
+     Runtime increased from ~3 minutes to ~4 minutes.
+
+    Note, the poe settings for JGDAS_PREP and JGFS_PREP have no impact at the
+    time of initial handoff but may come into play with a future obsproc_prep 
+    upgrade.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/gfs/prod/gfs.   - Increase ~400 Mb per day
+   /com/gfs/prod/gdas.  - Increase ~700 Mb per day
+   /com/cdas/prod/cdas. - Decrease ~330 Mb per day (This particular change is no
+        longer expected in production due to breakout of cdas related jobs
+        mentioned above.)
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the GDAS and GFS networks.
+     (As mentioned above, CDAS users are no longer expected to be impacted by
+     changes to this package).
+   - The following will no longer be alerted for cyc=00,06,12,18:
+        gfs.t${cyc}z.sstgrb
+        gfs.t${cyc}z.engicegrb
+        gfs.t${cyc}z.snogrb
+        gfs.t${cyc}z.trmm.tm00.bufr_d
+        gfs.t${cyc}z.sptrmm.tm00.bufr_d
+        gdas1.t${cyc}z.snogrb
+        gdas1.t${cyc}z.snogrb_t574
+        gdas1.t${cyc}z.sstgrb
+        gdas1.t${cyc}z.engicegrb
+        gdas1.t${cyc}z.engicegrb.grib2
+        gdas1.t${cyc}z.engicegrb.grib2.idx
+        gdas1.t${cyc}z.sstgrb.grib2
+        gdas1.t${cyc}z.sstgrb.grib2.idx
+        gdas1.t${cyc}z.snogrb.grib2
+        gdas1.t${cyc}z.snogrb.grib2.idx
+        gdas1.t${cyc}z.trmm.tm00.bufr_d
+        gdas1.t${cyc}z.sptrmm.tm00.bufr_d
+        gdas1.t${cyc}z.trmm.tm00.bufr_d.unblok
+        gdas1.t${cyc}z.sptrmm.tm00.bufr_d.unblok
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.2.0.
+   - This update must not be implemented until gsi.v5.0.0 (or later) is used 
+     for jgfs_analysis and jgdas_analysis_high.
+   - Modify ecFlow event name in exglobal_dump.sh.ecf as appropriate to release 
+     the jobs that run the JGFS_EMCSFC_SFC_PREP or JGDAS_EMCSFC_SFC_PREP 
+     scripts from the new emcsfc package (v1.0.0, or later).
+
+
+ Shared Software:
+ ----------------
+    - obsproc_dump.v3.2.0
+    - obsproc_prep.v3.3.0   (updated from v3.2.0)
+    - obsproc_dump_post.v2.0.0
+    - obsproc_prep_post.v2.0.1
+    - obsproc_shared/bufr_dumplist.v1.0.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Modules used in testing:
+ ------------------------
+      EnvVars/1.0.0
+      ics/12.1
+      ibmpe/1.3.0.7
+      lsf/9.1
+      cfp/1.0.0
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.0.2 --> released Sep 30, 2014
+                             --> implemented Nov 4, 2014
+
+files added, modified or deleted since last release:
+ M obsproc_global/jobs/JCDAS_DUMP
+ M obsproc_global/jobs/JCDAS_DUMP_POST
+ M obsproc_global/jobs/JCDAS_PREP1
+ M obsproc_global/jobs/JCDAS_PREP1_POST
+ M obsproc_global/jobs/JCDAS_PREP2
+ M obsproc_global/jobs/JCDAS_PREP2_POST
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST:
+    - All references to PROCESS_SATELLITE_COUNTS removed since
+      /nwprod/ush/global_satcount.sh is obsolete.
+   JCDAS_DUMP_POST, JCDAS_PREP1, JCDAS_PREP1_POST, JCDAS_PREP2,
+   JCDAS_PREP2_POST, JGDAS_DUMP_POST, JGDAS_PREP, JGDAS_PREP_POST,
+   JGFS_DUMP_POST, JGFS_PREP, JGFS_PREP_POST:
+    - Remove unnecessary setting of environment variable TMPDIR (not
+      referenced in any child scripts).
+   JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - Updated comment explaining reason for hardwire of environment variable
+      TMPDIR.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Removed the dumping of AMSR-E data ("amsre"), AMSU-B data ("1bamub",
+      "esamub") and HIRS-3 data ("1bhrs3").
+      BENEFIT: These data are no longer processed.  The only dumps being
+               produced are "esamub", but these contain all missing btemps.
+
+
+ Output changes:
+ ---------------
+   Jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - As a result of update to obsproc_prep.v3.2.0:
+       - DFQ now encoded in PREPBUFR file in some cases for surface data.
+       - WQM will not be encoded in PREPBUFR file if UOB and VOB are missing
+         for surface data.
+       - DFP now encoded in PREPBUFR file in some cases for surface data.
+       - DFR now encoded in PREPBUFR file in some cases for surface data.
+       - SYNDATA bogus winds will no longer be missing in some situations where
+         they are expected to be generated due to previous, but now corrected,
+         cases which had caused abnormal termination of SYNDAT_SYNDATA.
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - The small dump file "esamub" (containing no usable data) will no longer
+      be present in /com/[cdas][gfs]/prod/... directories.
+    - "ESAMUB" will no longer appear in GDAS and GFS RTDM count graphics.
+   Job JGDAS_DUMP_POST (18z cycle run only):
+    - As a result of update to obsproc_shared/bufr_avgdata.v1.0.1:
+       - The obcount_30day directories (/com/arch/prod/obcount_30day/$model,
+         for model=gfs,gdas,nam) will now retain 32 days worth of files instead
+         of 30 days. Despite retaining 32 days of files, averages will continue
+         to be constructed from only the past 30 days.
+
+
+ Compute Resource Information:
+ -----------------------------
+   - No change in requested resources in the job cards.
+   - Minor changes to memory usage (see "Shared Software" below).
+   - Negligible change in disk space and run time.
+
+
+ Shared Software:
+ ----------------
+    - JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+         obsproc_dump.v3.2.0  (updated from v3.1.0)
+    - JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+         obsproc_prep.v3.2.0  (updated from v3.1.0)
+           - program syndat_syndata now uses more memory due to an increase in
+             array parameters "ldxdim" and "ndatmx":
+                previous: The maximum resident set size (KB) = 911252
+                now:      The maximum resident set size (KB) = 913268
+    - JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+         obsproc_dump_post.v2.0.0
+    - JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST:
+         obsproc_prep_post.v2.0.1  (updated from v2.0.0)
+    - JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+         obsproc_shared/bufr_dumplist.v1.0.0
+    - JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST,
+      JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+         obsproc_shared/bufr_remorest.v1.0.0
+    - JGDAS_DUMP_POST:
+         obsproc_shared/bufr_avgdata.v1.0.1  (updated from v1.0.0)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JCDAS_DUMP, JCDAS_DUMP_POST, JCDAS_PREP1,
+     JCDAS_PREP1_POST, JCDAS_PREP2, JCDAS_PREP2_POST, JGDAS_DUMP,
+     JGDAS_DUMP_POST, JGDAS_PREP, JGDAS_PREP_POST, JGFS_DUMP, JGFS_DUMP_POST,
+     JGFS_PREP and JGFS_PREP_POST as part of the parallel-production test of
+     the OBSPROC FY14Q4 bundle.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the CDAS, GDAS and GFS networks.
+   - The following will no longer be alerted for cyc=00,06,12,18:
+       gfs.t${cyc}z.esamub.tm00.bufr_d
+       gdas1.t${cyc}z.esamub.tm00.bufr_d
+       gdas1.t${cyc}z.esamub.tm00.bufr_d.unblok
+       cdas.t${cyc}z.esamub.tm00.bufr_d.unblok
+   - No other changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.0.
+   This must be implemented simultaneously with the implementations of:
+      v1.2.1 of obsproc_dump_monitor,
+      v2.0.2 of obsproc_nam, obsproc_rap, obsproc_rtma, obsproc_urma,
+      v2.3.0 of obsproc_satingest,
+      v3.2.0 of obsproc_dump, obsproc_prep,
+      v2.0.1 of obsproc_prep_post,
+      v1.0.0 of obsproc_dump_alert, radar_reflectivity_mosaic,
+      v1.0.0 of radar_reflectivity_ref2grb,
+      v1.0.1 of obsproc_shared/bufr_avgdata.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140914_OBSPROC-fy14q4/obsproc_global.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140914_OBSPROC.v4.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.0.1 --> released Jul 23, 2014, updated Aug 5, 2014
+                             --> implemented Aug 12, 2014
+
+files added, modified or deleted since last release:
+ M obsproc_global/jobs/JCDAS_PREP1
+ M obsproc_global/jobs/JCDAS_PREP2
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGFS_PREP
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - Environment variable DICTPREP now defaults to new vertical structure
+      directory path location for metar.tbl dictionary
+      (/nwprod/decoders/decod_shared/dictionaries, rather than
+      /nwprod/dictionaries which will be removed in September 2014).
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - uses code from obsproc_prep.v3.1.0 (updated from obsproc_prep.v3.0.0)
+       - program prepobs_prepacqc now uses more memory due to an increase in
+         array parameters "maxflt" and "max_reps":
+            previous: The maximum resident set size (KB) = 863576
+            now:      The maximum resident set size (KB) = 1025360
+    - no wallclock run time change: CDAS
+    - no wallclock run time change: GDAS
+    - no wallclock run time change: GFS
+    - no other changes
+   Jobs JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST:
+    - continues to use code from obsproc_prep_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - no changes
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - continues to use code from obsproc_dump.v3.1.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no changes
+   Jobs JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - continues to use code from obsproc_dump_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - continues to use code from obsproc_shared/bufr_avgdata.v1.0.0 (GDAS only)
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0 (GDAS and
+      GFS only)
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP and JGFS_PREP.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the CDAS, GDAS and GFS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.1.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_nam.v2.0.1, obsproc_rap.v2.0.1, obsproc_rtma.v2.0.1,
+   obsproc_urma.v2.0.1 and obsproc_prep.v3.1.0, and simultaneously with the
+   implementation of the FY14Q3 NAM Upgrade bundle (v3.1.0).
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140722_OBSPROC-more_robust_prepacqc/obsproc_global.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140722_OBSPROC.v3.1.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 2.0.0 --> released May 5, 2014
+                             --> implemented Jun 24, 2014
+
+files added, modified or deleted since last release:
+ M obsproc_global/fix/prepobs_errtable.cdas
+ M obsproc_global/fix/prepobs_errtable.global
+ M obsproc_global/fix/prepobs_oiqc.oberrs
+ M obsproc_global/fix/prepobs_oiqc.oberrs.cdas
+ M obsproc_global/jobs/JCDAS_DUMP
+ M obsproc_global/jobs/JCDAS_DUMP_POST
+ M obsproc_global/jobs/JCDAS_PREP1
+ M obsproc_global/jobs/JCDAS_PREP1_POST
+ M obsproc_global/jobs/JCDAS_PREP2
+ M obsproc_global/jobs/JCDAS_PREP2_POST
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP_POST
+ M obsproc_global/jobs/JGDAS_PREP
+ M obsproc_global/jobs/JGDAS_PREP_POST
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP_POST
+ M obsproc_global/jobs/JGFS_PREP
+ M obsproc_global/jobs/JGFS_PREP_POST
+ M obsproc_global/parm/prepobs_cqcbufr.cdas.parm
+ M obsproc_global/parm/prepobs_cqcbufr.gdas.parm
+ M obsproc_global/parm/prepobs_cqcbufr.gfs.parm
+ M obsproc_global/parm/prepobs_prepacqc.cdas.parm
+ M obsproc_global/parm/prepobs_prepacqc.gdas.parm
+ M obsproc_global/parm/prepobs_prepacqc.gfs.parm
+ M obsproc_global/parm/prepobs_prepdata.cdas.parm
+ M obsproc_global/parm/prepobs_prepdata.gdas.parm
+ M obsproc_global/parm/prepobs_prepdata.gfs.parm
+ M obsproc_global/parm/prepobs_prepssmi.cdas.parm
+ M obsproc_global/parm/prepobs_prepssmi.gdas.parm
+ M obsproc_global/parm/prepobs_prepssmi.gfs.parm
+ M obsproc_global/parm/prepobs_prevents.cdas.parm
+ M obsproc_global/parm/prepobs_profcqc.gdas.parm
+ M obsproc_global/parm/prepobs_profcqc.gfs.parm
+ M obsproc_global/parm/syndat_syndata.gdas.parm
+ M obsproc_global/parm/syndat_syndata.gfs.parm
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+ M obsproc_global/scripts/exglobal_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Require that the developer export their own particular temporary
+      directory root ($DATAROOT) into the job scripts. If $DATAROOT is not set
+      in these scripts, the script will abort.
+      NOTE: This does not affect production.
+      BENEFIT: This avoids having to hardwire a development-specific default
+               temporary directory root in these job scripts. This can now be
+               different for different development groups.
+   JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_global and obsproc_prep version numbers via imported
+      environment variables $obsproc_global_ver and $obsproc_prep_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep which points to
+      directory path for generic prep subdirectories under version control
+      (in production this is normally /nwprod/obsproc_prep.$obsproc_prep_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific prep subdirectories under version
+      control (in production this is normally
+      /nwprod/obsproc_global.$obsproc_global_ver).  Replaces /nw${envir} in
+      order to point to files in scripts, parm and fix directories moved from
+      horizontal to vertical directory structure.
+   JGDAS_PREP, JGFS_PREP:
+    - Export environment variable $errPREPDATA_limit as "4" at all center hour
+      (cycle) times. Before, it was set to default of "0" at all center hour
+      times in obsproc_prep ush script prepobs_makeprepbufr.sh.
+      BENEFIT: PREPOBS_PREPDATA will no longer abort in any center hour (cycle)
+               time run when it finds no data in either the input "adpupa" or
+               "adpsfc" dump files. A diagnostic will be printed in stdout.
+               The modern GSI can run ok if these data are not available for
+               some unexpected reason.
+   JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_global, obsproc_prep_post and
+      obsproc_shared/bufr_remorest version numbers via imported environment
+      variables $obsproc_global_ver, $obsproc_prep_post_ver and
+      $obsproc_shared_bufr_remorest_ver, resp.  These are defined in the
+      upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep_post which points to
+      directory path for generic prep_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_prep_post.$obsproc_prep_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts directory moved from horizontal to
+      vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_global.$obsproc_global_ver).  Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+   JCDAS_PREP1_POST:
+    - Added more robust logic to select PDY, where this is based on cycle time
+      to avoid any possibility of obtaining a PDY late by 1 day due to a delay
+      in the production run. Added environmental equvalence for cases when
+      developer wrapper script exports variable "PDY" into this script.  All of
+      this updated logic matches that currently found in other CDAS job
+      scripts.
+   JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_global, obsproc_dump_post and
+      obsproc_shared/bufr_remorest version numbers via imported environment
+      variables $obsproc_global_ver, $obsproc_dump_post_ver and
+      $obsproc_shared_bufr_remorest_ver, resp.  These are defined in the
+      upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump_post which points to
+      directory path for generic dump_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_dump_post.$obsproc_dump_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts, exec and (in GDAS and GFS networks
+      only) ush directories moved from horizontal to vertical directory
+      structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_global.$obsproc_global_ver).  Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+    JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - Obtains obsproc_shared/bufr_dumplist version number via imported
+      environment variable $obsproc_shared_bufr_dumplist_ver.  This is defined
+      in the upstream ecflow script.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_dumplist which
+      points to directory path for generic shared bufr_dumplist subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver).
+      Replaces /nw${envir} in order to point to files in fix directory moved
+      from horizontal to vertical directory structure.
+   JGDAS_DUMP_POST:
+    - Obtains obsproc_shared/bufr_avgdata version number via imported
+      environment variable $obsproc_shared_bufr_avgdata_ver.  This is defined
+      in the upstream ecflow script.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_avgdata which
+      points to directory path for generic shared bufr_avgdata subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_avgdata.${obsproc_shared_bufr_avgdata_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+   JCDAS_DUMP, JCDAS_PREP2_POST, JCDAS_DUMP_POST:
+    - Added environmental equvalence for cases when developer wrapper script
+      exports variable "PDY" into this script.
+
+ Model script changes:
+   exglobal_makeprepbufr.sh.ecf:
+    - Initial population into vertical structure.
+    - Modified to change path to prepobs_makeprepbufr.sh from $ushscript to
+      $ushscript_prep as obsproc_prep package has been populated into vertical
+      structure.
+   exglobal_dump.sh.ecf:
+    - No longer attempts to dump OSCAT data.
+      BENEFIT: This is a waste of time now that the instrument has died
+               (2/20/14).
+    - Minor syntax changes to reduce unncecssary error msgs (and other cleanup).
+
+ Fixed file changes:
+   prepobs_errtable.cdas, prepobs_errtable.global, prepobs_oiqc.oberrs,
+   prepobs_oiqc.oberrs.cdas:
+    - No changes (initial population into vertical structure).
+
+ Parm file changes:
+   prepobs_prepdata.cdas.parm, prepobs_prepdata.gdas.parm,
+   prepobs_prepdata.gfs.parm:
+    - Initial population into vertical structure.
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that these files are in subversion.
+    - New 12'th surface type (representing Coast Guard data) added to array
+      JSURFW (=0). 
+      BENEFIT: Coast Guard data that report pressure information will be
+      encoded into PREPBUFR file as report type 180/280. 
+    - New switch NPKRPT (12*FALSE) to control processing of surface obs with
+      missing pressure information (FALSE here means these will continue to be
+      discarded).
+   prepobs_prepssmi.cdas.parm, prepobs_prepssmi.gdas.parm,
+   prepobs_prepssmi.gfs.parm:
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that these files are in subversion.
+      Otherwise, no changes to contents.
+   prepobs_cqcbufr.cdas.parm, prepobs_cqcbufr.gdas.parm,
+   prepobs_cqcbufr.gfs.parm, prepobs_prepacqc.cdas.parm,
+   prepobs_prepacqc.gdas.parm, prepobs_prepacqc.gfs.parm,
+   prepobs_prevents.cdas.parm, prepobs_profcqc.gdas.parm,
+   prepobs_profcqc.gfs.parm:
+    - Initial population into vertical structure.
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that these files are in subversion.
+      Otherwise, no changes to contents.
+   syndat_syndata.gdas.parm, syndat_syndata.gfs.parm:
+    - No changes (initial population into vertical structure).
+
+
+ Output changes:
+ ---------------
+   Jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - As a result of update to obsproc_prep.v3.0.0:
+       - Satellite zenith angle (degrees) encoded into PREPBUFR file (mnemonic
+         "SAZA") for all satwnd types.
+       - Surface marine reports will now encode pmsl ob and qc (PMO and PMQ) in
+         PREPBUFR file if pmsl is reported.
+       - SFCSHP reports with calm winds and non-missing background u- or v-
+         component wind .ge. 5 m/sec are flagged with Q.M. 8 in PREPBUFR file.
+       - Coast Guard surface marine mass and wind data will now be processed as
+         part of report type 180/280 (when pressure information is available)
+         in PREPBUFR file.
+       - Surface reports with incomplete wind information will now be retained
+         and encoded into the PREPBUFR file.
+       - Report type 183 now stores moisture quality mark no lower than 3
+         (suspect).
+   Jobs JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.0.0:
+       - Printing format changed slightly in some dump listing files in /com to
+         squeeze more information on a line.
+       - Satellite zenith angle (degrees) added to satwnd dump listing files in
+         /com/[cdas][gfs]/prod/... directories.
+       - MAP profilers with more than 102 levels will now get all levels listed
+         in /com/[cdas][gfs]/prod/... directories
+       - Coast Guard tide gauge reports added to sfcshp dump listing files in
+         /com/[cdas][gfs]/prod/... directories.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP:
+    - the CDAS, GDAS, and GFS PREPBUFR files will now be approximately
+      1.02 times (102%) as large and  as before since they will now include
+      Coast Guard surface marine data and additional surface reports with 
+      incomplete wind information that had previously been discarded.
+      Also increased a bit as a result of other additions (see output changes
+      above).
+        CDAS: space used by all PREPBUFR files increases from ~ 130 MBytes/day
+              to ~ 133 MBytes/day
+        GDAS: space used by all PREPBUFR files increases from ~ 200 MBytes/day
+              to ~ 204 MBytes/day
+        GFS:  space used by all PREPBUFR files increases from ~ 180 MBytes/day
+              to ~ 184 MBytes/day
+    - no wallclock run time change: CDAS
+    - no wallclock run time change: GDAS
+    - no wallclock run time change: GFS
+    - uses code from obsproc_prep.v3.0.0
+    - no other changes
+   Jobs JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST:
+    - uses code from obsproc_prep_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - no other changes
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - uses code from obsproc_dump.v3.1.0 (updated from obsproc_dump.v3.0.0)
+       - changes in bufr_edtbfr here slightly increase its memory usage
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+   Jobs JCDAS_DUMP_POST, JGDAS_DUMP_POST, JGFS_DUMP_POST:
+    - slight increase in size of satwnd, sfcshp and proflr dump listing files
+      as a result of changes noted above in output changes
+    - slight increase in size of non-restricted sfcshp dump and dump listing
+      files as a result of changes noted above in output changes
+    - uses code from obsproc_dump_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - uses code from obsproc_shared/bufr_avgdata.v1.0.0 (GDAS only)
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0 (GDAS and GFS only)
+    - no other changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JCDAS_PREP1, JCDAS_PREP2, JGDAS_PREP, JGFS_PREP,
+     JCDAS_PREP1_POST, JCDAS_PREP2_POST, JGDAS_PREP_POST, JGFS_PREP_POST,
+     JCDAS_DUMP_POST, JGDAS_DUMP_POST and JGFS_DUMP_POST
+   - This is part of the parallel-production test of the OBSPROC Phase 2
+     bundle.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the CDAS, GDAS and GFS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_nam.v2.0.0, obsproc_rap.v2.0.0,
+   obsproc_rtma.v2.0.0, obsproc_urma.v2.0.0, obsproc_dump.v3.1.0,
+   obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0, obsproc_prep_post.v2.0.0,
+   obsproc_satingest.v2.2.0, obsproc_shared/bufr_remorest.v1.0.0 and
+   obsproc_shared/bufr_avgdata.v1.0.0.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140505_OBSPROC-fy14q2_phase2/obsproc_global.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140505_OBSPROC.v3.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 1.1.0 --> released Feb 9, 2014
+                             --> implemented May 6, 2014
+
+files added, modified or deleted since last release:
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - Modified to dump GOES IR, water vapor, and visible satellite-derived
+      winds using a time window of -1.00 to -0.01 hours relative to cycle time
+      for the CDAS, GDAS and GFS rather than -1.50 to +1.50 hours relative to
+      cycle time.
+      BENEFIT: NESDIS is changing the frequency of their GOES satellite
+               derived winds from 3-hourly to 1-hourly. The change to
+               exglobal_dump.sh.ecf will allow one complete wind set to
+               continue to be dumped and assimilated (not changing the time
+               window would triple the number of winds dumped and assimilated,
+               all over the same locations). This change will also allow winds
+               closer to cycle time to now be assimilated.
+
+
+ Output changes:
+ ---------------
+   No changes.
+  
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - continues to use code from obsproc_dump.v3.0.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP.
+   - This is part of the parallel-production test of the hourly GOES satellite
+     winds.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the CDAS, GDAS and GFS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v2.0.0.
+   This must be implemented at EXACTLY the same time as NESDIS' promotion of
+   the hourly GOES satellite winds to their production server, and
+   simultaneously with the implementations of obsproc_dump_monitor.v1.1.0,
+   obsproc_nam.v1.1.0, obsproc_rap.v1.1.0, obsproc_rtma.v1.2.0,
+   obsproc_urma.v1.2.0 and obsproc_satingest.v2.1.0.
+
+   Please copy new file
+   /meso/save/Dennis.Keyser/HOME/versions/HOURLY_WINDS/obsproc_global.ver
+   to /nwprod/versions, replacing like-named file.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140209_OBSPROC.v2.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_global release 1.0.0 --> released Feb 8, 2014
+                             --> implemented Apr 8, 2014
+
+Initial population of vertical structure.
+
+files:
+ M obsproc_global/jobs/JCDAS_DUMP
+ M obsproc_global/jobs/JGDAS_DUMP
+ M obsproc_global/jobs/JGFS_DUMP
+ M obsproc_global/parm/prepobs_prepssmi.cdas.parm
+ M obsproc_global/parm/prepobs_prepssmi.gdas.parm
+ M obsproc_global/parm/prepobs_prepssmi.gfs.parm
+ M obsproc_global/scripts/exglobal_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_global, obsproc_dump and obsproc_shared/bufr_dumplist
+      version numbers via imported environment variables $obsproc_global_ver,
+      $obsproc_dump_ver and obsproc_shared_bufr_dumplist_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump which points to
+      directory path for generic dump subdirectories under version control
+      (in production this is normally /nwprod/obsproc_dump.$obsproc_dump_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific dump subdirectories under version
+      control (in production this is normally
+      /nwprod/obsproc_global.$obsproc_global_ver).  Replaces /nw${envir} in
+      order to point to files in scripts and parm directory moved from
+      horizontal to vertical directory structure.
+    - Exports new environment variables $HOMEobsproc_shared_bufr_dumplist and
+      $FIXobsproc_shared_bufr_dumplist which point to directory path for
+      bufr_dumplist fixed file under version control (in production the latter
+      is normally
+   /nwprod/obsproc_shared/bufr_dumplist.$obsproc_shared_bufr_dumplist_ver/fix).
+      Replaces /nw${envir}/fix from old horizontal directory structure.
+   JCDAS_DUMP:
+    - Uses "cp -p" rather than "cp when copying files to /com/arkv directory
+      in order to preserve group ownership as "rstprod" for restricted files.
+   JGDAS_DUMP, JGFS_DUMP:
+    - Exports new directory path variables for additional ice and sst files.
+
+ Model script changes:
+   exglobal_dump.sh.ecf:
+    - $USHobsproc_dump replaces $utilscript as the environment variable
+      representing the directory path to the ush script check_tanks.sh.
+    - Modified to now dump OSCAT scatterometer data in "oscatw" using a time
+      window of -3.00 to +2.99 hours relative to cycle time for the CDAS, GDAS
+      and GFS.
+      BENEFIT: GFS/GDAS parallel runs are now looking at these data.
+      N O T I C E:  By the time this was implemented, OSCAT data were no longer
+                    available.  The instrument stopped working on 2/20/14 and
+                    was declared as "Dead" on 4/3/14.
+    - Modified to skip the dumping of NeXRaD VAD winds from level 2 decoder
+      (type 002, subtype 017) as part of the "vadwnd" dump ["vadwnd" will still
+      contain only NeXRaD VAD winds from radar coded message (type 002, subtype
+      008) for now].
+      BENEFIT: The default is to now include NeXRaD VAD winds from the level 2
+               decoder in the "vadwnd" dump file (as they will be used in the
+               next NAM bundle).  The Global GSI cannot handle these at this
+               time.
+    - Modified to turn off the check for the existence of "wndsat" data tanks
+      and thus any attempt to dump these data..
+      BENEFIT: The WindSat scatterometer data ingest feed is currently broken
+               as these data are now being produced under a new format that
+               NCEP does not recognize.  As we transition to the new feed,
+               we do not want to inadvertently dump these data in operations.
+    - Modified to pick up additional ice, sst, and snow files.
+      BENEFIT: GFS/GDAS parallel runs are now looking at these data.
+
+ Parm file changes:
+   prepobs_prepssmi.cdas.parm, prepobs_prepssmi.gdas.parm,
+   prepobs_prepssmi.gfs.parm:
+    - No changes to contents.
+
+
+ Output changes:
+ ---------------
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - Creates new dump files
+      /com/$NET/prod/$RUN.$PDY/$model.t${cyc}z.oscatw.tm00.bufr_d ,
+      where cyc= 00, 06, 12, 18; NET= cdas and model= cdas for RUN= cdas;
+      NET= gfs and model= gdas1 for RUN= gdas; and NET= gfs and model= gfs for
+      RUN= gfs. --> NO, OSCAT DIED!!
+    - "ascatw" dump files will now contain scatterometer winds from METOP-B (as
+      well as from METOP-A from before).
+    - As a result of update to obsproc_dump.v3.0.0:
+       - If there are zero aircraft reports, processing will not seg fault in
+         BUFR_DUPAIR.
+   Job JCDAS_DUMP:
+    - Users in the "rstprod" group will now be able to read restricted dump
+      files in the /com/arkv directory.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP:
+    - the "ascatw" dump files will now be approximately twice as large
+      since they will now include METOP-B (as well as METOP-A from before)
+         CDAS: ascatw increases from ~ 17 MBytes/day to ~ 34 MBytes/day
+         GDAS: ascatw increases from ~ 17 MBytes/day to ~ 34 MBytes/day
+         GFS:  ascatw increases from ~ 14 MBytes/day to ~ 28 MBytes/day
+    - disk space required per day for all new output dump files is:
+        cdas: oscatw   ~  88 MBytes --> NO, OSCAT DIED!!
+        gdas: oscatw   ~  87 MBytes --> NO, OSCAT DIED!!
+        gfs:  oscatw   ~  66 MBytes --> NO, OSCAT DIED!!
+        TOTAL:       ~   241 MBytes --> NO, OSCAT DIED!!
+    - disk space required per day for all new ice, sst & snow grib files is:
+        gfs:  fields   ~ 172 MBytes
+        gdas: fields   ~ 172 MBytes
+        TOTAL:       ~   344 MBytes
+    - 3 second increase in wallclock run time
+    - uses code from obsproc_dump.v3.0.0
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JCDAS_DUMP, JGDAS_DUMP, JGFS_DUMP.
+   - All changes in this version (1.0.0) will be tested when the next version
+     (1.1.0) is tested as part of the parallel-production test of the hourly
+     GOES satellite winds.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the CDAS, GDAS and GFS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v1.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.0.0, obsproc_dump.v3.0.0, obsproc_nam.v1.0.0,
+   obsproc_rap.v1.0.0, obsproc_rtma.v1.1.0, obsproc_urma.v1.1.0,
+   obsproc_satingest.v2.0.0, obsproc_shared/bufr_cword.v1.0.0 and
+   obsproc_shared/bufr_dumplist.v1.0.0.
+
+   It should be implemented PRIOR to NESDIS' promotion of their hourly GOES
+   satellite winds to their production server,
+
+   Please copy new file
+   /meso/save/Dennis.Keyser/HOME/versions/obsproc_global.ver to
+   /nwprod/versions.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140208_OBSPROC.v1.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

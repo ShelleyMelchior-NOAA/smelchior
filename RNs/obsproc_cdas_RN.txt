@@ -1,0 +1,1385 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.5.4 --> released Mar 15, 2022
+                           --> implemented Mar ??, 2022
+
+files:
+   obsproc_cdas/fix/prepobs_errtable.cdas
+   obsproc_cdas/fix/prepobs_oiqc.oberrs.cdas
+   obsproc_cdas/jobs/JCDAS_DUMP
+   obsproc_cdas/jobs/JCDAS_DUMP_POST
+   obsproc_cdas/jobs/JCDAS_PREP1
+   obsproc_cdas/jobs/JCDAS_PREP1_POST
+   obsproc_cdas/jobs/JCDAS_PREP2
+   obsproc_cdas/jobs/JCDAS_PREP2_POST
+   obsproc_cdas/parm/prepobs_cqcbufr.cdas.parm
+   obsproc_cdas/parm/prepobs_prepacqc.cdas.parm
+   obsproc_cdas/parm/prepobs_prepdata.cdas.parm
+   obsproc_cdas/parm/prepobs_prepssmi.cdas.parm
+   obsproc_cdas/parm/prepobs_prevents.cdas.parm
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+   obsproc_cdas/scripts/excdas_makeprepbufr.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ Model Script file changes:
+   excdas_dump.sh.ecf:
+    - Modifed to enable the dumping of 002017 component of vadwnd dump
+      group.
+      BENEFIT: SCN 21-96 disabled "NEXRAD Vel Azm Dsp(VAD) winds via radar
+               coded msg" (b002/xx008) data. In order to continue processing 
+               global vadwnd dump files, the processing of "NEXRAD Vel Azm 
+               Dsp(VAD) winds via Level 2 decoder" (b002017) data needs to
+               be enabled. This will allow for vadwnd data to continue to be
+               available for cdas processing.
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - As a result of updates to excdas_dump.sh.ecf:
+       $COMROOT/cdas/prod/cdas.YYYYMMDD/cdas.tCCz.vadwnd.tm00.bufr_d,
+       will contain observations from the "NEXRAD Vel Azm Dsp (VAD) winds
+       via Level 2 deocder (002017) subset. These data are higher volume,
+       resulting in each cycle's vadwnd bufr_d file being larger than 
+       current operations by ~ 1 Mb. 
+
+ Compute Resource Information:
+ -----------------------------
+    - No change in requested resources in the job cards.
+    - Negligible change in memory usage.
+    - Negligible change in wall clock time.
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/cdas/prod/cdas.YYYYMMDD:
+     cdas.tCCz.vadwnd.tm00.bufr_d* files increase by 4 Mb per day
+
+ Shared Software (used by 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0 (updated from v5.1.1)
+    - obsproc_prep.v5.5.0 (updated from v5.3.0)
+    - obsproc_dump_post.v3.6.0 (updated from v3.5.0)
+    - obsproc_prep_post.v3.1.1 (unchanged)
+    - obsproc_shared/bufr_dumplist.v2.4.1 (updated from v2.4.0)
+    - obsproc_shared/bufr_remorest.v2.1.3 (updated from v2.1.2)
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_envir (expected to be loaded in advance; tested with 1.1.0)
+    prod_util (expected to be loaded in advance; tested with v1.1.6)
+  JCDAS_DUMP requires:
+    grib_util (loaded in trigger script, tested with 1.0.6)
+    CFP (expected to be loaded in advance; tested with v2.0.2)
+  obsproc_cdas.ver uses ips_ver=18.0.5.274
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS (cdas data not currently archived)
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.3.2.
+   This must be installed on WCOSS Dell phase 3.
+   This must be implemented simultaneously with the implementations of:
+      v3.4.3 of obsproc_global,
+      v16.1.6 of GFS,
+      v2.2.16 of cfs.
+   Please retrieve the obsproc_global.ver file:
+   git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+   cd EMC_obsproc; git checkout master
+   cp versions/20220315_OBSPROC_v16.3.2/obsproc_cdas.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.5.3 --> released Jul 16, 2021
+                           --> implemented Aug 18, 2021
+
+files:
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Modified dump group 2 subtype counts to keep aligned with the
+      updated bufr_dumplist at v2.4.0.
+      BENEFIT: sfcshp dump file includes BUFR format ships and cman data.
+    - Modified dump group 2 to generate a separate tideg dump file, no
+      longer included in the sfcshp dump file.
+      BENEFIT: Eliminates duplicate reports complications between the
+               two separate data streams: tideg and cmanb.
+    - Added logic to copy bufr_dumplist file to $COMOUT.
+      BENEFIT: per NCO SPA request.
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - As a result of updates to excdas_dump.sh.ecf:
+       - The sfcshp dump file,
+          $COMROOT/cdas/prod/cdas.YYYYMMDD/cdas.tCCz.sfcshp.tm00.bufr_d,
+         will have the tideg subset (NC001005) removed.
+       - The tideg dump file,
+          $COMROOT/cdas/prod/cdas.YYYYMMDD/cdas.tCCz.tideg.tm00.bufr_d,
+         will be new.
+    - As a result of updates in obsproc_shared/bufr_dumplist.v2.4.0:
+      - The following subsets are now included in the sfcshp dump file:
+          "SHIPSB" [Ship - manual and automatic, restricted (BUFR)]
+           (001.101)
+          "SHIPUB" [Ship - manual and automatic, unrestricted (BUFR)]
+           (001.113)
+          "CMANB" [Surface Marine CMAN rpts decided from BUFR format]
+           (001.104)
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/cdas/prod/cdas.YYYYMMDD/:
+     cdas.tCCz.sfcshp.tm00.bufr_d* files increase by 32 Mb per day
+     cdas.tCCz.tideg.tm00.bufr_d file introduce 7 Mb per day
+     cdas.tCCz.prepbufr.tm00* files increase by 16 Mb per day 
+
+
+ Shared Software (used by 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0 (updated from v5.1.1)
+    - obsproc_prep.v5.5.0 (updated from v5.3.0)
+    - obsproc_dump_post.v3.6.0 (updated from v3.5.0)
+    - obsproc_prep_post.v3.1.1 (unchanged)
+    - obsproc_shared/bufr_dumplist.v2.4.0 (updated from v2.3.1)
+    - obsproc_shared/bufr_remorest.v2.1.3 (updated from v2.1.2)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_envir (expected to be loaded in advance; tested with 1.1.0)
+    prod_util (expected to be loaded in advance; tested with v1.1.6)
+  JCDAS_DUMP requires:
+    grib_util (loaded in trigger script, tested with 1.0.6)
+    CFP (expected to be loaded in advance; tested with v2.0.2)
+  obsproc_cdas.ver uses ips_ver=18.0.5.274
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS (cdas data not currently archived)
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.1.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.4.0 of obsproc_prep,
+      v2.1.3 of obsproc_shared_bufr_remorest,
+      v2.4.0 of obsproc_shared_bufr_dumplist.
+
+   Please retrieve obsproc_cdas.ver file:
+     git clone gerrit:EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20210712_OBSPROC-v16.1.0/obsproc_cdas.ver $NWROOT/versions/obsproc_cdas.ver
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.5.2 --> released Sep 14, 2020
+                           --> implemented Oct 22, 2020
+
+files:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+
+
+ JOB script changes:
+   JCDAS_DUMP:
+    - Disabled the export of variable TANK_GRIBFLDS.  The need
+      for this variable was disabled in obsproc_cdas.v2.5.0.
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Updated to remove obsolete dump mnemonic from Dump
+      group #1: goesfv.
+      BENEFIT: cdas dump processing is up to date with
+               currently available data sets.
+    - Updated Dump group #8 to skip legacy Meteosat AMV
+      subsets: 005064, 005065, 005066.  These subsets
+      are replaced by new WMO BUFR sequence subsets:
+      005067, 005068, 005069.  The format change from
+      EUMETSAT occurs Oct 6, 2020. 
+      BENEFIT: cdas dump processing is up to date with
+               currently available data sets.
+    - Updated Dump group #8 to process new WMO BUFR 
+      sequence subset for VIIRS AMVs: 005091.  Removed
+      obsolete subset: 005090.
+      BENEFIT: cdas dump processing is up to date with
+               currently available data sets.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/cdas/prod/cdas.   -  no change 
+
+
+ Shared Software (used by 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0 (updated from v5.0.1)
+    - obsproc_prep.v5.3.0 (updated from v5.2.2)
+    - obsproc_dump_post.v3.4.0 (updated from v3.3.2)
+    - obsproc_prep_post.v3.1.1 (updated from v3.1.0)
+    - obsproc_shared/bufr_dumplist.v2.3.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_remorest.v2.1.1 (updated from v2.1.0)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_envir (expected to be loaded in advance; tested with 1.1.0)
+    prod_util (expected to be loaded in advance; tested with v1.1.4)
+  JCDAS_DUMP requires:
+    grib_util (loaded in trigger script, tested with 1.1.1)
+    CFP (expected to be loaded in advance; tested with v2.0.2)
+  obsproc_cdas.ver uses ips_ver=18.0.5.274
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS (cdas data not currently archived)
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+      v4.2.0 of decod_dcelrw,
+      v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
+      v3.3.1 of obsproc_rtma,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v5.3.0 of obsproc_prep,
+      v3.1.1 of obsproc_prep_post,
+      v2.3.0 of obsproc_shared_bufr_dumplist - previously released to support RTOFS,
+      v2.1.1 of obsproc_shared_bufr_remorest.
+
+   Please retrieve obsproc_cdas.ver file:
+     git clone gerrit:EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20200818_OBSPROC-v14.0.0/obsproc_cdas.ver $NWROOT/versions/obsproc_cdas.ver
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.5.1 --> released Mar 26, 2020
+                           --> implemented Mar 26, 2020
+
+ M obsproc_cdas/jobs/JCDAS_DUMP
+
+Modified JCDAS_DUMP to point var TANK_GRIBFLDS to ph3 $DCOMROOT.
+
+Release and implementation orchestrated by NCO SPA.
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.5.0 --> released Jan 15, 2020
+                           --> implemented Mar 09, 2020
+
+files:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/jobs/JCDAS_DUMP_POST
+ M obsproc_cdas/jobs/JCDAS_PREP1
+ M obsproc_cdas/jobs/JCDAS_PREP1_POST
+ M obsproc_cdas/jobs/JCDAS_PREP2
+ M obsproc_cdas/jobs/JCDAS_PREP2_POST
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+( A - added,  M - modified, D - deleted)
+
+ JOB script changes:
+   All job scripts:
+    - Modified to run on Dell-p3.
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Modified to run on Dell-p3.
+    - Changed background threads to serial threads.
+    - Skipped processing of two tanks added to the msonet dump
+       group in bufr_dumplist: b255/xx031, b255/xx101.  These
+       two msonet tanks were introduced in bufr_dumplist.v1.6.0.
+    - Disabled the dumping of radwnd data.
+    - Disabled the copy of snow and sst grb data from dcom to com.
+
+
+ Compute Resource Information:
+ -----------------------------
+    - If current production resources in job cards remain
+      unchanged for JCDAS_DUMP, the process runs ~60s slower
+      on Dell.  It is posposed that the requested resources
+      in the job cards increase from 3 to 4 for: 
+      #BSUB -R "span[ptile=4]"
+      #BSUB -n 4
+      BENEFIT: This adjustment results in JCDAS_DUMP running
+      ~ 98s faster on Dell.
+    - No change in requested resources in the job cards for
+      JCDAS_DUMP_POST, JCDAS_PREP1, JCDAS_PREP1_POST,
+      JCDAS_PREP2, and JCDAS_PREP2_POST.
+    - JCDAS_DUMP runs        ~98s faster on Dell (after card changes)
+    - JCDAS_DUMP_POST runs   ~ 5s faster on Dell
+    - JCDAS_PREP1 runs       ~ 5s slower on Dell
+    - JCDAS_PREP1_POST runs  ~ 5s slower on Dell
+    - JCDAS_PREP2 runs       ~12s faster on Dell
+    - JCDAS_PREP2_POST runs  ~ 5s slower on Dell
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/cdas/prod/cdas.   - ~31 Mb smaller by discontinuing radwnd 
+
+
+ Shared Software (used by 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2 (updated from v4.0.0)
+    - obsproc_prep.v5.2.2 (updated from v5.0.0)
+    - obsproc_dump_post.v3.3.2 (updated from v3.1.0)
+    - obsproc_prep_post.v3.1.0 (updated from v3.0.0)
+    - obsproc_shared/bufr_dumplist.v2.0.2 (updated from v1.5.0)
+    - obsproc_shared/bufr_remorest.v2.1.0 (updated from v2.0.0)
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_envir (expected to be loaded in advance; tested with 1.0.3)
+    prod_util (expected to be loaded in advance; tested with v1.1.3)
+  JCDAS_DUMP requires:
+    grib_util (loaded in trigger script, tested with 1.0.6)
+    CFP (expected to be loaded in advance; tested with v2.0.2)
+  obsproc_cdas.ver uses ips_ver=18.0.5.274
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS (cdas data not currently archived)
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v12.2.0.
+   This must be implemented simultaneously with the implementations of:
+      v3.3.2 of obsproc_dump_post,
+      v5.2.2 of obsproc_prep.
+
+   Please retrieve obsproc_cdas.ver file:
+     git clone gerrit:EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20200115_OBSPROC-v12.2.0/obsproc_cdas.ver $NWROOT/versions/obsproc_cdas.ver
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.4.2 --> released Feb 11, 2020
+                           --> implemented Feb 11, 2020
+
+files:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+
+( A - added,  M - modified, D - deleted)
+
+ JOB script changes:
+   JCDAS_DUMP:
+    - updated the default COM_SSTOI assignment to use compath.py utility
+      in order to find 1-degree sst file on phase 3
+
+Release and implementation orchestrated by NCO SPA.  There was a path
+change in JCDAS_DUMP to locate sst data after the implementation of
+NSST.v1.0.0 on Dell-ph3.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.4.1 --> released Jun 12, 2019
+                           --> implemented Jun 12, 2019
+
+files:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+
+( A - added,  M - modified, D - deleted)
+
+Release and implementation orchestrated by NCO SPA.  There was a path
+change in JCDAS_DUMP to locate sea ice data after the implementation of
+FV3 GFSv15.1 on Dell-ph3.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.4.0 --> released Aug 29, 2018
+                           --> implemented Sep 18, 2018
+
+files:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/jobs/JCDAS_DUMP_POST
+ M obsproc_cdas/jobs/JCDAS_PREP1
+ M obsproc_cdas/jobs/JCDAS_PREP1_POST
+ M obsproc_cdas/jobs/JCDAS_PREP2
+ M obsproc_cdas/jobs/JCDAS_PREP2_POST
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+ M obsproc_cdas/scripts/excdas_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All job scripts:
+    - Use variable $RUN rather than $model to set the default COMIN and COMOUT
+      directory basenames. This allows NCO to use "$model" to reference the
+      "obsproc_cdas" package in ecflow scripts (per recent practice).
+    - Added call of err_exit if the driver script returns a non-zero status.
+   JCDAS_DUMP:
+     - Updated default NWROOT location to find obsproc_dump on phase 2 disk.
+     - Changed variable BACK to be expandable with default value of "off" which
+       disables background threads in dumpjb. (was hard-coded as "on")
+     - Added variable MPMD with default setting of "off" (used in dumpjb)
+     - Added variable launcher with default setting of "cfp" to use that utility
+       to process multiple dump groups simultaneously in excdas_dump.sh.ecf.
+   JCDAS_DUMP_POST, JCDAS_PREP1_POST, JCDAS_PREP2_POST:
+     - Updated default NWROOT location to find bufr_remorest on phase 2 disk.
+   JCDAS_PREP2:
+     - Removed load of util_shared module. (not needed with newer obsproc_prep)
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Replaced use of background threads with cfp for simultaneous dump group
+      processing. (dump groups will be processed serially if anything other than
+      "cfp" is passed in for variable launcher)
+   excdas_makeprepbufr.sh.ecf:
+    - Use variable $RUN rather than $model when referencing input directories
+      (as noted above for all job scripts)
+
+
+ Output changes:
+ ---------------
+
+   Job JCDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v3.1.0:
+       - Listings for "msonet" dumps will include SDM quality marks.
+       - Some printed float values will no longer include a leading zero.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JCDAS_DUMP:
+   - Was:  serial, shared, 14000 Mb.
+   - Recommend: parallel, shared, 3 tasks, ptile=3, 4000 Mb per task.
+     With above, runtime reduced from ~16 min to ~8 min
+   Job JCDAS_DUMP_POST:
+   - Was:  serial, shared, 1500 Mb.
+   - Recommend: parallel, shared, 3 tasks, ptile=3, 500 Mb per task.
+     With above, runtime reduced from ~5 min to ~3 min
+
+
+ Disk Space Changes:
+ -------------------
+   /com/cdas/prod/cdas.   - No change
+
+
+ Shared Software (used by 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v4.0.0 (updated from v3.3.0)
+    - obsproc_prep.v5.0.0 (updated from v3.8.0)
+    - obsproc_dump_post.v3.1.0 (updated from v2.3.0)
+    - obsproc_prep_post.v3.0.0 (updated from v2.3.0)
+    - obsproc_shared/bufr_dumplist.v1.5.0 (updated from v1.4.0)
+    - obsproc_shared/bufr_remorest.v2.0.0 (updated from v1.0.0)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_envir (expected to be loaded in advance; tested with 1.0.1, the
+               default at the time)
+    prod_util (expected to be loaded in advance; tested with v1.0.28, the
+               default at the time)
+  JCDAS_DUMP requires:
+    grib_util/v1.0.5 (loaded in job script, updated from 1.0.1)
+    cfp/1.1.0 (expected to be loaded in advance)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS (cdas data not currently archived)
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v10.2.0.
+
+   Please retrieve obsproc_cdas.ver file:
+     git clone gerrit:EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20180808_OBSPROC-v10.2.0/obsproc_cdas.ver /nwprod/versions/obsproc_cdas.ver
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.3.0 --> released Apr 24, 2017
+                           --> implemented May 09, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Fixed a typo.
+
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Dump files
+         /com/cdas/prod/cdas.<yyyymmdd>/cdas.t<cc>z.aircft.tm00.bufr_d
+         now contain Korean AMDAR (BUFR), AMDAR-catchall (BUFR), and Panasonic
+         (AirDAT) TAMDAR (BUFR) reports from b004/xx010, b004/xx011 and
+         b004/x103 tanks, resp. In cases where AMDAR-catchall (BUFR)
+         (b004/xx103) reports duplicate TAC-feed AMDAR (b004/xx003) reports, the
+         former will be retained.
+   Job JCDAS_PREP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Korean AMDAR (BUFR) and AMDAR-catchall (BUFR) reports now excoded into
+         PREPBUFR files (type 131/231) and will be available for assimilation.
+         Panasonic (AirDAT) TAMDAR (BUFR) reports are not encoded into PREPBUFR
+         files.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JCDAS_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Processing additional aircraft data requires ~73 MB of memory.
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   Job JCDAS_PREP1:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Processing additional aircraft data results in a ~1 second increase in
+         wallclock run time.
+       - Processing additional aircraft data requires ~16 MB of memory.
+    - No change in requested resources in the job cards.
+   Job JCDAS_PREP2:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Processing additional aircraft data results in a ~6 second increase in
+         wallclock run time.
+       - Processing additional aircraft data requires ~23 MB of memory.
+    - No change in requested resources in the job cards.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/cdas/prod/cdas.   - Increase ~24 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0
+    - obsproc_prep.v3.8.0
+    - obsproc_dump_post.v2.3.0
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.4.0 (updated from v1.3.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.8, the
+               default at the time)
+  JCDAS_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+  JCDAS_PREP2 requires:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v7.1.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.2.0 of obsproc_dump_monitor,
+      v3.1.0 of obsproc_nam,
+      v2.4.0 of obsproc_rap,
+      v1.4.0 of obsproc_shared/bufr_dumplist.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170414_OBSPROC-v7.1.0/obsproc_cdas.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.2.0 --> released Jan 12, 2017
+                           --> implemented Feb 21, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/jobs/JCDAS_DUMP_POST
+ M obsproc_cdas/jobs/JCDAS_PREP1
+ M obsproc_cdas/jobs/JCDAS_PREP1_POST
+ M obsproc_cdas/jobs/JCDAS_PREP2
+ M obsproc_cdas/jobs/JCDAS_PREP2_POST
+ M obsproc_cdas/parm/prepobs_prepdata.cdas.parm
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All job scripts:
+    - Move check that required variables are set to top of script.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JCDAS_DUMP:
+    - Set default for new script variable $KEEP_NEARDUP_ACFT to "NO" to ensure
+      that near-duplicate aircraft reports will not be retained.
+      BENEFIT: The CDAS analysis will continue to process aircraft data in the
+               same manner as before.  No change is good for the CDAS!
+   JCDAS_PREP1:
+    - Minor comment change.
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Removed temporary logic added in v2.3.0 which changed "gpsipw" dump file's
+      group to "rstprod" and its permission to "640" so that it could only be
+      read by users in the rstprod group.  This is no longer needed since
+      "gpsipw" has now been added to the list of dump files for which this needs
+      to be done in obsproc_dump.v3.3.0 which is being implemented
+      simultaneously with obsproc_cdas.v2.2.0.
+
+ Parm file changes:
+   prepobs_prepdata.cdas.parm:
+    - The default overrides for AWINDO, JAMASS, JAWIND, IACFTL, AIFNOW and
+      FLACMS are extended to accommodate three additional aircraft data types:
+      Korean AMDAR (BUFR), AMDAR-catchall (BUFR) and Panasonic (AirDAT) TAMDAR
+      (BUFR).  There were six, now there are nine.  The two new AMDAR types will
+      get the same values as previously existing AMDAR types in type 131/231 and
+      will be processed and included in the PREPBUFR files if found in the
+      "aircft" dump files. The new TAMDAR type will get the same values as the
+      previously existing TAMDAR type (MADIS) and will not be processed and thus
+      not included in the PREPBUFR files even if found in the "aircft" dump
+      files.
+      (Note: Canadian AMDAR aircraft mass and wind data, which are found in the
+             "aircft" dump files, continue to be turned off from processing
+             since they would be encoded into report types 133/235 which are not
+             recognized by the CDAS analysis.)
+      BENEFIT: Korean AMDAR (BUFR) and AMDAR-catchall (BUFR) will be available
+               for assimilation by the CDAS once found in "aircft" dump files
+               (they are not yet there).
+
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - Mesonet (msonet) dump files can now contain reports with purged/
+         rejected QMs on p,t,q,uv.
+    - After ARINC switches to v7 BUFR for AMDAR and MDCRS, dump files
+      /com/cdas/prod/cdas.$PDY/cdas.t${cyc}z.aircar.tm00.bufr_d
+      (where cyc= 00, 06, 12, 18) can potentially store lat/lon (CLAT/CLON) to
+      10**5 precision.
+   Job JCDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - Listings for "aircft", "aircar", "adpupa", "adpsfc", "sfcshp",
+         "msonet", "ascatw" and "gpsipw" dumps now print lat/lon out to 0.00001
+         degree (although actual significance is still based on precision in the
+         BUFR lat/lon encoded in each dump file).
+   Job JCDAS_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - E-AMDAR moisture now excoded into PREPBUFR files (flagged here, not
+         considered by assimilation).
+       - PREPBUFR files now store lat/lon (YOB/XOB) to 10**5 precision, this
+         will potentially be seen for the following types: AIRCFT 131/231
+         E-AMDAR (only), AIRCAR 133/233 (MDCRS) (after ARINC switches to v7 BUFR
+         for AMDAR and MDCRS).
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JCDAS_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - program bufr_edtbfr uses more memory due to an increase in array parameter
+         "ISTNID_MATCH":
+               previous: The maximum resident set size (KB) = 239108
+               now:      The maximum resident set size (KB) = 258952
+       - Changes in program bufr_edtbfr result in a ~30 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+   Job JCDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - program bufr_listdumps uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - No change in wallclock run time.
+    - No change in requested resources in the job cards.
+   Job JCDAS_PREP1:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - program prepobs_prepdata uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - No change in requested resources in the job cards.
+    - ~8 second increase in wallclock run time.
+   Job JCDAS_PREP2:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - program prepobs_prepacqc uses more memory due to an increase in array
+         parameter MAXFLT and now passing double-precision latitude/longitude:
+               previous: The maximum resident set size (KB) = 1365088
+               now:      The maximum resident set size (KB) = 1369196
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/cdas/prod/cdas.   - Increase ~37 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0 (updated from v3.2.1)
+    - obsproc_prep.v3.8.0 (updated from v3.7.0)
+    - obsproc_dump_post.v2.3.0 (updated from v2.2.1)
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.5, the
+               default at the time)
+  JCDAS_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+  JCDAS_PREP2 requires:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.5.0.
+   This must be implemented simultaneously with the implementations of:
+      v3.3.0 of obsproc_dump,
+      v2.1.0 of obsproc_dump_monitor,
+      v2.3.0 of obsproc_dump_post,
+      v2.4.0 of obsproc_global,
+      v2.3.0 of obsproc_nam,
+      v3.8.0 of obsproc_prep,
+      v2.3.0 of obsproc_rap,
+      v2.2.0 of obsproc_rtma,
+      v2.2.0 of obsproc_urma.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170112_OBSPROC-v6.5.0/obsproc_cdas.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.1.2 --> released Oct 28, 2016
+                           --> implemented Nov 1, 2016
+
+ only change:
+
+ M obsproc_cdas/jobs/JCDAS_DUMP
+
+( M - modified)
+
+
+ JOB script changes:
+   JCDAS_DUMP:
+    - Moved SEAICE to Phase2.
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.1.1 --> released Oct 11 2016
+                           --> implemented Oct 11, 2016
+
+ only change:
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump_post.v2.2.1 (updated from v2.2.0)
+
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.1.0 --> released Sep 1, 2016
+                           --> implemented Sep 27, 2016
+
+files added, modified or deleted since last release:
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/jobs/JCDAS_DUMP_POST
+ M obsproc_cdas/jobs/JCDAS_PREP1
+ M obsproc_cdas/jobs/JCDAS_PREP1_POST
+ M obsproc_cdas/jobs/JCDAS_PREP2
+ M obsproc_cdas/jobs/JCDAS_PREP2_POST
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+ M obsproc_cdas/scripts/excdas_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Use NCO-established variables to point to root directories for main
+      software components and input/output directories in order to run on
+      WCOSS Phase 1 or Phase 2.  (Some util* variables remain and point to
+      /nwprod/util as required by obsproc application scripts).
+    - Use NCO-established variables to point to prod and grib utilities.
+    - Execute "module list" to echo "Currently Loaded Modulefiles" to stdout.
+    - Removed direct path to setpdy.sh utility script, relying on version
+      added to PATH (presumably by prod_util module).  Echo full path to this
+      script to stdout.
+    - Use new NCO standard variable KEEPDATA in place of CLEANUP to decide
+      whether to remove working directory at end of run.
+    - Removed NCO vs developer checks in places were we could rely on
+      variables
+      set in ecflow environment for NCO runs. Modified remaining such wrappers
+      to check setting of NCO standard variable RUN_ENVIR in place of
+      non-standard variables used previously.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JCDAS_DUMP:
+    - Obtains version number for module grib_util via imported environment
+      variable $grib_util_ver.  This is defined in the upstream ecflow script.
+      Current setting is grib_util_ver=v1.0.1.
+       - Load module grib_util/v1.0.1.
+      BENEFIT: Defines path now relied on to run utility program grbindex in
+               model script excdas_dump.sh.ecf and in ush script
+               bufr_dump_obs.sh.
+    - Moved logic to copy files to arkv directory from here to model script
+      excdas_dump.sh.ecf. New script variable controlling this, $COPY_TO_ARKV,
+      defaults to "YES" here (and only when it is "YES" is the target directory
+      path $COMARC now set here).
+   JCDAS_PREP1, JCDAS_PREP2:
+    - Moved logic to copy files to arkv directory from here to model script
+      excdas_makeprepbufr.sh.ecf. New script variable $COMARC, the target
+      directory path, is set here (when script variable controlling copy to
+      arkv directory, $COPY_TO_ARKV is "YES") such that it can write to output
+      directory on either WCOSS Phase 1 or Phase 2, with a NCO vs developer
+      check wrapper.
+   JCDAS_PREP1, JCDAS_PREP1_POST, JCDAS_PREP2, JCDAS_PREP2_POST:
+    - Set new script variable $JOB_NUMBER (1 for PREP1 & PREP1_POST jobs, 2 for
+      PREP2 & PREP2_POST jobs).  For PREP jobs, used by model script
+      excdas_makeprepbufr.sh.ecf to determine what files should be copied to
+      arkv directory.
+   JCDAS_PREP2:
+    - Obtains version number for module util_shared via imported environment
+      variable $util_shared_ver.  This is defined in the upstream ecflow script.
+      Current setting is util_shared_ver=v1.0.4.
+       - Load module util_shared/v1.0.4.
+      BENEFIT: Defines prepended path now relied on to run utility ush
+               getges.sh in ush script prepobs_makeprepbufr.sh.
+    - New script variable $COM_IN, the path to past and future PREPBUFR files
+      possibly read by program prepobs_cqcbufr which is ultimately executed out
+      of model script excdas_makeprepbufr.sh, is set here such that it can run
+      on either WCOSS Phase 1 or Phase 2, with a NCO vs developer check
+      wrapper.
+      BENEFIT: The previous path to these PREPBUFR files, $COM1, was
+               inadvertently not exported to excdas_makeprepbufr.sh.ecf. This
+               prevented the CQCBUFR temporal check from running in the CDAS
+               network (the only network where it currently would run). This QC
+               check now runs in the CDAS PREP2 jobs.
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Use NCO standard variables to point to grib utilities.
+    - Replaced "/com" with full file name path beginning with ${COMSP} in
+      messages posted to jlogfile when copying 0.5 degree snow grib file, T574
+      snow grib file, engice grib file and sst grib file.
+      BENEFIT: Adds more information, generalizes for current and future prod
+               i/o (/com and /com2, resp.).
+    - Moved logic to copy files to arkv directory here (had been in job
+      script JCDAS_DUMP).  Controlled by new script variable $COPY_TO_ARKV set
+      in job script. Copy preserves ownership & group id but updates timestamp.
+      BENEFIT: Logic such as this should not be in job script.
+    - Added temporary logic to change "gpsipw" dump file's group to "rstprod"
+      and its permission to "640" so that it can only be read by users in the
+      rstprod group.
+      BENEFIT: New "gpsipw" dump file is restricted.  The logic to restrict dump
+               files is done in obsproc_dump ush script bufr_dump_obs.sh, where
+               the list of files to restrict is hardwired.  Since obsproc_dump
+               is not included in this release bundle, the restriction must be
+               done here.  This temporary logic will be removed once a future
+               change to add "gpsipw" to the list of dump files to restrict is
+               made in the next obsproc_dump release.
+   excdas_makeprepbufr.sh.ecf:
+    - Replaced script variable $COM1 with $COM_IN which is a directory path to
+      past and future PREPBUFR files possibly read by program prepobs_cqcbufr
+      which is ultimately executed out of this script.
+      BENEFIT: See change to job script JCDAS_PREP2 above.
+    - Replace hard path to ndate utility with NCO standard variable $NDATE.
+    - Moved logic to copy files to arkv directory here (had been in job
+      scripts JCDAS_PREP1 and JCDAS_PREP2).  Controlled by new script variable
+      $COPY_TO_ARKV set in job script. New script variable $JOB_NUMBER (1 for
+      PREP1 job, 2 for PREP2 job, set in job script) determines what should be
+      copied.  Copy preserves ownership & group id but updates timestamp.
+      BENEFIT: Logic such as this should not be in job script. PREPBUFR files
+               now have correct group id "rstprod" rather than "prod".
+
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.3.0:
+       - Dump files
+         /com/cdas/prod/cdas.<yyyymmdd>/cdas.t<cc>z.gpsipw.tm00.bufr_d
+         now contain new U.S.-ENI and foreign-GNSS Ground Based GPS-IPW/ZTD
+         (message type NC012004) (before they contained U.S.-GSD Ground Based
+         GPS-IPW/ZTD, message type NC012003).  They will also now be restricted.
+   Job JCDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.2.0:
+       - The following new files are created:
+         /com/cdas/prod/cdas.<yyyymmdd>/cdas.t<cc>z.gpsipw.tm00.bufr_d.nr
+       - Dump listing files
+         /com/cdas/prod/cdas.<yyyymmdd>/cdas.t<cc>z.gpsipw.tm00.bufr_d.listing
+         list lat and lon to nearest 0.00001 degree rather than to nearest 0.01
+         degree.  These files are now restricted.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JCDAS_DUMP:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - ~ 4 second increase in wallclock run time.
+   Job JCDAS_DUMP_POST:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - ~3 second increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/cdas/prod/cdas.   - Increase ~469 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.7.0 (updated from v3.5.0)
+    - obsproc_dump_post.v2.2.0 (updated from v2.0.1)
+    - obsproc_prep_post.v2.3.0 (updated from v2.1.0)
+    - obsproc_shared/bufr_dumplist.v1.3.0 (updated from v1.2.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.4, the
+               default at the time)
+  JCDAS_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+  JCDAS_PREP2 requires:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+   - This is part of the parallel test of the new GPS-IPW update.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted
+     previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.4.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.0 of obsproc_dump_monitor,
+      v2.2.0 of obsproc_dump_post,
+      v2.3.0 of obsproc_global,
+      v2.2.0 of obsproc_nam,
+      v3.7.0 of obsproc_prep,
+      v2.3.0 of obsproc_prep_post,
+      v2.2.0 of obsproc_rap,
+      v1.3.0 of obsproc_shared/bufr_dumplist;
+   but AFTER the implementation of v3.1.0 of obsproc_satingest.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160901_OBSPROC-v6.4.0/obsproc_cdas.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.0.4 --> released May 1, 2015
+                           --> implemented Aug 10, 2015
+
+files:
+ M obsproc_cdas/parm/prepobs_prepdata.cdas.parm
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Dump window for GOES satwnd types from tanks NC005010 (IR/LW), NC005011
+      (WV/IMGR) and NC005012 (VIZ) changed from -1.00 to -0.01 hours about
+      center dump time to -3.00 to +2.99 hours about center dump time.
+      BENEFIT:  Allows all possible GOES satwnds to be dumped throughout the
+                day in this late (archive) network.
+    - Dump window for new satwnd types NC005019 (GOES IR/SW), NC005080 (POES
+      AVHRR) and NC005090 (POES VIIRS) specified to be -3.00 to +2.99 hours
+      about center dump time.
+      BENEFIT:  Allows all of these new satwnd types to be dumped throughout
+                the day in this late (archive) network.
+
+ Parm file changes:
+   prepobs_prepdata.cdas.parm:
+    - The time window for processing high-density IR/LW, VIZ, WV/IMGR cloud-top
+      and WV/IMGR deep-layer GOES satwnds into the CDAS PREPBUFR file is
+      changed from -1.50 hours to +1.50 hours about PREPBUFR center time to
+      -1.00 to -0.01 hours about PREPBUFR center time.
+      BENEFIT:  This results in no net change in the number of these winds in
+                the CDAS PREPBUFR file (and thus the number available to the
+                CDAS analysis) even though the dump time-window for these types
+                has been widened as noted above.
+
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - The "satwnd" dumps will contain ~6 times as many GOES IR/LW, GOES WV/IMGR
+      and GOES VIZ winds as before.
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.2.0:
+       - The "satwnd" dump files will contain GOES IR/SW, POES AVHRR/IR/LW and
+         POES VIIRS/IR/LW winds.
+   Job JCDAS_PREP1:
+    - As a result of update to obsproc_prep.v3.5.0:
+       - Valid TSB values will be encoded into PREPBUFR file for reports in
+         message type AIRCAR.
+       - Marine reports previously, incorrectly deemed over land and flagged
+         will now be deemed over water and be available for assimilation.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JCDAS_PREP2:
+    - No change in requested resources in the job cards.
+    - program prepobs_prepacqc now uses more memory due to an increase in
+      array parameter "max_reps":
+            previous: The maximum resident set size (KB) = 1024368
+            now:      The maximum resident set size (KB) = 1366072
+    - No other changes to memory usage.
+    - A couple of seconds increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/cdas/prod/cdas.   - Increase ~631 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1 (updated from v3.2.0)
+    - obsproc_prep.v3.5.0 (updated from v3.4.0)
+    - obsproc_dump_post.v2.0.1 (updated from v2.0.0)
+    - obsproc_prep_post.v2.1.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_dumplist.v1.2.0 (updated from v1.1.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.1.1 of obsprod_global,
+      v2.0.3 of obsproc_nam,
+      v3.5.0 of obsproc_prep,
+      v2.1.0 of obsproc_prep_post,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_rtma,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb,
+      v1.2.0 of obsproc_shared/bufr_dumplist.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20150501_OBSPROC-fy15q2/obsproc_cdas.ver
+   and copy to /nwprod/versions.
+   (lowest sub-directory later renamed to 20150501_OBSPROC.v5.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.0.3 --> released Jun 30, 2015
+                           --> implemented Jun 30, 2015
+
+ only change: 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_prep_post.v2.0.2 (updated from v2.0.1)
+
+
+(Note: NCO/PMB did not update the version number here)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_cdas release 2.0.3 --> released Dec 4, 2014
+                           --> implemented Dec 15, 2014
+
+Initial population of vertical structure under obsproc_cdas
+(moved out of obsproc_global.v2.0.2).
+
+files:
+ M obsproc_cdas/fix/prepobs_errtable.cdas
+ M obsproc_cdas/fix/prepobs_oiqc.oberrs.cdas
+ M obsproc_cdas/jobs/JCDAS_DUMP
+ M obsproc_cdas/jobs/JCDAS_DUMP_POST
+ M obsproc_cdas/jobs/JCDAS_PREP1
+ M obsproc_cdas/jobs/JCDAS_PREP1_POST
+ M obsproc_cdas/jobs/JCDAS_PREP2
+ M obsproc_cdas/jobs/JCDAS_PREP2_POST
+ M obsproc_cdas/parm/prepobs_cqcbufr.cdas.parm
+ M obsproc_cdas/parm/prepobs_prepacqc.cdas.parm
+ M obsproc_cdas/parm/prepobs_prepdata.cdas.parm
+ M obsproc_cdas/parm/prepobs_prepssmi.cdas.parm
+ M obsproc_cdas/parm/prepobs_prevents.cdas.parm
+ M obsproc_cdas/scripts/excdas_dump.sh.ecf
+ M obsproc_cdas/scripts/excdas_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Splits CDAS network into new obsproc_cdas directory.  GFS and GDAS
+      networks remain in obsproc_global.directory.
+       - Obtain obsproc_cdas version number via imported environment variable
+         $obsproc_cdas_ver.  This is defined in the upstream ecflow script.
+         (Replaces obsproc_global environment variable $obsproc_global_ver.)
+         In production, environment variable $HOMEobsproc_network is now set to
+         /nwprod/obsproc_cdas.$obsproc_cdas_ver (had been set to
+         /nwprod/obsproc_global.$obsproc_global_ver). 
+      BENEFIT: Allows more flexibility in making changes to just the CDAS which
+               is a fundamentally different system than the GFS/GDAS.
+   JCDAS_DUMP:
+    - Remove reference to TRMM in comments.
+
+ Model script changes:
+   excdas_dump.sh.ecf:
+    - Copy of obsproc_global.v2.0.2/scripts/exglobal_dump.sh.ecf and then
+      updated to exclusively handle the CDAS network.            
+    - Specific CDAS differences from
+      obsproc_global.v2.0.2/scripts/exglobal_dump.sh.ecf:
+       - No longer dumps TRMM data.  (These data are not assimilated. Ingest
+         will soon be discontinued as the satellite is nearing end of life.)
+   excdas_makeprepbufr.sh.ecf:
+    - Copy of obsproc_global.v2.0.2/scripts/exglobal_makeprepbufr.sh.ecf and
+      then updated to exclusively handle the CDAS network.            
+
+ Fixed file changes:
+   All fixed files:
+    - No changes to contents.
+
+ Parm file changes:
+   All parm files:
+    - No changes to contents.
+
+
+ Output changes:
+ ---------------
+   Job JCDAS_DUMP:
+    - Dump files "trmm" and "sptrmm" will no longer be present in
+      /com/cdas/prod/... directories.
+   Jobs JCDAS_PREP1, JCDAS_PREP2:
+    - As a result of update to obsproc_prep.v3.4.0:
+       - Reports in PREPBUFR file, message type SATEMP will now be from the
+         primary POES constellation NOAA-19 ("SAID" 223) and METOP-1(B)
+         ("SAID" 3) rather than from the secondary POES constellation NOAA-18
+         ("SAID" 209) and METOP-2(A) (which was incorrectly identified as
+         "SAID" 210 instead of "SAID" 4).
+
+
+ Compute Resource Information:
+ -----------------------------
+   No change in requested resources in the job cards.
+   No change to memory usage.
+   Negligible change in disk space and run time.
+
+
+ Shared Software:
+ ----------------
+    - JCDAS_DUMP:
+         obsproc_dump.v3.2.0
+         obsproc_shared/bufr_dumplist.v1.1.0 (updated from v1.0.0)
+    - JCDAS_PREP1, JCDAS_PREP2:
+         obsproc_prep.v3.4.0 (updated from v3.2.0)
+    - JCDAS_DUMP_POST:
+         obsproc_dump_post.v2.0.0
+    - JCDAS_PREP1_POST, JCDAS_PREP2_POST:
+         obsproc_prep_post.v2.0.1
+    - JCDAS_PREP1_POST, JCDAS_PREP2_POST, JCDAS_DUMP_POST:
+         obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all six production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output is the CDAS network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.1.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.4.0 of obsproc_satingest,
+      v3.4.0 of obsproc_prep.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20141204_OBSPROC-ATOVS_sndg_new_sats/obsproc_cdas.ver
+   and copy to /nwprod/versions.
+   (lowest sub-directory later renamed to 20141204_OBSPROC.v4.1.0)
+
+   Please change
+       VERSION_FILE=/nw${envir}/versions/obsproc_global.ver
+    to
+       VERSION_FILE=/nw${envir}/versions/obsproc_cdas.ver
+   and change the path to the WCOSS Job Script from
+       /nw$envir/obsproc_global.${obsproc_global_ver}/jobs/
+    to
+       /nw$envir/obsproc_cdas.${obsproc_cdas_ver}/jobs/
+   in the following ecflow scripts:
+           scripts/prod00/cdas12/dump/jcdas_dump_12.ecf
+           scripts/prod00/cdas12/dump/jcdas_dump_post_12.ecf
+           scripts/prod00/cdas12/prep/jcdas_prep1_12.ecf
+           scripts/prod00/cdas12/prep/jcdas_prep1_post_12.ecf
+           scripts/prod00/cdas12/prep/jcdas_prep2_12.ecf
+           scripts/prod00/cdas12/prep/jcdas_prep2_post_12.ecf
+           scripts/prod06/cdas18/dump/jcdas_dump_18.ecf
+           scripts/prod06/cdas18/dump/jcdas_dump_post_18.ecf
+           scripts/prod06/cdas18/prep/jcdas_prep1_18.ecf
+           scripts/prod06/cdas18/prep/jcdas_prep1_post_18.ecf
+           scripts/prod06/cdas18/prep/jcdas_prep2_18.ecf
+           scripts/prod06/cdas18/prep/jcdas_prep2_post_18.ecf
+           scripts/prod12/cdas00/dump/jcdas_dump_00.ecf
+           scripts/prod12/cdas00/dump/jcdas_dump_post_00.ecf
+           scripts/prod12/cdas00/prep/jcdas_prep1_00.ecf
+           scripts/prod12/cdas00/prep/jcdas_prep1_post_00.ecf
+           scripts/prod12/cdas00/prep/jcdas_prep2_00.ecf
+           scripts/prod12/cdas00/prep/jcdas_prep2_post_00.ecf
+           scripts/prod18/cdas06/dump/jcdas_dump_06.ecf
+           scripts/prod18/cdas06/dump/jcdas_dump_post_06.ecf
+           scripts/prod18/cdas06/prep/jcdas_prep1_06.ecf
+           scripts/prod18/cdas06/prep/jcdas_prep1_post_06.ecf
+           scripts/prod18/cdas06/prep/jcdas_prep2_06.ecf
+           scripts/prod18/cdas06/prep/jcdas_prep2_post_06.ecf
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

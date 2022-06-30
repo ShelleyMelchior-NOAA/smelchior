@@ -1,0 +1,1414 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.4.0 --> released Jul ??, 2021
+                                           --> implemented ??? ??, 2021
+
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.3.1
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.4.0
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Add BUFR type 001, subtype 104 to dump group mnemonics "cmanb",
+       "sfcshp", "sfmar", and "001".
+    2) Remove subset 001005 from "sfcshp" dump group.
+    3) Remove legacy Meteosat tanks from "satwnd" dump group.
+  BENEFIT:
+    - Change 1 supports the processing of BUFR format ship and cman platform
+      data.
+    - Change 2 promotes an indiviudal tideg dump file.  Pulling tide gauge
+      data from the sfcshp dump file prevents tideg data from being encoded
+      into the prepbufr file.  This prevents duplication of data from the
+      tideg and cmandb data streams.
+    - Change 3 prevents the attempt to dump non-existent BUFR tank files.
+
+
+ Module changes:
+ ---------------
+   2.4.0 replaces 2.3.1 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS Cray-XC40 & Dell-p3 systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.4.0 from this release to each of:
+
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.4.0
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.4.0
+
+       * - compiler_prod/ips/18.0.1
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v16.1.0
+   This must be implemented simultaneously with the implementation of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.5.0 of obsproc_prep,
+      v2.1.3 of obsproc_shared_bufr_remorest.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+   But note, please update:
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_cdas.ver,
+     obsproc_dump_monitor.ver,
+     RTDM,
+   to set obsproc_shared_bufr_dumplist to v2.4.0.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.3.1 --> released Feb 10, 2021
+                                           --> implemented Apr 14, 2021
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.3.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.3.1
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Remove subset 002013 from PROFLR dump group
+  BENEFIT:
+    - Change 1 allows BUFR data tank b002/xx013 to move into $DCOMROOT/prod
+      without any impact to downstream processing.
+
+
+ Module changes:
+ ---------------
+   2.3.1 replaces 2.3.0 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS Cray-XC40 & Dell-p3 systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.3.1 from this release to each of:
+
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.3.1
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.3.1
+
+       * - compiler_prod/ips/18.0.1
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v15.1.0
+   This must be implemented prior to, or simultaneously with, the implementation of:
+      v4.1.0 of decod_dcwpfl.
+   This can be implemented along with,
+      v3.4.1 of obsproc_global,
+      v3.4.1 of obsproc_nam,
+      v3.5.0 of obsproc_dump_post,
+      v2.1.2 of obsproc_shared_bufr_remorest.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+   But note, please update:
+     obsproc_cdas.ver,
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_dump_monitor.ver,
+     RTDM,
+   to set obsproc_shared_bufr_dumplist to v2.3.1.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.3.0 --> released Aug 08, 2020
+                                           --> implemented Oct 22, 2020
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.2.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.3.0
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Add BUFR type 000, subtypes 100, 101, and 102 to dump group mnemonics
+       "adpsfc", "sflnd", and "000".
+    2) Changed alert status for TAC format "synop" from "RED" to "grn" for
+       all networks.
+    3) Add BUFR type 001, subtypes 102 and 103 to dump group mnemonic "sfcshp".
+    4) Add BUFR type 001, subtype 120 to dump group mnemonic "saldrn".
+    5) Add BUFR type 001, subtype 101 to dump group mnemonic "shipsb".
+    6) Add BUFR type 001, subtype 113 to dump group mnemonic "shipub".
+    7) Correct typo in dump mnemonic for BUFR type 031, subtype 006.  The
+       correct dump mnemonic is "xbtctd".
+    8) Adjust alert threshold for dump mnemonic "amdar", from 50 to 10, for
+       all applicable networks.
+    9) Adjust deficiency alert to RED for dump mnemonic "eadas" for GFS, GDAS,
+       and HRLY.
+   10) Adjust deficiency alert for dump mnemonic "amdarb".  The new settings
+       include: no specified color for NAM and RED for GFS, GDAS, and HRLY.
+   11) Removed obsolete dump mnemonic, escrsf, BUFR type 021, subtype 037.
+
+  BENEFIT:
+    - Changes 1-3 support the processing of BUFR format synoptic and buoy data.
+    - Change 4 supports processing of BUFR format saildrone data.
+    - Change 5 supports processing of BUFR format restricted ships data.
+    - Change 6 supports processing of BUFR format unrestricted ships data.
+    - Change 7 supports processing of eXpendable BathyThermograph, XCTD profiles
+      using the correct dump mnemonic.
+    - Change 8 will reduce unnecessary Real Time Data Monitoring alerts.
+    - Changes 9-10 will properly alert data deficiencies for BUFR format AMDAR
+      and European AMDAR data.
+
+ Module changes:
+ ---------------
+   2.3.0 replaces 2.2.0 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS Cray-XC40 & Dell-p3 systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.3.0 from this release to each of:
+
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.3.0
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.3.0
+
+       * - compiler_prod/ips/18.0.1
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v14.0.0
+   This must be implemented prior to, or simultaneously with, the implementation of:
+      v4.2.0 of decod_dcelrw,
+      v2.5.2 of obsproc_cdas,
+      v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
+      v3.3.1 of obsproc_rtma,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v5.3.0 of obsproc_prep,
+      v3.1.1 of obsproc_prep_post,
+      v2.1.1 of obsproc_shared_bufr_remorest,
+      v2.0.0 of RTOFS.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+   But note, please update:
+     obsproc_cdas.ver,
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_dump_monitor.ver,
+   to set obsproc_shared_bufr_dumplist to v2.3.0.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.2.0 --> released Apr 06, 2020
+                                           --> implemented Apr 22, 2020
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.1.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.2.0
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Add BUFR type 005, subtype 072 to dump group mnemonics "leogeo",
+       "sluas", and "005".
+    2) Rename escris to escrsf.
+    3) Rename crisdb to crsfdb.
+    4) Remove all GOES-15 entries for satellite winds and SST retrievals.
+       The following groups are impacted: _sluas, _005, _satwnd, 
+       _infus, _h2ius, _visus, _h2sus, _3p9us, _sstnsg, _sfsat, _012.
+  BENEFIT:
+    - Change 1 supports the processing of LEO-GEO satellite AMVs from
+      UWisc for GFSv16. 
+    - Changes 2-3 are in response to the April 22, 2020 cessation of
+      NSR data from NPP CrIS.  FSR data from NPP CrIS will populate
+      tanks b021/xx037 and b021/xx212.  These dump mnemonics are renamed
+      to identify them as containing FSR data.
+    - Change 4 is in response to the storage of GOES-15 on March 2, 2020.
+
+
+ Module changes:
+ ---------------
+   2.2.0 replaces 2.1.0 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for 
+   obsproc_<NETWORK> packages which execute this version of 
+   obsproc_shared/bufr_dumplist.
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS Cray-XC40 & Dell-p3 systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.2.0 from this release to each of:
+
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.2.0
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.2.0
+
+       * - compiler_prod/ips/18.0.1 
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v12.0.0
+   This must be implemented simultaneously with the implementation of:
+      v3.2.6 of obsproc_global,
+   and before the implementation of:
+      v3.2.0 of obsproc_rap.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.1.0 --> released Oct 30, 2019
+                                           --> implemented Dec 05, 2019
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.2
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.1.0
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Add BUFR type 005, subtype 091 to dump group mnemonics "ifvrnb",
+       "satwnd", "sluas", and "005".
+    2) Add "Descriptive Information" for new viirs amv dump mnemonic
+       "ifvrnb".
+    4) Add BUFR type 008, subtype 019 to dump group mnemonics "ompslp",
+       "ozone", and "008".
+    5) Add "Descriptive Information" for new omps limb profiler dump
+       mnemonic "ompslp".
+    6) Add BUFR type 021, subtypes 044, 045, and 046 to dump group 
+       mnemonics "ahicsr", "gsrcsr", "gsrasr", "radnc", and "021". 
+    7) Add "Descriptive Information" for new radiance dump mnemonics
+       "ahicsr", "gsrcsr", "gsrasr".
+  BENEFIT:
+    - Changes 1-2 support the processing of NPP and NOAA-20 VIIRS
+      AMV data in the mandated WMO BUFR v31 sequence format.
+    - Changes 3-4 support the processing of OMPS Limb Profiler data
+      to benefit future releases of GFS.
+    - Changes 5-6 support the processing of Himawari-8 brightness
+      temperature and GOES-16 clear and all sky radiance data, to 
+      benefit future releases of RAP and GFS.
+
+ Module changes:
+ ---------------
+   2.1.0 replaces 2.0.2 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for 
+   obsproc_<NETWORK> packages which execute this version of 
+   obsproc_shared/bufr_dumplist.
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS IBM Phase 2, Cray-XC40 & Dell-p3
+   systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.1.0 from this release to each of:
+
+     IBM-p2
+       /gpfs/gp2/nco/ops/nwprod/modulefiles/bufr_dumplist/2.1.0
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.1.0
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.1.0
+
+       * - compiler_prod/ips/18.0.1 
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v12.0.0
+   This must be implemented simultaneously with or prior to the implementation of:
+      obsproc_rap.v3.2.0
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.0.2 --> released Aug 15, 2019
+                                           --> implemented Aug 21, 2019
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.1
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.2
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Removed the critical flag for NAM and Hourly for geost1,
+        type 003, subtype 003.  GOES-15 sounding/radiance data is no
+        longer critical for NAM.
+  BENEFIT:
+    jnam_dump_alert will no longer experience failures for shortage of
+     this data.
+
+ Module changes:
+ ---------------
+   2.0.2 replaces 2.0.1 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for 
+   obsproc_<NETWORK> packages which execute this version of 
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS IBM Phase 2, Cray-XC40 & Dell-p3
+   systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.0.2 from this release to each of:
+
+     IBM-p2
+       /gpfs/gp2/nco/ops/nwprod/modulefiles/bufr_dumplist/2.0.2
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.0.2
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.0.2
+
+       * - compiler_prod/ips/18.0.1 
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v11.3.0
+   This must be implemented simultaneously with or prior to the implementation of:
+      obsproc_nam.v3.4.0
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.0.1 --> released Nov 01, 2018
+                                           --> implemented Nov 13, 2018
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.1
+( A - added,  M - modified, D - deleted)
+
+ Fixed file changes:
+   - bufr_dumplist
+    1) Add the following new single dump mnemonics for existing tank types:
+       "infin2" [INDIA SATWIND, INSAT IR channel, type 005, subtype 024] 
+       "visin2" [INDIA SATWIND, INSAT VIS channel, type 005, subtype 025] 
+       "h20in2" [INDIA SATWIND, INSAT WV channel, type 005, subtype 026] 
+  BENEFIT:
+    Change 1 supports the processing of Indiasat AMV's.
+
+ Module changes:
+ ---------------
+   2.0.1 replaces 2.0.0 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+    BENEFIT:
+      Set environment variable HOMEobsproc_shared_bufr_dumplist for use
+      by dumpjb or other utilities that make use of the bufr_dumplist
+      text file.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for 
+   obsproc_<NETWORK> packages which execute this version of 
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS IBM Phase 2, Cray-XC40 & Dell-p3
+   systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.0.1 from this release to each of:
+
+     IBM-p2
+       /nwprod2/modulefiles/bufr_dumplist/2.0.1
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.0.1
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.0.1
+
+       * - whichever subdirs are appropriate on Dell-p3 systems.
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v11.0.1
+   This must be implemented simultaneously with the implementation of:
+      obsproc_dump.v5.0.1
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 2.0.0 --> released Aug 31, 2018
+                                           --> implemented Oct 02, 2018
+
+files:
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.6.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/2.0.0
+( A - added,  M - modified, D - deleted)
+
+ Module changes:
+ ---------------
+   2.0.0 replaces 1.6.0 in directory modulefiles/bufr_dumplist:
+    - Module file version number incremented and code modified to detect use on
+      phase 3 Dell platforms.
+    BENEFIT:
+     Allows use of module on phase 3 systems; module sets environment variable
+     HOMEobsproc_shared_bufr_dumplist which is used by dumpjb and/or other
+     utilities that make use of the bufr_dumplist text file)
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for 
+   obsproc_<NETWORK> packages which execute this version of 
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on each of WCOSS IBM Phase 2, Cray-XC40 & Dell-p3
+   systems.
+
+   - Please copy modulefiles/bufr_dumplist/2.0.0 from this release to each of:
+
+     IBM-p2
+       /nwprod2/modulefiles/bufr_dumplist/2.0.0
+     Cray-XC40:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/2.0.0
+     Dell-p3:
+       /gpfs/dell1/nco/ops/nwprod/modulefiles/*/bufr_dumplist/2.0.0
+
+       * - whichever subdirs are appropriate on Dell-p3 systems.
+
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v11.0.0
+   This must be implemented simultaneously with the implementation of:
+      obsproc_dump.v5.0.0
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.6.0 --> released May 15, 2018
+                                           --> implemented Dec 04, 2018
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.5.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.6.0
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add BUFR type 008, subtypes 014, 016, 017, and 018 to dump group 
+        mnemonics "ozone" and "008".
+     2) Add "Descriptive Information" for new ozone dump mnemonics "ompsn6",
+        "ompst6", "ompsn8", "ompst8".
+     3) Add BUFR type 021, subtypes 023, 024, 025 to dump group mnemonics
+        "sfsat" and "021".
+     4) Add "Descriptive Information" for new "sfsat" BUFR type 021, subtypes
+        023, 024, and 025: "sstvcw", "sstvpw", and "sstvdl".
+     5) Add BUFR type 031, subtypes 125, 126, 127, 128, 129, and 130 to dump
+        group mnemonics "ocean" and "031".
+     6) Created new dump group "satmar" to include BUFR type 031, subtypes 104,
+        106, 110, 112, 113, 114, 115, 117, 118, 119, 120, 121, 122, 123, 124,
+        125, 126, 127 and 130.
+     7) Rename "subgld" to "subpfl" and update "Descriptive Information". 
+     8) Add "Descriptive Information" for new "satmar" subtypes: "xbtcdt", 
+        "altkob", "nsjn3o", "njsn3i", "njs3ww", "nsn3am", "nsn3as", and 
+        "nsn3ww".
+     9) Add BUFR type 255, subtypes 031 and 101 to dump group mnemonics "msonet"
+        and "255".
+    10) Add "Descriptive Information" for new "msonet" subtype: "msourb".
+    11) Remove BUFR type 002, subtype 007 from dump group "proflr".  The NOAA 
+        Profiler Network wind profiles were terminated 9/2017.
+    12) Add "Descriptive Information" for new dump mnemonics "synpbr",
+        "synopb", "synpmb".
+    13) Update "Descriptive Information" for dump mnemonics "infus", "h2ius",
+        "visus", "h2sus", "3p9us", "infusr", "h2dusr", "visusr", "h2tusr",
+        "3p9usr", "bathy", "tesac", "trkob", and "axbt".
+  BENEFIT:
+    Changes 1-2 support the processing of version 8 NPP/NOAA-20 OMPS nadir
+    profile and total column ozone data.
+    Changes 3-4 support obsproc_dump.v4.1.0 release for RTG-SST - the processing
+    of VIIRS SST data from NPP/NOAA-20.
+    Changes 5-8 support adding wave height data for a future release of URMA.
+    Changes 9-10 support adding two new sources of mesonet data for a future
+    release of RTMA/URMA.
+    Change 12 supports future obsproc_dump release for the migration of synoptic
+    data from TAC format to BUFR format.
+
+
+ Module changes:
+ ---------------
+   1.6.0 replaces 1.5.0 in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+      (Note: This can be loaded to set environment variable
+             HOMEobsproc_shared_bufr_dumplist for use by dumpjb or other
+             utilities that make use of the bufr_dumplist text file.)
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see "Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   There are no obsproc_<NETWORK> packages which execute this version
+   of obsproc_shared/bufr_dumplist.  See information about 
+   dissemination in the latest release notes for RTG-SST.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on BOTH WCOSS IBM Phase 2, and Cray.
+
+   - Please copy modulefiles/bufr_dumplist/1.6.0 from this release to:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/1.6.0
+     and:
+       /nwprod2/modulefiles/bufr_dumplist/1.6.0
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v8.3.2.
+   This must be implemented simultaneously with the implementation of:
+      obsproc_dump.v4.1.0
+
+   There are no obsproc_<NETWORK> packages which execute this version
+   of obsproc_shared/bufr_dumplist.  RTG-SST is the initial
+   application to use this version.  Please ensure rtgssthr.ver is
+   updated to point to obsproc_dump.v4.1.0 and
+   obsproc_shared/bufr_dumplist.v1.6.0.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.5.0 --> released Nov 15, 2017
+                                           --> implemented Dec 21, 2017
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ D obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.4.0
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.5.0
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add the following new single dump mnemonics for existing or soon to
+exist tank types:
+  "crisf4" [NPP/NOAA-20 CrIS full spectral radiances (431 channel subset), type
+            021, subtype 206]
+  "infusr" [GOES-16 infrared/long-wave Atmospheric Motion Vectors, type 005,
+            subtype 030]
+  "h2dusr" [GOES-16 water vapor imager/deep-layer Atmospheric Motion Vectors,
+            type 005, subtype 031]
+  "visusr" [GOES-16 visible Atmospheric Motion Vectors, type 005, subtype 032]
+  "h2tusr" [GOES-16 water vapor imager/cloud-top Atmospheric Motion Vectors,
+            type 005, subtype 034]
+  "3p9usr" [GOES-16 infrared/short-wave Atmospheric Motion Vectors, type 005,
+            subtype 039]
+     2) Add BUFR type 021, subtype 206 to dump group mnemonics "radnc"
+        and "021".
+     3) Add BUFR type 005, subtypes 030, 031, 032, 034 and 039 to dump group mnemonics "sluas"
+        and "005".
+     4) Update "Descriptive Information" for single dump mnemonics "cris",
+        "atms", "viirs", "crisfs", "crisdb" and "atmsdb".
+  BENEFIT:
+    Changes 1, 2 and 3 are being made to account for a data type currently (or
+    about to be) in the production database.
+
+
+ Module changes:
+ ---------------
+   1.5.0 replaces 1.4.0 (via svn mv) in directory modulefiles/bufr_dumplist:
+    - Accounts for new version number here.
+      (Note: This can be loaded to set environment variable
+             HOMEobsproc_shared_bufr_dumplist for use by dumpjb or other
+             utilities that make use of the bufr_dumplist text file.)
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on BOTH WCOSS IBM Phase 2, and Cray.  It does not
+   have to be implemented on WCOSS IBM Phase 1 because obsproc_dump.v4.0.0 is
+   now implemented and dumpjb here has been modified to determine the location
+   of bufr_dumplist [/gpfs/hps/nco/ops/nwprod (Cray) vs. /nwprod2 (IBM Ph. 2)]
+   based on the version number the wrapper script provides to it (if that,
+   indeed, is what the wrapper script is providing to point to the bufr_dumplist
+   file - never the case in production).
+
+   - Please copy modulefiles/bufr_dumplist/1.5.0 from this release to:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/1.5.0
+     and:
+       /nwprod2/modulefiles/bufr_dumplist/1.5.0
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v8.0.4.
+   This must be implemented simultaneously with the implementation of:
+      obsproc_global.v3.1.0
+   and either simultaneously with or after the implementation of:
+      v3.4.2 of obsproc_satingest.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.4.0 --> released Apr 21, 2017
+                                           --> implemented May 9, 2017
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+ A obsproc_shared/bufr_dumplist/modulefiles/bufr_dumplist/1.4.0
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add the following new single dump mnemonics for existing tank types:
+  "dbuoyb" [Drifting buoys (decoded from BUFR), type 001, subtype 102]
+  "mbuoyb" [Moored buoys (decoded from BUFR), type 001, subtype 103]
+  "cnsaal" (CNES SARAL/ALTIKA OGDR altimeter SSHA + wind/wave high-resolution
+            global, type 031, subtype 122)
+  "cnc2al" (CNES CRYOSAT-2 OGDR OGDR altimeter SSHA + wind/wave high-resolution
+            global, type 031, subtype 123)
+  "cnj3al" (CNES/NESDIS JASON-3 OGDR OGDR altimeter SSHA + wind/wave high-
+            resolution global, type 031, subtype 124)
+
+     2) Add BUFR type 001, subtypes 102 and 103 to dump group mnemonics "sfmar"
+        and "001".
+
+     3) Add BUFR type 031, subtypes 122, 123 and 124 to dump group mnemonics
+        "ocean" and "031".
+
+     4) Update "Descriptive Information" for single dump mnemonic "tmdara".
+
+     5) Add BUFR type 004, subtypes 010, 011 and 103 to dump group mnemonic
+        "aircft".
+
+     6) Remove BUFR type 004, subtypes 008, 012 and 013 from dump group mnemonic
+        "aircft".
+
+  BENEFIT:
+    Changes 1, 2 and 3 are being made to account for data types currently in the
+production databases.
+    Changes 5 and 6 allow the "aircft" dumps to, by default, include active
+types "TAMDAR aircft data from Panasonic", "Korean AMDAR aircraft" and
+"catch-all AMDAR aircraft (decoded from BUFR)"; and to now exclude obsolete
+types "TAMDAR Mesaba", "TAMDAR PenAir" and "TAMDAR Chautauqua" aircraft, all
+from ESRL/GSD (and decoded from netCDF).
+
+
+ Module changes:
+ ---------------
+   1.4.0 in new directory modulefiles/bufr_dumplist:
+    - New. Can be loaded to set environment variable
+      HOMEobsproc_shared_bufr_dumplist for use by dumpjb or other utilities
+      that make use of the bufr_dumplist text file.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on BOTH WCOSS Phase 1, WCOSS Phase 2, and Cray. 
+   The implementation needs to be made on Phase 1 because dumpjb in
+   obsproc_dump (which is not part of this bundle) is hardwrired  to look
+   for bufr_dumplist in /nwprod if only the version number is provided
+   (this is for wrapper scripts running dumpjb outside the normal
+   obsproc_<network> in production).  dumpjb will be modified in the next release
+   of obsproc_dump (v4.0.0) to determine the location of bufr_dumplist (/nwprod vs.
+   /nwprod2) based on the version number the wrapper script provides to it (if
+   that, indeed, is what the wrapper script is providing to point to the
+   bufr_dumplist file - never the case in production).  Once that update to
+   dumpjb in obsproc_dump is implemented, this latest version of bufr_dumplist
+   can be removed from Phase 1.
+
+   - Please copy modulefiles/bufr_dumplist/1.4.0 from this release to:
+       /gpfs/hps/nco/ops/nwprod/modulefiles/bufr_dumplist/1.4.0
+     and:
+       /nwprod2/modulefiles/bufr_dumplist/1.4.0
+   - When adding to nwtest or nwpara, please remember to modify the envir
+     variable in the modulefile accordingly.
+
+   This is part of OBSPROC.v7.1.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.3.0 of obsproc_cdas,
+      v2.2.0 of obsproc_dump_monitor,
+      v3.1.0 of obsproc_nam,
+      v2.4.0 of obsproc_rap.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.3.0 --> released Sep 1, 2016
+                                           --> implemented Sep 27, 2016
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add the following new single dump mnemonics for existing or soon to
+exist tank types:
+  "ltngen" (Earth Networks Total Lightning Network, type 007, subtype 003)
+  "gnss"   (Ground-based Gbl Navigation Sat System data, type 012, subtype 004)
+    [Note: Future type "ssmisp" (DMSP SSM/IS - FNOC derived products) had
+           occupied this type and subtype, but this is now moved to type 012,
+           subtype 006.]
+  "escris" (NPP CrIS radiances - direct bcst from RARS , type 021, subtype 037)
+  "esatms" (NPP ATMS br. temps - direct bcst from RARS , type 021, subtype 038)
+  "esiasi" (METOP IASI radiances-direct bcst from RARS , type 021, subtype 039)
+  "crisfs" (NPP CrIS full spectral radiances, type 021, subtype 205)
+  "crisdb" (NPP CrIS radiances-direct bcst from UW/SSEC, type 021, subtype 212)
+  "atmsdb" (NPP ATMS br. temps-direct bcst from UW/SSEC, type 021, subtype 213)
+  "iasidb" (METOP IASI radiances-dir bcast from UW/SSEC, type 021, subtype 239)
+  "saphir" (Megha-Tropiques SAPHIR L1A2 bright. temps, type 021, subtype 242)
+  "gmi1cr" (GPM GMI Level 1C-R brightness temperatures, type 021, subtype 246)
+  "amsr2"  (GCOM-W AMSR2 Level 1B brightness temps, type 021, subtype 248)
+  "subgld" (Sub-surface glider profiles, type 031, subtype 005)
+
+     2) Add BUFR type 031, subtype 005 to dump group mnemonics "ocean" and
+"031".
+
+     3) Add BUFR type 007, subtype 003 to dump group mnemonics "synfe" and
+"007".
+
+     4) Add BUFR type 021, subtypes 037, 038, 039, 205, 212, 213, 239, 242, 246
+and 248 to dump group mnemonics "radnc" and "021".
+
+     5) Add BUFR type 012, subtype 006 to dump group mnemonics "sfsat" and
+"012".
+
+     6) Change the single dump mnemonic for tank type 012, subtype 255 from
+"oscat" to "rscat".  Change the "Data Groups by Network Data Dump Composition"
+for tank type 012, subtype 255 (only one in group) from "oscatw" to "rscatw".
+The original mnemonics represented OCEANSAT-2 OSCAT products which were never
+available in production prior to the loss of the satellite.  The new mnemonics
+represent International Space Station (ISS) RAPIDSCAT products which are now
+available for testing.
+
+     7) The single dump mnemonic "gpsipw" is changed to represent tank type 012,
+subtype 004 rather than tank type 012, subtype 003.
+
+     8) Update "Descriptive Information" for single dump mnemonics "gome",
+"ascat" and "mtiasi" to add METOP-1 (in addition to METOP-2).
+
+     9) Update "Descriptive Information" for single dump mnemonics "1bamua",
+"1bmhs" and "1bhrs4" to add METOP-1 (in addition to NOAA satellites and
+METOP-2).
+
+    10) Update "Descriptive Information" for single dump mnemonics "esamua",
+"esamub", "eshrs3" and "esmhs" to add METOP-1 and 2 (in addition to NOAA
+satellites).
+
+    11) Update "Descriptive Information" for single dump mnemonic "prflrh".
+
+  BENEFIT:
+    Changes 1, 2, 3, 4 and 6 are being made to account for data types currently
+(or about to be) in the production databases.
+    Change 7 is being made because tank type 012, subtype 003 is being replaced
+ with tank type 012, subtype 004.
+    Changes 8 and 9 are being made such that METOP-1 (B) is identified as a
+satellite contributing to the applicable dump types in the Real-Time Data
+Monitoring System web page.
+    Change 10 is being made such that METOP-1 (B) and METOP-2 (A) are
+identified as satellites contributing to the applicable dump types in the
+Real-Time Data Monitoring System web page.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on BOTH WCOSS Phase 1 and WCOSS Phase 2 (has
+   Steven's approval).  The implementation needs to be made on Phase 1 because
+   dumpjb in obsproc_dump (which is not part of this bundle) is hardwrired  to
+   look for bufr_dumplist in /nwprod if only the version number is provided
+   (this is for wrapper scripts running dumpjb outside the normal
+   obsproc_<network> in production).  We will modify dumpjb in the next release
+   of obsproc_dump to determine the location of bufr_dumplist (/nwprod vs.
+   /nwprod2) based on the version number the wrapper script provides to it (if
+   that, indeed, is what the wrapper script is providing to point to the
+   bufr_dumplist file - never the case in production).  Once that update to
+   dumpjb in obsproc_dump is implemented, this latest version of bufr_dumplist
+   can be removed from Phase 1.
+
+   This is part of OBSPROC.v6.4.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.1.0 of obsproc_cdas,
+      v2.0.0 of obsproc_dump_monitor,
+      v2.2.0 of obsproc_dump_post,
+      v2.3.0 of obsproc_global,
+      v2.2.0 of obsproc_nam,
+      v3.7.0 of obsproc_prep,
+      v2.3.0 of obsproc_prep_post,
+      v2.2.0 of obsproc_rap;
+   but AFTER the implementation of v3.1.0 of obsproc_satingest.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.2.0 --> released May 1, 2015
+                                           --> implemented Aug 10, 2015
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add the following new single dump mnemonics for future tank types:
+"infvr" [VIIRS (NPP) infrared derived cloud motion, type 005, subtype 090],
+"efclam" [GOES imager effective cloud amount data (University of Wisconsin),
+type 012, subtype 160].
+     2) Add BUFR type 005, subtypes 019, 080, and 090 to dump group mnemonic
+"satwnd".
+     3) Add BUFR type 005, subtype 090 to dump group mnemonics "sluas" and
+"005".
+     4) Add BUFR type 012, subtype 160 to dump group mnemonics "sfsat" and
+"012".
+  BENEFIT:
+    The "satwnd" dumps will now, by default, include BUFR type 005, subtypes
+ 019 (GOES/NESDIS 3.9 micron channel derived cloud motion), 080 [AVHRR (NOAA/
+METOP) infrared derived cloud motion], and 090 [VIIRS (NPP) infrared derived
+cloud motion - VIIRS may not yet be in production database].  These will be
+tested in various GSI upgrades in the next quarter.
+    The "efclam" dumps will eventually be read by the RTMA/URMA GSI, replacing
+the BUFR files output to /dcom/us007003/<yyyymmdd>/wtxtbul which are now used
+by the "about-to-be-implemented" RTMA/URMA GSI upgrade. Those files are created
+in satingest job JIGOES_CLOUD and are just a 1:1 translation of each input file
+to BUFR.
+
+     5) Change the following single dump mnemonics from moderately-critical to
+non-critical: "trmm" (BUFR type 012, subtype 013) in the GFS, GDAS and HOURLY
+networks; "1bhrs3" (BUFR type 021, subtype 025) in the HOURLY and RAP networks.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_dumplist.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of
+   obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.4 of obsproc_cdas,
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.1.1 of obsprod_global,
+      v2.0.3 of obsproc_nam,
+      v3.5.0 of obsproc_prep,
+      v2.1.0 of obsproc_prep_post,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_rtma,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.1.0 --> released Oct 21, 2014
+                                           --> implemented Nov 4, 2014
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+    - Add BUFR type 008, subtype 031 to dump group mnemonic "airnow".
+      BENEFIT: This upgrade allows for dumping and processing of particulate
+               matter data in support of CMAC model verification.
+
+
+ Output changes:
+ ---------------
+   This upgrade will cause PM (NC008031) data reports to be included in the 
+   airnow bufr dump files that are generated.
+
+
+ Compute Resource Information:
+ -----------------------------
+   No changes.
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_<NETWORK> packages which execute obsproc_dump which in turn executes
+   this version of obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.1.
+   This upgrade should be implemented simulaneously w/ verification upgrades 
+   enabling CMAC model verification.
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_dumplist release 1.0.0 --> released Feb 8, 2014
+                                           --> implemented Apr 8, 2014
+
+Initial population of vertical structure.
+
+files:
+ M obsproc_shared/bufr_dumplist/fix/bufr_dumplist
+( A - added,  M - modified, D - deleted)
+
+
+ Fixed file changes:
+
+     1) Add the following new single dump mnemonics for new production tank
+types: "oscatw" and "oscat" (OSCAT products, BUFR type 012, subtype 255),
+"rdcrXX" (where XX=00-23) (Canadian radar reflectivity by hour, type 006,
+subtypes 080-103), "rdcwXX" (where XX=00-23) (Canadian radar radial wind by
+hour, type 006, subtypes 110-133), "ncryal" (NAVO ALPS CRYOSAT-2 altimeter
+SSHA high-resolution global, type 031, subtype 117) and "msocrn" (CRN/MADIS
+Climate Reference Network, type 255, subtype 111) - all of these are
+non-critical in all networks.
+
+     2) Add the following new single dump mnemonics for future tank types:
+"hdob" (High-Density OBs from recco aircraft data, type 004, subtype 015),
+"raobfb" (Rawinsonde-fixed land decoded from BUFR, type 002, subtype 101),
+"raobmb" (Rawinsonde-mobile land decoded from BUFR, type 002, subtype 102),
+"raobsb" (Rawinsonde-ship decoded from BUFR, type 002, subtype 103), "dropwb"
+(Dropwinsonde decoded from BUFR, type 002, subtype 104), "pibalb" (Pibal
+decoded from BUFR, type 002, subtype 105), "prflpb" [Profiler winds decoded
+from BUFR (Pibal), type 002, subtype 109], "amdarb" (AMDAR decoded from BUFR,
+type 004, subtype 103), "nsarao" (NAVOCEANO ALPS SARAL OGDR altimeter SSHA
+high-resolution global, type 031, subtype 118), "nsarai" (NAVOCEANO ALPS SARAL
+IGDR altimeter SSHA high-resolution global, type 031, subtype 119),"ncr2ww"
+(NAVOCEANO CRYOSAT-2 altimeter wind/wave fast delivery, type 031, subtype 120)
+and "nsarww" (NAVOCEANO SARAL altimeter wind/wave fast delivery, type 031,
+subtype 121) - all of these are non-critical in all networks.
+
+     3) Add the new dump group mnemonic "canrad. (Canadian radar reflectivity
+and radial wind, type type 006, subtypes 080-103 and 110-133, all now
+production tank types).
+
+     4) Add BUFR type 002, subtypes 101-105, and 109 to group mnemonics
+"vsndn" and "002".
+
+     5) Add BUFR type 004, subtype 015 and 103 to group mnemonics "sluan" and
+"004".
+
+     6) Add BUFR type 006, subtypes 080-103 and 110-133 to group mnemonics
+"radar" and "006".
+
+     7) Add BUFR type 012, subtype 255 to group mnemonics "sfsat" and "012".
+
+     8) Add BUFR type 031, subtypes 117-121 to group mnemonics "ocean" and
+"031".
+
+     9) Add BUFR type 255, subtype 111 to group mnemonics "local" and "255".
+
+    10) Add BUFR type 002, subtype 017 [NEXRAD Velocity Azimuth Display (VAD)
+winds coming out of Level 2 decoder] to group mnemonic "vadwnd" [joins existing
+BUFR type 002, subtype 008 (NEXRAD VAD winds coming from radar coded message)].
+
+    11) Change the following single dump mnemonics from non-critical to
+moderately-critical: "shipsu" (BUFR type 001, subtype 013) in all networks;
+"ascat" (type 012, subtype 122) in the in the NAM, GFS, GDAS and HOURLY
+networks; "prflrb" (type 002, subtype 011) in the NAM, HOURLY and RAP
+networks; "h20ja" (type 005, subtype 046), "sevcsr" (type 021, subtype 043),
+"atms" (type 021, subtype 203) and "cris" (type 021, subtype 202) - all in the
+GFS, GDAS and HOURLY networks; "lgycld" (type 012, subtype 150) and "rd2rXX"
+(where XX=00-23) (Level 2 NEXRAD radar reflectivity by hour, type 006,
+subtypes 040-063) - in the RAP and HOURLY networks; "rass" (type 002, subtype
+012), "msoden" (type 255, subtype 001), "msoapr" (type 255, subtype 004),
+"msokan" (type 255, subtype 005), "msofla" (type 255, subtype 006), "msoiow"
+(type 255, subtype 007), "msoawx" (type 255, subtype 009), "msowfy" (type,
+255, subtype 012), "msocob" (type 255, subtype 013), "msohad" (type 255,
+subtype 014), "msoaws" (type 255, subtype 015), "msoien" (type 255, subtype
+016), "msowis" (type 255, subtype 020), "msolju" (type 255, subtype 021),
+"mso470" (type 255, subtype 022), "msoalk" (type 255, subtype 026), "msogeo"
+(type 255, subtype 027), "msovir" (type 255, subtype 028), "msomca" (type 255,
+subtype 29) - all in the NAM and HOURLY networks; "gpsro" (type 003, subtype
+010) and "mtiasi" (type 021, subtype 241) - both in the NAM network; and
+"camdar" (type 004, subtype 009), "1bamua" (type 021, subtype 023), "1bhrs3"
+(type 021, subtype 025), "1bmhs" (type 021, subtype 027), "1bhrs4" (type 021,
+subtype 028), "infmo" (type 005, subtype 070) and "h20mo" (type 005, subtype
+071) - all in the RAP network.
+
+    12) Change the following single dump mnemonics from moderately-critical to
+non-critical: "1bamub" (BUFR type 021, subtype 024) in the NAM, GFS, GDAS and
+HOURLY networks; "pirep" (type 004, subtype 002) and "1bhrs3" (type 021,
+subtype 025) - both in the NAM, GFS and GDAS networks; "esamub" (type 021,
+subtype 034) and "wdsat" (type 012, subtype 138) in the GFS, GDAS and HOURLY
+networks; and "msoden" (type 255, subtype 001), "msowst" (type 255, subtype
+003), "msoapr" (type 255, subtype 004), "msokan" (type 255, subtype 005),
+"msoiow" (type 255, subtype 007), "msomin" (type 255, subtype 008), "msoawx"
+(type 255, subtype 009), "msonos" (type 255, subtype 010), "msoapg" (type 255,
+subtype 011), "msowfy" (type 255, subtype 012), "msohad" (type 255, subtype
+014), "msoaws" (type 255, subtype 015), "msoien" (type 255, subtype 016),
+"msokla" (type 255, subtype 017), "msocol" (type 255, subtype 018), "msowtx"
+(type 255, subtype 019), "msowis" (type 255, subtype 020), "msodcn" (type 255,
+subtype 023), "msoind" (type 255, subtype 024), "msogeo" (type 255, subtype
+027), "msovir" (type 255, subtype 028), "msomca" (type 255, subtype 029) and
+"msothr" (type 255, subtype 030) - all in the RAP network.
+
+    13) Change the single dump mnemonic "geost1" (BUFR type 003, subtype 003)
+from critical to non-critical in the RAP network
+
+    14) Single dump mnemonic "prflre" (European profiler winds, BUFR type 002,
+subtype 016) changed from typo "proflre".
+
+    15) All references to "RUC" changed to "RAP".
+
+  BENEFIT:
+    Changes 1, 3, 6, 8 (partial) and 9 are all being made to account for data
+types currently in the production databases.  OSCAT is now being dumped in
+the NAM, NDAS, GFS and GDAS networks.  The other types will be dumped soon in
+production.
+    Change 10 is being made so that the "vadwnd" dumps in the DUMP_MONITOR,
+NAM and NDAS networks (only for now) will now include BUFR type 002 subtype 017
+(VAD winds coming out of Level 2 decoder).  These are being tested in the
+parallel NAM/NDAS in preparation for their operational use in the upcoming
+FY14Q2 NAM bundle.  The RTDM will now include dump count graphics for these
+(under mnemonic "nxrdw2").
+    Changes 2, 4, 5, 7, 8 (partial) are all being made to account for data
+types currently in the developmental databases.  These will become operational
+when they are promoted to /dcom.
+    Changes 11-13 account for changes in the various network's usage of these
+data types and brings the dump alert system and RTDM system up to date since
+the last time the dumplist was updated.  Some types that were previously
+assimilated operationally in some networks are no longer assimilated.  Other
+types that were previously not assimilated in some networks are now
+assimilated operationally.
+
+
+ Output changes:
+ ---------------
+   Changes 1-9 have no affect on operations.  Users dumping future data types
+from the developmental and checkout BUFR databases will now have dump
+mnemonics.
+   Changes 10-12 will enhance the RTDM and dump alert system since the warnings
+here will now be better tuned to the actual criticality of the data w.r.t.
+NCEP analyses. 
+
+
+ Compute Resource Information:
+ -----------------------------
+   No changes.
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_dumplist.  All jobs executing this
+   version of obsproc_shared/bufr_dumplist will be part of the parallel-
+   production test of the hourly GOES satellite winds.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute obsproc_dump which in turn executes
+   this version of obsproc_shared/bufr_dumplist.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v1.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump.v3.0.0, obsproc_dump_monitor.v1.0.0, obsproc_global.v1.0.0,
+   obsproc_nam.v1.0.0, obsproc_rap.v1.0.0, obsproc_rtma.v1.1.0,
+   obsproc_urma.v1.1.0, obsproc_satingest.v2.0.0 and
+   obsproc_shared/bufr_cword.v1.0.0.
+
+   It should be implemented PRIOR to NESDIS' promotion of their hourly GOES
+   satellite winds to their production server,
+
+   Since there are no jobs in obsproc_shared/bufr_dumplist, an
+   obsproc_shared_bufr_dumplist.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

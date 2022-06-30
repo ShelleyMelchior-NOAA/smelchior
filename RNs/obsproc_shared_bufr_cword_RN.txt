@@ -1,0 +1,203 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_cword release 1.1.1 --> released Mar 20, 2020
+                                        --> implemented ??? ??, 2020
+
+files:
+   obsproc_shared/bufr_cword/sorc/bufr_cword.fd/cword.f
+   obsproc_shared/bufr_cword/sorc/bufr_cword.fd/makefile
+   obsproc_shared/bufr_cword/sorc/build.sh
+   obsproc_shared/bufr_cword/sorc/clean.sh
+   obsproc_shared/bufr_cword/sorc/clobber.sh
+   obsproc_shared/bufr_cword/sorc/install.sh
+ M obsproc_shared/bufr_cword/sorc/load_libs.rc
+   obsproc_shared/bufr_cword/sorc/README.build
+   obsproc_shared/bufr_cword/sorc/setlibs.rc
+   obsproc_shared/bufr_cword/ush/bufr_cword.sh
+
+( A - added)
+( M - modified)
+
+ Source code changes:
+   load_libs.rc
+    - Updated to load bufrlib.v11.3.0
+
+ Compute Resource Information:
+ -----------------------------
+   Source code bufr_cword:
+    - link to version 2.0.6 of w3nco library
+    - link to version 11.3.0 of bufr library
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_cword.  All jobs executing this
+   version of obsproc_shared/bufr_cword will be part of the parallel-production
+   test.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v12.4.0.
+   This must be implemented simultaneously with the implementation of
+   obsproc_satingest.v3.10.0.
+
+   Since there are no jobs in obsproc_shared/bufr_cword, an
+   obsproc_shared_bufr_cword.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_cword release 1.1.0 --> released Feb 22, 2019
+                                        --> implemented Mar 21, 2019
+
+files:
+   obsproc_shared/bufr_cword/sorc/bufr_cword.fd/cword.f
+   obsproc_shared/bufr_cword/sorc/bufr_cword.fd/makefile
+ M obsproc_shared/bufr_cword/sorc/build.sh
+ A obsproc_shared/bufr_cword/sorc/clean.sh
+ A obsproc_shared/bufr_cword/sorc/clobber.sh
+   obsproc_shared/bufr_cword/sorc/install.sh
+ M obsproc_shared/bufr_cword/sorc/load_libs.rc
+ M obsproc_shared/bufr_cword/sorc/README.build
+ M obsproc_shared/bufr_cword/sorc/setlibs.rc
+   obsproc_shared/bufr_cword/ush/bufr_cword.sh
+
+( A - added)
+( M - modified)
+
+ Source code changes:
+   build.sh
+    - Updated to build codes on Dell-p3, Cray-XC40, or IMB iDataPlex.
+   clean.sh
+    - New script to invoke 'make clean' in all sorc subdirectories.
+   clobber.sh
+    - New script to invoke 'make clobber' in all sorc subdirectories.
+   load_libs.rc
+    - Updated to load modules for Dell-p3
+   README.build
+    - Updated to clarify library module instructions.
+   setlibs.rc
+    - Updated to work on a variety of platforms; no longer called. 
+
+ Compute Resource Information:
+ -----------------------------
+   Source code bufr_cword:
+    - link to version 2.0.6 of w3nco library
+    - link to version 11.2.0 of bufr library
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_cword.  All jobs executing this
+   version of obsproc_shared/bufr_cword will be part of the parallel-production
+   test.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v10.5.0.
+   This must be implemented simultaneously with the implementation of
+   obsproc_satingest.v3.8.0.
+
+   Since there are no jobs in obsproc_shared/bufr_cword, an
+   obsproc_shared_bufr_cword.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_cword release 1.0.0 --> released Feb 8, 2014
+                                        --> implemented Apr 8, 2014
+
+Initial population of vertical structure.
+
+files:
+ M obsproc_shared/bufr_cword/sorc/bufr_cword.fd/cword.f
+ M obsproc_shared/bufr_cword/sorc/bufr_cword.fd/makefile
+ A obsproc_shared/bufr_cword/sorc/build.sh
+ A obsproc_shared/bufr_cword/sorc/install.sh
+ A obsproc_shared/bufr_cword/sorc/load_libs.rc
+ A obsproc_shared/bufr_cword/sorc/README.build
+ A obsproc_shared/bufr_cword/sorc/setlibs.rc
+ M obsproc_shared/bufr_cword/ush/bufr_cword.sh
+
+( A - added)
+( M - modified)
+
+
+ USH script changes:
+   bufr_cword.sh:
+    - Renamed from cwordsh.
+    - Turn on echoing of script commands to stdout (set -x).
+    - Changes to handle files now under Vertical Directory Structure:
+       - Imports new environment variable $EXECobsproc_shared_bufr_cword which
+         points to path for bufr_cword executable now under version control
+         (in production this is normally
+         /nwprod/obsproc_shared/bufr_cword.vX.Y.Z/exec where X.Y.Z version
+         number being used, usually the latest).
+         This replaces $utilexec (which had defaulted to production value of
+         /nwprod/util/exec) in order to point to bufr_cword executable moved
+         from horizontal directory structure (where it was called cwordsh) to
+         vertical directory structure.
+
+ Source code changes:
+   build.sh in sorc directory:
+    - New. Used to build executable bufr_avgdata in the bufr_avgdata.fd sub-
+      directory of the sorc directory.  Reads either load_libs.rc or setlibs.rc
+      file to point to library version numbers needed by makefile.
+   install.sh in sorc directory:
+    - New. Used to install (move) executable bufr_avgdata (after build) in
+      exec directory (assumed to be in same root directory as sorc).
+   load_libs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if setlibs.rc is read.)
+   README.build in sorc directory:
+    - New. Documentation on using build.sh and install.sh.
+   setlibs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if load_libs.rc is read.)
+   bufr_cword:
+    - Renamed from cwordsh.
+    - Increased limit for I/O filename from 120 characters to 500 characters.
+    - Makefile modified to use environment variables to point to library
+      version numbers and to add sample build script and info in sorc
+      directory.  This generalizes the library version information.
+    - NOTE: The filename length increase requires that this program always be
+            linked with BUFRLIB version 10.2.5 or later when it is recompiled.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_cword.)
+
+
+ Compute Resource Information:
+ -----------------------------
+   Source code bufr_cword:
+    - continues to link to version 2.0.6 of w3nco library
+    - continues to link to version 10.2.5 of bufr library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_cword.  All jobs executing this
+   version of obsproc_shared/bufr_cword will be part of the parallel-production
+   test of the hourly GOES satellite winds.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_satingest since it now executes this version of
+   obsproc_shared/bufr_cword.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v1.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump.v3.0.0, obsproc_dump_monitor.v1.0.0, obsproc_global.v1.0.0,
+   obsproc_nam.v1.0.0, obsproc_rap.v1.0.0, obsproc_rtma.v1.1.0,
+   obsproc_urma.v1.1.0, obsproc_satingest.v2.0.0 and
+   obsproc_shared/bufr_dumplist.v1.0.0.
+
+   It should be implemented PRIOR to NESDIS' promotion of their hourly GOES
+   satellite winds to their production server,
+
+   Since there are no jobs in obsproc_shared/bufr_cword, an
+   obsproc_shared_bufr_cword.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

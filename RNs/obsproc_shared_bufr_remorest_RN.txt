@@ -1,0 +1,493 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.1.3 --> released Jul ??, 2021
+                                           --> implemented ??? ??, 2021
+
+files:
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/remorest.f
+   obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/makefile
+   obsproc_shared/bufr_remorest/sorc/build.sh
+   obsproc_shared/bufr_remorest/sorc/clean.sh
+   obsproc_shared/bufr_remorest/sorc/install.sh
+   obsproc_shared/bufr_remorest/sorc/load_libs.rc
+   obsproc_shared/bufr_remorest/sorc/README.build
+   obsproc_shared/bufr_remorest/sorc/setlibs.rc
+   obsproc_shared/bufr_remorest/ush/bufr_remorest.sh
+( A - added,  M - modified, D - deleted)
+
+ Source code changes:
+   bufr_remorest.fd/remorest.f (main program)
+    - Included subset NC001101 in logic section that replaces station
+      ID with MASKSTID.
+      BENEFIT: BUFR format restricted ships data can be properly
+               dispensed to public users.
+
+ Output changes:
+ ---------------
+   Networks specific sfcshp dump files will include BUFR format 
+   restricted ship observations with station ID replaced by MASKSTID.
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 
+   bufr   11.3.0
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to 
+   use this version should be tested in advance.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.1.0.
+   This can be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.5.0 of obsproc_prep,
+      v2.4.1 of obsproc_shared_bufr_dumplist.
+   This must be installed on all WCOSS systems (Cray-XC40, Dell-p3).
+
+ Since there are no jobs in obsproc_shared/bufr_remorest, an
+ obsproc_shared_bufr_remorest.ver file is not needed.
+ But note, please udate:
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+     obsproc_cdas.ver,
+     obsproc_dump_monitor.ver,
+     RTDM,
+ to set obsproc_shared_bufr_remorest to v2.1.3.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.1.2 --> released Feb 02, 2021
+                                           --> implemented Apr 14, 2021
+
+files:
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/remorest.f
+( A - added,  M - modified, D - deleted)
+
+ Source code changes:
+   bufr_remorest.fd/remorest.f (main program)
+    - Added call to bufrlib routine, maxout, to process commercial
+      GPS-RO data.  The default message length of 10000 bytes is not
+      sufficiently large enough for GPS-RO data.  Maxout is used to 
+      set the max message length to 200000 bytes when reading
+      data from the NC003010 subset. 
+      BENEFIT: Commercial GPS-RO data will be stripped from gpsro
+               BUFR dump files for safe public dissemination.
+
+ Output changes:
+ ---------------
+   All network gpsro BUFR dump files will have a non-restricted BUFR
+   dump file. $COMROOT will have two gpsro dump files.  Only the nr
+   gpsro dump file will be disseminated to the public.
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 
+   bufr   11.3.0
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to 
+   use this version should be tested in advance.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.1.0.
+   This can be implemented simultaneously with the implementations of:
+      v4.0.0 of decod_dcrocc,
+      v3.4.1 of obsproc_global,
+      v3.4.2 of obsproc_nam,
+      v5.1.1 of obsproc_dump,
+      v3.5.0 of obsproc_dump_post,
+      v2.4.1 of obsproc_shared_bufr_dumplist.
+   This must be installed on all WCOSS systems (Cray-XC40, Dell-p3).
+
+ Since there are no jobs in obsproc_shared/bufr_remorest, an
+ obsproc_shared_bufr_remorest.ver file is not needed.
+ But note, please udate:
+     obsproc_global.ver,
+     obsproc_nam.ver,
+ to set obsproc_shared_bufr_remorest to v2.1.2.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.1.1 --> released Aug 28, 2020
+                                           --> implemented Oct 22, 2020
+
+files:
+ M obsproc_shared/bufr_remorest/sorc/load_libs.rc
+( A - added,  M - modified, D - deleted)
+
+
+ Build changes (in sorc directory):
+   load_libs.rc:
+    - Updated to load BUFR library version 11.3.0.
+
+
+ Output changes:
+ ---------------
+   None.
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 
+   bufr   11.3.0
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to 
+   use this version should be tested in advance.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This can be implemented prior to, or simultaneously with, the implementations of:
+      v4.2.0 of decod_dcelrw
+      v2.5.2 of obsproc_cdas,
+      v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
+      v3.3.1 of obsproc_rtma,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v5.3.0 of obsproc_prep,
+      v3.1.1 of obsproc_prep_post,
+      v2.3.0 of obsproc_shared_bufr_dumplist - previously released to support RTOFS.
+   This must be installed on all WCOSS systems (Cray-XC40, Dell-p3).
+
+ Since there are no jobs in obsproc_shared/bufr_remorest, an
+ obsproc_shared_bufr_remorest.ver file is not needed.
+ But note, please udate:
+     obsproc_cdas.ver,
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+ to set obsproc_shared_bufr_remorest to v2.1.1.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.1.0 --> released Aug 31, 2018
+                                           --> implemented Jun 12, 2019
+
+files:
+ M obsproc_shared/bufr_remorest/sorc/build.sh
+ M obsproc_shared/bufr_remorest/sorc/load_libs.rc
+( A - added,  M - modified, D - deleted)
+
+
+ Source code and build changes (in sorc directory):
+   build.sh:
+    - Updated to build codes on Dell-p3 or Cray-XC40 or IBM iDataPlex.
+   load_libs.rc:
+    - Updated to load modules for Dell-p3.
+
+
+ Output changes:
+ ---------------
+   None.
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 
+   bufr   11.2.0 (11.1.0 Cray-XC40 and IBM iDataPlex)
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to 
+   use this version should be tested in advance.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.0.0.
+   This can be implemented prior to, but no later than, the implementation of:
+      v3.2.0 of obsproc_global.
+   This can be implemented simultaneously with the implementations of:
+      v5.0.0 of obsproc_dump,
+      v3.3.0 of obsproc_dump_post,
+      v5.2.0 of obsproc_prep,
+      v3.1.0 of obsproc_prep_post,
+      v2.1.0 of obsproc_shared_bufr_avgdata.
+   This can also be implemented prior to, but no later than, the FV3 GFS upgrade.
+   This must be installed on all WCOSS systems (IBM iDataPlex, Cray-XC40, Dell-p3).
+
+ Since there are no jobs in obsproc_shared/bufr_remorest, an
+   obsproc_shared_bufr_remorest.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.0.1 --> released Jul 30, 2018
+                                           --> implemented Dec 04, 2018
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/remorest.f
+( A - added,  M - modified, D - deleted)
+
+ Source code changes:
+   bufr_remorest.fd/remorest.f (main program)
+    - Added minutes to print statement everytime a new BUFR message is read.  In
+      the case of a PREPBUFR file this is the central (analysis) time (which is
+      the same) for every message.  In the case of a DUMP file, this is the
+      central dump time for the first (dummy) message read in, the dump file
+      creation time for the second (dummy) message read in, and the message
+      YYYYMMDDHH (with minutes always zero) for all data messages read in.  The
+      minutes are obtained from Section 1 of the message read in via call to
+      BUFRLIB routine IUPVS01.
+      BENEFIT: Until now, central dump time and PREPBUFR (analysis) time minutes
+               was always zero.  However, with the implementation of the new
+               RTMA_RU, these times can now also have minutes = 15, 30 or 45
+               (since the RTMA_RU runs 4 times per hour). This change allows
+               this print statement to reflect this new message time format.
+    - Fixed a bug in cases where individual subsets in an input message must be
+      read in and checked/updated before being written back out if not rejected
+      altogether (see * below for cases). Here code was opening output message
+      via OPENMG which does not take into account input message's Section 1
+      minutes value (it thus opens a message with default of zero minutes in
+      Section 1 date). Updated to call BUFRLIB routine MINIMG in such cases to
+      encode non-zero minutes value (previously read in via BUFRLIB routine
+      IUPVS01, see first change above) into Section 1 date when OPENMB actually
+      does open a new message.
+      * - either the input message contains a mixture of restricted and non-
+          restricted reports or contains restricted reports which can be made
+          non-restricted by masking their id
+      BENEFIT: Applies only to PREPBUFR files for RTMA_RU runs at 15, 30 or 45
+               minutes past the hour: ensures that all messages in output file
+               have the same (correct) center date out to minutes in Section 1
+               {rather than messages created via OPENMB (e.g., ADPSFC, SFCSHP in
+               RTMA_RU runs) having Section 1 minutes of zero}.
+
+ Output changes:
+ ---------------
+   None.
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+   bufr   11.1.0 (previously 10.2.5)
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to
+   use this version should be tested in advance.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v10.0.0.
+   This should be installed prior to or simultaneously with:
+   obsproc_rtma.v3.1.0,
+   obsproc_urma.v3.1.0,
+   obsproc_dump.v4.1.0 (previously released with OBSPROC-v8.3.2),
+   obsproc_dump_post.v3.2.0,
+   obsproc_prep.v5.1.0,
+   obsproc_shared/bufr_dumplist.v1.6.0 (previously released with OBSPROC-v8.3.2),
+   obsproc_prep_post.v3.0.1.
+   It should be installed on both WCOSS IBM iDataPlex and Cray-XC40.
+
+   There are no jobs in this software component so there is no version file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 2.0.0 --> released Apr 07, 2017
+                                           --> implemented Jul 19, 2017
+
+Updated to run on both IBM iDataPlex and Cray-XC40.
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/remorest.f
+ M obsproc_shared/bufr_remorest/sorc/build.sh
+ M obsproc_shared/bufr_remorest/sorc/load_libs.rc
+ M obsproc_shared/bufr_remorest/sorc/README.build
+ M obsproc_shared/bufr_remorest/sorc/setlibs.rc
+ M obsproc_shared/bufr_remorest/ush/bufr_remorest.sh
+( A - added,  M - modified, D - deleted)
+
+ Source code and build changes (in sorc directory):
+   build.sh:
+    - Updated to build codes on Cray-XC40 or IBM iDataPlex.
+    - For Cray-XC40 builds, FC=ftn is passed to the make command to override the
+      the default setting in the makefiles.
+    - Use load_libs.rc rather than setlibs.rc to specify libraries.
+    - Upgrade from ics/12.1 to ics/16.0.3 for builds on IBM iDataPlex.
+   load_libs.rc:
+    - Updated for different module naming conventions used on IBM vs Cray-XC40.
+    - Upgrade to bufrlib version from 10.2.5 to 11.1.0.
+   setlibs.rc:
+    - Point to appropriate library pathnames when building on IBM vs Cray-XC40.
+    - Upgrade to bufrlib version from 10.2.5 to 11.1.0.
+   README.build:
+    - Removed instructions for compiling without the build.sh script.
+    - Other cleanup.
+   bufr_remorest.fd/remorest.f (main program)
+    - Added call of bufrlib routine SETBMISS to set the missing value used for
+      bufr reads and writes to 10E8_8.  Function GETBMISS is then used to 
+      define variable BMISS rather than using a hardwired value of 10E10. This
+      change was made to reduce the risk of integer overflows on both IBM 
+      iDataPlex and Cray-XC40.
+
+ USH script changes:
+   bufr_remorest.sh:
+    - Changed exit value of 555 (which is out of the acceptable range) to 55
+      to ensure that the parent script sees the intended value.
+
+
+ Output changes:
+ ---------------
+   None.
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 
+   bufr   11.1.0 (previously 10.2.5)
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  Any jobs upgrading to 
+   use this version should be tested in advance.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1  
+   It should be installed on both WCOSS systems (IBM iDataPlex and Cray-XC40)
+   with or prior to obsproc_global.v3.0.0.
+
+   There are no jobs in this software component so there is no version file.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_remorest release 1.0.0 --> released May 5, 2014
+                                           --> implemented Jun 24, 2014
+
+Initial population of vertical structure.
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/remorest.f
+ M obsproc_shared/bufr_remorest/sorc/bufr_remorest.fd/makefile
+ A obsproc_shared/bufr_remorest/sorc/build.sh
+ A obsproc_shared/bufr_remorest/sorc/clean.sh
+ A obsproc_shared/bufr_remorest/sorc/install.sh
+ A obsproc_shared/bufr_remorest/sorc/load_libs.rc
+ A obsproc_shared/bufr_remorest/sorc/README.build
+ A obsproc_shared/bufr_remorest/sorc/setlibs.rc
+ M obsproc_shared/bufr_remorest/ush/bufr_remorest.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_remorest.sh:
+    - No changes (other than move to vertical structure).
+
+ Source code changes:
+   build.sh in sorc directory:
+    - New. Used to build executable bufr_remorest in the bufr_remorest.fd sub-
+      directory of the sorc directory.  Reads either load_libs.rc or setlibs.rc
+      file to point to library version numbers needed by makefile.
+   clean.sh in sorc directory:
+    - New. Used to "make clean" bufr_remorest.fd sub-directory in the sorc
+      directory (generally after a build).
+   install.sh in sorc directory:
+    - New. Used to install (move) executable bufr_remorest (after build) in
+      exec directory (assumed to be in same root directory as sorc).
+   load_libs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if setlibs.rc is read.)
+   README.build in sorc directory:
+    - New. Documentation on using build.sh, install.sh and clean.sh.
+   setlibs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if load_libs.rc is read.)
+   bufr_remorest:
+    - No change to source.
+    - Makefile modified to use environment variables to point to library
+      version numbers and to add sample build script and info in sorc
+      directory.  This generalizes the library version information.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Source code bufr_remorest:
+    - continues to link to version 2.0.6 of w3nco library
+    - continues to link to version 10.2.5 of bufr library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_remorest.  All jobs executing this
+   version of obsproc_shared/bufr_remorest will be part of the parallel-
+   production test of the OBSPROC Phase 2 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute obsproc_prep_post and
+   obsproc_dump_post which in turn executes this version of
+   obsproc_shared/bufr_remorest.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_global.v2.0.0, obsproc_nam.v2.0.0,
+   obsproc_rap.v2.0.0, obsproc_rtma.v2.0.0, obsproc_urma.v2.0.0,
+   obsproc_dump.v3.1.0, obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0,
+   obsproc_prep_post.v2.0.0, obsproc_satingest.v2.2.0 and
+   obsproc_shared/bufr_avgdata.v1.0.0.
+
+   Since there are no jobs in obsproc_shared/bufr_remorest, an
+   obsproc_shared_bufr_remorest.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

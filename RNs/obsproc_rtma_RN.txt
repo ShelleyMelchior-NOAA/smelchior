@@ -1,0 +1,2241 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.3.3 --> released Jul ??, 2021
+                           --> implemented ??? ??, 2021
+
+files:
+   obsproc_rtma/jobs/JRTMA_DUMP
+   obsproc_rtma/jobs/JRTMA_DUMP_POST
+   obsproc_rtma/jobs/JRTMA_PREP
+   obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exrtma_dump.sh.ecf:
+    - Modified dump group 2 subtype counts to keep aligned with the
+      updated bufr_dumplist at v2.4.0.
+      BENEFIT: sfcshp dump file includes BUFR format ships and cman data.
+    - Modified dump group 2 to generate a separate tideg dump file, no
+      longer included in the sfcshp dump file.
+      BENEFIT: Eliminates duplicate reports complications between the
+               two separate data streams: tideg and cmanb.
+    - Added logic to copy bufr_dumplist file to $COMOUT.
+      BENEFIT: per NCO SPA request.
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP:
+    - As a result of updates to exrtma_dump.sh.ecf:
+       - The sfcshp dump file,
+          $COMROOT/rtma/prod/rtma*.YYYYMMDD/rtma*.tCCz.sfcshp.tm00.bufr_d,
+         will have the tideg subset (NC001005) removed.
+       - The tideg dump file,
+          $COMROOT/rtma/prod/rtma*.YYYYMMDD/rtma*.tCCz.tideg.tm00.bufr_d,
+         will be new.
+    - As a result of updates in obsproc_shared/bufr_dumplist.v2.4.0:
+      - The following subsets are now included in the sfcshp dump file:
+          "SHIPSB" [Ship - manual and automatic, restricted (BUFR)]
+           (001.101)
+          "SHIPUB" [Ship - manual and automatic, unrestricted (BUFR)]
+           (001.113)
+          "CMANB" [Surface Marine CMAN rpts decided from BUFR format]
+           (001.104)
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in memory usage.
+    - Negligble change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/rtma/prod/rtma.YYYYMMDD/:
+     rtma.tCCz.sfcshp.tm00.bufr_d* files increase by 16 Mb per day
+     rtma.tCCz.tideg.tm00.bufr_d files introduce  2 Mb per day    
+     rtma.tCCz.prepbufr.tm00* files increase by 36 Mb per day
+   $COMROOT/rtma/prod/rtma_ru.YYYYMMDD/:
+     rtma_ru.tCCCCz.sfcshp.tm00.bufr_d* files increase by 24 Mb per day
+     rtma_ru.tCCCCz.tideg.tm00.bufr_d files are 0 size    
+     rtma_ru.tCCCCz.prepbufr.tm00* files increase by 84 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0                 (updated from v5.1.1)
+    - obsproc_dump_post.v3.6.0            (updated from v3.5.0)
+    - obsproc_prep.v5.5.0                 (updated from v5.3.0)
+    - obsproc_prep_post.v3.1.1            (unchanged)
+    - obsproc_shared/bufr_dumplist.v2.4.0 (updated from v2.3.1)
+    - obsproc_shared/bufr_remorest.v2.1.3 (updated from v2.1.2)
+    - obsproc_shared/bufr_avgdata.v2.1.1  (unchanged)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.6, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    CFP        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.1.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.4.3 of obsproc_nam,
+      v3.2.2 of obsproc_rap,
+      v3.2.4 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.5.0 of obsproc_prep,
+      v2.1.3 of obsproc_shared_bufr_remorest,
+      v2.4.0 of obsproc_shared_bufr_dumplist.
+
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20210712_OBSPROC-v16.1.0/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.3.2 --> released Oct 09, 2020
+                           --> implemented Mar 22, 2021
+
+files:
+   obsproc_rtma/jobs/JRTMA_DUMP
+   obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+   obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+   obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JRTMA_PREP:
+    - Modified to use the new $COMPONENT subdirectory structure.
+    - Modified to integrate the NETCDF_IN switch for encoding the
+      first guess information into the prepbufr file.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+
+
+ Output changes:
+ ---------------
+   No change
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /gpfs/dell2/nco/ops/com/rtma/prod/rtma    - No change.
+   /gpfs/dell2/nco/ops/com/rtma/prod/rtma_ru - No change. 
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0                 (unchanged)
+    - obsproc_dump_post.v3.4.0            (unchanged)
+    - obsproc_prep.v5.3.0                 (unchanged)
+    - obsproc_prep_post.v3.1.1            (unchanged)
+    - obsproc_shared/bufr_dumplist.v2.3.0 (unchanged)
+    - obsproc_shared/bufr_remorest.v2.1.1 (unchanged)
+    - obsproc_shared/bufr_avgdata.v2.1.0  (unchanged)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.4, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    CFP        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+     v16.0.0 of GFS,
+      v3.4.0 of obsproc_global,
+      v3.4.1 of obsproc_nam,
+      v3.2.1 of obsproc_rap,
+      v3.2.2 of obsproc_urma,
+      v5.4.0 of obsproc_prep,
+      v3.2.0 of obsproc_prep_post,
+      v2.1.1 of obsproc_dump_alert,
+      v2.1.1 of obsproc_shared_bufr_avgdata
+      v1.0.3 of sfcship.
+
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20201009_OBSPROC-v15.0.0/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.3.1 --> released Sep 14, 2020
+                           --> implemented Oct 22, 2020
+
+files:
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model script changes:
+  exrtma_dump.sh.ecf:
+    - Updated Dump group #1 to skip legacy Meteosat AMV
+      subsets: 005064, 005065, 005066.  These subsets 
+      are replaced by new WMO BUFR sequence subsets:
+      005067, 005068, 005069.  The format change from
+      EUMETSAT occurs Oct 6, 2020. 
+      BENEFIT: enables seamless transition to the new
+               Meteosat AMV data sets for all RTMA and 
+               RTMA_RU cycles. 
+
+
+ Output changes:
+ ---------------
+   No change
+
+
+ Compute Resource Information:
+ -----------------------------
+   No change
+
+
+ Disk Space Changes:
+ -------------------
+   /gpfs/dell2/nco/ops/com/rtma/prod/rtma    - No change.
+   /gpfs/dell2/nco/ops/com/rtma/prod/rtma_ru - No change. 
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0                 (updated from v5.0.2)
+    - obsproc_shared/bufr_dumplist.v2.3.0 (updated from v2.1.0)
+    - obsproc_dump_post.v3.4.0            (updated from v3.3.1)
+    - obsproc_prep.v5.3.0                 (updated from v5.2.1)
+    - obsproc_prep_post.v3.1.1            (updated from v3.1.0)
+    - obsproc_shared/bufr_remorest.v2.1.1 (updated from v2.1.0)
+    - obsproc_shared/bufr_avgdata.v2.1.0  (unchanged)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.4, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    CFP        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This must be implemented on Dell-p3.
+
+   This must be implemented simultaneously with the implementations of:
+      v4.2.0 of decod_dcelrw,
+      v2.5.2 of obsproc_cdas,
+      v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v5.3.0 of obsproc_prep,
+      v3.1.1 of obsproc_prep_post,
+      v2.3.0 of obsproc_shared_bufr_dumplist - previously released to support RTOFS,
+      v2.1.1 of obsproc_shared_bufr_remorest,
+      v2.8.3 of RTMA.
+
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20200818_OBSPROC-v14.0.0/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.3.0 --> released Feb 14, 2020
+                           --> implemented Jul 28, 2020
+
+files:
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model script changes:
+  exrtma_dump.sh.ecf:
+    - For "rtma_ru" runs, re-enabled dumping of GOES imager effective 
+      cloud amount data (efclam, NC012160) in dump thread #1.
+      BENEFIT: enables cloud cover analysis in RTMA_RU
+
+ Output changes:
+ ---------------
+   For "rtma_ru" runs, dump files *.efclam.*.bufr_d* will be produced.
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP
+     - For "rtma_ru" runs, the enabling of efclam dumps makes for a
+       increase in run time of 20-30 wallclock seconds, on average.
+
+ Disk Space Changes:
+ -------------------
+   /com2/rtma/prod/rtma.    - No change.
+   /com2/rtma/prod/rtma_ru. - Increase of ~3 GB per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2                 (updated from v4.1.0)
+    - obsproc_shared/bufr_dumplist.v2.1.0 (updated from v2.0.1)
+    - obsproc_dump_post.v3.3.1            (updated from v3.3.0)
+    - obsproc_prep.v5.2.1                 (updated from v5.2.0)
+    - obsproc_prep_post.v3.1.0            (unchanged)
+    - obsproc_shared/bufr_remorest.v2.1.0 (unchanged)
+    - obsproc_shared/bufr_avgdata.v2.1.0  (unchanged)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.3, the default at the time)
+    prod_envir (tested with v1.0.3, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    cfp        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+     Only RTMA_RU should differ from current prodution.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20200214_OBSPROC-v13.0.0/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.2.1 --> released Oct 22, 2019
+                           --> implemented  Oct 29, 2019
+
+files:
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ Model script changes:
+  exrtma_dump.sh.ecf:
+   - Modified to limit the processing for the adpsfc dump group to just 
+     the previous day's tank.  This applies only to the rtma_ru 0000z cycle.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   No changes.
+
+
+ Disk Space Changes:
+ -------------------
+   /$COMROOT/rtma/prod/rtma.    - No change.
+   /$COMROOT/rtma/prod/rtma_ru. - No change.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2                 (updated from v4.1.0)
+    - obsproc_shared/bufr_dumplist.v2.0.1 (updated from v1.6.0)
+    - obsproc_dump_post.v3.3.0            (updated from v3.2.0)
+    - obsproc_prep.v5.2.1                 (updated from v5.1.0)
+    - obsproc_prep_post.v3.1.0            (updated from v3.0.1)
+    - obsproc_shared/bufr_remorest.v2.1.0 (updated from v2.0.1)
+    - obsproc_shared/bufr_avgdata.v2.1.0  (updated from v2.0.0)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.2, the default at the time)
+    prod_envir (tested with v1.0.3, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    cfp        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20191022_OBSPROC-v11.5.1/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.2.0 --> released Aug 06, 2019
+                           --> implemented  Aug 21, 2019
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Modified to run on Dell-p3.
+   JRTMA_DUMP:
+    - Turned off background threads.
+    - Removed load of grib_util module (latest preferred practice is to load
+      modules in the parent environment). 
+
+ Model script changes:
+  exrtma_dump.sh.ecf:
+   - Modified to run on Dell-p3.
+   - Removed load of cfp module (latest preferred practice is to load modules
+     in the parent environment).
+   - Changed background threads to serial threads.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+   Regular cycles:
+    JRTMA_DUMP:       ~ 2s faster on ph3; ~307Mb more memory usage on ph3
+    JRTMA_DUMP_POST:  ~ 1s faster on ph3; ~ 22Mb less memory usage on ph3
+    JRTMA_PREP:       ~ 1s slower on ph3; ~  4Mb less memory usage on ph3
+    JRTMA_PREP_POST:  ~ 6s slower on ph3; ~ 14Mb more memory usage on ph3
+   RU cycles:
+    JRTMA_DUMP:       ~ 2s slower on ph3; ~329Mb less memory usage on ph3
+    JRTMA_DUMP_POST:  ~ 3s faster on ph3; ~ 16Mb less memory usage on ph3
+    JRTMA_PREP:       ~13s faster on ph3; ~ 24Mb less memory usage on ph3
+    JRTMA_PREP_POST:  ~ 1s slower on ph3; ~  7Mb more memory usage on ph3
+
+
+ Disk Space Changes:
+ -------------------
+   /$COMROOT/rtma/prod/rtma.    - No change.
+   /$COMROOT/rtma/prod/rtma_ru. - No change.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2                 (updated from v4.1.0)
+    - obsproc_shared/bufr_dumplist.v2.0.1 (updated from v1.6.0)
+    - obsproc_dump_post.v3.3.0            (updated from v3.2.0)
+    - obsproc_prep.v5.2.1                 (updated from v5.1.0)
+    - obsproc_prep_post.v3.1.0            (updated from v3.0.1)
+    - obsproc_shared/bufr_remorest.v2.1.0 (updated from v2.0.1)
+    - obsproc_shared/bufr_avgdata.v2.1.0  (updated from v2.0.0)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.2, the default at the time)
+    prod_envir (tested with v1.0.3, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+  exrtma_dump.sh.ecf requires:
+    cfp        (tested with v2.0.2; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.5.0.
+   This must be installed on WCOSS Dell phase 3.
+   This must be implemented simultaneously with or before the implementation
+    of RTMA/URMA on WCOSS Dell phase 3.
+
+   Please retrieve obsproc_rtma.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20190805_OBSPROC-v11.5.0/obsproc_rtma.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.1.0 --> released Jul 30, 2018
+                           --> implemented Dec 04, 2018
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   For All JOB scripts: 
+    - Added check on exit status from the model scripts.
+
+
+ Model script changes:
+   exrtma_dump.sh.ecf
+    - For "rtma_ru" runs, removed dumping of GOES imager effective cloud
+      amount data (efclam, NC012160) from dump thread #1.
+      BENEFIT: reduces overall time for dump processing.
+
+
+ Output changes:
+ ---------------
+   For "rtma_ru" runs, dump files *.efclam.*.bufr_d* will no longer be
+    produced.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP
+     - For "rtma_ru" runs, the elimination of efclam dumps makes for a
+       reduction in run time of 20-30 wallclock seconds, on average.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/rtma/prod/rtma.    - No change.
+   /com2/rtma/prod/rtma_ru. - Decrease of ~3 GB per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v4.1.0                 (updated from v4.0.0)
+    - obsproc_shared/bufr_dumplist.v1.6.0 (updated from v1.5.0)
+    - obsproc_dump_post.v3.2.0            (updated from v3.1.0)
+    - obsproc_prep.v5.1.0                 (updated from v5.0.0)
+    - obsproc_prep_post.v3.0.1            (updated from v3.0.0)
+    - obsproc_shared/bufr_remorest.v2.0.1 (updated from v2.0.0)
+    - obsproc_shared/bufr_avgdata.v2.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.0.25, the default at the time)
+    prod_envir (tested with v1.0.1, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Run JRTMA_DUMP, checking that *.efclam.*.bufr dump files are not
+     generated.
+   - This implementation depends upon the implementation of 
+        obsproc_shared/bufr_dumplist.v1.6.0 and 
+        obsproc_dump.v4.1.0
+     both of which were previously released with OBSPROC.v8.3.2 in May 2018.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v10.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v4.1.0 of obsproc_dump *
+      v1.6.0 of obsproc_shared/bufr_dumplist *
+      v3.2.0 of obsproc_dump_post
+      v5.1.0 of obsproc_prep
+      v3.0.1 of obsproc_prep_post
+      v2.0.1 of obsproc_shared/bufr_remorest
+
+    * - these were previously released in OBSPROC.v8.3.2 in May 2018
+
+   This must be implemented simultaneously or before the implementation
+    of:
+      v2.7.0 of RTMA/URMA
+
+
+   Please retrieve obsproc_rtma.ver file:
+     git clone gerrit:EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20180629_OBSPROC-v10.0.0/obsproc_rtma.ver /nwprod2/versions/obsproc_rtma.ver
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.0.1 --> released Feb 20, 2018
+                           --> implemented Feb 20, 2018
+
+files:
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+ M obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+ Model script changes:
+   exrap_dump.sh.ecf, exrap_makeprepbufr.sh.ecf:
+    - A call to dbn_alert was added for satwnd, per GSD request (RFC 4169).
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 3.0.0 --> released Jul 14, 2017
+                           --> implemented Dec 13, 2017
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+ M obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+ New JOB RUNS enabled:
+    Four new RTMA jobs are to be enabled w/ this upgrade, in which NET='rtma'
+  but with RUN="rtma_ru". These Rapid Update (RU) runs are to be scheduled to
+  run 4 times hourly.
+    A new cycle time variable, "cycM", is expected to be exported from the job
+  triggering scripts.  This is intended to be analogous to the use of the "cyc"
+  variable for specifying cycle hours.  The "cycM" variable should be set to
+  values of 00, 15, 30 & 45, respectively, for each of the 4 separate runs each
+  hour. 
+    The JRTMA_DUMP jobs should be initiated at HH:08, HH:23, HH:38 and HH:53
+  (ie, at the quarter hour plus 8 minutes). Subsequent JRTMA_DUMP_POST,
+  JRTMA_PREP, & JRTMA_PREP_POST should follow, scheduled with the same
+  dependencise as are currently set in hourly RTMA systems.
+    Outputs are set to be located in a new RUN subdirectory, such as:
+
+            /com2/rtma/prod/rtma_ru.20170714/
+
+    Filenames in this new RUN subdir will be of the form:
+
+            rtma_ru.tHHMMz.*
+  where HH=cyc and MM=cycM
+
+
+ JOB script changes:
+
+   For All JOB scripts: 
+    - Added logic to key on imported "job" variable containing "_ru_" string
+      (part of rtma_ru_* jobs) to indicate a 15 minute cycle run.  For these
+      runs, new variable "cycM" is expected to have been imported, containing 
+      the minutes value of the cycle center time (complementary to the existing 
+      "cyc" that holds the cycle hour value).
+    - RUN value is set to "rtma_ru" for multi-hour, 15 minute cycling runs.
+    - Potentially 4-digit "cycle" values are computed and passed to filenames
+      and called scripts.
+
+   JRTMA_DUMP_POST: 
+    - Processing of data count averages is disabled for 15min cycle runs thru
+      the setting of the PROCESS_AVGTABLES variable to "NO".
+    - Default processing of bufr_listdump threads in parallel is disabled by
+      exporting environment variable MPMD with a value of "NO".
+
+   JRTMA_PREP: 
+    - A dummy sgesprep file is created in the DATA working directory so as to
+      inhibit the unnecessary copying of first guess files, thereby reducing
+      processing time (especially important for rtma_ru runs).
+
+ Model script changes:
+   For all model scripts (exrtma_dump.sh.ecf & exrtma_makeprepbufr.sh):
+
+   exrtma_dump.sh.ecf
+    - For "rtma_ru" runs, indicated by the existence of imported variable
+      "cycM", computes fractional hour cycle time; this fractional value is
+      then appended to the 'dumptime' value exported for use in the
+      obsproc_dump ush/bufr_dump_obs.sh script.
+
+   exrtma_makeprepbufr.sh.ecf
+    - For "rtma_ru" runs, keys on imported "cycM" value, used as optional 2nd
+      argument in call to obsproc_prep ush/prepobs_makeprepbufr.sh script.
+
+
+ Output changes:
+ ---------------
+     New subdirs for RTMA_RU runs will contain all output from all 96 cycles
+   daily (4x/hourly).
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_PREP:
+     - A few seconds increase in run time due to pick up of larger gfs forecast
+       file from cray disk.
+
+   Job J???? in Rapid Update cycles:
+     - Each 4x/hourly RTMA_RU run will have the same resource requirements as
+       the current hourly RTMA runs.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/rtma/prod/rtma.    - No change.
+
+     Each 4x/hourly RTMA_RU run will generate similar file sizes as a current
+   hourly RTMA run, estimated at 4.8 GB.  Can expect an increase of 4x this
+   value as a result of RTMA_RU runs.
+
+   /com2/rtma/prod/rtma_ru. - Increase ~20 GB per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v4.0.0
+    - obsproc_prep.v5.0.0 (updated from v4.0.0)
+    - obsproc_dump_post.v3.1.0 (updated from v3.0.0)
+    - obsproc_prep_post.v3.0.0
+    - obsproc_shared/bufr_dumplist.v1.4.0
+    - obsproc_shared/bufr_remorest.v2.0.0
+    - obsproc_shared/bufr_avgdata.v2.0.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.0.12, the default at the time)
+    prod_envir (tested with v1.0.1, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs w/ both hourly and 4x/hourly frequency.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - Archival of RTMA_RU run outputs should follow the same criteria as is
+     currenly used with RTMA hourly runs.  This will be a roughly 4x increase
+     in archived content.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.1.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v5.0.0 of obsproc_prep
+      v3.1.0 of obsproc_dump_post
+
+   This must be implemented simultaneously with the implementations of:
+      v3.0.0 of obsproc_urma
+      v2.6.0 of RTMA/URMA
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170714_OBSPROC-v8.1.0/obsproc_rtma.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.3.0 --> released Apr 28, 2017
+                           --> implemented Jul 19, 2017
+
+files:
+ M obsproc_rtma/jobs/JRTMA_PREP
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JRTMA_PREP:
+    - Added new variable NEMSIO_IN with default setting of ".true." to tell
+      obsproc_prep software whether to pick up nemsio global forecast files
+      instead of the older sigio files.
+    - Added variables COMINgdas and COMINgfs needed by the version of getges.sh
+      used for NEMSIO_IN=.true. (available in obsproc_prep.v4.0.0).
+    - Made variable envir_getges substitutable so that it can be imported from
+      the parent environment.  (default is "prod")
+    - Added wrapper around GETGES_NWG and GETGES_COM variables for the pre- and
+      post- GFS upgrade transitional period.
+    - Removed load of the util_shared module which is no longer needed with the
+      upgrade to obsproc_prep.v4.0.0
+
+
+ Output changes:
+ ---------------
+   None.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_PREP:
+     - A few seconds increase in run time due to pick up of larger gfs forecast
+       file from cray disk.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/rtma/prod/rtma.    - No change.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0
+    - obsproc_prep.v4.0.0 (updated from v3.8.0)
+    - obsproc_dump_post.v2.3.0
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.0.10, the default at the time)
+    prod_envir (tested with v1.0.1, the default at the time)
+  JRTMA_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JRTMA_PREP with GFS upgrade parallel data available on the Cray-XC40
+     with following settings:
+       export envir_getges=para
+       export COMPATH=/gpfs/hps/nco/ops/com
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1.
+   This must be implemented simultaneously with the implementation of:
+      v3.0.0 of obsproc_global
+    along with:
+      v3.2.0 of obsproc_nam
+      v2.5.0 of obsproc_rap
+      v2.3.0 of obsproc_urma
+    and with or after:
+      v4.0.0 of obsproc_prep
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170413_OBSPROC-v8.0.1/obsproc_rtma.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.2.0 --> released Jan 12, 2017
+                           --> implemented Feb 21, 2017
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+
+( M - modified)
+
+
+ JOB script changes:
+   All job scripts:
+    - Move check that required variables are set to top of script.
+   JRTMA_DUMP:
+    - Points to latest version of obsproc_shared/bufr_dumplist in Phase 2 vs.
+      Phase 1 ($NWROOTp2 replaces $NWROOTp1; the transitional setting for
+      $NWROOTp2 added).
+    - Obtains version number for module grib_util via imported environment
+      variable $grib_util_ver.  This is now defined in
+      /nwprod2/versions/obsproc_rtma.ver.
+      Current setting is grib_util_ver=v1.0.1
+       - Load module grib_util/v1.0.1.
+          - Removed setting of variable EXGRBIX.
+      BENEFIT: Defines path now relied on to run utility program grbindex in
+               ush script bufr_dump_obs.sh.
+    - Remove exported script variable $utilparm (which defaulted to
+      /nwprod/util/parm) as it is no longer required by any child scripts.
+   JRTMA_DUMP_POST:
+    - Points to latest version of obsproc_dump_post and
+      obsproc_shared/bufr_dumplist in Phase 2 vs. Phase 1 ($NWROOTp2 replaces
+      $NWROOTp1; the transitional setting for $NWROOTp2 added).
+    - More flexible options for specifiying variable $AVGDarch_OUT in developer
+      runs.
+   JRTMA_PREP:
+    - Obtains version number for module util_shared via imported environment
+      variable $util_shared_ver.  This is now defined in
+      /nwprod2/versions/obsproc_rtma.ver.
+      Current setting is util_shared_ver=v1.0.4.
+       - Load module util_shared/v1.0.4.
+      BENEFIT: Defines prepended path now relied on to run utility ush
+               getges.sh in ush script prepobs_makeprepbufr.sh.
+      Note: Exported script variables GETGES_COM and GETGES_NWG are retained
+            with no changes since they now always override getges.sh defaults
+            of "$COMROOT" and "$GESROOT", resp. in module util_shared/v1.0.4
+            version of utility ush getges.sh.  This gives flexibility for cases
+            when a development or test run may redirect COMROOT or GESROOT to
+            an alternate location. It also avoids the need to set GETGES_COM or
+            GETGES_NWG in the driver script in this case.  Also allows
+            GETGES_COM or GETGES_NWG to be set to an alternative location in
+            driver script.
+    - Replaces generic $NWROOT with more specific $NWROOTp2 as root to
+      obsproc_prep in Phase 2 (the transitional setting for $NWROOTp2 added).
+   JRTMA_PREP_POST:
+    - Points to latest version of obsproc_prep_post in Phase 2 vs. Phase 1
+      ($NWROOTp2 replaces $NWROOTp1; the transitional setting for $NWROOTp2
+      added).
+   JRTMA_PREP, JRTMA_PREP_POST:
+    - Remove exported script variable $utilexec (which defaulted to
+      /nwprod/util/exec) as it is no longer required by any child scripts.
+
+ Parm file changes:
+   prepobs_prepdata.rtma.parm:
+    - The default overrides for AWINDO, JAMASS, JAWIND, IACFTL and FLACMS are
+      extended to accommodate three additional aircraft data types: Korean AMDAR
+      (BUFR), AMDAR-catchall (BUFR) and Panasonic (AirDAT) TAMDAR (BUFR).  There
+      were six, now there are nine.  The three new types get the same values as
+      previously existing AMDAR types. These three new aircraft data types, like
+      all aircraft types, will not be processed and thus not included in the
+      PREPBUFR files.
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - Mesonet (msonet) dump files can now contain reports with purged/
+         rejected QMs on p,t,q,uv.
+   Job JRTMA_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - Listings for "adpsfc", "sfcshp", "msonet" and "ascatw" dumps now print
+         lat/lon out to 0.00001 degree (although actual significance is still
+         based on precision in the BUFR lat/lon encoded in each dump file).
+   Jobs JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - PREPBUFR files now store lat/lon (YOB/XOB) to 10**5 precision, this
+         will potentially be seen for the following type: MSONET 188/288 since
+         this has 10**5 precision in dumps.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - program bufr_edtbfr uses more memory due to an increase in array parameter
+         "ISTNID_MATCH":
+               previous: The maximum resident set size (KB) = 239108
+               now:      The maximum resident set size (KB) = 258952
+       - Changes in program bufr_edtbfr result in a ~17 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+   Job JRTMA_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - program bufr_listdumps uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   Job JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - program prepobs_prepdata uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   Job JRTMA_PREP_POST:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/rtma/prod/rtma.    - Increase ~25 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0 (updated from v3.2.1)
+    - obsproc_prep.v3.8.0 (updated from v3.6.0)
+    - obsproc_dump_post.v2.3.0 (updated from v2.0.1)
+    - obsproc_prep_post.v2.3.0 (updated from v2.1.0)
+    - obsproc_shared/bufr_dumplist.v1.3.0 (updated from v1.2.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.5, the
+               default at the time)
+  JRTMA_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+  JRTMA_PREP requires:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com2 (IF??) noted previously..
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.5.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.2.0 of obsproc_cdas,
+      v3.3.0 of obsproc_dump,
+      v2.1.0 of obsproc_dump_monitor,
+      v2.3.0 of obsproc_dump_post,
+      v2.4.0 of obsproc_global,
+      v2.3.0 of obsproc_nam,
+      v3.8.0 of obsproc_prep,
+      v2.3.0 of obsproc_rap,
+      v2.2.0 of obsproc_urma.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170112_OBSPROC-v6.5.0/obsproc_rtma.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.1.0 --> released Feb 8, 2016
+                           --> implemented Aug 23, 2016
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+
+( M - modified)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+    - Removed NCO vs developer checks in places where we could rely on variables 
+      set in ecflow environment for NCO runs. Modified remaining such wrappers 
+      to check setting of NCO standard variable RUN_ENVIR in place of 
+      non-standard variables used previously.
+    - Use NCO-established variables to point to root directories for main
+      software components and input/output directories in order to run on
+      WCOSS Phase 1 or Phase 2.  (Some util* variables remain and point to
+      /nwprod/util as required by obsproc application scripts).
+    - Removed direct path to setpdy.sh utility script, relying on versions
+      added to PATH (presumably by prod_util module).
+      NOTE: explicit path to setup.sh utility script remains so as to be
+            compatible w/ potential future removal of this utility (this is a
+            temporary arrangement until child obsproc scripts that require
+            this utility are updated).
+    - Use new NCO standard variable KEEPDATA in place of CLEANUP to decide
+      whether to remove working directory at end of run.
+    - Use NCO-established variables to point to prod utilities.
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.6.0:
+       - Surface land METAR reports now contain an additional, new CEILING 
+         field, derived from cloud amount and cloud height values.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   The additional prepbufr content results in a negligible increase in file 
+   size.
+   /com2/rtma/prod/rtma.*  - Increase of ~.25 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.6.0 (updated from v3.5.0)
+    - obsproc_dump_post.v2.0.1
+    - obsproc_prep_post.v2.1.0
+    - obsproc_shared/bufr_dumplist.v1.2.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.1, the
+               default at the time)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+   - This is part of the parallel test of the RTMA Upgrade bundle (FY16Q4 or
+     later).
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.2.0b.
+   - It is expected that this will be implemented simultaneously with the
+     implementation of the FY16Q4 (or later) RTMA Upgrade (v2.4.3).  However,
+     it could go in sooner.  Please note, however:
+     - This must be implemented simultaneously with the implementation of
+       v3.6.0 of obsproc_prep.
+     - This must be implemented simultaneously with the implementation of
+       v2.1.0 of obsproc_urma.
+     - This must be implemented simultaneously with the implementation of
+       v2.1.0 of obsproc_rap.
+   - If implementing on WCOSS Phase 1 (prior to move of RTMA to run on
+     Phase 2), please export the following for all jobs:
+       NWROOT=/nwprod
+       COMROOT=/com
+   - The move of RTDM files for all models to /com2 is expected to come at a
+     later date. When that time comes, copy the following from /com to /com2:
+       /com/arch/prod/avgdata/obcount_30davg.rtma.current
+       /com/arch/prod/obcount_30day/rtma
+     UNTIL THEN, temporarily add:
+       export HOMEarch=/com/arch/${envir}
+      to ecflow scripts for JRTMA_DUMP_POST.
+
+   If implementing on WCOSS Phase 1 (prior to move of RTMA to run on Phase 2):
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160127_OBSPROC-v6.2.0/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+   If implementing on WCOSS Phase 2 (with move of RTMA to run on Phase 2):
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160127_OBSPROC-v6.2.0/obsproc_rtma.ver
+   and copy to /nwprod2/versions (new file here).
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.7 --> released May 11, 2016
+                           --> implemented May 11, 2016
+
+ only change:
+
+ M obsproc_rtma/jobs/JRTMA_PREP
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_PREP:
+    - Added GETGES_COM with default of /com2 to override getges.sh default.
+      BENEFIT: Overrides default value "/com" still in util ush getges.sh.
+               Needed once GFS moves to Phase 2 (presumably at the same time
+               this release is implemented).  Ecflow scripts for JRAP_PREP can
+               override this if necessary.
+    - Added GETGES_NWG with default of /nwges2 to override getges.sh default.
+      BENEFIT: Overrides default value "/nwges" still in util ush getges.sh.
+               Needed once GFS moves to Phase 2 (presumably at the same time
+               this release is implemented).  Ecflow scripts for JRAP_PREP can
+               override this if necessary.
+
+This release was generated by NCO/PMB.
+
+This is part of OBSPROC.v6.1.0.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.6 --> released Jan 19, 2016
+                           --> implemented Jan 19, 2016
+
+ only change:
+
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_DUMP_POST:
+    - New lines to export $comin and $comin_m1 with WCOSS Phase 2 "$COMROOT"
+      location, /com2.
+      BENEFIT: Fixes bug introduced in v2.0.5.  Child script
+               $USHobsproc_shared_bufr_avgdata/bufr_avgdata.sh will now
+               correctly point to /com2 to obtain today's and yesterday's RTMA
+               dump status and updated status files, rather than to default
+               location /com where these files are no longer located. Thirty-
+               day averages will again be maintained in
+               /com/arch/prod/avgdata/obcount_30davg.rtma.current.
+
+This release was generated by NCO/PMB.
+
+This is part of OBSPROC.v6.0.2.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.5 --> released Jan 6, 2016
+                           --> implemented Jan 6, 2016
+
+ only changes:
+
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Updates as a result of move to WCOSS Phase 2.
+
+This release was generated by NCO/PMB.
+
+This is part of OBSPROC.v6.0.1.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.4 --> released May 1, 2015
+                           --> implemented Aug 10, 2015
+
+files:
+   obsproc_rtma/jobs/JRTMA_DUMP
+   obsproc_rtma/jobs/JRTMA_DUMP_POST
+   obsproc_rtma/jobs/JRTMA_PREP
+   obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+   obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ Model script changes:
+   exrtma_dump.sh.ecf:
+    - Dump window for new satwnd type NC005019 (GOES IR/SW) set to -1.00 to
+      -0.01 hours about center dump time.
+      BENEFIT: Will match dump window for other GOES types, providing a single
+               hourly set for each GOES satellite, closest to center dump time.
+    - Dump new type "efclam" (GOES imager effective cloud amount from U. Wisc.)
+      in a time window of +/- 0.5 hours about dump center time.
+      BENEFIT: These dumps (from tank b012/xx160) will eventually be read by
+               the RTMA GSI, replacing the BUFR files output to
+               /dcom/us007003/<yyyymmdd>/wtxtbul which are now used by the
+               RTMA GSI. Those files are created in satingest job JIGOES_CLOUD
+               and are just a 1:1 translation of each input file to BUFR.
+
+ Parm file changes:
+   prepobs_prepdata.rtma.parm:
+    - Minor comment changes.
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP:
+    - New "efclam" dump files will be produced.
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.2.0:
+       - The "satwnd" dump files will contain GOES IR/SW, POES AVHRR/IR/LW and
+         POES VIIRS/IR/LW winds.
+   Job JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.5.0:
+       - Marine reports previously, incorrectly deemed over land and flagged
+         will now be deemed over water and be available for assimilation.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - A couple of seconds increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/rtma/prod/rtma.  - Increase ~1.081 Gb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1 (updated from v3.2.0)
+    - obsproc_prep.v3.5.0 (updated from v3.4.0)
+    - obsproc_dump_post.v2.0.1 (updated from v2.0.0)
+    - obsproc_prep_post.v2.1.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_dumplist.v1.2.0 (updated from v1.1.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all four production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.4 of obsproc_cdas,
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.1.1 of obsproc_global,
+      v3.5.0 of obsproc_prep,
+      v2.1.0 of obsproc_prep_post,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb,
+      v1.2.0 of obsproc_shared/bufr_dumplist.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20150501_OBSPROC-fy15q2/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20150501_OBSPROC.v5.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.3 --> released Jun 30, 2015
+                           --> implemented Jun 30, 2015
+
+ only change:
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_prep_post.v2.0.2 (updated from v2.0.1)
+
+
+(Note: NCO/PMB did not update the version number here)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.3 --> released Jan 6, 2015
+                           --> implemented Apr 14, 2015
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+   obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+ D obsproc_rtma/parm/wave_dcodascat.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+   obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( D - deleted)
+
+
+ JOB script changes:
+   JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Update to account for minor changes made by NCO at implementation time.
+
+ Parm file changes:
+   wave_dcodascat.rtma.parm:
+    - Removed.
+      BENEFIT: METOP-B ASCAT reports will now be available for assimilation
+               (and indeed will be assimilated) by the RTMA GSI as they will be
+               included in the RTMA "ascatw" dump files and in the RTMA
+               PREPBUFR files (the default herefile inside
+               obsproc_dump/ush/bufr_dump_obs.sh is no longer overridden).
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP:
+    - The hourly "ascatw" dump files will now contain METOP-B ASCAT reports (in
+      addition to existing METOP-A ASCAT reports).
+   Job JRTMA_PREP:
+    - The hourly PREPBUFR files will now contain METOP-B ASCAT reports (in
+      addition to existing METOP-A ASCAT reports) in message type ASCATW.
+
+
+ Compute Resource Information:
+ -----------------------------
+   No change in requested resources in the job cards for any jobs.
+   No change to memory usage for any jobs.
+   Negligible change in run time for some jobs.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/rtma/prod/rtma - Increase ~170 Mb per day 
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+   obsproc_dump.v3.2.0
+   obsproc_dump_post.v2.0.0
+   obsproc_prep.v3.4.0 (updated from v3.2.0)
+   obsproc_prep_post.v2.0.1
+   obsproc_shared/bufr_avgdata.v1.0.1
+   obsproc_shared/bufr_dumplist.v1.1.0 (updated from 1.0.0)
+   obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP and
+     JRTMA_PREP_POST as part of the parallel-production test of the FY15Q2 RTMA
+     upgrade (v2.3.0).
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.2.2.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.3 of obsproc_urma,
+      v2.3.0 (and all shared software components) of RTMA and URMA (FY15Q2).
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20150106_RTMA_URMA-fy15q2/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20150106_OBSPROC.v4.2.2)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.2 --> released Sep 14, 2014
+                           --> implemented Nov 4, 2014
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+   obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+   obsproc_rtma/parm/wave_dcodascat.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Remove unnecessary setting of environment variable TMPDIR (not
+      referenced in child scripts).
+   JRTMA_DUMP:
+    - Updated comment explaining reason for hardwire of environment variable
+      TMPDIR.
+   JRTMA_PREP_POST:
+    - All references to PROCESS_SATELLITE_COUNTS removed since
+      /nwprod/ush/global_satcount.sh is obsolete.
+
+ Model script changes:
+   exrtma_dump.sh.ecf:
+    - Add parallel scripting option to replace background threads for
+      simultaneous dump group processing.
+      BENEFIT: Improves timing.  Complies with NCO's request to remove
+               background processes from production scripts.
+    - Minor dump group shuffling.
+      BENEFIT: Improves timing.
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP_POST (23z cycle run only):
+    - As a result of update to obsproc_shared/bufr_avgdata.v1.0.1:
+       - The obcount_30day rtma directory (/com/arch/prod/obcount_30day/rtma)
+         will now retain 32 days worth of files instead of 30 days. Despite
+         retaining 32 days of files, averages will continue to be contructed
+         from only the past 30 days.
+   Job JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.2.0:
+       - DFQ now encoded in PREPBUFR file in some cases for surface data.
+       - WQM will not be encoded in PREPBUFR file if UOB and VOB are missing
+         for surface data.
+       - DFP now encoded in PREPBUFR file in some cases for surface data.
+       - DFR now encoded in PREPBUFR file in some cases for surface data.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - previous job card specs were:
+         serial, shared, 6000 Mb
+    - recommended job card specs are:
+         parallel, shared, 3 tasks, ptile=3, 3000 Mb per task
+    - the above job card changes will result in ~30 sec decrease in wallclock
+      run time
+   No other changes in requested resources in the job cards.
+   No change to memory usage.
+   No change in disk space and run time.
+
+
+ Shared Software:
+ ----------------
+    - JRTMA_DUMP:
+         obsproc_dump.v3.2.0 (updated from v3.1.0)
+         obsproc_shared/bufr_dumplist.v1.0.0
+    - JRTMA_DUMP_POST:
+         obsproc_dump_post.v2.0.0
+         obsproc_shared/bufr_remorest.v1.0.0
+         obsproc_shared/bufr_avgdata.v1.0.1 (updated from v1.0.0)
+         obsproc_shared/bufr_dumplist.v1.0.0
+    - JRTMA_PREP:
+         obsproc_prep.v3.2.0 (updated from v3.1.0)
+    - JRTMA_PREP_POST:
+         obsproc_prep_post.v2.0.1 (updated from v2.0.0)
+         obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP and
+     JRTMA_PREP_POST as part of the parallel-production test of the OBSPROC
+     FY14Q4 bundle.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.0.
+   This must be implemented simultaneously with the implementations of:
+      v1.2.1 of obsproc_dump_monitor,
+      v2.0.2 of obsproc_global, obsproc_nam, obsproc_rap, obsproc_urma,
+      v2.3.0 of obsproc_satingest,
+      v3.2.0 of obsproc_dump, obsproc_prep,
+      v2.0.1 of obsproc_prep_post,
+      v1.0.0 of obsproc_dump_alert, radar_reflectivity_mosaic,
+      v1.0.0 of radar_reflectivity_ref2grb,
+      v1.0.1 of obsproc_shared/bufr_avgdata.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140914_OBSPROC-fy14q4/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140914_OBSPROC.v4.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.1 --> released Jul 23, 2014, updated Aug 5, 2014
+                           --> implemented Aug 12, 2014
+
+files:
+   obsproc_rtma/jobs/JRTMA_DUMP
+   obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+   obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+   obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+   obsproc_rtma/parm/wave_dcodascat.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+   obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_PREP:
+    - Environment variable DICTPREP now defaults to new vertical structure
+      directory path location for metar.tbl dictionary
+      (/nwprod/decoders/decod_shared/dictionaries, rather than
+      /nwprod/dictionaries which will be removed in September 2014).
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - continues to use code from obsproc_dump.v3.1.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no changes
+   Job JRTMA_DUMP_POST:
+    - continues to use code from obsproc_dump_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - continues to use code from obsproc_shared/bufr_avgdata.v1.0.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no changes
+   Job JRTMA_PREP:
+    - uses code from obsproc_prep.v3.1.0 (updated from obsproc_prep.v3.0.0)
+    - no other changes
+   Job JRTMA_PREP_POST:
+    - continues to use code from obsproc_prep_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production job JRTMA_PREP.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.1.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_global.v2.0.1, obsproc_nam.v2.0.1, obsproc_rap.v2.0.1,
+   obsproc_urma.v2.0.1 and obsproc_prep.v3.1.0, and simultaneously with the
+   implementation of the FY14Q3 NAM Upgrade bundle (v3.1.0).
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140722_OBSPROC-more_robust_prepacqc/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140722_OBSPROC.v3.1.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 2.0.0 --> released May 5, 2014
+                           --> implemented Jun 24, 2014
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/parm/prepobs_prepdata.rtma.parm
+ M obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+   obsproc_rtma/parm/wave_dcodascat.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+   obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Require that the developer export their own particular temporary
+      directory root ($DATAROOT) into the job scripts. If $DATAROOT is not set
+      in these scripts, the script will abort.
+      NOTE: This does not affect production.
+      BENEFIT: This avoids having to hardwire a development-specific default
+               temporary directory root in these job scripts. This can now be
+               different for different development groups.
+   JRTMA_DUMP_POST:
+    - Obtains obsproc_rtma, obsproc_dump_post, obsproc_shared/bufr_remorest,
+      obsproc_shared/bufr_avgdata and obsproc_shared/bufr_dumplist version
+      numbers via imported environment variables $obsproc_rtma_ver,
+      $obsproc_dump_post_ver, $obsproc_shared_bufr_remorest_ver,
+      $obsproc_shared_bufr_avgdata_ver and $obsproc_shared_bufr_dumplist_ver,
+      resp.  These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump_post which points to
+      directory path for generic dump_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_dump_post.$obsproc_dump_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts and exec directories moved from
+      horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally /nwprod/obsproc_rtma.$obsproc_rtma_ver).
+      Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_avgdata which
+      points to directory path for generic shared bufr_avgdata subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_avgdata.${obsproc_shared_bufr_avgdata_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_dumplist which
+      points to directory path for generic shared bufr_dumplist subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver).
+      Replaces /nw${envir} in order to point to files in fix directory moved
+      from horizontal to vertical directory structure.
+   JRTMA_PREP:
+    - Obtains obsproc_prep version number via imported environment variable
+      $obsproc_prep_ver.  This is defined in the upstream ecflow script. 
+    - Full environmental equivalence. Additional streamlining, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep which points to
+      directory path for generic prep subdirectories under version control
+      (in production this is normally /nwprod/obsproc_prep.$obsproc_prep_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network (changed from
+      $HOMErtma) which points to directory path for network-specific prep
+      subdirectories under version control (in production this is normally now
+      /nwprod/obsproc_rtma.$obsproc_rtma_ver).  Replaces /nw${envir} in order
+      to point to files in parm directory moved from horizontal to vertical
+      directory structure.
+   JRTMA_PREP_POST:
+    - Obtains obsproc_rtma, obsproc_prep_post and obsproc_shared/bufr_remorest
+      version numbers via imported environment variables $obsproc_rtma_ver,
+      $obsproc_prep_post_ver and $obsproc_shared_bufr_remorest_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep_post which points to
+      directory path for generic prep_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_prep_post.$obsproc_prep_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts directory moved from horizontal to
+      vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally /nwprod/obsproc_rtma.$obsproc_rtma_ver).
+      Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+
+ Parm file changes:
+   prepobs_prepdata.rtma.parm:
+    - Initial population into vertical structure.
+    - Removed comments related to version number, implementation date, and/or
+      history.  No longer needed now that this file is in subversion.
+    - New 12'th surface type (representing Coast Guard data) added to arrays
+      JSURFW (=0) and FWINDO (=050.).
+      BENEFIT: Coast guard mass and wind data now processed and available for
+               analysis.
+    - New switch NPKRPT (12*TRUE) to control processing of surface obs with
+      missing pressure information.  TRUE here means all of the following:
+         - Will process surface reports that would otherwise be tossed due to
+           their having a missing pstn.
+         - These reports estimate pstn from the reported or U.S. Standard
+           Atmosphere pmsl, the reported or U.S. Standard Atmosphere sensible
+           temperature, and the reported elevation (only marine reports > 7.5 m
+           can have a reported pmsl and fall into this category). This
+           estimated pstn (POB) is used to estimate q (QOB).  Both POB and QOB
+           are assigned minimum q.m.'s (PQM, QQM) of 3. This estimated POB is
+           encoded into PREPBUFR file.
+         - These reports are then assigned new PREPBUFR report types 192/292
+           (SYNOP), 193/293 (METAR), 194/294 (marine) and 195/295 (mesonet).
+         - ATLAS buoy wind reports which also have missing pstn and pmsl will
+           continue to be processed as before (PREPBUFR report type 282
+           (Note: This means that if an ATLAS buoy ever had T,q info, its mass
+                  piece would still be tossed rather than getting into PREPBUFR
+                  file under under report type 194 (may need to fix this logic
+                  someday).
+         - MESONETS will no longer have "x" in character 8 of id, instead they
+           will get PREPBUFR report types 195/295 rather than 188/288.
+      BENEFIT: ADPSFC, SFCSHP, and MSONET reports that do not contain station
+               pressure information are now retained (previously, they were
+               discarded) and are available for the analysis.
+    - New namelist switch DOPMSL (=TRUE) in PREVENTS (gblevents) processing
+      to derive pmsl (mnemonic "PMO") from reported station pressure ("POB"),
+      station height/elevation ("ZOB") and computed virtual temperature for
+      surface reports in cases when pmsl initially encoded in PREPBUFR file by
+      prepobs_prepdata is missing (including all mesonet reports).  The derived
+      pmsl either gets a quality mark ("PMQ") of 3 or inherits the station
+      pressure quality mark ("PQM"), whichever is greater.  The value of the
+      pmsl indicator (new mnemonic "PMIN") is set to 1 to denote pmsl was
+      derived rather than observed.
+      BENEFIT: More complete and thorough pressure information for surface data
+               is available in the RTMA GSI via this derived pmsl since many
+               more reports will have a pmsl now (whether observed or derived).
+               The RTMA GSI analyzes Pmsl.
+   prepobs_prepssmi.rtma.parm:
+    - Removed comments related to version number, implementation date, and/or
+      history.  No longer needed now that this file is in subversion.
+      Otherwise, no changes to contents.
+
+
+ Output changes:
+ ---------------
+   Job JRTMA_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.0.0:
+       - Printing format changed slightly in some dump listing files in
+         /com/rtma/prod/... directories to squeeze more information on a line.
+       - Satellite zenith angle (degrees) added to satwnd dump listing files in
+         /com/rtma/prod/... directories
+       - Coast Guard tide gauge reports added to sfcshp dump listing files in
+         /com/rtma/prod/... directories
+   Job JRTMA_PREP:
+    - As a result of update to obsproc_prep.v3.0.0:
+       - Surface reports with missing pressure will now be stored in report
+         types 192/292 (SYNOP), 193/293 (METAR), 194/294 (marine) and 195/295
+         (msonet) in PREPBUFR file.
+       - Coast guard surface marine mass and wind data will now be processed as
+         part of report types 194/294 (when pressure is unavailable) or 180/280
+         (when pressure is available) in PREPBUFR file.
+       - Estimated pmsl (PMO) with qm (PMQ) of 3 will now be encoded in
+         PREPBUFR file for surface reports where it is missing and can be
+         calculated.  The pmsl indicator (PMIN) is set to 1 in this case (set
+         to 0 for reported PMO).
+       - Satellite zenith angle (degrees) encoded into PREPBUFR file (mnemonic
+         "SAZA") for all satwnd types.
+       - Surface marine reports will now encode pmsl ob and qc (PMO and PMQ) in
+         PREPBUFR file if pmsl is reported.
+       - SFCSHP reports with calm winds and non-missing background u- or v-
+         component wind .ge. 5 m/sec are flagged with Q.M. 8 in PREPBUFR file.
+       - Surface reports with incomplete wind information will now be retained
+         and encoded into the PREPBUFR file.
+       - Report type 183 now stores moisture quality mark no lower than 3
+         (suspect).
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - uses code from obsproc_dump.v3.1.0 (updated from obsproc_dump.v3.0.0)
+       - changes in bufr_edtbfr here slightly increase its memory usage
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+   Job JRTMA_DUMP_POST:
+    - slight increase in size of satwnd and sfcshp listing files as a result of
+      changes noted above in output changes
+    - slight increase in size of non-restricted sfcshp dump and dump listing
+      files as a result of changes noted above in output changes
+    - uses code from obsproc_dump_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - uses code from obsproc_shared/bufr_avgdata.v1.0.0
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+   Job JRTMA_PREP:
+    - the RTMA PREPBUFR files will now be approximately 1.06 times (106%)
+      as large as before since they will now include report types 192/292,
+      193/293, 194/294, 195/295, Coast Guard surface marine data, and surface
+      reports with incomplete wind information that had previously been
+      discarded.  Also increased a bit as a result of other additions (see
+      output changes above).
+         RTMA: space used by all PREPBUFR files increases from
+               ~ 426 MBytes/day to ~ 451 MBytes/day
+    - ~ 3.75 second increase in wallclock run times
+    - uses code from obsproc_prep.v3.0.0
+    - no other changes
+   Job JRTMA_PREP_POST:
+    - uses code from obsproc_prep_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - no other changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JRTMA_PREP, JRTMA_DUMP_POST and JRTMA_PREP_POST.
+   - This is part of the parallel-production test of the OBSPROC Phase 2
+     bundle.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_global.v2.0.0, obsproc_nam.v2.0.0,
+   obsproc_rap.v2.0.0, obsproc_urma.v2.0.0, obsproc_dump.v3.1.0,
+   obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0, obsproc_prep_post.v2.0.0,
+   obsproc_satingest.v2.2.0, obsproc_shared/bufr_remorest.v1.0.0 and
+   obsproc_shared/bufr_avgdata.v1.0.0.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140505_OBSPROC-fy14q2_phase2/obsproc_rtma.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140505_OBSPROC.v3.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 1.2.0 --> released Feb 9, 2014
+                           --> implemented May 6, 2014
+
+files:
+   obsproc_rtma/jobs/JRTMA_DUMP
+   obsproc_rtma/jobs/JRTMA_DUMP_POST
+   obsproc_rtma/jobs/JRTMA_PREP
+   obsproc_rtma/jobs/JRTMA_PREP_POST
+   obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+   obsproc_rtma/parm/wave_dcodascat.rtma.parm
+   obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+   obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ Model script changes:
+   exrtma_dump.sh.ecf:
+    - Modified to dump GOES IR, water vapor, and visible satellite-derived
+      winds using a time window of -1.00 to -0.01 hours relative to cycle time
+      for the RTMA, rather than -2.50 to +0.50 hours relative to cycle time.
+      BENEFIT: NESDIS is changing the frequency of their GOES satellite
+               derived winds from 3-hourly to 1-hourly. The change to
+               exrtma_dump.sh.ecf will allow one complete wind set to be dumped
+               and assimilated at every cycle time (not changing the time
+               window could at least triple the number of winds assimilated at
+               some cycles, all over the same locations). This change will also
+               allow winds closer to cycle time to now be assimilated.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - continues to use code from obsproc_dump.v3.0.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+   Jobs JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production job JRTMA_DUMP.
+   - This is part of the parallel-production test of the hourly GOES satellite
+     winds.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v2.0.0.
+   This must be implemented at EXACTLY the same time as NESDIS' promotion of
+   the hourly GOES satellite winds to their production server, and
+   simultaneously with the implementations of obsproc_dump_monitor.v1.1.0,
+   obsproc_global.v1.1.0, obsproc_nam.v1.1.0, obsproc_rap.v1.1.0,
+   obsproc_urma.v1.2.0 and obsproc_satingest.v2.1.0.
+
+   Please copy
+   /meso/save/Dennis.Keyser/HOME/versions/HOURLY_WINDS/obsproc_rtma.ver to
+   /nwprod/versions, replacing like-named file.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140209_OBSPROC.v2.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 1.1.0 --> released Feb 8, 2014
+                           --> implemented Apr 8, 2014
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/parm/prepobs_prepssmi.rtma.parm
+ A obsproc_rtma/parm/wave_dcodascat.rtma.parm
+ M obsproc_rtma/parm/wave_dcodquikscat.rtma.parm
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+ M obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( A - added)
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+   JRTMA_DUMP:
+    - Obtains obsproc_rtma, obsproc_dump and obsproc_shared/bufr_dumplist
+      version numbers via imported environment variables $obsproc_rtma_ver
+      (changed from $model_ver), $obsproc_dump_ver and
+      obsproc_shared_bufr_dumplist_ver, resp. These are defined in the upstream
+      ecflow script.
+    - Full environmental equivalence. Additional streamlining, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump which points to
+      directory path for generic dump subdirectories under version control
+      (in production this is normally /nwprod/obsproc_dump.$obsproc_dump_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network (changed from
+      $HOMErtma) which points to directory path for network-specific dump
+      subdirectories under version control (in production this is normally now
+      /nwprod/obsproc_rtma.$obsproc_rtma_ver).  Replaces /nw${envir} in order
+      to point to files in scripts and parm directory moved from horizontal to
+      vertical directory structure.
+    - Exports new environment variables $HOMEobsproc_shared_bufr_dumplist and
+      $FIXobsproc_shared_bufr_dumplist which point to directory path for
+      bufr_dumplist fixed file under version control (in production the latter
+      is normally
+   /nwprod/obsproc_shared/bufr_dumplist.$obsproc_shared_bufr_dumplist_ver/fix).
+      Replaces /nw${envir}/fix from old horizontal directory structure.
+   JRTMA_PREP:
+    - Obtains obsproc_rtma version number via imported environment variable
+      $obsproc_rtma_ver (changed from $model_ver). This is defined in the
+      upstream ecflow script.
+    - New variable ushscript_prep added, directory path to ush script
+      prepobs_makeprepbufr.sh (currently set to old path $ushscript, done in
+      preparation for future transition to obsproc_prep in VS/EE).
+
+ Model script changes:
+   exrtma_dump.sh.ecf:
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Modified to turn off the attempt to dump "wndsat" data.
+      BENEFIT: The WindSat scatterometer data ingest feed is currently broken
+               as these data are now being produced under a new format that
+               NCEP does not recognize.  As we transition to the new feed,
+               we do not want to inadvertently dump these data in operations.
+   exrtma_makeprepbufr:
+    - Now imports variable ushscript_prep as directory path to ush script
+      prepobs_makeprepbufr.sh insread of ushscript.
+
+ Parm file changes:
+   prepobs_prepssmi.rtma.parm, wave_dcodquikscat.rtma.parm:
+    - No changes to contents.
+   wave_dcodascat.rtma.parm:
+    - New. Overrides default herefile inside obsproc_dump/ush/bufr_dump_obs.sh
+      in order to turn off processing of METOP-B ASCAT reports (GSI not ready
+      for them).
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JRTMA_DUMP:
+    - uses code from obsproc_dump.v3.0.0
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0
+   Jobs JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP,
+     JRTMA_PREP_POST.
+   - All changes in this version (1.1.0) will be tested when the next version
+     (1.2.0) is tested as part of the parallel-production test of the hourly
+     GOES satellite winds.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v1.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.0.0, obsproc_dump.v3.0.0, obsproc_global.v1.0.0,
+   obsproc_nam.v1.0.0, obsproc_rap.v1.0.0, obsproc_urma.v1.1.0,
+   obsproc_satingest.v2.0.0, obsproc_shared/bufr_cword.v1.0.0 and
+   obsproc_shared/bufr_dumplist.v1.0.0.
+
+   It should be implemented PRIOR to NESDIS' promotion of their hourly GOES
+   satellite winds to their production server,
+
+   Please copy
+   /meso/save/Dennis.Keyser/HOME/versions/obsproc_rtma.v1.1.0/obsproc_rtma.ver
+   to /nwprod/versions, replacing like-named file.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140208_OBSPROC.v1.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_rtma release 1.0.0 --> released Dec 9, 2013
+                           --> implemented Jan 28, 2014
+
+Initial population of vertical structure (in obsproc).
+
+files:
+ M obsproc_rtma/jobs/JRTMA_DUMP
+ M obsproc_rtma/jobs/JRTMA_DUMP_POST
+ M obsproc_rtma/jobs/JRTMA_PREP
+ M obsproc_rtma/jobs/JRTMA_PREP_POST
+ M obsproc_rtma/scripts/exrtma_dump.sh.ecf
+ M obsproc_rtma/scripts/exrtma_makeprepbufr.sh.ecf
+
+( M - modified)
+
+
+ JOB script changes:
+   JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP, JRTMA_PREP_POST:
+    - Moved from RTMA VS/EE to OBSPROC_RTMA VS/EE.
+    - Obtains obsproc_rtma version number via imported environment variable
+      $model_ver.  This is defined in the upstream ecflow script.
+    - Exports environment variable $HOMErtma which points to directory path for
+      network-specific subdirectories under version control (in production this
+      is normally /nwprod/obsproc_rtma.$model_ver).  Points to files in
+      vertical structure scripts, currently only in JRTMA_DUMP and JRTMA_PREP.
+
+ Model script changes:
+   exrtma_dump.sh.ecf, exrtma_makeprepbufr.sh.ecf:
+    - Moved from RTMA VS/EE to OBSPROC_RTMA VS/EE.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   No changes.
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JRTMA_DUMP, JRTMA_DUMP_POST, JRTMA_PREP,
+     JRTMA_PREP_POST.
+   - This should be part of the overall RTMA/URMA 30-day evaluation.
+
+
+ Dissemination:
+ --------------
+   - The main user of this output is the RTMA network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This must be implemented simultaneously with the implementation of
+   rtma2p5.v2.2.0.
+
+   Please copy new file /nwpara/versions/obsproc_rtma.ver to /nwprod/versions.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20131209_VS_rel-1.0.0_OBSPROC_RTMA)
+  
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

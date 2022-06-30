@@ -1,0 +1,404 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 2.1.1 --> released by NCO SPA
+                                          --> implemented Feb ??, 2021
+
+files:
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Prepared to run with the new GFSv16 com directory structure.
+      
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 2.1.0 --> released Aug 31, 2018
+                                          --> implemented Jun 12, 2019
+
+files:
+ M obsproc_shared/bufr_avgdata/sorc/bufr_avgdata.fd/avgdata.f
+   obsproc_shared/bufr_avgdata/sorc/bufr_avgdata.fd/makefile
+ M obsproc_shared/bufr_avgdata/sorc/build.sh
+   obsproc_shared/bufr_avgdata/sorc/clean.sh
+   obsproc_shared/bufr_avgdata/sorc/install.sh
+ M obsproc_shared/bufr_avgdata/sorc/load_libs.rc
+   obsproc_shared/bufr_avgdata/sorc/README.build
+   obsproc_shared/bufr_avgdata/sorc/setlibs.rc
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Accounts for NAM now having tm06 through tm00 time markers (only tm00 is
+      expected here for this and all other networks).
+    - All remaining references to "gdas1" are removed.
+    - Prepared to run with the new FV3GFS com directory structure.
+      
+ Source code and build changes (in sorc directory):
+   bufr_avgdata.fd/avgdata.f (main program):
+    - Accounts for NAM now having tm06 through tm00 time markers (only tm00 is
+      expected here for this and all other networks).
+   build.sh:
+    - Updated to build codes on Dell-p3 or Cray-XC40 or IBM iDataPlex
+   load_libs.rc:
+    - Updated to load modules for Dell-p3.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_avgdata.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_avgdata.  All jobs updating to this
+   version of obsproc_shared/bufr_avgdata should be tested in advance.
+
+
+ Dissemination:
+ --------------
+   There are no products disseminated by this software unit.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.0.0.
+   This can be implemented prior to, but no later than, the implementations of:
+      v3.2.0 of obsproc_global,
+      v3.3.0 of obsproc_nam.
+   This can be implemented simultaneously with the implementations of:
+      v5.0.0 of obsproc_dump,
+      v3.3.0 of obsproc_dump_post,
+      v5.2.0 of obsproc_prep,
+      v3.1.0 of obsproc_prep_post,
+      v2.1.0 of obsproc_shared_bufr_remorest.
+   This can also be implemented prior to, but no later than, the FV3 GFS upgrade.
+   This must be installed on all WCOSS systems (IBM iDataPlex, Cray-XC40, Dell-p3).
+
+   Since there are no jobs in obsproc_shared/bufr_avgdata, an
+   obsproc_shared_bufr_avgdata.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 2.0.0 --> released Apr 7, 2017
+                                          --> implemented Jul 19, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_avgdata/sorc/build.sh
+ M obsproc_shared/bufr_avgdata/sorc/load_libs.rc
+ M obsproc_shared/bufr_avgdata/sorc/README.build
+ M obsproc_shared/bufr_avgdata/sorc/setlibs.rc
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Updated to run on both IBM iDataPlex and Cray-XC40.
+    - Replaced hardwired pathnames with NCO standard variables.
+    - Modified to handle gdas1 or gdas as prefix for input gdas file names
+      (in preparation for 2017 GFS upgrade).
+    - Added default of empty string for variable jlogfile to eliminate the
+      need to toggle the switch that traps references to unset variables.
+
+ Source code and build changes (in sorc directory):
+   build.sh:
+    - Updated to build codes on Cray-XC40 or IBM iDataPlex.
+    - For Cray-XC40 builds, FC=ftn is passed to the make command to override the
+      the default setting in the makefiles.
+    - Use load_libs.rc rather than setlibs.rc to specify libraries.
+    - Upgrade from ics/12.1 to ics/16.0.3 for builds on IBM iDataPlex.
+   load_libs.rc:
+    - Updated for different module naming conventions used on IBM vs Cray-XC40.
+   setlibs.rc:
+    - Point to appropriate library pathnames when building on IBM vs Cray-XC40.
+   README.build:
+    - Removed instructions for compiling without the build.sh script.
+    - Other cleanup.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_avgdata.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+
+
+ Build Instructions:
+ -------------------
+   See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_avgdata.  All jobs updating to this
+   version of obsproc_shared/bufr_avgdata should be tested in advance.
+
+
+ Dissemination:
+ --------------
+   There are no products disseminated by this software unit.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1
+   It should be installed on both WCOSS systems (IBM iDataPlex and Cray-XC40)
+   with or prior to obsproc_global.v3.0.0.
+
+   Since there are no jobs in obsproc_shared/bufr_avgdata, an
+   obsproc_shared_bufr_avgdata.ver file is not needed.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 1.1.0 --> released Dec 2, 2016
+                                          --> implemented Mar 21, 2017
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Added tm00 qualifier to all status file copy statements.
+      BENEFIT: This adjustment will force the copy of only
+               those status files and updated status files
+               that were generated for the tm00 cycle runs.
+               The tm06-tm01 cycle runs are not considered
+               in the bufr_avgdata processing. 
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_avgdata.)
+
+
+ Shared Software:
+ ----------------
+    - Source code bufr_avgdata:
+         links to version 2.0.6 of w3nco library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_avgdata.  All jobs executing this
+   version of obsproc_shared/bufr_avgdata will be part of the parallel-
+   production test of the OBSPROC.v7.0.0 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_nam which executes obsproc_dump_post which in turn
+   executes this version of obsproc_shared/bufr_avgdata.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v7.0.0.
+   This must be implemented simultaneously with the implementations of:
+      NAM v4.0.0 on Phase 2 and
+      obsproc_nam.v3.0.0.
+
+   Since there are no jobs in obsproc_shared/bufr_avgdata, an
+   obsproc_shared_bufr_avgdata.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 1.0.1 --> released Sep 14, 2014
+                                          --> implemented Nov 4, 2014
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_avgdata/sorc/load_libs.rc
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Adjusted pdy_earliest to keep 32 days of files.
+      BENEFIT: This adjustment will circumvent potential RTDM job failures
+               due to racing between the gdas_dump_post_18 job and
+               the model_realtime_gdas_18 job. The latter needs 31 days
+               of data. The former trims to 30 days.
+    - Since the archive directory will contain 32 days of files, when
+      it formerly contained 30 days of files, the logic has been
+      adjusted to average across only the 30 latest files in the
+      archive directory, not across all files in the directory.
+
+ Source code changes:
+   load_libs.rc in sorc directory:
+    - remove "module use -a /nwprod/lib/modulefiles" and
+             "module avail"
+      BENEFIT: No longer needed and can slow down compilation.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of
+   obsproc_shared/bufr_avgdata.)
+
+
+ Shared Software:
+ ----------------
+    - Source code bufr_avgdata:
+         links to version 2.0.6 of w3nco library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_avgdata.  All jobs executing this
+   version of obsproc_shared/bufr_avgdata will be part of the parallel-
+   production test of the OBSPROC FY14Q4 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the release notes for
+   obsproc_dump_monitor and the other obsproc_<NETWORK> packages which
+   execute obsproc_dump_post which in turn executes this version of
+   obsproc_shared/bufr_avgdata.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.0.
+   This must be implemented simultaneously with the implementations of:
+      v1.2.1 of obsproc_dump_monitor,
+      v2.0.2 of obsproc_global, obsproc_nam, obsproc_rap, obsproc_rtma,
+      v2.0.2 of obsproc_urma,
+      v2.3.0 of obsproc_satingest,
+      v3.2.0 of obsproc_dump, obsproc_prep,
+      v2.0.1 of obsproc_prep_post,
+      v1.0.0 of obsproc_dump_alert, radar_reflectivity_mosaic,
+      v1.0.0 of radar_reflectivity_ref2grb.
+
+   Since there are no jobs in obsproc_shared/bufr_avgdata, an
+   obsproc_shared_bufr_avgdata.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_shared/bufr_avgdata release 1.0.0 --> released May 5, 2014
+                                          --> implemented Jun 24, 2014
+
+Initial population of vertical structure.
+
+files added, modified or deleted since last release:
+ M obsproc_shared/bufr_avgdata/sorc/bufr_avgdata.fd/avgdata.f
+ M obsproc_shared/bufr_avgdata/sorc/bufr_avgdata.fd/makefile
+ A obsproc_shared/bufr_avgdata/sorc/build.sh
+ A obsproc_shared/bufr_avgdata/sorc/clean.sh
+ A obsproc_shared/bufr_avgdata/sorc/install.sh
+ A obsproc_shared/bufr_avgdata/sorc/load_libs.rc
+ A obsproc_shared/bufr_avgdata/sorc/README.build
+ A obsproc_shared/bufr_avgdata/sorc/setlibs.rc
+ M obsproc_shared/bufr_avgdata/ush/bufr_avgdata.sh
+( A - added,  M - modified, D - deleted)
+
+
+ USH script changes:
+   bufr_avgdata.sh:
+    - Updated to add URMA network.
+      BENEFIT:  A running 30-day dump count average table can now be generated
+               for the URMA network.
+    - Environment variable $DUMPLIST (complete path to bufr_dumplist fixed
+      file) no longer defaults to /nwprod/fix/bufr_dumplist but rather to
+      $FIXobsproc_shared_bufr_dumplist/bufr_dumplist.
+    - Environment variable $AVGX (complete path to bufr_avgdata executable) no
+      longer defaults to /nwprod/exec/bufr_avgdata but rather to
+      $EXECobsproc_shared_bufr_avgdata/bufr_avgdata.
+    - Updated logic which scrubs "date" directories older than 30 days in
+      "$OBCNTarch/<network>" to skip over (and retain) any directories that are
+      not named "<network>.YYYYMMDD".
+      BENEFIT:  Prior to this, scrubbing would break if a rouge (non-date) file
+                or directory was in "$OBCNTarch/<network>".  This happened
+                recently when a file called "TAR.tar" was inadvertently placed
+                in /com/arch/prod/obcount_30day/gdas.  True date directories
+                older than 30 days were no longer scrubbed.  Scrubbing will be
+                maintained now in this situation (any rouge files/directories
+                will always be retained but NCO should remove them a.s.a.p.).
+
+ Source code changes:
+   build.sh in sorc directory:
+    - New. Used to build executable bufr_avgdata in the bufr_avgdata.fd sub-
+      directory of the sorc directory.  Reads either load_libs.rc or setlibs.rc
+      file to point to library version numbers needed by makefile.
+   clean.sh in sorc directory:
+    - New. Used to "make clean" bufr_avgdata.fd sub-directory in the sorc
+      directory (generally after a build).
+   install.sh in sorc directory:
+    - New. Used to install (move) executable bufr_avgdata (after build) in
+      exec directory (assumed to be in same root directory as sorc).
+   load_libs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if setlibs.rc is read.)
+   README.build in sorc directory:
+    - New. Documentation on using build.sh, install.sh and clean.sh.
+   setlibs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if load_libs.rc is read.)
+   bufr_avgdata:
+    - No change to source.
+    - Makefile modified to use environment variables to point to library
+      version numbers and to add sample build script and info in sorc
+      directory.  This generalizes the library version information.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Source code bufr_avgdata:
+    - continues to link to version 2.0.6 of w3nco library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_shared/bufr_avgdata.  All jobs executing this
+   version of obsproc_shared/bufr_avgdata will be part of the parallel-
+   production test of the OBSPROC Phase 2 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_dump_monitor and the other obsproc_<NETWORK> packages which
+   execute obsproc_dump_post which in turn executes this version of
+   obsproc_shared/bufr_avgdata.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_global.v2.0.0, obsproc_nam.v2.0.0,
+   obsproc_rap.v2.0.0, obsproc_rtma.v2.0.0, obsproc_urma.v2.0.0,
+   obsproc_dump.v3.1.0, obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0,
+   obsproc_prep_post.v2.0.0, obsproc_satingest.v2.2.0 and
+   obsproc_shared/bufr_remorest.v1.0.0.
+
+   Since there are no jobs in obsproc_shared/bufr_avgdata, an
+   obsproc_shared_bufr_avgdata.ver file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

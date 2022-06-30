@@ -1,0 +1,2639 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.4.3 --> released Jul ??, 2021
+                          --> implemented  ??? ??, 2021
+
+files:
+   obsproc_nam/fix/prepobs_errtable.nam
+   obsproc_nam/jobs/JNAM_DUMP
+   obsproc_nam/jobs/JNAM_DUMP2
+   obsproc_nam/jobs/JNAM_DUMP_POST
+   obsproc_nam/jobs/JNAM_PREP
+   obsproc_nam/jobs/JNAM_PREP_POST
+   obsproc_nam/parm/prepobs_cqcbufr.nam.parm
+   obsproc_nam/parm/prepobs_prepacqc.nam.parm
+   obsproc_nam/parm/prepobs_prepdata.nam.parm
+   obsproc_nam/parm/prepobs_prepssmi.nam.parm
+   obsproc_nam/parm/prepobs_profcqc.nam.parm
+   obsproc_nam/parm/syndat_syndata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+   obsproc_nam/scripts/exnam_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Modified dump group 3 subtype counts to keep aligned with the
+      updated bufr_dumplist at v2.4.0.
+      BENEFIT: sfcshp dump file includes BUFR format ships and cman data.
+    - Modified dump group 3 to generate a separate tideg dump file, no
+      longer included in the sfcshp dump file.
+      BENEFIT: Eliminates duplicate reports complications between the
+               two separate data streams: tideg and cmanb.
+    - Added logic to copy bufr_dumplist file to $COMOUT.
+      BENEFIT: per NCO SPA request.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP:
+    - As a result of updates to exnam_dump.sh.ecf:
+       - The sfcshp dump file,
+          $COMROOT/nam/prod/nam.YYYYMMDD/nam.tCCz.sfcshp.tm00.bufr_d,
+         will have the tideg subset (NC001005) removed.
+       - The tideg dump file,
+          $COMROOT/nam/prod/nam.YYYYMMDD/nam.tCCz.tideg.tm00.bufr_d,
+         will be new.
+    - As a result of updates in obsproc_shared/bufr_dumplist.v2.4.0:
+      - The following subsets are now included in the sfcshp dump file:
+          "SHIPSB" [Ship - manual and automatic, restricted (BUFR)]
+           (001.101)
+          "SHIPUB" [Ship - manual and automatic, unrestricted (BUFR)]
+           (001.113)
+          "CMANB" [Surface Marine CMAN rpts decided from BUFR format]
+           (001.104)
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in dissemination.
+    - No change in archival on HPSS.
+    - Negligible change in wall clock time.
+
+
+ Disk Space Changes:
+ -------------------
+   $COMROOT/nam/prod/nam.YYYYMMDD/:
+     nam.tCCz.sfcshp.tm0?.bufr_d* files increase by 40 Mb per day
+     nam.tCCz.tideg.tm0?.bufr_d introduce 8 Mb per day
+     nam.tCCz.prepbufr.tm0* files increase by 32 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.2.0                  (updated from v5.1.1)
+    - obsproc_prep.v5.5.0                  (updated from v5.4.0)
+    - obsproc_dump_post.v3.6.0             (updated from v3.5.0)
+    - obsproc_prep_post.v3.2.0             (unchanged)
+    - obsproc_shared/bufr_dumplist.v2.4.0  (updated from v2.3.1)
+    - obsproc_shared/bufr_remorest.v2.1.3  (updated from v2.1.2)
+    - obsproc_shared/bufr_avgdata.v2.1.1   (unchanged)
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.6, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JNAM_DUMP, JNAM_DUMP2 require:
+    grib_util  (tested with v1.0.6; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all 4 production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - Dissemination changes:
+      nam.tCCz.tideg.tmHH.bufr_d now disseminated
+      nam.tCCz.sfcshp.tmHH.bufr_d still disseminated, but no longer 
+       contains tideg data (subset NC001005).
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v16.1.0.
+   This must be installed on WCOSS Dell phase 3.
+
+   This must be implemented simultaneously with the implementations of:
+      v3.4.2 of obsproc_global,
+      v3.2.3 of obsproc_rap,
+      v3.3.3 of obsproc_rtma,
+      v3.2.3 of obsproc_urma,
+      v2.5.3 of obsproc_cdas,
+      v2.4.1 of obsproc_dump_monitor,
+      v5.2.0 of obsproc_dump,
+      v3.6.0 of obsproc_dump_post,
+      v5.5.0 of obsproc_prep,
+      v2.1.3 of obsproc_shared/bufr_remorest,
+      v2.4.0 of obsproc_share/bufr_dumplist.
+
+   Please retrieve obsproc_nam.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20210712_OBSPROC-v16.1.0/obsproc_nam.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.4.2 --> released Feb 10, 2021
+                          --> implemented  Apr 13, 2021
+
+files:
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Disabled DBN alerts for gpsro dump files.  gpsro dump files
+      have the potential to contain commercial data.  The
+      equivalent non-restricted gpsro dump files are alerted
+      instead from exdump_post.sh.ecf.
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change in dissemination.
+    - No change in archival on HPSS.
+
+ Disk Space Changes:
+ -------------------
+   - New non-restricted gpsro dump files will add ~6 Mb to /com for each
+     catch-up cycle: CCz tm06-tm00. For a full PDY, that is ~24 Mb.
+   - The addition of commercial GPS-RO data results in gpsro dump files
+     increasing by ~2 Mb in /com for each catch-up cycle: CCz tm06-tm00.
+     For full PDY, that is ~8 Mb. 
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.1
+    - obsproc_prep.v5.3.0
+    - obsproc_dump_post.v3.5.0
+    - obsproc_prep_post.v3.1.1
+    - obsproc_shared/bufr_dumplist.v2.3.1
+    - obsproc_shared/bufr_remorest.v2.1.2
+    - obsproc_shared/bufr_avgdata.v2.1.0
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.5, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JNAM_DUMP, JNAM_DUMP2 require:
+    grib_util  (tested with v1.0.6; loaded in trigger script)
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JNAM_DUMP and JNAM_DUMP_POST.
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - Dissemination changes:
+      nam.tCCz.gpsro.tmHH.bufr_d no longer disseminated
+      nam.tCCz.gpsro.tmHH.bufr_d.nr now disseminated
+   - No change in archival on HPSS.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.1.0.
+   This must be implemented simultaneously with the implementations of:
+      v4.0.0 of decod_dcrocc,
+      v3.4.1 of obsproc_global,
+      v5.1.1 of obsproc_dump,
+      v3.5.0 of obsproc_dump_post,
+      v2.1.2 of obsproc_shared/bufr_remorest,
+      v2.3.1 of obsproc_share/bufr_dumplist.
+   This must be installed on WCOSS Dell phase 3.
+
+   Please retrieve obsproc_nam.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20210201_OBSPROC-v15.1.0/obsproc_nam.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.4.1 --> released Oct 09, 2020
+                          --> implemented Mar ??, 2021
+
+files:
+ M obsproc_nam/jobs/JNAM_PREP
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_PREP:
+    - Modified to use the new $COMPONENT subdirectory structure. 
+    - Modified to integrate the NETCDF_IN switch for encoding the
+      first guess information into the prepbufr file.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+
+
+ Compute Resource Information:
+ -----------------------------
+   JNAM_DUMP, JNAM_DUMP_POST, JNAM_PREP_POST:
+    - No changes
+   JNAM_PREP:
+    - No change in requested resources in the job cards.
+    - runs ~100s slower
+    - requires ~8168 Mb more memory per cycle
+
+
+ Disk Space Changes:
+ -------------------
+   As a result of upgrading to obsproc_dump.v5.1.0 and
+   obsproc_prep.v5.3.0 on Oct 13, 2020, and encoding
+   netcdf history format first guess fields,
+    - prepbufr file size will increase by ~ 53 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.1.0 (updated from v5.0.2)
+    - obsproc_prep.v5.4.0 (updated from v5.3.0)
+    - obsproc_dump_post.v3.4.0 (updated from v3.3.0)
+    - obsproc_prep_post.v3.2.0 (updated from v3.1.0)
+    - obsproc_shared/bufr_dumplist.v2.3.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_remorest.v2.1.1 (updated from v2.1.0)
+    - obsproc_shared/bufr_avgdata.v2.1.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.4, the default at the time)
+    prod_envir (tested with v1.1.0, the default at the time)
+  JNAM_DUMP, JNAM_DUMP2 require:
+    grib_util  (tested with v1.1.1; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all five production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.0.0.
+   This must be installed on WCOSS Dell phase 3.
+   This must be implemented simultaneously with the implementations of:
+      v16.0.0 of GFS,
+       v3.4.0 of obsproc_global,
+       v3.2.1 of obsproc_rap,
+       v3.3.2 of obsproc_rtma,
+       v3.2.2 of obsproc_urma,
+       v5.4.0 of obsproc_prep,
+       v3.2.0 of obsproc_prep_post.
+   Please retrieve obsproc_nam.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20201009_OBSPROC-v15.0.0/obsproc_nam.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.4.0 --> released Jun 10, 2019
+                          --> implemented  Aug 21, 2019
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_DUMP, JNAM_DUMP2, JNAM_DUMP_POST, JNAM_PREP, JNAM_PREP_POST:
+    - Modified to run on Dell-p3.
+   JNAM_DUMP, JNAM_DUMP2:
+    - Removed mention of snowdepth data
+    - Removed load of grib_util module (latest preferred practice is to load
+      modules in the parent environment).
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Modified to run on Dell-p3.
+    - Changed background threads to serial threads.
+    - Copy of 8th mesh snow depth data to $COMROOT disabled.
+    - Forced the skip of 2 tanks that were added to the msonet dump group
+      after bufr_dumplist.v1.4.0.  NAM is frozen and will not process the
+      2 new msonet sources.
+    - Removed processing of radwnd dump group.  The ingest job that
+      retrieves level 2.5 and 3 radial wind data will not be ported to 
+      Dell-p3.
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+   JNAM_DUMP:      ~38s longer on ph3; ~1229Mb less memory usage on ph3
+   JNAM_DUMP2:      ~2s longer on ph3;  ~624Mb less memory usage on ph3
+   JNAM_DUMP_POST:  ~3s longer on ph3;    ~3Mb less memory usage on ph3
+   JNAM_PREP:      ~16s faster on ph3; ~2020Mb less memory usage on ph3
+   JNAM_PREP_POST:  ~7s longer on ph3;   ~11Mb less memory usage on ph3
+
+
+ Disk Space Changes:
+ -------------------
+   No changes.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v5.0.2 (updated from v3.3.0)
+    - obsproc_prep.v5.2.0 (updated from v3.8.0)
+    - obsproc_dump_post.v3.3.0 (updated from v2.3.0)
+    - obsproc_prep_post.v3.1.0 (updated from v2.3.0)
+    - obsproc_shared/bufr_dumplist.v2.0.2 (updated from v1.4.0)
+    - obsproc_shared/bufr_remorest.v2.1.0 (updated from v1.0.0)
+    - obsproc_shared/bufr_avgdata.v2.1.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.1.0, the default at the time)
+    prod_envir (tested with v1.0.3, the default at the time)
+  JNAM_DUMP, JNAM_DUMP2 require:
+    grib_util  (tested with v1.0.6; loaded in trigger script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all five production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.3.0.
+   This must be implemented simultaneously with or after the implementation of:
+      obsproc_shared_bufr_dumplist.v2.0.2
+   This must be installed on WCOSS Dell phase 3.
+
+   Please retrieve obsproc_nam.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20190607_OBSPROC-v11.3.0/obsproc_nam.ver $NWROOT/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.3.0 --> released Aug 31, 2018
+                          --> implemented  Jun 12, 2019
+
+files:
+ M obsproc_nam/jobs/JNAM_PREP
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_PREP
+    - Modified $COMINgdas and $COMINgfs to add a suffix directory 
+      containing the cycle time.
+      BENEFIT: Necessary to handle GFS and GDAS com directory change
+               associated with FV3GFS.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_PREP:
+    - As a result of update to use obsproc_prep.v5.2.0:
+       - The global first guess encoded in the PREPBUFR files may come from a
+         different initial time.
+
+
+ Compute Resource Information:
+ -----------------------------
+   All jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   No changes.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_prep.v5.2.0
+    - obsproc_shared_bufr_avgdata.v2.1.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.0.28, the default at the time)
+    prod_envir (tested with v1.0.1, the default at the time)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JNAM_PREP with GFS upgrade parallel data available on Dell-p3.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v5.2.0 of obsproc_prep,
+      v2.1.0 of obsproc_shared/bufr_avgdata.
+   This must be implemented simultaneously with the implementation of:
+      v3.2.0 of obsproc_global,
+      v2.1.0 of obsproc_dump_alert,
+      v3.1.0 of obsproc_rap.
+   This must be installed on WCOSS phase 2.
+
+   Please retrieve obsproc_nam.ver file:
+     git clone ssh://$USER@vlab.ncep.noaa.gov:29418/EMC_obsproc
+     cd EMC_obsproc; git checkout master
+     cp versions/20180725_OBSPROC-v11.0.0/obsproc_nam.ver $NWROOTp2/versions
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.2.0 --> released Apr 28, 2017
+                          --> implemented  Jul 19, 2017
+
+files:
+ M obsproc_nam/jobs/JNAM_PREP
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_PREP
+    - Added new variable NEMSIO_IN with default setting of ".true." to tell
+      obsproc_prep software whether to process nemsio global forecast files
+      instead of the older sigio files.
+    - Added variables COMINgdas and COMINgfs needed by the version of getges.sh
+      used for NEMSIO_IN=.true. (available in obsproc_prep.v4.0.0).
+    - Added variable envir_getges with default of "prod".
+    - Added wrapper around GETGES_NWG and GETGES_COM variables for the pre- and
+      post- GFS upgrade transitional period.
+    - Removed load of the util_shared module which is no longer needed with the
+      upgrade to obsproc_prep.v4.0.0.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_PREP:
+    - As a result of update to obsproc_prep.v4.0.0:
+       - nam prepbufr files will have quality marks applied for more VADWND
+         and PROFLR stations due to increases in the max number of stations
+         that can be qc'd in prepobs_cqcvad and prepobs_profcqc, respectively.
+    - As a result of update to obsproc_prep.v4.0.0 with NEMSIO_IN=.true.:
+       - for any run, no matter the valid time, a single global forecast file
+         valid at the same hour will be used to provide background information.
+         (Previously, that was true only for on-time runs and catch-up runs for
+         tm03 and tm06.  The tm01, tm02, tm04, tm05 catch-up runs used two
+         3-hrly forecast files valid at surrounding hours).  Thus, file 
+         nam.t??z.sgesprep.tm?? will be output for all runs and files
+         nam.t??z.sgesprep_before.tm?? and nam.t??z.sgesprep_after.tm??
+         will no longer be created for any run.
+       - the global forecast files copied to nam.t??z.sgesprep.tm?? will change
+         from spectral coordinate (sigio) to gridded fields (nemsio) and will
+         increase in size from ~3.5Gb to ~7Gb.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JNAM_PREP in on-time and hourly catch-up cycles:
+      - The max memory increases to ~53Gb, but no change in job cards
+        is required because these jobs already run exclusively on IBM-P2 nodes.
+      - In developer testing, run times were reduced by:
+           ~10 seconds for on-time runs and catch-up runs for tm03 and tm06
+           ~90 seconds for tm01, tm02, tm04, tm05 catch-up runs.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/nam/prod/nam.   - Increase ~42 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0
+    - obsproc_prep.v4.0.0 (updated from v3.8.0)
+    - obsproc_dump_post.v2.3.0
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.4.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.1.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util  (tested with v1.0.10, the default at the time)
+    prod_envir (tested with v1.0.1, the default at the time)
+  JNAM_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test JNAM_PREP for on-time and catch-up cycles with GFS upgrade
+     parallel data available on the Cray-XC40 with following settings:
+       export envir_getges=para
+       export COMPATH=/gpfs/hps/nco/ops/com
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - No change in dissemination.
+   - No change in archival on HPSS outside of changes to /com2 noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1.
+   This must be implemented simultaneously with the implementation of:
+      v3.0.0 of obsproc_global
+    along with:
+      v2.5.0 of obsproc_rap
+      v2.3.0 of obsproc_rtma
+      v2.3.0 of obsproc_urma
+    and with or after:
+      v4.0.0 of obsproc_prep
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170413_OBSPROC-v8.0.1/obsproc_nam.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.1.0 --> released Apr 24, 2017
+                          --> implemented May 09, 2017
+
+files:
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Fixed a typo.
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm,
+    - Set values for namelist switches AWINDO, JAWIND, JAMASS, IACFTL, AIFNOW
+      and FLACMS pertaining to Korean AMDAR (BUFR), AMDAR-catchall (BUFR), and
+      Panasonic (AirDAT) TAMDAR (BUFR) types to be the same as the default
+      values inside the prepobs_prepdata program.  These had not been explicitly
+      specified here. This change has no affect on processing but follows "best
+      practice" to explicitly set key namelist switches inside prepdata parm
+      cards even when they agree with defaults. (Note: These had not been
+      explicitly set before now because a NAM upgrade 30-day eval was running
+      during a time when these three new aircraft types might have been added to
+      the "aircft" dump file (in the end, however, there were not added until
+      now, after the NAM upgrade implementation).
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Dump files
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.aircft.${tmmark}.bufr_d
+         now contain  Korean AMDAR (BUFR), AMDAR-catchall (BUFR), and Panasonic
+         (AirDAT) TAMDAR (BUFR) reports from b004/xx010, b004/xx011 and
+         b004/x103 tanks, resp. In cases where AMDAR-catchall (BUFR)
+         (b004/xx103) reports duplicate TAC-feed AMDAR (b004/xx003) reports, the
+         former will be retained.
+       - "TMDARA" [TAMDAR aircraft data-all types (from Panasonic, decoded from
+         BUFR)], "KAMDAR" [Korean AMDAR aircraft data (decoded from BUFR)], and
+         "AMDARB" [AMDAR aircraft data (decoded from BUFR)] will now appear in
+         NAM RTDM count graphics.
+   Job JNAM_PREP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Korean AMDAR (BUFR) (report type 131/231), AMDAR-catchall (BUFR)
+         (report type 131/231) and Panasonic (AirDAT) TAMDAR (BUFR) (report type
+         134/234) reports now excoded into PREPBUFR files and will be available
+         for assimilation.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JNAM_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Processing additional aircraft data requires ~160 MB of memory.
+       - Processing additional aircraft data results in a ~5 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+   Job JNAM_PREP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.4.0:
+       - Processing additional aircraft data requres ~15 MB of memory.
+       - Processing additional aircraft data results in a ~16 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com2/nam/prod/nam.   - Increase ~56 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0
+    - obsproc_prep.v3.8.0
+    - obsproc_dump_post.v2.3.0
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.4.0 (updated from v1.3.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.1.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.8, the
+               default at the time)
+  JNAM_DUMP requires:
+    grib_util/v1.0.1 (loaded in job script)
+  JNAM_PREP requires:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all five production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - No changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com2 noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v7.1.0.
+   - This must be implemented simultaneously with the implementations of:
+      v2.3.0 of obsproc_cdas,
+      v1.4.0 of obsproc_shared/bufr_dumplist,
+      v2.2.0 of obsproc_dump_monitor,
+      v2.4.0 of obsproc_rap.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170414_OBSPROC-v7.1.0/obsproc_nam.ver
+   and copy to /nwprod2/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 3.0.0 --> released Oct 12, 2016
+                          --> implemented Mar 21, 2017
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ D obsproc_nam/jobs/JNDAS_DUMP
+ D obsproc_nam/jobs/JNDAS_DUMP2
+ D obsproc_nam/jobs/JNDAS_DUMP_POST
+ D obsproc_nam/jobs/JNDAS_PREP
+ D obsproc_nam/jobs/JNDAS_PREP_POST
+ M obsproc_nam/parm/prepobs_cqcbufr.nam.parm
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/parm/prepobs_prepssmi.nam.parm
+ M obsproc_nam/parm/prepobs_profcqc.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+ M obsproc_nam/scripts/exnam_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_DUMP, JNAM_DUMP2, JNAM_PREP, JNAM_DUMP_POST, JNAM_PREP_POST:
+    - Added requirement for variable tmmark to be exported into script.
+    - Expanded logic that sets PDY to consider cycle and tmmark for cases when
+      a run commences prior to run of the 12 UTC or 00 UTC PROD_SETUP job.
+    - Added tmmark to run summary information provided at conclusion of a run.
+      BENEFIT: Allows obsproc_nam processing to comply with the NAM v4.0.0 new
+               hourly catch-up cycle format, since the NDAS is replaced by the
+               hourly catch-up cycle NAM which integrates tmmark into these NAM
+               job scripts.
+    - Added bash shebang at job of script (change made by NCO/IDSB during
+      testing).
+   JNAM_DUMP:
+    - imssnow & snowdepth grib files are now copied from /dcom to /com2 only in
+      the tm06 runs (for every cycle). [They had been copied in the (omly) tm00
+      run (for every cycle) before, and they were copied to in the old tm12
+      JNDAS_DUMP run (for every cycle).]
+      BENEFIT: Since the tm06 run is the first for each cycle, these files will
+               be available as soon as possible on /com2.  It was recently
+               discovered that the NAM does not even use these files.  The only
+               network which does use these is the RCDAS which had copied them
+               from the NDAS /com location prior to this implementation. (See
+               "Special Instructions" below.
+   JNAM_DUMP_POST:
+    - Added logic to explicitly set PROCESS_DATACOUNTS to YES only in the tm00
+      run in all cycles.
+      BENEFIT: This results in no change from before, but is needed since the
+               NAM at all cycles now runs the catch-up cycle processing
+               (tm06-tm01) in addition to the pre-existing on-time cycle
+               processing (tm00).
+    - Added logic to explicitly set PROCESS_AVGTABLES to YES only in the tm00
+      run in the 18z cycle.
+      BENEFIT: This results in no change from before, but is needed since the
+               NAM 18z cycle now runs the catch-up cycle processing (tm06-tm01)
+               in addition to the pre-existing on-time cycle processing (tm00). 
+   JNDAS_DUMP,JNDAS_DUMP2,JNDAS_DUMP_POST,JNDAS_PREP,JNDAS_PREP_POST:
+    - Removed. Since the NDAS is replaced by the hourly catch-up cycle NAM
+      (integrating tmmark into JNAM_DUMP, JNAM_DUMP2, JNAM_PREP, JNAM_DUMP_POST
+      and JNAM_PREP_POST, see above), these NDAS job scripts are obsolete.
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - lghtng added to Dump group #8.  The dump window is "-0.50 to +0.50 hours"
+      for catch-up cycle (tm06-tm01) and "-0.75 to +1.50 hours" for on-time
+      cycle (tm00).
+     BENEFIT: Allows NAM network to use lightning data in model runs.
+    - Added the dump window "-0.50 to +0.50 hours" for new catch-up cycle
+      (tm06-tm01) gpsro, esamua, eshrs3, sevcsr, vadwnd, satwnd (subtypes
+      005/044, 005/045, 005/046, 005/070, 005/071, 005/080, 005/090), rassda,
+      sfcshp, adpsfc, ascatt, msonet, nexrad, goesfv, esmhs, ssmisu, adpupa.
+      (These had been dumped with time window "-1.50 to +1.50 hours" in the old
+      NDAS).
+    - Added the dump window "-0.50 to +0.50 hours" for new catch-up cycle
+      (tm06-tm01) satwnd (subtypes 005/064, 005/065, 005/066).  (These had been
+      dumped with time window "-1.50 to +1.49 hours" in the old NDAS).
+    - Added the dump window "-1.00 to +0.99 hours" for new catch-up cycle
+      (tm06-tm01) 1bamua, 1bmhs, mtiasi, atms, 1bhrs4, airsev, osbuv8, cris.
+      (These had been dumped with time window "-1.50 to +1.50 hours" in the old
+      NDAS).
+    - Added the dump window "-0.50 to -0.01 hours" for new catch-up cycle
+      (tm06-tm01) satwnd (subtypes 005/010, 005/011, 005/012, 005/019).  (These
+      had been dumped with time window "-1.00 to -0.01 hours" in the old NDAS).
+    - Added the dump window "-0.75 to +0.75 hours" for new catch-up cycle
+      (tm06-tm01) radwnd.  (These had been dumped with time window "-1.75 to
+      +1.75 hours" in the old NDAS).
+    - Added the dump window "-2.50 to +2.50 hours" for new catch-up cycle
+      (tm06-tm01) proflr.  (These had been dumped with time window "-2.50 to
+      +2.50 hours" in the old NDAS).
+    - Added the dump window "-0.22 to -0.12 hours" for new catch-up cycle
+      (tm06-tm01) gpsipw.  (These had been dumped with time window "-0.22 to
+      -0.12 hours" in the old NDAS).
+    - Added the dump window "-3.75 to +3.75 hours" for new catch-up cycle
+      (tm06-tm01) aircar, aircft.  (These had been dumped with time window
+      "-3.75 to +3.75 hours" in the old NDAS).
+    - Added the dump window "-1.25 to -0.01 hours" for new catch-up cycle
+      (tm06-tm01) goesnd.  (These had been dumped with time window "-1.25 to
+      -0.01 hours" in the old NDAS).
+    - Added the dump window "-0.50 to +0.50 hours" for new catch-up cycle
+      (tm06-tm01) lgycld.  (These had been dumped with time window "-0.50 to
+      +0.50 hours" in the old NDAS).
+    - Adjusted the dump window from "-1.50 to +1.50 hours" to "-0.75 to +1.50
+      hours" for on-time cycle (tm00) 1bamua, 1bmhs, gpsro, mtiasi, esamua,
+      eshrs3, sevcsr, atms, vadwnd, satwnd (subtypes 005/044, 005/045, 005/046,
+      005/070, 005/071, 005/080, 005/090), rassda, sfcshp, adpsfc, ascatt,
+      msonet, nexrad, goesfv, 1bhrs4, airsev, osbuv8, esmhs, ssmisu, cris,
+      adpupa.
+    - Adjusted the dump window from "-1.50 to +1.49 hours" to "-0.75 to +1.49
+      hours" for on-time cycle (tm00) satwnd (subtypes 005/064, 005/065,
+      005/066).
+    - Adjusted the dump window from "-1.75 to +1.75 hours" to "-1.00 to +1.75
+      hours" for on-time cycle (tm00) radwnd.
+    - Adjusted the dump window from "-1.00 to -0.01 hours" to "-0.75 to -0.01
+      hours" for on-time cycle (tm00) satwnd (subtypes 005/010, 005/011,
+      005/012, 005/019).
+    BENEFIT: Added and adjusted dump windows allow for appropriately sized BUFR
+             DUMP (and PREPBUFR) files to support the NAM v4.0.0 release.
+    - Minor changes to remove all references to "NDAS".
+    - Now tests for tmmark=tm00 (rather than RUN=nam) to set ADPUPA_wait to YES
+      and CHECK_STATUS to NO.
+      BENEFIT: Will not run adpupa dump last and will check for presence of dump
+               status file (in the event of a re-run and stop if found) in
+               catch-up cycle (tm06-tm01) NAM runs, just as was done previously
+               in NDAS runs.  The on-time (tm00) NAM runs will continue to run
+               adpupa dump last and will continue to not check for presence of
+               dump status file (in the event of a re-run).
+    - Will no longer execute $CNVGRIB or $WGRIB2 to generate grib2 and grib2.idx
+      forms of the imssnow field (which is copied over from /dcom in tm06 runs
+      for every cycle).  These had previously been generated in the on-time
+      (tm00) NAM runs for every cycle.
+      BENEFIT: Saves time and space.  These files are not used by any production
+               networks.
+    - Add tmmark to messages posted to joblog.
+   exnam_makeprepbufr.sh.ecf:
+    - Minor changes to remove all references to "NDAS".
+    - Now copies current PREPBUFR mnemonic table to /com2 in both tm06 and tm00
+      runs of NAM (if tm06 or tm00 file not already copied in a previous cycle
+      for the same day or if tm06 or tm00 file has changed from a copy made in
+      a previous cycle for the same day).  The filename in /com2 now includes
+      $tmmark as its suffix qualifier.
+        - Previously the filename did not include $tmmark and was copied in both
+          the NAM (tm00) and in the NDAS (tm12) (if file not already copied in a
+          previous cycle for the same day or if file had changed from a copy
+          made in a previous cycle for the same day).
+      BENEFIT: Since the NDAS is gone, the additional copy in the earliest NAM
+               cycle run (tm06) is included here to basically replace the prior
+               tm12 NDAS copy. This records, in /com2, any change that might
+               occur to the PREPBUFR mnemonic table between the catch-up and
+               on-time runs of the NAM for a specific cycle.
+    - Add tmmark to messages posted to joblog and post analysis time to joblog.
+
+ Parm file changes:
+   prepobs_cqcbufr.nam.parm, prepobs_prepdata.nam.parm,
+   prepobs_prepssmi.nam.parm, prepobs_profcqc.nam.parm:
+    - Minor comment changes to remove reference to "NDAS".
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP:
+    - Files nam.t<cc>.imssnow.grb.grib2 and nam.t<cc>z.imssnow.grb.grib2.idx
+      are no longer created.  These were not used by any production networks,
+    - As a result of the change to hourly update cycles for the NAM network:
+       - Dump files will include tmmarks varying from tm06-tm01 for cycles
+         00Z, 06Z, 12Z, and 18Z (a total of 7 dump files per dump group per 
+         cycle [this count includes the tm00 dump files]).
+       - BUFR dump files, as well as imssnow and snowdepth grib files, will no
+         longer include ndas in any directory architecture or file names.
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.<dump>.${tmmark}.bufr_d
+    - As a result of the adjusted dump windows for tm00 cycles, 
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.status.tm00.bufr_d and
+         the dump files themselves
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.<dump>.tm00.bufr_d
+         will now likely reflect a different dump count for data groups:
+         1bamua, 1bhrs4, 1bmhs, adpsfc, adpupa, airsev, ascatt, ascatw, atms,
+         cris, esamua, eshrs3, esmhs, goesfv, gpsro, msonet, mtiasi, nexrad,
+         osbuv8, radwnd, rassda, satwnd, sevcsr, sfcshp, ssmisu, vadwnd. 
+    - As a result of adding lightning ("lghtng") to the dump processing:
+       - The following new file was created:
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.lghtng.${tmmark}.bufr_d
+       - The status files in
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.status.tm00.bufr_d
+         will now include entries for "lghtng" dump counts from tanks 007/001
+         and 007/002.
+   Job JNAM_DUMP_POST:
+    - As a result of the change to hourly update cycles for the NAM network:
+       - Non-restricted and listing BUFR dump files will no longer include ndas in
+         any directory architecture or file names.
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.<dump>.${tmmark}.bufr_d.nr
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.<dump>.${tmmark}.bufr_d.listing
+    - As a result of adding lghtng to the dump processing:
+       - The following new file was created:
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.lghtng.${tmmark}.bufr_d.nr
+       - The updated status files in
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.updated.status.tm00.bufr_d
+         will now contain dump counts and 30-d avg dump counts for new data types
+         "ltngsr" and "ltnglr".
+          - "LTNGSR" (NLDN Short-range lightning from Vaisala via NOAAPORT) and
+            "LTNGLR" (LLDN Long-range lightning from Vaisala via NOAAPORT), will
+             now appear in NAM RTDM count graphics.
+   Job JNAM_PREP:
+    - As a result of the change to hourly update cycles for the NAM network:
+       - PREPBUFR files will include tmmarks varying from tm06-tm01 for cycles
+         00Z, 06Z, 12Z, and 18Z (a total of 7 PREPBUFR files per cycle [this
+         count includes the tm00 prepbufr file]).
+       - PREPBUFR files will no longer include ndas in any directory
+         architecture or file names.
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.prepbufr.${tmmark}
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.prepbufr_pre-qc.${tmmark}
+       - PREPBUFR mnemonic table files nam.t<cc>z.prep.bufrtable.tm00 and
+         nam.t<cc>z.prep.bufrtable.tm06 replace the single file
+         nam.t<cc>z.prep.bufrtable (normally for cc=00 unless the files change
+         during the day in which case another cc pair may appear).
+    - As a result of the adjusted dump windows for tm00 cycles, the PREPBUFR
+         files /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.prepbufr.tm00
+         will now likely reflect a different count for the various report types.
+   Job JNAM_PREP_POST:
+    - As a result of the change to hourly update cycles for the NAM network: 
+       - Non-restricted PREPBUFR fles will no longer include ndas in any
+         directory architecture or file names.
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.prepbufr.${tmmark}.nr
+         /com2/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.prepbufr_pre-qc.${tmmark}.nr
+
+
+ Compute Resource Information:
+ -----------------------------
+   Job JNAM_DUMP:
+    - No change for tm00 cycles
+    - Cycles tm06-tm01 require 4000 Mb
+    - Cycles tm06-tm04 use ~150 seconds in wallclock run time.
+    - Cycle tm03 uses ~112 seconds in wallclock run time.
+    - Cycle tm02 uses ~105 seconds in wallclock run time.
+    - Cycle tm01 uses ~73 seconds in wallclock run time.
+   Job JNAM_DUMP2:
+    - Cycle tm00 requires 2000 Mb
+    - Cycles tm06-tm01 require 1500 Mb
+    - Cycle tm00 uses ~90 seconds in wallclock run time.
+    - Cycles tm06-tm04 use ~88 seconds in wallclock run time.
+    - Cycle tm03 uses ~85 seconds in wallclock run time.
+    - Cycle tm02 uses ~80 seconds in wallclock run time.
+    - Cycle tm01 uses ~70 seconds in wallclock run time.
+   Job JNAM_PREP:
+    - No change for tm00 cycles
+    - Cycles tm06-tm01 require 25000 Mb
+    - Cycles tm06-tm01 use ~192 seconds in wallclock run time.
+   Jobs JNAM_DUMP_POST:
+    - No change for tm00 cycles for memory requirements
+    - Cycles tm06-tm01 require 1000 Mb
+    - Cycle tm00 uses ~90 seconds wallclock run time.
+    - Cycles tm06-tm01 use ~45 seconds wallclock run time.
+   Jobs JNAM_PREP_POST:
+    - No change for tm00 cycles
+    - Cycles tm06-tm01 use same memory requirements as tm00.
+    - Cycles tm06-tm01 use ~15 seconds in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/nam/prod/ndas.  - Obsolete (decrease ~85 Gb per day)
+   /com2/nam/prod/nam.  - Increase ~100 Gb per day from previous
+                          /com/nam/prod/nam. location; therefore,
+                          Net increase ~15 Gb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+  Note: obsproc_nam.v2.3.0, was released after obsproc_nam.v3.0.0 but was
+        implemented prior to obsproc_nam.v3.0.0 - this resulted in changes to
+        some shared software versions between the time of the release (and
+        early-on testing) of obsproc_nam.v3.0.0 and the implementation of
+        obsproc_nam.v3.0.0.
+  At release (and early-on testing):
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.7.0
+    - obsproc_dump_post.v2.2.1
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.1.0 (updated from v1.0.1)
+  At implementation (and for prior later-testing):
+    - obsproc_dump.v3.3.0
+    - obsproc_prep.v3.8.0
+    - obsproc_dump_post.v2.3.0
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.5, the
+               default at the time)
+  JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP and JNDAS_DUMP2 require:
+    grib_util/v1.0.1 (loaded in job script)
+  JNAM_PREP and JNDAS_PREP require:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all five remaining NAM production jobs.
+   - This is part of the parallel test of the NAM v4.0.0 upgrade.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM network.
+   - With the end of the NDAS, the following will no longer be alerted for
+     cyc=00,06,12,18 and time-mark tm12,tm09,tm06,tm03:
+       ndas.t${cyc}z.<file>.${tmmark}.bufr_d
+        - where file = 1bamua, 1bhrs4, 1bmhs, adpsfc, adpupa, aircar, aircft,
+                       airsev, ascatt, ascatw, atms, cris, esamua, eshrs3,
+                       esmhs, goesfv, goesnd, gpsipw, gpsro, lgycld, msonet,
+                       mtiasi, nexrad, osbuv8, proflr, radwnd, rassda, satwnd,
+                        sevcsr, sfcshp, ssmisu, vadwnd.
+       ndas.t${cyc}z.<file>.${tmmark}.bufr_d.nr
+        - where file = adpsfc, aircar, aircft, gpsipw, msonet, sfcshp.
+       ndas.t${cyc}z.prepbufr.${tmmark}.nr
+   - With the introduction of the tm06-tm01 NAM catch-up cycles, the following
+     will now be alerted for cyc=00,06,12,18 and time-mark tm06,tm05,tm04,tm03,
+     tm02,tm01:
+       nam.t${cyc}z.<file>.${tmmark}.bufr_d
+        - where file = 1bamua, 1bhrs4, 1bmhs, adpsfc, adpupa, aircar, aircft,
+                       airsev, ascatt, ascatw, atms, cris, esamua, eshrs3,
+                       esmhs, goesfv, goesnd, gpsipw, gpsro, lgycld, msonet,
+                       mtiasi, nexrad, osbuv8, proflr, radwnd, rassda, satwnd,
+                        sevcsr, sfcshp, ssmisu, vadwnd.
+       nam.t${cyc}z.<file>.${tmmark}.bufr_d.nr
+        - where file = adpsfc, aircar, aircft, gpsipw, msonet, sfcshp.
+       nam.t${cyc}z.prepbufr.${tmmark}.nr
+   - No other changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com2 noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This should be implemented on WCOSS Phase 2.
+
+   This is part of OBSPROC.v7.0.0.
+   - This must be implemented simultaneously with the implementations of:
+      NAM v4.0.0 on Phase 2 and
+      obsproc_shared/bufr_avgdata.v1.1.0.
+
+   The RCDAS has copied imssnow and snowdepth grib files from the NDAS /com
+   location. Since this implementation removes the NDAS, the RCDAS_PREP scripts
+   will have to be modified to either copy these files from the NAM /com2
+   location or, better yet, perform its own copy of these files from the
+   original /dcom location.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20161012_OBSPROC-v7.0.0/obsproc_nam.ver
+   and copy to /nwprod2/versions (new file here).
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.3.0 --> released Jan 12, 2017
+                          --> implemented Feb 21, 2017
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ M obsproc_nam/jobs/JNDAS_DUMP
+ M obsproc_nam/jobs/JNDAS_DUMP2
+ M obsproc_nam/jobs/JNDAS_DUMP_POST
+ M obsproc_nam/jobs/JNDAS_PREP
+ M obsproc_nam/jobs/JNDAS_PREP_POST
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All job scripts:
+    - Move check that required variables are set to top of script.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JNAM_DUMP, JNDAS_DUMP:
+    - Set default for new script variable $KEEP_NEARDUP_ACFT to "NO" to ensure
+      that near-duplicate aircraft reports will not be retained.
+      BENEFIT: Testing has shown that the inclusion of these near-duplicate
+               aircraft reports degrades the GFS forecast five days out.  It
+               is uncertain what the affect is on the NAM forecast but more
+               testing is needed to ensure that it too won't be degraded at some
+               point in the forecast.  The GSI may need to be updated to include
+               thinning of aircraft reports before the near-duplicate aircraft
+               reports can be introduced.  This switch will allow for an easy
+               change to include these data at some future time.
+   JNAM_PREP, JNDAS_PREP:
+    - Minor comment change.
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Removed temporary logic added in v2.2.0 which changed "gpsipw" dump file's
+      group to "rstprod" and its permission to "640" so that it could only be
+      read by users in the rstprod group.  This is no longer needed since
+      "gpsipw" has now been added to the list of dump files for which this needs
+      to be done in obsproc_dump.v3.3.0 which is being implemented
+      simultaneously with obsproc_nam.v2.3.0.
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm:
+    - The default overrides for AWINDO, JAMASS, JAWIND, IACFTL, AIFNOW and
+      FLACMS are extended to accommodate three additional aircraft data types:
+      Korean AMDAR (BUFR), AMDAR-catchall (BUFR) and Panasonic (AirDAT) TAMDAR
+      (BUFR).  There were six, now there are nine.  Moisture will be processed
+      (if available) for all three types, but otherwise they will get the same
+      values as previously existing AMDAR types.  These three new aircraft data
+      types, like all aircraft types, will be processed and included in the
+      PREPBUFR files if found in the "aircft" dump files.
+      BENEFIT: Korean AMDAR (BUFR) and AMDAR-catchall (BUFR) will be available
+               for assimilation by the NAM/NDAS GSI once found in "aircft" dump
+               files (they are not yet there).  Panasonic (AirDAT) TAMDAR (BUFR)
+               will be available for testing and eventual assimilation by the
+               NAM/NDAS GSI once found in "aircft" dump files (they are not yet
+               there).
+
+
+ Output changes:
+ ---------------
+   Jobs JNAM_DUMP, JNDAS_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - Mesonet (msonet) dump files can now contain reports with purged/
+         rejected QMs on p,t,q,uv.
+    - After ARINC switches to v7 BUFR for AMDAR and MDCRS, dump files
+      /com/nam/prod/$RUN.$PDY/$RUN.t${cyc}z.aircar.tm00.bufr_d
+      (where cyc= 00, 06, 12, 18; RUN= nam, ndas; tmmark= tm00 for RUN=nam,
+      and = tm03, tm06, tm09, tm12 for RUN-ndas) can potentially store lat/lon
+      (CLAT/CLON) to 10**5 precision.
+   Job JNAM_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - Creates new names for dump alert flag files:
+         /com/nam/prod/nam.$PDY/nam.t${cyc}z.dump_alert_flag.tm00 ,
+         where cyc= 00, 06, 12, 18.
+         (Note: Legacy filenames
+                /com/nam/prod/nam.$PDY/nam.t${cyc}z.dump_alert_flag
+                will still be output until JDUMP_ALERT is transitioned to read
+                from new filenames.)
+       - Creates new names for dump alert log files:
+         /com/logs/alertlog/nam.t${cyc}z.tm00 and
+         /com/logs/alertlog/trend_vs_[03][06][09][12]months_ago.nam.t${cyc}z.tm00 ,
+         where cyc= 00, 06, 12, 18.
+         (Note: Legacy filenames
+                /com/logs/alertlog/nam.t${cyc}z and
+                /com/logs/alertlog/trend_vs_[03][06][09][12]months_ago.nam.t${cyc}z
+                will still be output until such time that the filename change
+                can be advertised.)
+   Job JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - Listings for "aircft", "aircar", "adpupa", "adpsfc", "sfcshp",
+         "msonet", "ascatw" and "gpsipw" dumps now print lat/lon out to 0.00001
+         degree (although actual significance is still based on precision in the
+         BUFR lat/lon encoded in each dump file).
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - E-AMDAR moisture now excoded into PREPBUFR files (not considered by
+         assimilation).
+       - PREPBUFR files now store lat/lon (YOB/XOB) to 10**5 precision, this
+         will potentially be seen for the following types: AIRCFT 131/231
+         E-AMDAR (only), AIRCFT 135/235 (Canadian-AMDAR), AIRCAR 133/233 (MDCRS)
+         (after ARINC switches to v7 BUFR for AMDAR and MDCRS); as well as in
+         GPSIPW 153 and MSONET 188/288 since these both have 10**5 precision in
+         dumps.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_DUMP, JNDAS_DUMP:
+    - As a result of update to obsproc_dump.v3.3.0:
+       - program bufr_edtbfr uses more memory due to an increase in array parameter
+         "ISTNID_MATCH":
+               previous: The maximum resident set size (KB) = 239108
+               now:      The maximum resident set size (KB) = 258952
+       - Changes in program bufr_edtbfr result in a ~27 second increase in
+         wallclock run time.
+    - No change in requested resources in the job cards.
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.3.0:
+       - program bufr_listdumps uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - As a result of update to obsproc_prep.v3.8.0:
+       - program prepobs_prepdata uses a bit more memory due to now passing
+         double-precision latitude/longitude.
+       - program prepobs_prepacqc uses more memory due to an increase in array
+         parameter MAXFLT and now passing double-precision latitude/longitude:
+               previous: The maximum resident set size (KB) = 1365088
+               now:      The maximum resident set size (KB) = 1369196
+    - No change in requested resources in the job cards.
+    - No change in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/nam/prod/nam.    - Increase  ~24 Mb per day
+   /com/nam/prod/ndas.   - Increase ~118 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.3.0 (updated from v3.2.1)
+    - obsproc_prep.v3.8.0 (updated from v3.7.0)
+    - obsproc_dump_post.v2.3.0 (updated from v2.2.1)
+    - obsproc_prep_post.v2.3.0
+    - obsproc_shared/bufr_dumplist.v1.3.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.5, the
+               default at the time)
+  JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP and JNDAS_DUMP2 require:
+    grib_util/v1.0.1 (loaded in job script)
+  JNAM_PREP and JNDAS_PREP require:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all ten production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.5.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.2.0 of obsproc_cdas,
+      v3.3.0 of obsproc_dump,
+      v2.1.0 of obsproc_dump_monitor,
+      v2.3.0 of obsproc_dump_post,
+      v2.4.0 of obsproc_global,
+      v3.8.0 of obsproc_prep,
+      v2.3.0 of obsproc_rap,
+      v2.2.0 of obsproc_rtma,
+      v2.2.0 of obsproc_urma.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20170112_OBSPROC-v6.5.0/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.2.1 --> released Oct 11 2016
+                          --> implemented Oct 11, 2016
+
+ only change:
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump_post.v2.2.1 (updated from v2.2.0)
+
+
+This release was generated by NCO/IDSB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.2.0 --> released Sep 1, 2016
+                          --> implemented Sep 27, 2016
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ M obsproc_nam/jobs/JNDAS_DUMP
+ M obsproc_nam/jobs/JNDAS_DUMP2
+ M obsproc_nam/jobs/JNDAS_DUMP_POST
+ M obsproc_nam/jobs/JNDAS_PREP
+ M obsproc_nam/jobs/JNDAS_PREP_POST
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+ M obsproc_nam/scripts/exnam_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Use NCO-established variables to point to root directories for main
+      software components and input/output directories in order to run on
+      WCOSS Phase 1 or Phase 2.  (Some util* variables remain and point to
+      /nwprod/util as required by obsproc application scripts).
+    - Use NCO-established variables to point to prod and grib utilities.
+    - Execute "module list" to echo "Currently Loaded Modulefiles" to stdout.
+    - Removed direct path to setpdy.sh utility script, relying on version
+      added to PATH (presumably by prod_util module).  Echo full path to this
+      script to stdout.
+    - Use new NCO standard variable KEEPDATA in place of CLEANUP to decide
+      whether to remove working directory at end of run.
+    - Removed NCO vs developer checks in places were we could rely on variables
+      set in ecflow environment for NCO runs. Modified remaining such wrappers
+      to check setting of NCO standard variable RUN_ENVIR in place of
+      non-standard variables used previously.
+    - Revised logic that generates version informational output at the start of
+      the job for cleaner script and output.
+   JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - Obtains version number for module grib_util via imported environment
+      variable $grib_util_ver.  This is defined in the upstream ecflow script.
+      Current setting is grib_util_ver=v1.0.1.
+       - Load module grib_util/v1.0.1.
+      BENEFIT: Defines path now relied on to run utility programs cnvgrib and
+               wgrib2 in model script exnam_dump.sh.ecf and grbindex in ush
+               script bufr_dump_obs.sh.
+   JNAM_DUMP_POST:
+    - More flexible options for specifiying variables $AVGDarch_IN,
+      $AVGDarch_OUT and $ALERTL in developer runs.
+    - Added entries for variable comin and comin_m1 to override default
+      settings in shared application script bufr_avgdata.sh.
+      BENEFIT: Although technically not needed while NAM runs in Phase 1, will
+               be needed when it moved to Phase 2.  Doesn't hurt to add it now.
+   JNAM_PREP, JNDAS_PREP:
+    - Obtains version number for module util_shared via imported environment
+      variable $util_shared_ver.  This is defined in the upstream ecflow script.
+      Current setting is util_shared_ver=v1.0.4.
+       - Load module util_shared/v1.0.4.
+      BENEFIT: Defines prepended path now relied on to run utility ush
+               getges.sh in ush script prepobs_makeprepbufr.sh.
+      Note: Exported script variables GETGES_COM and GETGES_NWG are retained
+            with no changes since they now always override getges.sh defaults
+            of "$COMROOT" and "$GESROOT", resp. in module util_shared/v1.0.4
+            version of utility ush getges.sh.  Since the default for GETGES_COM
+            in these job scripts is "/com2", this avoids the need to set
+            GETGES_COM to "/com2" in the driver scripts even though the NAM is
+            still running in Phase 1 and the driver (ecflow) script exports
+            COMROOT as "/com".  This also gives flexibility for cases when a
+            development or test run may redirect COMROOT or GESROOT to
+            an alternate location. It also avoids the need to set GETGES_COM or
+            GETGES_NWG in the driver script in this case.  Also allows
+            GETGES_COM or GETGES_NWG to be set to an alternative location in
+            driver script.
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Remove setting of variable $SENDDBN_NDAS with default of "NO" if not set
+      in parent job script.  Instead, test if it has been set in job script and
+      invoke test of its value only if it has been set there.
+    - Replace hard path to ndate utility with NCO standard variable $NDATE.
+    - Use NCO standard variables to point to grib utilities.
+    - Remove test on imported variable $SENDDBN_GB2 and instead test on
+      imported variable SENDDBN.
+    - Replaced "/com" with full file name path beginning with ${COMSP} in
+      messages posted to jlogfile when copying IMS snow grib file and snow
+      depth grib file.
+      BENEFIT: Adds more information, generalizes for current and future prod
+               i/o (/com and /com2, resp.). 
+    - Adjusted the window from "-1.0 to -0.50 hours" to "-0.22 to -0.12 hours"
+      (~ -13 to -7 min) to accommodate the new Ground Based GPS-IPW/ZTD (from
+      U.S.-ENI and foreign GNSS providers) in dump message type NC012004.
+      BENEFIT: Keeps the number of U.S.-ENI reports dumped from being too much
+               larger than that from the previous GSD-feed in dump message type
+               NC012003 since the ENI reports are available every 5 min while
+               the GSD reports were available only every 30 min. Accounts for an
+               approximate 80-min latency in the U.S.-ENI reports. (The dump
+               time windows may be tweaked in the future.)
+    - Added temporary logic to change "gpsipw" dump file's group to "rstprod"
+      and its permission to "640" so that it can only be read by users in the
+      rstprod group.
+      BENEFIT: New "gpsipw" dump file is restricted.  The logic to restrict dump
+               files is done in obsproc_dump ush script bufr_dump_obs.sh, where
+               the list of files to restrict is hardwired.  Since obsproc_dump
+               is not included in this release bundle, the restriction must be
+               done here.  This temporary logic will be removed once a future
+               change to add "gpsipw" to the list of dump files to restrict is
+               made in the next obsproc_dump release.
+   exnam_makeprepbufr.sh.ecf:
+    - Replace hard path to ndate utility with NCO standard variable $NDATE.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP, JNDAS_DUMP:
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.3.0:
+       - Dump files
+         /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.gpsipw.${tmmark}.bufr_d
+         now contain new U.S.-ENI and foreign-GNSS Ground Based GPS-IPW/ZTD
+         (message type NC012004) (before they contained U.S.-GSD Ground Based
+         GPS-IPW/ZTD, message type NC012003).  They will also now be restricted.
+          - As a result of above, the dump "status" files
+            /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.status.${tmmark}.bufr_d
+            will now likely reflect a different dump count for data group
+            "gpsipw" (now in 012.004 as opposed to 012.003 before).  This change
+            in NAM dump counts will be reflected in the RTDM "Model Data Dump
+            Tables - NAM" under the new data type "gnss" (which replaces "gpspw"
+            which represented the old-GSD feed).
+    - The time window for new U.S.-ENI and foreign-GNSS Ground Based
+      GPS-IPW/ZTD in dump files
+      /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.gpsipw.${tmmark}.bufr_d
+      is +/- 3-min about cycle time (the time window for previous U.S.-GSD
+      Ground Based GPS-IPW/ZTD was -1.0 to -0.50 hours about cycle time).
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.2.0:
+       - The following new files are created:
+         /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.gpsipw.${tmmark}.bufr_d.nr
+       - The updated status files in
+         /com/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.updated.status.tm00.bufr_d
+         will now contain dump counts and 30-d avg dump counts for new data type
+         "gnss" (new-GSD feed which replaces "gpspw" which represented the old-
+         GSD feed).
+       - Dump listing files
+         /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.gpsipw.${tmmark}.bufr_d.listing
+         list lat and lon to nearest 0.00001 degree rather than to nearest 0.01
+         degree.  These files are now restricted.
+       - Information for 30-day average for "GOES/NESDIS infrared short-wave
+         derived cloud motion(3p9us)" is now available in files
+         /com/nam/prod/nam.<yyyymmdd>/nam.t<cc>z.updated.status.tm00.bufr_d.
+         This completes missing data in RTDMS graphics.
+   Job JNAM_PREP, JNDAS_PREP:
+    - As a result of update to obsproc_prep.v3.7.0:
+       - Reports in PREPBUFR files with message type GPSIPW (report type 153)
+         will now contain new U.S.-ENI Ground Based GPS-IPW/ZTD at cycle time
+         (before they contained U.S.-GSD Ground Based GPS-IPW at 45-min prior to
+         cycle time).
+          - Encodes zenith total delay (when present) and its error into
+            PREPBUFR file, represented by "atmospheric path delay in satellite
+            signal" (mnemonic APDS) and "error in atmospheric path delay in
+            satellite signal" (mnemonic APDE), resp., in association with
+            hardwired azimuth angle (mnemonic BEARAZ) of 0.0 (deg) and hardwired
+            elevation angle (mnemonic ELEV) of 90.0 (deg).
+    - As a result of update to obsproc_prep.v3.6.0:
+       - Surface land METAR reports in PREPBUFR files with message type ADPSFC
+         (report type 187) will now contain a cloud ceiling field (derived from
+         cloud amount and cloud height values) represented by mnemonic CEILING.
+         This is not read by the NAM/NDAS-GSI.
+   Job JNAM_PREP_POST, JNDAS_PREP_POST:
+    - As a result of update to obsproc_prep_post.v2.3.0:
+       - Non-restricted PREPBUFR files Files
+         /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.prepbufr.${tmmark}.nr
+         /com/nam/prod/[nam][ndas].<yyyymmdd>/[nam][ndas].t<cc>z.prepbufr_pre-qc.${tmmark}.nr
+         no longer contain any reports in message type "GPSIPW" (as all reports
+         are restricted and stripped out)
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - ~3 second increase in wallclock run time.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - Negligible change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/nam/prod/nam.   - Increase ~16.8 Mb per day
+   /com/nam/prod/ndas.  - Increase ~70  Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.7.0 (updated from v3.5.0)
+    - obsproc_dump_post.v2.2.0 (updated from v2.1.0)
+    - obsproc_prep_post.v2.3.0 (updated from v2.1.0)
+    - obsproc_shared/bufr_dumplist.v1.3.0 (updated from v1.2.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Required modules:
+ -----------------
+  All jobs require:
+    prod_util (expected to be loaded in advance; tested with v1.0.4, the
+               default at the time)
+  JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP and JNDAS_DUMP2 require:
+    grib_util/v1.0.1 (loaded in job script)
+  JNAM_PREP and JNDAS_PREP require:
+    util_shared/v1.0.4 (loaded in job script)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all ten production jobs.
+   - This is part of the parallel test of the new GPS-IPW update.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.4.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.1.0 of obsproc_cdas,
+      v2.0.0 of obsproc_dump_monitor,
+      v2.2.0 of obsproc_dump_post,
+      v2.3.0 of obsproc_global,
+      v3.7.0 of obsproc_prep,
+      v2.3.0 of obsproc_prep_post,
+      v2.2.0 of obsproc_rap,
+      v1.3.0 of obsproc_shared/bufr_dumplist;
+   but AFTER the implementation of v3.1.0 of obsproc_satingest.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160901_OBSPROC-v6.4.0/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.1.0 --> released Mar 30, 2016
+                          --> implemented May 11, 2016
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNDAS_PREP
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_DUMP_POST:
+    - Modified to perform data count averaging during 18Z runs of this job.
+   JNAM_PREP, JNDAS_PREP:
+    - Added GETGES_COM with default of /com2 to override getges.sh default.
+      BENEFIT: Overrides default value "/com" still in util ush getges.sh.
+               Needed once GFS moves to Phase 2 (presumably at the same time
+               this release is implemented).  Ecflow scripts for JRAP_PREP can
+               override this if necessary.
+    - Added GETGES_NWG with default of /nwges2 to override getges.sh default.
+      BENEFIT: Overrides default value "/nwges" still in util ush getges.sh.
+               Needed once GFS moves to Phase 2 (presumably at the same time
+               this release is implemented).  Ecflow scripts for JRAP_PREP can
+               override this if necessary.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP_POST (18z cycle run only):
+    - As a result of update to obsproc_dump_post.v2.1.0, this job will
+       - update files /com/arch/prod/avgdata/*nam*
+       - update content of directory /com/arch/prod/obcount_30day/nam
+      Previously the above was done by obsproc_global job JGDAS_DUMP_POST. 
+
+
+ Compute Resource Information:
+ -----------------------------
+   No changes.
+
+
+ Disk Space Changes:
+ -------------------
+   No changes.
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1
+    - obsproc_prep.v3.5.0
+    - obsproc_dump_post.v2.1.0 (updated from v2.0.1)
+    - obsproc_prep_post.v2.1.0
+    - obsproc_shared/bufr_dumplist.v1.2.0
+    - obsproc_shared/bufr_remorest.v1.0.0
+    - obsproc_shared/bufr_avgdata.v1.0.1
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - This is part of the parallel test of the GFS Upgrade bundle (FY16Q3).
+     These scripts match those tested in prod-parallel (March 22-23, 2016).
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.1.0.
+   It is expected that this will be implemented simultaneously with the
+   implementation of the FY16Q3 GFS Upgrade bundle on Phase 2.
+
+   This must be implemented simultaneously with the implementation of:
+      v2.2.0 of obsproc_global,
+      v2.1.0 of obsproc_dump_post
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20160127_OBSPROC-v6.1.0/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.0.3 --> released May 1, 2015
+                          --> implemented Aug 10, 2015
+
+files:
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Added dumps of "ssmisu", "sevcsr", "atms" and "cris", all with time
+      window of +/- 1.50 hours about center dump time and within expanded NAM
+      domain.
+      BENEFIT: These will eventually be tested in NAM GSI.
+    - Dump window for new satwnd type NC005019 (GOES IR/SW) set to -1.00 to
+      -0.01 hours about center dump time.
+      BENEFIT: Will match dump window for other GOES types, providing a single
+               hourly set for each GOES satellite, closest to center dump time.
+    - Reordered cfp commands to execute the longer running commands first.
+      BENEFIT: Speeds up run time which is needed now that subsequent PREP job
+               is slower due to interpolation of recently implemented T1534
+               global guess.
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm:
+    - Minor comment changes.
+
+
+ Output changes:
+ ---------------
+   Job JNAM_DUMP, JNDAS_DUMP:
+    - Creates new dump files
+      /com/nam/prod/$RUN.$PDY/$RUN.t${cyc}z.<file>.$tmmark.bufr_d ,
+      where cyc= 00, 06, 12, 18; RUN= nam, ndas; tmmark= tm00 for RUN=nam,
+      and = tm03, tm06, tm09, tm12 for RUN-ndas; and file = ssmisu, sevcsr,
+      atms, cris.
+    - "SSMISU" (SSM/IS radiances), "SEVCSR" (SEVIRI clear-sky radiances),
+      "ATMS" (NPP ATMS radiances) AND "CRIS" (NPP CrIS radiances) will now
+      appear in NAM RTDM count graphics.
+    - As a result of update to obsproc_shared/bufr_dumplist.v1.2.0:
+       - "3P9US" (GOES IR/SW), "INFAV" (AVHRR IR/LW) and "INFVR" (VIIRS IR/LW)
+         will now appear in NAM RTDM count graphics.
+       - The "satwnd" dump files will contain GOES IR/SW, POES AVHRR/IR/LW and
+         POES VIIRS/IR/LW winds.
+   Job JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.0.1:
+       - Total cloud cover (TOCC) is now correctly listed in
+         [nam][ndas].t${cyc}.goesnd.${tmmark}.bufr_d.listing files in
+         /com/nam/prod/[nam][ndas].${PDY} directories (prior to this it was
+         missing).
+   Job JNAM_PREP, JNDAS_PREP:
+    - As a result of update to obsproc_prep.v3.5.0:
+       - Valid TSB values will be encoded into PREPBUFR file for reports in
+         message type AIRCAR.
+       - Marine reports previously, incorrectly deemed over land and flagged
+         will now be deemed over water and be available for assimilation.
+       - Total cloud cover (TOCC) is now encoded in PREPBUFR files for reports
+         in message type GOESND with type 151.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_DUMP, JNAM_DUMP2:
+    - previous job card specs were:
+         poe, prod queue, 2 tasks, ptile=2, 4500 Mb per task
+    - recommended job card specs are:
+         poe, prod queue, 3 tasks, ptile=3, 3000 Mb per task
+    - The combination of the above job card changes as well as the changes in
+      model script exnam_dump.sh.ecf (see above) result in ~110 sec decrease in
+      run time for the JNAM_DUMP job. This helps to offset the wallclock run
+      time increase in the subsequent PREP jobs due to interpolation of
+      recently implemented T1534 global guess.
+    - No change to memory usage.
+   Jobs JNDAS_DUMP, JNDAS_DUMP2:
+    - previous job card specs were:
+         poe, prod queue, 2 tasks, ptile=2, 8000 Mb per task
+    - recommended job card specs are:
+         poe, prod queue, 3 tasks, ptile=3, 5334 Mb per task
+    - The combination of the above job card changes as well as the changes in
+      model script exnam_dump.sh.ecf (see above) result in ~120 sec decrease in
+      run time for the JNDAS_DUMP tm12 job. This helps to offset the wallclock
+      run time increase in the subsequent PREP jobs due to interpolation of
+      recently implemented T1534 global guess.
+    - No change to memory usage.
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - program prepobs_prepacqc now uses more memory due to an increase in
+      array parameter "max_reps":
+            previous: The maximum resident set size (KB) = 1024368
+            now:      The maximum resident set size (KB) = 1366072
+    - No other changes to memory usage.
+   All other jobs:
+    - No change in requested resources in the job cards.
+    - No change to memory usage.
+    - No change in wallclock run time.
+
+
+ Disk Space Changes:
+ -------------------
+   /com/nam/prod/nam.   - Increase ~ 46 Mb per day
+   /com/nam/prod/ndas.  - Increase ~406 Mb per day
+
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_dump.v3.2.1 (updated from v3.2.0)
+    - obsproc_prep.v3.5.0 (updated from v3.2.0)
+    - obsproc_dump_post.v2.0.1 (updated from v2.0.0)
+    - obsproc_prep_post.v2.1.0 (updated from v2.0.2)
+    - obsproc_shared/bufr_dumplist.v1.2.0 (updated from v1.0.0)
+    - obsproc_shared/bufr_remorest.v1.0.0
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test all ten production jobs.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No changes in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.4 of obsproc_cdas,
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.1.1 of obsproc_global,
+      v3.5.0 of obsproc_prep,
+      v2.1.0 of obsproc_prep_post,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_rtma,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb,
+      v1.2.0 of obsproc_shared/bufr_dumplist.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20150501_OBSPROC-fy15q2/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20150501_OBSPROC.v5.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.0.2 --> released Jun 30, 2015
+                          --> implemented Jun 30, 2015
+
+ only change:
+
+ Shared Software (with 1 or more jobs):
+ --------------------------------------
+    - obsproc_prep_post.v2.0.2 (updated from v2.0.1)
+
+
+(Note: NCO/PMB did not update the version number here)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.0.2 --> released Sep 14, 2014
+                          --> implemented Nov 4, 2014
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ M obsproc_nam/jobs/JNDAS_DUMP
+ M obsproc_nam/jobs/JNDAS_DUMP2
+ M obsproc_nam/jobs/JNDAS_DUMP_POST
+ M obsproc_nam/jobs/JNDAS_PREP
+ M obsproc_nam/jobs/JNDAS_PREP_POST
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_DUMP_POST, JNAM_PREP_POST, JNDAS_PREP, JNDAS_DUMP_POST,
+   JNDAS_PREP_POST, JNAM_PREP:
+    - Remove unnecessary setting of environment variable TMPDIR (not
+      referenced in any child scripts).
+   JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - Updated comment explaining reason for hardwire of environment variable
+      TMPDIR.
+   JNAM_PREP_POST, JNDAS_PREP_POST:
+    - All references to PROCESS_SATELLITE_COUNTS removed since
+      /nwprod/ush/global_satcount.sh is obsolete.
+   JNAM_PREP, JNDAS_PREP:
+    - Modify the setting of NSPLIT variable used to break up data for parallel
+      processing.  The (default) setting is now 3.
+      BENEFIT: This is in preparation for the expected larger size of global
+               background fields (T1534) in the upcoming 2014 GFS upgrade and
+               is needed due to current memory limitations.
+    - Add comments and settings in preparation for potential upgrade to use
+      poe rather than background threads for parallel processing in
+      prepobs_makeprepbufr.sh (under development in obsproc_prep application
+      package).
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Add parallel scripting option to replace background threads for
+      simultaneous dump group processing.
+      BENEFIT: Improves timing [compensates for increased run time in PREP
+               jobs due to change to NSPLIT=3 in JNAM_PREP and JNDAS_PREP (see
+               change above)]. Complies with NCO's request to remove background
+               processes from production scripts.
+    - Minor dump group shuffling.
+      BENEFIT: Allows DUMP + PREP combined run time to be close to the same as
+               before.
+    - Removed the dumping of AMSU-B data ("1bamub", "esamub") and HIRS-3 data
+      ("1bhrs3").
+      BENEFIT: These data are no longer processed.  The only dumps being
+               produced are "esamub", but these contain all missing btemps.
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm:
+    - The satellite path type switch for odd1 and odd2 GOES satellite cloud top
+      pressure is changed from "retain but do not use" to "process" [namelist
+      switch IRTRV odd1 and odd2 satellite GOES CT changed from 5*9999 to 5*0].
+      This forces its quality mark (encoded in PREPBUFR file under mnemonic
+      CTPQM) to be initialized as 2 (neutral) rather than as 15 (do not use).
+      BENEFIT: These are in NAM/NDAS PREPBUFR files under report type 151 since
+               Phase 1a implementation 4/4/2014. This change currently has no
+               affect on production since CTPQM is currently not read by GSI
+               but it may be used in the future.
+    - The satellite path type switch for even1 and odd2 GOES satellite
+      precipitable water retrievals is changed from "process" to "retain but do
+      not use" [namelist switch IRTRV even1 and odd2 satellite GOES PW changed
+      from 5*0 to 5*9999].  This forces its quality marks (encoded in PREPBUFR
+      file under mnemonics PW1Q, PW2Q, PW3Q and PW4Q) to be initialized as 15
+      (do not use) rather than as 2 (neutral).
+      BENEFIT: These are no longer processed. This changes forces the quality
+               mark to be 15 for all GOES satellite precipitable water
+               retrievals if they ever were processed again.
+
+
+ Output changes:
+ ---------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - Mnemonic CTPQM in report type 151 of message type GOESND in PREPBUFR
+      files will now be encoded as "2" in most cases rather than as "15" in all
+      cases before.
+    - As a result of update to obsproc_prep.v3.2.0:
+       - DFQ now encoded in PREPBUFR file in some cases for surface data.
+       - WQM will not be encoded in PREPBUFR file if UOB and VOB are missing
+         for surface data.
+       - DFP now encoded in PREPBUFR file in some cases for surface data.
+       - DFR now encoded in PREPBUFR file in some cases for surface data.
+       - SYNDATA bogus winds will no longer be missing in some situations where
+         they are expected to be generated due to previous, but now corrected,
+         cases which had caused abnormal termination of SYNDAT_SYNDATA.
+   Job JNAM_DUMP, JNDAS_DUMP:
+    - Empty dump files "1bamub" and "1bhrs3" will no longer be present in
+      /com/nam/prod/... directories.
+    - The small dump file "esamub" (containing no usable data) will no longer
+      be present in /com/nam/prod/... directories.
+   Job JNAM_DUMP:
+    - "1BAMUB", "1BHRS3" and "ESAMUB" will no longer appear in NAM RTDM count
+       graphics.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - ~30 second increase in wallclock run time
+    - previous job card specs were:
+         parallel, exclusive, 12 tasks, ptile=12
+    - recommended job card specs are:
+         parallel, exclusive, 3 tasks, ptile=3
+    - Note 1: Since PREPBUFR processing does not yet run under poe (it still
+              runs background processes), the number of tasks and ptile here
+              are not actually used.  However, we will eventually switch to poe
+              so it makes sense now to change these.
+    - Note 2: The expected larger size of global background fields associated
+              with the 2014 GFS upgrade (T1534) may require tweaking of the job
+              card specs to compensate for the expected much slower run time in
+              these jobs.  Much of this added run time will likely have to be
+              made up for in the DUMP jobs (see below).  This will have to be
+              worked out during NCO's testing of these jobs using the T1534
+              background.
+   Jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - previous job card specs were:
+         JNAM_DUMP: serial, shared, 6000 Mb
+         JNAM_DUMP2: serial, shared, 5000 Mb
+         JNDAS_DUMP, JNDAS_DUMP2: serial, shared, 45000 Mb
+    - recommended job card specs are:
+         JNAM_DUMP, JNAM_DUMP2: parallel, shared, 2 tasks, ptile=2, 4500 Mb per
+                                task
+         JNDAS_DUMP, JNDAS_DUMP2: parallel, shared, 2 tasks, ptile=2, 8000 Mb
+                                  per task
+         (benefit: using poe eliminates need to request such a large chunk of
+                   memory for NDAS dumps to avoid jobs aborting due to their
+                   oversubscribing on a single node)
+    - the above job card changes will result in ~30 sec decrease in wallclock
+      run time, offsetting the wallclock run time increase in the PREP jobs
+      (see above) (also maybe a 2 sec decrease in run time with removal of
+      three obsolete dump types)
+    - Note: The expected larger size of global background fields associated
+            with the 2014 GFS upgrade (T1534) will likely require tweaking of
+            the DUMP job card specs to further speed up the DUMP jobs in order
+            to compensate for the expected slower run time in the PREP jobs
+            (see above).  This will have to be worked out during NCO's testing
+            of the PREP jobs using the T1534 background.
+   No other changes in requested resources in the job cards.
+   Minor changes to memory usage (see "Shared Software" below).
+   No other changes in disk space and run time.
+
+
+ Shared Software:
+ ----------------
+    - JNAM_PREP, JNDAS_PREP:
+         obsproc_prep.v3.2.0 (updated from v3.1.0)
+           - program syndat_syndata now uses more memory due to an increase in
+             array parameters "ldxdim" and "ndatmx":
+                previous: The maximum resident set size (KB) = 911252
+                now:      The maximum resident set size (KB) = 913268
+    - JNAM_PREP_POST, JNDAS_PREP_POST:
+         obsproc_prep_post.v2.0.1 (updated from v2.0.0)
+         obsproc_shared/bufr_remorest.v1.0.0
+    - JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+         obsproc_dump.v3.2.0 (updated from v3.1.0)
+         obsproc_shared/bufr_dumplist.v1.0.0
+    - JNAM_DUMP_POST, JNDAS_DUMP_POST:
+         obsproc_dump_post.v2.0.0
+         obsproc_shared/bufr_remorest.v1.0.0
+         obsproc_shared/bufr_dumplist.v1.0.0 (NAM only)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JNAM_DUMP, JNAM_DUMP2, JNAM_DUMP_POST, JNAM_PREP,
+     JNAM_PREP_POST, JNDAS_DUMP, JNDAS_DUMP2, JNDAS_DUMP_POST, JNDAS_PREP and
+     JNDAS_PREP_POST as part of the parallel-production test of the OBSPROC
+     FY14Q4 bundle.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - The following will no longer be alerted for cyc=00,06,12,18:
+       nam.t${cyc}z.1bhrs3.tm00.bufr_d
+       nam.t${cyc}z.1bamub.tm00.bufr_d
+       nam.t${cyc}z.esamub.tm00.bufr_d
+   - The following will no longer be alerted for cyc=00,06,12,18 and
+     time-mark tm12,tm09,tm06,tm03:
+       ndas.t${cyc}z.1bhrs3.${tmmark}.bufr_d
+       ndas.t${cyc}z.1bamub.${tmmark}.bufr_d
+       ndas.t${cyc}z.esamub.${tmmark}.bufr_d
+   - No other changes in dissemination.
+   - No change in archival on HPSS outside of changes to /com noted previously.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.0.
+   This must be implemented simultaneously with the implementations of:
+      v1.2.1 of obsproc_dump_monitor,
+      v2.0.2 of obsproc_global, obsproc_rap, obsproc_rtma, obsproc_urma,
+      v2.3.0 of obsproc_satingest,
+      v3.2.0 of obsproc_dump, obsproc_prep,
+      v2.0.1 of obsproc_prep_post,
+      v1.0.0 of obsproc_dump_alert, radar_reflectivity_mosaic,
+      v1.0.0 of radar_reflectivity_ref2grb,
+      v1.0.1 of obsproc_shared/bufr_avgdata.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140914_OBSPROC-fy14q4/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140914_OBSPROC.v4.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.0.1 --> released Jun 9, 2014, updated Aug 5, 2014
+                          --> implemented Aug 12, 2014
+
+files:
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNDAS_PREP
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_PREP, JNDAS_PREP:
+    - Environment variable DICTPREP now defaults to new vertical structure
+      directory path location for metar.tbl dictionary
+      (/nwprod/decoders/decod_shared/dictionaries, rather than
+      /nwprod/dictionaries which will be removed in September 2014).
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm:
+    - New VAD winds from level 2 decoder (BUFR type 002, subtype 017) are no
+      longer excluded from encoding into NAM and NDAS PREPBUFR files [switch
+      SUBSKP(002,017) = TRUE is removed and reverts back to default of FALSE].
+      BENEFIT: The updated NAM GSI will now assimilate these reports.
+
+
+ Output changes:
+ ---------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - VAD wind data from level 2 decoder will now be encoded in PREPBUFR file,
+      under report type 224, subtype 2.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - the NAM and NDAS PREPBUFR files will now be approximately 1.05 times
+      (105%) as large and 1.04 times (104%) as large as before since they will
+      now include VAD wind reports from level 2 decoder.
+         NAM:  space used by all PREPBUFR files increases from ~ 351 MBytes/day
+               to ~ 367 MBytes/day
+         NDAS: space used by all PREPBUFR files increases from
+               ~ 1.661 MBytes/day to ~ 1.730 MBytes/day
+    - uses code from obsproc_prep.v3.1.0 (updated from obsproc_prep.v3.0.0)
+       - program prepobs_prepacqc now uses more memory due to an increase in
+         array parameters "maxflt" and "max_reps":
+            previous: The maximum resident set size (KB) = 863576
+            now:      The maximum resident set size (KB) = 1025360
+    - no wallclock run time change: NAM
+    - no wallclock run time change: NDAS
+    - no other changes
+   Jobs JNAM_PREP_POST, JNDAS_PREP_POST:
+    - continues to use code from obsproc_prep_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - no changes
+   Jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - continues to use code from obsproc_dump.v3.1.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no changes
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - continues to use code from obsproc_dump_post.v2.0.0
+    - continues to use code from obsproc_shared/bufr_remorest.v1.0.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0 (NAM only)
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JNAM_PREP and JNDAS_PREP.
+   - This is part of the parallel test of the NAM Upgrade bundle (v3.1.0,
+     FY14Q3).
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.1.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_global.v2.0.1, obsproc_rap.v2.0.1, obsproc_rtma.v2.0.1,
+   obsproc_urma.v2.0.1 and obsproc_prep.v3.1.0, and simultaneously with the
+   implementation of the FY14Q3 NAM Upgrade bundle (v3.1.0).
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140722_OBSPROC-more_robust_prepacqc/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140722_OBSPROC.v3.1.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 2.0.0 --> released May 5, 2014, updated May 29, 2014,
+                              updated Jun 8, 2014
+                          --> implemented Jun 24, 2014
+
+files:
+ M obsproc_nam/fix/prepobs_errtable.nam
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNAM_DUMP_POST
+ M obsproc_nam/jobs/JNAM_PREP
+ M obsproc_nam/jobs/JNAM_PREP_POST
+ M obsproc_nam/jobs/JNDAS_DUMP
+ M obsproc_nam/jobs/JNDAS_DUMP2
+ M obsproc_nam/jobs/JNDAS_DUMP_POST
+ M obsproc_nam/jobs/JNDAS_PREP
+ M obsproc_nam/jobs/JNDAS_PREP_POST
+ M obsproc_nam/parm/prepobs_cqcbufr.nam.parm
+ M obsproc_nam/parm/prepobs_prepacqc.nam.parm
+ M obsproc_nam/parm/prepobs_prepdata.nam.parm
+ M obsproc_nam/parm/prepobs_prepssmi.nam.parm
+ M obsproc_nam/parm/prepobs_profcqc.nam.parm
+ M obsproc_nam/parm/syndat_syndata.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+ M obsproc_nam/scripts/exnam_makeprepbufr.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   All JOB scripts:
+    - Require that the developer export their own particular temporary
+      directory root ($DATAROOT) into the job scripts. If $DATAROOT is not set
+      in these scripts, the script will abort.
+      NOTE: This does not affect production.
+      BENEFIT: This avoids having to hardwire a development-specific default
+               temporary directory root in these job scripts. This can now be
+               different for different development groups.
+   JNAM_PREP, JNDAS_PREP:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_nam and obsproc_prep version numbers via imported
+      environment variables $obsproc_nam_ver and $obsproc_prep_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep which points to
+      directory path for generic prep subdirectories under version control
+      (in production this is normally /nwprod/obsproc_prep.$obsproc_prep_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific prep subdirectories under version
+      control (in production this is normally
+      /nwprod/obsproc_nam.$obsproc_nam_ver).  Replaces /nw${envir} in order to
+      point to files in scripts, parm and fix directories moved from horizontal
+      to vertical directory structure.
+    - Added dump file "goesnd" to the environment variable string $BUFRLIST so
+      that it will be read by PREPOBS_PREPDATA.  This will allow GOES 1x1 fov
+      cloud data from NESDIS to be encoded in the NAM and NDAS PREPBUFR files.
+      BENEFIT: NAM/NDAS parallel runs are now looking at these data.
+    - Export environment variable $errPREPDATA_limit as "4" at all center hour
+      times. Before, it was set to default of "0" at 00 and 12z center hour
+      times and "4" at all other center hour times in model script
+      exnam_makeprepbufr.sh.ecf.
+      BENEFIT: PREPOBS_PREPDATA will no longer abort in 00 or 12z center hour
+               time runs when it finds no data in either the input "adpupa" or
+               "adpsfc" dump files. A diagnostic will be printed in stdout.
+               The modern GSI can run ok if these data are not available for
+               some unexpected reason.
+   JNAM_PREP_POST, JNDAS_PREP_POST:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_nam, obsproc_prep_post and obsproc_shared/bufr_remorest
+      version numbers via imported environment variables $obsproc_nam_ver,
+      $obsproc_prep_post_ver and $obsproc_shared_bufr_remorest_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_prep_post which points to
+      directory path for generic prep_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_prep_post.$obsproc_prep_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts directory moved from horizontal to
+      vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally /nwprod/obsproc_nam.$obsproc_nam_ver).
+      Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+   JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - Initial population into vertical structure.
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_nam, obsproc_dump_post and obsproc_shared/bufr_remorest
+      version numbers via imported environment variables $obsproc_nam_ver,
+      $obsproc_dump_post_ver and $obsproc_shared_bufr_remorest_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump_post which points to
+      directory path for generic dump_post subdirectories under version control
+      (in production this is normally
+      /nwprod/obsproc_dump_post.$obsproc_dump_post_ver).  Replaces /nw${envir}
+      in order to point to files in scripts, exec and (in NAM network only) ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific subdirectories under version control
+      (in production this is normally /nwprod/obsproc_nam.$obsproc_nam_ver).
+      Replaces /nw${envir}.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_remorest which
+      points to directory path for generic shared bufr_remorest subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_remorest.${obsproc_shared_bufr_remorest_ver).
+      Replaces /nw${envir} in order to point to files in exec and ush
+      directories moved from horizontal to vertical directory structure.
+   JNAM_DUMP_POST:
+    - Obtains obsproc_shared/bufr_dumplist version number via imported
+      environment variable $obsproc_shared_bufr_dumplist_ver.  This is defined
+      in the upstream ecflow script.
+    - Exports new environment variable $HOMEobsproc_shared_bufr_dumplist which
+      points to directory path for generic shared bufr_dumplist subdirectories
+      under version control (in production this is normally
+      /nwprod/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver).
+      Replaces /nw${envir} in order to point to files in fix directory moved
+      from horizontal to vertical directory structure.
+   JNDAS_PREP_POST, JNDAS_DUMP_POST:
+    - Added environmental equvalence for cases when developer wrapper script
+      exports variable "PDY" into this script.
+
+ Model script changes:
+   exnam_makeprepbufr.sh.ecf:
+    - Initial population into vertical structure.
+    - Modified to change path to prepobs_makeprepbufr.sh from $ushscript to
+      $ushscript_prep as obsproc_prep package has been populated into vertical
+      structure.
+   exnam_dump.sh.ecf:
+    - No longer attempts to dump OSCAT data.
+      BENEFIT: This is a waste of time now that the instrument has died
+               (2/20/14).
+    - Modified to reduce dump time window for LaRC-generated sfov GOES cloud
+      data in "lgycld" to +/- 0.50 hours relative to cycle time for the NAM and
+      NDAS (vs. +/- 1.50 hours before).
+      BENEFIT: The previous dump time window was too large and caused the NAM
+               GSI to fail due to too many data in the PRPEBUFR file.  In
+               addition, this narrower dump time window matches that of the RAP
+               whose "lgycld" dump was initially used in the testing for the
+               NAM. 
+
+ Fixed file changes:
+   prepobs_errtable.nam:
+    - Initial population into vertical structure.
+    - Changed to provide appropriate ob error values for the new PREPBUFR
+      report types 192-195 and 292-295. 
+
+ Parm file changes:
+   prepobs_prepdata.nam.parm:
+    - Initial population into vertical structure.
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that this file is in subversion.
+    - Turned on processing of NESDIS GOES 1x1 fov cloud data from NESDIS
+      (changed NAM PREPDATA parm cards such that GOESCT is set to TRUE rather
+      than FALSE for 1x1 fov data).
+      BENEFIT: NAM/NDAS parallel runs are now looking at these data.
+    - New 12'th surface type (representing Coast Guard data) added to arrays
+      JSURFW (=0) and FWINDO (=150.).
+      BENEFIT: Coast guard mass and wind data now processed and available for
+               analysis.
+    - New switch NPKRPT (12*TRUE) to control processing of surface obs with
+      missing pressure information.  TRUE here means all of the following:
+         - Will process surface reports that would otherwise be tossed due to
+           their having a missing pstn.
+         - These reports estimate pstn from the reported or U.S. Standard
+           Atmosphere pmsl, the reported or U.S. Standard Atmosphere sensible
+           temperature, and the reported elevation (only marine reports > 7.5 m
+           can have a reported pmsl and fall into this category). This
+           estimated pstn (POB) is used to estimate q (QOB).  Both POB and QOB
+           are assigned minimum q.m.'s (PQM, QQM) of 3. This estimated POB is
+           encoded into PREPBUFR file.
+         - These reports are then assigned new PREPBUFR report types 192/292
+           (SYNOP), 193/293 (METAR), 194/294 (marine) and 195/295 (mesonet).
+         - ATLAS buoy wind reports which also have missing pstn and pmsl will
+           continue to be processed as before (PREPBUFR report type 282
+           (Note: This means that if an ATLAS buoy ever had T,q info, its mass
+                  piece would still be tossed rather than getting into PREPBUFR
+                  file under under report type 194 (may need to fix this logic
+                  someday).
+         - MESONETS will no longer have "x" in character 8 of id, instead they
+           will get PREPBUFR report types 195/295 rather than 188/288.
+      BENEFIT: ADPSFC, SFCSHP, and MSONET reports that do not contain station
+               pressure information are now retained (previously, they were
+               discarded) and are available for the analysis.
+    - New VAD winds from level 2 decoder (BUFR type 002, subtype 017) are
+      excluded from encoding into NAM and NDAS PREPBUFR files [switch
+      SUBSKP(002,017) set to TRUE].
+      BENEFIT: The current operational NAM GSI cannot properly handle these
+               reports.  They will be used in the next update to the NAM GSI.
+   prepobs_prepssmi.nam.parm:
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that this file is in subversion. Otherwise,
+      no changes to contents.
+   prepobs_cqcbufr.nam.parm, prepobs_prepacqc.nam.parm,
+   prepobs_profcqc.nam.parm:
+    - Initial population into vertical structure.
+    - Removed comments related to version number, implementation date, and/or
+      history. No longer needed now that these files are in subversion.
+      Otherwise, no changes to contents.
+   syndat_syndata.nam.parm:
+    - No changes (initial population into vertical structure).
+
+
+ Output changes:
+ ---------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - GOES 1x1 fov cloud data from NESDIS will now be stored in report type
+      151 in PREPBUFR file.
+    - As a result of update to obsproc_prep.v3.0.0:
+       - Satellite zenith angle (degrees) encoded into PREPBUFR file (mnemonic
+         "SAZA") for all satwnd types.
+       - Surface marine reports will now encode pmsl ob and qc (PMO and PMQ) in
+         PREPBUFR file if pmsl is reported.
+       - SFCSHP reports with calm winds and non-missing background u- or v-
+         component wind .ge. 5 m/sec are flagged with Q.M. 8 in PREPBUFR file.
+       - Coast Guard surface marine mass and wind data will now be processed as
+         part of report type 180/280 (when pressure information is available)
+         in PREPBUFR file.
+       - Surface reports with incomplete wind information will now be retained
+         and encoded into the PREPBUFR file.
+       - Report type 183 now stores moisture quality mark no lower than 3
+         (suspect).
+       - Surface reports with missing pressure will now be stored in report
+         types 192/292 (SYNOP), 193/293 (METAR), 194/294 (marine) and 195/295
+         (msonet) in PREPBUFR file.
+       - MAP profilers with more than 102 levels will now get all levels
+         encoded into the PREPBUFR file.
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - As a result of update to obsproc_dump_post.v2.0.0:
+       - Printing format changed slightly in some dump listing files in
+         /com/nam/prod/... directories to squeeze more information on a line.
+       - New VAD wind reports from level 2 decoder added to vadwnd dump listing
+         files in /com/nam/prod/... directories
+       - Satellite zenith angle (degrees) added to satwnd dump listing files in
+         /com/nam/prod/... directories
+       - MAP profilers with more than 102 levels will now get all levels listed
+         in /com/nam/prod/... directories
+       - Coast Guard tide gauge reports added to sfcshp dump listing files in
+         /com/nam/prod/... directories
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_PREP, JNDAS_PREP:
+    - the NAM and NDAS PREPBUFR files will now be approximately 1.31 times 
+      (131%) as large and 1.28 times (128%) as large as before since they will 
+      now include report types 192/292, 193/293, 194/294, 195/295 and 151 as
+      well as Coast Guard surface marine data, and surface reports with
+      incomplete wind information that had previously been discarded.  Also
+      increased a bit as a result of other additions (see output changes
+      above).
+         NAM:  space used by all PREPBUFR files increases from ~ 268 MBytes/day
+               to ~ 351 MBytes/day
+         NDAS: space used by all PREPBUFR files increases from 
+               ~ 1,300 MBytes/day to ~ 1,661 MBytes/day
+    - 73 second increase in wallclock run time: NAM
+    - 96 second increase in wallclock run time: NDAS
+    - uses code from obsproc_prep.v3.0.0
+    - no other changes
+   Jobs JNAM_PREP_POST, JNDAS_PREP_POST:
+    - uses code from obsproc_prep_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - no other changes
+   Jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - uses code from obsproc_dump.v3.1.0 (updated from obsproc_dump.v3.0.0)
+       - changes in bufr_edtbfr here slightly increase its memory usage
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+   Jobs JNAM_DUMP_POST, JNDAS_DUMP_POST:
+    - slight increase in size of vadwnd, satwnd, sfcshp and proflr dump listing
+      files as a result of changes noted above in output changes
+    - slight increase in size of non-restricted sfcshp dump and dump listing
+      files as a result of changes noted above in output changes
+    - uses code from obsproc_dump_post.v2.0.0
+    - uses code from obsproc_shared/bufr_remorest.v1.0.0
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0 (NAM only)
+    - no other changes
+   Jobs JNAM_DUMP, JNDAS_DUMP:
+    - the "lgycld" dump files will now be approximately 53% (NAM) and 38%
+      (NDAS) smaller than before due to the reduced dump time window (with
+      daily sizes of 120 MBytes and 450 MBytes, resp.)
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JNAM_PREP, JNDAS_PREP, JNAM_PREP_POST, 
+     JNDAS_PREP_POST, JNAM_DUMP_POST and JNDAS_DUMP_POST.
+   - This is part of the parallel-production test of the OBSPROC Phase 2
+     bundle.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_global.v2.0.0, obsproc_rap.v2.0.0,
+   obsproc_rtma.v2.0.0, obsproc_urma.v2.0.0, obsproc_dump.v3.1.0,
+   obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0, obsproc_prep_post.v2.0.0,
+   obsproc_satingest.v2.2.0, obsproc_shared/bufr_remorest.v1.0.0 and
+   obsproc_shared/bufr_avgdata.v1.0.0.
+
+   Please export file
+   https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140505_OBSPROC-fy14q2_phase2/obsproc_nam.ver
+   and copy to /nwprod/versions, replacing like-named file.
+   (lowest sub-directory later renamed to 20140505_OBSPROC.v3.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 1.1.0 --> released Feb 9, 2014
+                          --> implemented May 6, 2014
+
+files:
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Modified to dump GOES IR, water vapor, and visible satellite-derived
+      winds using a time window of -1.00 to -0.01 hours relative to cycle time
+      for the NAM and NDAS, rather than -1.50 to +1.25 hours relative to cycle
+      time for the NAM, and -1.50 to +1.55 hours relative to cycle time for
+      the NDAS.
+      BENEFIT: NESDIS is changing the frequency of their GOES satellite
+               derived winds from 3-hourly to 1-hourly. The change to
+               exnam_dump.sh.ecf will allow one complete wind set to continue
+               to be dumped and assimilated (not changing the time window would
+               triple the number of winds dumped and assimilated, all over the
+               same locations). This change will also allow winds closer to
+               cycle time to now be assimilated.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - continues to use code from obsproc_dump.v3.0.0
+    - continues to use code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2.
+   - This is part of the parallel-production test of the hourly GOES satellite
+     winds.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v2.0.0.
+   This must be implemented at EXACTLY the same time as NESDIS' promotion of
+   the hourly GOES satellite winds to their production server, and
+   simultaneously with the implementations of obsproc_dump_monitor.v1.1.0,
+   obsproc_global.v1.1.0, obsproc_rap.v1.1.0, obsproc_rtma.v1.2.0,
+   obsproc_urma.v1.2.0 and obsproc_satingest.v2.1.0.
+
+   Please copy new file
+   /meso/save/Dennis.Keyser/HOME/versions/HOURLY_WINDS/obsproc_nam.ver to
+   /nwprod/versions, replacing like-named file.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140209_OBSPROC.v2.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_nam release 1.0.0 --> released Feb 8, 2014
+                          --> implemented Apr 8, 2014
+
+Initial population of vertical structure.
+
+files:
+ M obsproc_nam/jobs/JNAM_DUMP
+ M obsproc_nam/jobs/JNAM_DUMP2
+ M obsproc_nam/jobs/JNDAS_DUMP
+ M obsproc_nam/jobs/JNDAS_DUMP2
+ M obsproc_nam/parm/prepobs_prepssmi.nam.parm
+ M obsproc_nam/scripts/exnam_dump.sh.ecf
+
+( A - added,  M - modified, D - deleted)
+
+
+ JOB script changes:
+   JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - Changed all "date" commands to "date -u" since WCOSS should always
+      present date in UTC.
+    - Obtains obsproc_nam, obsproc_dump and obsproc_shared/bufr_dumplist
+      version numbers via imported environment variables $obsproc_nam_ver,
+      $obsproc_dump_ver and obsproc_shared_bufr_dumplist_ver, resp.
+      These are defined in the upstream ecflow script.
+    - Full environmental equivalence.  Streamlined, allows for more
+      generalization (e.g., for developer runs).
+    - Exports new environment variable $HOMEobsproc_dump which points to
+      directory path for generic dump subdirectories under version control
+      (in production this is normally /nwprod/obsproc_dump.$obsproc_dump_ver).
+      Replaces /nw${envir} in order to point to files in exec, fix and ush
+      directories moved from horizontal to vertical directory structure.
+    - Exports new environment variable $HOMEobsproc_network which points to
+      directory path for network-specific dump subdirectories under version
+      control (in production this is normally
+      /nwprod/obsproc_nam.$obsproc_nam_ver).  Replaces /nw${envir} in order to
+      point to files in scripts and parm directory moved from horizontal to
+      vertical directory structure.
+    - Exports new environment variables $HOMEobsproc_shared_bufr_dumplist and
+      $FIXobsproc_shared_bufr_dumplist which point to directory path for
+      bufr_dumplist fixed file under version control (in production the latter
+      is normally
+   /nwprod/obsproc_shared/bufr_dumplist.$obsproc_shared_bufr_dumplist_ver/fix).
+      Replaces /nw${envir}/fix from old horizontal directory structure.
+
+ Model script changes:
+   exnam_dump.sh.ecf:
+    - Modified to now dump NESDIS-generated sfov GOES cloud data in "goesnd"
+      using a time window of -1.25 to -0.01 hours relative to cycle time for
+      the NAM and NDAS.
+      BENEFIT: NAM/NDAS parallel runs are now looking at these data.
+    - Modified to now dump LaRC-generated sfov GOES cloud data in "lgycld"
+      using a time window of -1.50 to +1.50 hours relative to cycle time for
+      the NAM and NDAS.
+      BENEFIT: NAM/NDAS parallel runs will eventually be looking at these data.
+    - Modified to now dump OSCAT scatterometer data in "oscatw" using a time
+      window of -1.50 to +1.50 hours relative to cycle time for the NAM and
+      NDAS.
+      BENEFIT: NAM/NDAS parallel runs will eventually be looking at these data.
+      N O T I C E:  By the time this was implemented, OSCAT data were no longer
+                    available.  The instrument stopped working on 2/20/14 and
+                    was declared as "Dead" on 4/3/14.
+    - Modified to turn off the attempt to dump "wndsat" data.
+      BENEFIT: The WindSat scatterometer data ingest feed is currently broken
+               as these data are now being produced under a new format that
+               NCEP does not recognize.  As we transition to the new feed,
+               we do not want to inadvertently dump these data in operations.
+
+ Parm file changes:
+   prepobs_prepssmi.nam.parm:
+    - No changes to contents.
+
+
+ Output changes:
+ ---------------
+   Jobs JNAM_DUMP, JNDAS_DUMP:
+    - "ascatw" dump files will now contain scatterometer winds from METOP-B
+      (as well as from METOP-A from before).
+    - Creates new dump files
+      /com/nam/prod/$RUN.$PDY/$RUN.t${cyc}z.<file>.$tmmark.bufr_d ,
+      where cyc= 00, 06, 12, 18; RUN= nam, ndas; tmmark= tm00 for RUN=nam,
+      and = tm03, tm06, tm09, tm12 for RUN-ndas; and file = goesnd, lgycld,
+      oscatw (NO!).
+    - "vadwnd" dump files will now contain NeXRaD VAD winds from level 2
+      decoder (type 002, subtype 017) [as well as NeXRaD VAD winds from radar
+      coded message (type 002, subtype 008) from before]. These are being
+      tested in the parallel NAM/NDAS in preparation for their operational use
+      in the upcoming FY14Q2 NAM bundle. Note: the current production system
+      is not affected by this change as these are skipped over when PREPDATA
+      reads the "vadwnd" dump file.
+    - As a result of update to obsproc_dump.v3.0.0:
+       - If there are zero aircraft reports, processing will not seg fault in
+         BUFR_DUPAIR.
+   Jobs JNAM_DUMP2, JNDAS_DUMP2:
+    - No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Jobs JNAM_DUMP, JNDAS_DUMP:
+    - the "ascatw" dump files will now be approximately twice as large
+      since they will now include METOP-B (as well as METOP-A from before)
+         NAM:  ascatw increases from ~ 0.8 MBytes/day to ~ 1.6 MBytes/day
+         NDAS: ascatw increases from ~ 7 MBytes/day to ~ 14 MBytes/day 
+    - the "vadwnd" dump files will now be approximately three times as large
+      since they will now include NeXRaD VAD winds from radar decoder (as well
+      as NeXRaD VAD winds from radar coded message before)
+         NAM:  vadwnd increases from ~ 0.7 MBytes/day to ~ 2.1 MBytes/day
+         NDAS: vadwnd increases from ~ 3.4 MBytes/day to ~ 10.3 MBytes/day
+    - disk space required per day for all new output dump files is:
+        nam: goesnd    ~  30 MBytes
+        nam: lgycld    ~ 260 MBytes
+        nam: oscatw    ~  10 MBytes --> NO, OSCAT DIED!!
+        ndas: goesnd   ~  83 MBytes
+        ndas: lgycld   ~ 727 MBytes
+        ndas: oscatw   ~  60 MBytes --> NO, OSCAT DIED!!
+        TOTAL:       ~   1.2 GBytes
+    - 15 second increase in wallclock run time
+    - no other changes
+   Jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2:
+    - uses code from obsproc_dump.v3.0.0
+    - uses code from obsproc_shared/bufr_dumplist.v1.0.0
+    - no other changes
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   - Test production jobs JNAM_DUMP, JNAM_DUMP2, JNDAS_DUMP, JNDAS_DUMP2.
+   - All changes in this version (1.0.0) will be tested when the next version
+     (1.1.0) is tested as part of the parallel-production test of the hourly
+     GOES satellite winds.
+
+
+ Dissemination:
+ --------------
+   - The main users of this output are the NAM and NDAS networks.
+   - No change in dissemination.
+   - No change in archival on HPSS.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v1.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.0.0, obsproc_dump.v3.0.0, obsproc_global.v1.0.0,
+   obsproc_rap.v1.0.0, obsproc_rtma.v1.1.0, obsproc_urma.v1.1.0,
+   obsproc_satingest.v2.0.0, obsproc_shared/bufr_cword.v1.0.0 and
+   obsproc_shared/bufr_dumplist.v1.0.0.
+
+   It should be implemented PRIOR to NESDIS' promotion of their hourly GOES
+   satellite winds to their production server,
+
+   Please copy new file /meso/save/Dennis.Keyser/HOME/versions/obsproc_nam.ver
+   to /nwprod/versions.
+   (file location later became https://svnemc.ncep.noaa.gov/projects/obsproc/branches/VS/versions/20140208_OBSPROC.v1.0.0)
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

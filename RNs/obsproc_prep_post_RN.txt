@@ -1,0 +1,1219 @@
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 3.2.0 --> released Oct 09, 2020
+                                --> implemented ??? ??, 2021
+
+Files:
+   obsproc_prep_post/fix/gdascounts_base.shtml
+   obsproc_prep_post/fix/gdascounts_avg.awk
+   obsproc_prep_post/fix/gdascounts_html
+   obsproc_prep_post/fix/gdascounts_types
+   obsproc_prep_post/fix/satellite_counts.tbl
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+   obsproc_prep_post/sorc/gdascounts_ave.fd/build_new.f
+   obsproc_prep_post/sorc/gdascounts_ave.fd/makefile
+ M obsproc_prep_post/sorc/global_postevents.fd/makefile
+   obsproc_prep_post/sorc/global_postevents.fd/postevents.f
+   obsproc_prep_post/sorc/timetwin.fd/makefile
+   obsproc_prep_post/sorc/timetwin.fd/timetwin.f
+ M obsproc_prep_post/sorc/build.sh
+   obsproc_prep_post/sorc/clean.sh
+   obsproc_prep_post/sorc/install.sh
+ M obsproc_prep_post/sorc/load_libs.rc
+   obsproc_prep_post/sorc/README.build
+   obsproc_prep_post/sorc/setlibs.rc
+   obsproc_prep_post/ush/build_mainpage.sh
+   obsproc_prep_post/ush/gdascounts_combine.sh
+ M obsproc_prep_post/ush/gdas_counts.sh
+   obsproc_prep_post/ush/gdas_countstat.sh
+   obsproc_prep_post/ush/gdas_summary.sh
+   obsproc_prep_post/ush/global_postevents.sh
+   obsproc_prep_post/ush/mstr_shp_stn_lst_update.sh
+   obsproc_prep_post/ush/mstr_shp_stn_lst_update2.sh
+   obsproc_prep_post/ush/satellite_daily.pl
+   obsproc_prep_post/ush/satellite_html.pl
+   obsproc_prep_post/ush/satellite_summary.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Modified $path variable to include (or exclude) $COMPONENT 
+      subdirectory based on GFS version.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+
+
+ Source code and build changes (in sorc directory):
+   build.sh:
+    - removed obsolete settings for IBM p1/p2.
+    - updated to use intel/18.1.163 and cray-mpich for Cray. 
+    - updated to use ips/18.0.5.274 for Dell-p3.
+   load_libs.rc:
+    - Updated to load v2.4.0 for w3emc library.
+    - Updated to load NetCDF and HDF5 modules.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade.
+   global_postevents.fd/makefile
+    - Added NetCDF library.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade. 
+
+
+ ush script changes:
+   gdas_counts.sh:
+    - Introduced logic to define $INFILE based on the version of
+      GFS to determine valid directory structure.
+      BENEFIT: Needed to work correctly with the GFS v16 upgrade. 
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+   w3emc   2.3.0
+   bufr   11.3.0
+   bacio   2.0.2
+   sigio   2.1.0
+   nemsio  2.2.3
+   sp      2.0.2
+   netcdf  4.7.4
+   hdf5    1.10.6
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v15.0.0.
+   This must be installed on all WCOSS systems (Cray-XC40, Dell-p3).
+
+   This must be implemented simultaneously with the implementations of:
+     v16.0.0 of GFS,
+      v2.1.1 of obsproc_dump_alert,
+      v3.4.0 of obsproc_global,
+      v3.4.1 of obsproc_nam,
+      v3.2.1 of obsproc_rap,
+      v3.3.2 of obsproc_rtma,
+      v3.3.1 of obsproc_urma,
+      v5.4.0 of obsproc_prep.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.  But note, please update:
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+   to set obsproc_prep_post to v3.2.0.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 3.1.1 --> released Aug 28, 2020
+                                --> implemented ??? ??, 2020
+
+Files:
+ M obsproc_prep_post/sorc/global_postevents.fd/postevents.f
+ M obsproc_prep_post/sorc/load_libs.rc
+
+( A - added,  M - modified, D - deleted)
+
+
+ Source code and build changes (in sorc directory):
+   load_libs.rc:
+    - Updated to load v11.3.0 for bufrlib.
+   global_postevents.fd/postevents.f
+    - Modify the pivot year from 20 to 40 to handle 2-digit years that do 
+      not designate 19 or 20 for century.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+  - Even though there are no code changes to obsproc_cdas, obsproc_nam,
+    obsproc_rap, obsproc_rtma, and obsproc_urma, there are output changes for
+    these networks.
+    - The non-restricted prepbufr file will be slightly larger than production:
+      - *.tCCz.prepbufr.tm0*.nr
+    - The J*_PREP_POST job processes will run negligably longer than production.
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+   w3emc   2.3.0
+   bufr   11.3.0
+   bacio   2.0.2
+   sigio   2.1.0
+   nemsio  2.2.3
+   sp      2.0.2
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v14.0.0.
+   This can be implemented simultaneously with the implementations of:
+      v4.2.0 of decod_dcelrw,
+      v2.5.2 of obsproc_cdas,
+      v3.3.0 of obsproc_global,
+      v3.1.2 of obsproc_rap,
+      v3.3.1 of obsproc_rtma,
+      v3.2.1 of obsproc_urma,
+      v2.4.0 of obsproc_dump_monitor,
+      v5.1.0 of obsproc_dump,
+      v3.4.0 of obsproc_dump_post,
+      v5.3.0 of obsproc_prep,
+      v2.3.0 of obsproc_shared_bufr_dumplist - previously released to support RTOFS,
+      v2.1.1 of obsproc_shared_bufr_remorest.
+   This must be installed on all WCOSS systems (Cray-XC40, Dell-p3).
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.  But note, please update:
+     obsproc_cdas.ver,
+     obsproc_global.ver,
+     obsproc_nam.ver,
+     obsproc_rap.ver,
+     obsproc_rtma.ver,
+     obsproc_urma.ver,
+   to set obsproc_prep_post to v3.1.1.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 3.1.0 --> released Aug 31, 2018
+                                --> implemented Jun 12, 2019
+
+Files:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/build.sh
+ M obsproc_prep_post/sorc/load_libs.rc
+ M obsproc_prep_post/ush/gdas_counts.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - For gdas runs, added CYC_HIS subdirectory to com directory path for upper
+      air files used in timetwin processing.
+
+ Source code and build changes (in sorc directory):
+   build.sh:
+    - Updated to build codes on Dell-p3 or Cray-XC40 or IBM iDataPlex.
+   load_libs.rc:
+    - Updated to load modules for Dell-p3.
+
+ ush script changes:
+   gdas_counts.sh:
+    - Modified INFILE to use $COMIN1 to accommodate the $cyc subdir in
+      com introduced in FV3GFS.
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+   w3emc   2.3.0
+   bufr   11.2.0 (11.1.0 Cray-XC40 and IBM iDataPlex)
+   bacio   2.0.2
+   sigio   2.1.0 (2.0.1 Cray-XC40 and IBM iDataPlex)
+   nemsio  2.2.3 (2.2.2 Cray-XC40 and IBM iDataPlex)
+   sp      2.0.2
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v11.0.0.
+   This can be implemented prior to, but no later than, the implementation of:
+      v3.2.0 of obsproc_global.
+   This can be implemented simultaneously with the implementations of:
+      v5.0.0 of obsproc_dump,
+      v3.3.0 of obsproc_dump_post,
+      v5.2.0 of obsproc_prep,
+      v2.1.0 of obsproc_shared_bufr_avgdata,
+      v2.0.0 of obsproc_shared_bufr_dumplist,
+      v2.1.0 of obsproc_shared_bufr_remorest.
+   This can also be implemented prior to, but no later than, the FV3 GFS upgrade.
+   This must be installed on all WCOSS systems (IBM iDataPlex, Cray-XC40, Dell-p3).
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 3.0.1 --> released Jul 30, 2018
+                                --> implemented Dec 04, 2018
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ D obsproc_prep_post/ush/gdascounts_archive_pyear.sh
+ M obsproc_prep_post/ush/gdas_summary.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Removed call of ush/gdascounts_archive_pyear.sh.  This script had been
+      invoked every Feb 2nd to move monthly subdirectories with content for
+      the previous year from the main satcounts directory to a new YYYY
+      subdirectory of satcounts_archive.  This logic became obsolete with the
+      move of satcounts files to YYYYMM subdirectories in July 2017.
+    - For "rtma_ru" runs, indicated by the existence of imported variable
+      "cycM", adjusts joblog messages and stdout echo messages to include
+      minutes, or fraction of hour where applicable, in cycle time and change
+      run from RTMA to RTMA_RU.
+
+ USH script changes:
+   gdas_summary.sh:
+    - Removed option to input satcounts data from older MON directories
+      (eg, satcounts/APR or satcounts_archive/2016/APR).
+    - Removed unnecessary set of variable "month"
+
+   gdascounts_archive_pyear.sh:
+    - Deleted.  No longer needed.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6
+   w3emc   2.3.0
+   bufr   11.1.0
+   bacio   2.0.2
+   sigio   2.0.1
+   nemsio  2.2.2
+   sp      2.0.2
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v10.0.0.
+   This should be installed prior to or simultaneously with:
+   obsproc_rtma.v3.1.0,
+   obsproc_urma.v3.1.0,
+   obsproc_dump.v4.1.0 (previously released with OBSPROC-v8.3.2),
+   obsproc_dump_post.v3.2.0,
+   obsproc_prep.v5.1.0,
+   obsproc_shared/bufr_dumplist.v1.6.0 (previously released with OBSPROC-v8.3.2),
+   obsproc_shared/bufr_remorest.v2.0.1.
+   It should be installed on both WCOSS IBM iDataPlex and Cray-XC40.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 3.0.0 --> released Apr 11, 2017
+                                --> implemented Jul 19, 2017
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/global_postevents.fd/postevents.f
+ A obsproc_prep_post/sorc/timetwin.fd/makefile
+ A obsproc_prep_post/sorc/timetwin.fd/timetwin.f
+ M obsproc_prep_post/sorc/build.sh
+ M obsproc_prep_post/sorc/load_libs.rc
+ M obsproc_prep_post/sorc/README.build
+ M obsproc_prep_post/sorc/setlibs.rc
+ M obsproc_prep_post/ush/gdas_counts.sh
+ M obsproc_prep_post/ush/gdas_countstat.sh
+ M obsproc_prep_post/ush/gdas_summary.sh
+ M obsproc_prep_post/ush/global_postevents.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Replaced hardwired filename prefix "gdas1" with imported variable "$RUN"
+      in preparation for gdas filename change (gdas1->gdas).  The dbnet alerts
+      for gdas runs will also be based on $RUN (translated to upper case).
+    - Updated pointer to timetwin software which has been imported from
+      /nwprod/util/sorc into this package.
+    - Added FORT_BUFFERED=TRUE when calling timetwin executable to improve
+      performance when running on Cray-XC40.
+    - Corrected the invocation of prep_step prior to the call of timetwin.
+    - Added wrapper to skip yearly invocation of gdascounts_archive_pyear.sh if
+      SATCOMIN is on /gpfs/hps.  (See changes to gdas_summary.sh below.)
+    - Removed default settings for USHobsproc_prep_post, FIXobsproc_prep_post,
+      and EXECobsproc_prep_post.  These are now defined in all recent versions
+      of the only job script that needs them (obsproc_global/JGDAS_PREP_POST).
+    - Added variable "$PROCESS_UNBLKBUFR" to control whether or not to attempt
+      to create and alert an "unblok" copy of an unrestricted prepbufr file.
+      The default setting is "YES", however, as before, no such copy is made
+      if there is no "unblok" version of the original restricted prepbufr file.
+    - Added /bin/sh shebang.
+      
+ USH script changes:
+   gdas_counts.sh:
+    - Replaced hardwired filename prefix "gdas1" with imported variable "$RUN"
+      in preparation for gdas filename change (gdas1->gdas).
+   gdas_countstat.sh:
+    - Replaced hardwired filename prefix "gdas1" with new variable "$run" in
+      preparation for gdas filename change (gdas1->gdas). "$run" will typically
+      be set to "$RUN" in production runs, but using the lowercase variable here
+      (and adding optional argument described below) for consistency with the
+      original version of this script.
+    - Added optional 6th argument to pass in a value for $run (to aid generation
+      of statistics in delayed mode).
+    - Removed unnecessary commands and pared down local copies of dump status
+      files that are repeatedly grep'd to improve performance on Cray-XC40.
+    - Use sed instead of cut command to extract count values from dump status
+      files in order to properly parse count info if the field width changes.
+    - Added /bin/sh shebang.
+   gdas_summary.sh:
+    - Added logic to use new naming convention satcounts.YYYYMM to archive
+      satellite count files instead of satcounts/MMM.  (With this change, the
+      monthly directories don't need to be moved to a separate archive directory
+      each year and it is easier for NCO to age off old directories if needed).
+      Temporary logic is included to continue use of the MMM subdirectories
+      (eg: JAN, FEB, etc) until the SATCOMIN directory moves to /gpfs/hps.
+    - Use local arrays to store month names in various styles instead of 
+      calling util_shared script month_name.sh.  (This eliminates the need
+      to load the util_shared module for jgdas_prep_post).
+    - Removed leading "sh" when invoking gdas_countstat.sh. (safety measure in
+      case the latter is changed to another style script in the future)
+    - Corrected the invocation of prep_step prior to the call of gdascounts_ave.
+    - Added /bin/sh shebang.
+   global_postevents.sh:
+    - Updated to run on Cray-XC40 (as well as IBM iDataPlex).
+      - Environment variable $SITE or getsystem.pl are used to determine if
+        running on Cray-XC40.
+      - If running on Cray-XC40, use aprun to invoke the global_postevents
+        executable.
+    - Changed exit values of 555 (which is out of the acceptable range) to 55
+      to ensure that the parent script sees the intended value.
+    - (Note that this script is not known to be currently used in production)
+
+ Source code changes:
+   build.sh in sorc directory:
+    - Added logic to build on Cray-XC40 such that no change is necessary in
+      the makefiles. (FC exported from build.sh overrides setting in makefiles).
+    - Upgrade from ics/12.1 to ics/16.0.3 for builds on IBM iDataPlex.
+   load_libs.rc in sorc directory:
+    - Modified to handle library module patterns used on WCOSS IBM and Cray.
+    - Added nemsio version number (2.2.2) and module load.
+    - Upgraded w3emc version from 2.2.0 to 2.3.0.
+    - Upgraded bacio version from 2.0.1 to 2.0.2.
+    - Upgraded sigio version from 1.0.1 to 2.0.1.
+    - Added special variable to allow for different versions of sigio or nemsio
+      on Cray vs IBM if needed.
+   setlibs.rc in sorc directory:
+    - Modified to handle library pathnames used on WCOSS IBM and Cray-XC40.
+      (on Cray-XC40, point to libs built with intel compiler)
+    - Added nemsio version number (2.2.2) and var NEMSIO_LIB
+    - Upgraded w3emc version from 2.2.0 to 2.3.0.
+    - Upgraded bacio version from 2.0.1 to 2.0.2.
+    - Upgraded sigio version from 1.0.1 to 2.0.1.
+    - Added special variables to allow for different versions of sigio or nemsio
+      on Cray vs IBM if needed.
+    - Added pointers to 8-byte builds of w3emc, w3nco and bufr libraries
+      (needed by timetwin.fd).
+   README.build in sorc directory:
+    - Reorganized and removed instructions for compiling without build.sh.
+   timetwin.fd (timetwin.f and makefile):
+    - New.  Copied from /nwprod/util/sorc and modified as follows:
+       - timetwin.f: (No changes)
+       - makefile: Use environment variables to point to libraries (with 
+         versions set by load_libs.rc or setlibs.rc).  Added install target,
+         debug options and documentation plus minor cleanup.
+   global_postevents.fd (makefile):
+    - Added variable $NEMSIO_LIB to library list in order to successfully build
+      with the new version of the w3emc library and process nemsio global
+      analysis files.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (global_postevents, timetwin)
+   w3emc   2.3.0 (global_postevents, timetwin) (previously 2.2.0)
+   bufr   11.1.0 (global_postevents, timetwin)
+   bacio   2.0.2 (global_postevents)           (previously 2.0.1)
+   sigio   2.0.1 (global_postevents)           (previously 1.0.1)
+   nemsio  2.2.2 (global_postevents)           (New)
+   sp      2.0.2 (global_postevents)
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v8.0.1.
+   It should be installed on both WCOSS systems (IBM iDataPlex and Cray-XC40)
+   with or prior to obsproc_global.v3.0.0.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.
+
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.3.0 --> released Sep 1, 2016
+                                --> implemented Sep 27, 2016
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/build.sh
+ M obsproc_prep_post/sorc/load_libs.rc
+ M obsproc_prep_post/sorc/README.build
+ M obsproc_prep_post/sorc/setlibs.rc
+ M obsproc_prep_post/ush/gdascounts_archive_pyear.sh
+ M obsproc_prep_post/ush/gdascounts_combine.sh
+ M obsproc_prep_post/ush/gdas_counts.sh
+ M obsproc_prep_post/ush/gdas_countstat.sh
+ M obsproc_prep_post/ush/gdas_summary.sh
+ M obsproc_prep_post/ush/mstr_shp_stn_lst_update.sh
+ M obsproc_prep_post/ush/satellite_summary.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Added "GPSIPW" to the list of PREPBUFR Table A entries (message types) for
+      BUFR messages for which all reports are considered restricted and will be
+      removed.
+      BENEFIT: All U.S.-provided (ENI) reports in message type "GPSIPW" are
+               restricted (although currently not denoted as such) and,if
+               present, are stripped out of the non-restricted PREPBUFR file.
+               Foreign-provided (GNSS) reports in message type "GPSIPW" are non-
+               restricted, but they are currently not encoded into the
+               restricted PREPBUFR files.  If they were, they too would be
+               (incorrectly) stripped out of the non-resticted PREPBUFR file.
+               Currently the interface subroutine to the "gpsipw" dump file (in
+               prepobs_prepdata) does not pass any restriction information over,
+               so all reports coming from the "gpsipw" dump file must be
+               considered as restricted.  Once this is corrected (and U.S.-
+               provided reports are denoted as restricted), "GPSIPW" will be
+               moved to the list of PREPBUFR Table A entries which contain a
+               mixture of restricted and non-rstricted reports.  This will have
+               no affect until non-restricted foreign-provided (GNSS) reports
+               are allowed to be encoded into the PREPBUFR files.
+
+ USH script changes:
+   gdascounts_archive_pyear.sh:
+    - Split imported script variable $ARCHCOM into separate input and output
+      variables $ARCHCOMIN and $ARCHCOMOUT set in parent Job Script. If
+      $ARCHCOMIN .ne. $ARCHCOMOUT files will be copied from
+      $ARCHCOMIN/satcounts to ARCHCOM/satcounts_archive rather than moved.
+      BENEFIT: Allows developer runs to specify a production input location and
+               a local output location.
+   gdascounts_combine.sh:
+    - Split imported script variable $DATCOM1 into separate input and output
+      variables $DATCOM1_IN and $DATCOM1_OUT set in parent Job Script.
+      BENEFIT: Allows developer runs to specify a production input location and
+               a local output location.
+   gdas_counts.sh, gdas_countstat.sh, satellite_summary.sh:
+    - Split imported script variables $SATCOM and $DATCOM into separate input
+      and output variables $SATCOMIN (root to $SATCOMIN_dir) and $SATCOMOUT_dir,
+      and $DATCOMIN (root to $DATCOMIN_dir) and $DATCOMOUT_dir set in parent
+      Job Script.
+      BENEFIT: Allows developer runs to specify a production input location and
+               a local output location.
+   gdas_summary.sh:
+    - Split imported script variables $DATCOM1, $SATCOM and $DATCOM into
+      separate input and output variables $DATCOM1_IN and $DATCOM1_OUT,
+      $SATCOMIN (root to $SATCOMIN_dir, replacing $SATCOM_monsum_base which had
+      been set here) and $SATCOMOUT_dir, and $DATCOMIN (root to $DATCOMIN_dir,
+      replacing $DATCOM_monsum_base which had been set here) and $DATCOMOUT_dir
+      set in parent Job Script.
+      BENEFIT: Allows developer runs to specify a production input location and
+               a local output location.
+   mstr_shp_stn_lst_update.sh:
+    - If input archive directory .ne. output archive directory and there are no
+      files in output archive directory, then if no changes to files, copy them
+      from input archive directory to output archive directory.
+      BENEFIT:  Allows developer runs to populate $VOSarch_OUT even when there
+                are no file changes.
+
+ Source code changes:
+   build.sh in sorc directory:
+    - Increased likelihood of consistent builds by purging currently loaded
+      environment modules and loading specific compiler module.  The
+      default ibmpe module is then loaded for codes that might need it.
+    - Switch from using setlibs.rc to load_libs.rc (which loads library
+      modules).
+    - If environment variable $clobber is exported to this script with value
+      "clobber_no", then the "make clobber" step is skipped. If $clobber not
+      imported, "make clobber" will proceed as before.
+      BENEFIT: This may be useful if one is debugging only one source code
+               within a program with multiple source codes.
+   README.build in sorc directory:
+    - Updated to reflect changes in build.sh (see above).
+    - Added information on cleaning directories (was inadvetently omitted).
+    - Corrected some typos.
+   load_libs.rc in sorc directory:
+    - Increment the bufrlib version from v11.0.1 to v11.1.0.
+   setlibs.rc in sorc directory:
+    - Increment the bufrlib version from v11.0.1 to v11.1.0.
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (global_postevents)
+   w3emc   2.2.0 (global_postevents)
+   bufr   11.1.0 (global_postevents) (previously 11.0.1)
+   bacio   2.0.1 (global_postevents)
+   sigio   1.0.1 (global_postevents)
+   sp      2.0.2 (global_postevents)
+
+   * all libs except sigio are WCOSS phase2 disk (/nwprod2/*) versions
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.4.0.
+   This must be implemented simultaneously with the implementations of:
+      v2.1.0 of obsproc_cdas,
+      v2.0.0 of obsproc_dump_monitor,
+      v2.2.0 of obsproc_dump_post,
+      v2.3.0 of obsproc_global,
+      v2.2.0 of obsproc_nam,
+      v3.7.0 of obsproc_prep,
+      v2.2.0 of obsproc_rap,
+      v1.3.0 of obsproc_shared/bufr_dumplist;
+   but AFTER the implementation of v3.1.0 of obsproc_satingest.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver
+   file is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.2.0 --> released Feb 23, 2016
+                                --> implemented May 11, 2016
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/load_libs.rc
+ M obsproc_prep_post/sorc/setlibs.rc
+ M obsproc_prep_post/ush/gdascounts_archive_pyear.sh
+ M obsproc_prep_post/ush/gdas_countstat.sh
+ M obsproc_prep_post/ush/gdas_summary.sh
+ A obsproc_prep_post/ush/mstr_shp_stn_lst_update.sh
+ A obsproc_prep_post/ush/mstr_shp_stn_lst_update2.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Use NCO-established variables (presumably obtained from modules) to point
+      to prod utilities:
+       - $NDATE from module prod_util (default or specified version, loaded in
+         each network which executes this script in this version of
+         obsproc_prep_post) which replaces executable ndate in non-versioned,
+         horizontal structure utility directory path defined by imported
+         variable $utilexec.
+    - Added variable PROCESS_MASTER_SHIP_STNLST which, when YES, updates the
+      Master Ship Station List based on any information read from the updated
+      VOS ship list from NDBC.
+      BENEFIT: Job JRW1 uses an updated Master Ship Station List to generate
+               marine monthly statistics when it runs at 12z on the first day
+               of the month.
+
+ USH script changes:
+   gdascounts_archive_pyear.sh:
+    - Minor updates to script docblock.
+   gdas_countstat.sh:
+    - Use NCO-established variables (presumably obtained from modules) to point
+      to prod utilities:
+       - ush finddate.sh where prepended-path $PATH from module prod_util
+         (default or specified version, loaded in each network which executes
+         this script in this version of obsproc_prep_post) replaces horizontal
+         structure utility directory path defined by imported variable
+         $utilscript.  Echo full path to finddate.sh to stdout.
+   gdas_summary.sh:
+    - Use NCO-established variables to point to root directories for main
+      software components and input/output directories in order to run on WCOSS
+      Phase 1 or Phase 2:
+       - $COMROOT which replaces hardwire to "/com".
+    - Use NCO-established variables (presumably obtained from modules) to point
+      to prod utilities:
+       - ush finddate.sh where prepended-path $PATH from module prod_util
+         (default or specified version, loaded in each network which executes
+         this script in this version of obsproc_prep_post) replaces horizontal
+         structure utility directory path defined by imported variable
+         $utilscript.  Echo full path to finddate.sh to stdout.
+       - ush month_name.sh where prepended-path $PATH from module
+         util_shared/v1.0.2 (currently only specified version, loaded in each
+         network which executes this script in this version of
+         obsproc_prep_post) replaces horizontal structure utility directory
+         path defined by imported variable $utilscript]. Echo full path to
+         month_name.sh to stdout.
+   mstr_shp_stn_lst_update.sh:
+    - New.  Copies an updated VOS ship list from NDBC and merges the file with
+      a copy of the previous ship_names list.
+   mstr_shp_stn_lst_update2.sh
+    - New.  Updates the "Master Ship Station List" file and the (modified) NDBC
+      active ship list file and copies them both into the archive so they will
+      be ready for tomorrow's run.
+
+ Source code changes:
+   load_libs.rc and setlibs.rc in sorc directory:
+    - Increment the bufrlib version from v10.2.5 to v11.0.1.
+   setlibs.rc in sorc directory:
+    - Point to /nwprod2 copy of all libs managed by NCO except for sigio.
+   (Note: global_postevents hangs in the call to gblevents if compiled with
+          /nwprod2 build of sigio.v2.0.1 and the current build of w3emc.v2.2.0.
+          The latter was compiled with sigio.v1.0.1.  Thus we will stick with
+          /nwprod build of sigio.v1.0.1 for codes that call gblevents until
+          w3emc lib is updated to use the newer sigio lib, or gblevents is
+          moved to another library, or such.)
+
+
+ Output changes:
+ ---------------
+  (For specific network changes see " Output changes" in Release Notes for that
+   network, if that network executes this version of obsproc_prep_post.)
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (global_postevents)
+   w3emc   2.2.0 (global_postevents)
+   bufr   11.0.1 (global_postevents) (previously 10.2.5)
+   bacio   2.0.1 (global_postevents)
+   sigio   1.0.1 (global_postevents)
+   sp      2.0.2 (global_postevents)
+
+   * all libs except sigio are WCOSS phase2 disk (/nwprod2/*) versions
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post should be tested.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v6.1.0.
+   It is expected that this will be implemented simultaneously with the
+   implementation of the FY16Q3 GFS Upgrade bundle on Phase 2.  However, it
+   could go in sooner.  Please note, however, that this must be implemented
+   simultaneously with the implementation of obsproc_global v2.2.0 on either
+   Phase 1 or Phase 2.
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   IMPORTANT 1:  It is expected that at some point PRIOR to this
+                 implementation, Dataflow has promoted the transfer of the
+                 current day's active ship list from NDBC (file activeShipLst)
+                 from /dcomdev/us007003/ndbc/ to /dcom/us007003/ndbc/ .
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   IMPORTANT 2:  In addition, at the same time the utility scripts
+                   /nwprod/util/ush/marine_genstats_akiss.sh  and
+                   /nwprod/util/ush/marine_genstats_allstx.sh
+               which are executed inside /nwprod/jobs/JRW1 at 12z on the first
+               day of each month (to generate, in part, monthly ship statistics
+               over the Gulf of AK and elsewhere, resp.) must be changed such
+               that program /nwprod/util/exec/marine_stats_newstats (which
+               reads the ship names and its monthly old stat file in order to
+               generate the new monthly marine statistics for OPC)
+               reads in the new, daily-updated, Master Ship Station List
+               generated via the changes in obsproc_prep_post v2.2.0.
+               Specifically:
+                 In /nwprod/util/ush/marine_genstats_akiss.sh, change line 57
+                 from:
+                   export FORT11="$FIXhrly/ship_names"
+                 to
+                   export FORT11="${VOSarch_IN:-/com2/arch/prod/VOS}/ship_names
+                 and in /nwprod/util/ush/marine_genstats_allstx.sh, change line
+                 55 from:
+                   export FORT11="$FIXhrly/ship_names"
+                 to
+                   export FORT11="${VOSarch_IN:-/com2/arch/prod/VOS}/ship_names
+               Note that this change to JRW1 is considered as a downstream
+               change to the GFS upgrade and thus avoids the EE requirement for
+               its update.
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver file
+   is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.1.0 --> released May 1, 2015
+                                --> updated Jul 5, 2015
+                                --> implemented Aug 10, 2015
+
+Files added, modified or deleted since last release:
+ A obsproc_prep_post/fix/gdascounts_base.shtml
+ A obsproc_prep_post/fix/gdascounts_avg.awk
+ A obsproc_prep_post/fix/gdascounts_html
+ A obsproc_prep_post/fix/gdascounts_types
+ A obsproc_prep_post/fix/satellite_counts.tbl
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ A obsproc_prep_post/sorc/gdascounts_ave.fd/build_new.f
+ A obsproc_prep_post/sorc/gdascounts_ave.fd/makefile
+ A obsproc_prep_post/ush/build_mainpage.sh
+ A obsproc_prep_post/ush/gdascounts_archive_pyear.sh
+ A obsproc_prep_post/ush/gdascounts_combine.sh
+ A obsproc_prep_post/ush/gdas_counts.sh
+ A obsproc_prep_post/ush/gdas_countstat.sh
+ A obsproc_prep_post/ush/gdas_summary.sh
+ A obsproc_prep_post/ush/satellite_daily.pl
+ A obsproc_prep_post/ush/satellite_html.pl
+ A obsproc_prep_post/ush/satellite_summary.sh
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Removed SENDWEB wrapper around call to gdas_summary.sh so that stats can
+      be computed even if the info won't be posted to the web.
+    - Updated pointers to software that has been imported from /nwprod/util
+      into this package and removed hardwired pointers to the common utils.
+    - Fail immediately if can't find gdas nor gfs prepbufr file for current
+      cycle required to check for TimeTwins.
+    - Set new required variables that may not be passed in from older J-scripts.
+
+ USH script changes:
+   build_mainpage.sh:
+    - New.  Used to generate new main page upon request.
+   gdas_summary.sh:
+    - New.  Copied from /nwprod/util/ush and modified as follows:
+       - Updated pointers to other software likewise imported from /nwprod/util.
+       - Added variables in place of hardwired settings to aid non-prod runs. 
+       - Added option to send html updates to developer web space for developer
+         runs.
+   gdas_countstat.sh:
+    - New.  Copied from /nwprod/util/ush and modified as follows:
+       - Updated pointers to other software likewise imported from /nwprod/util.
+       - Made additional minor changes to reduce unnecessary warnings.
+   satellite_summary.sh:
+    - New.  Copied from /nwprod/util/ush and modified as follows:
+       - Updated pointers to other software likewise imported from /nwprod/util.
+       - Updated the parsing of cosmic/gps info in order to post those counts
+         properly in the stats table.  (The old logic was obsolete following the
+         May 2012 GFS/GDAS upgrade).
+       - Made additional minor changes to reduce unnecessary warnings.
+   gdascounts_combine.sh:
+    - New.  Copied from /nwprod/util/ush and modified as follows:
+        - Added ksh shebang to allow the script to run properly on WCOSS.
+        - Added checks to reduce risk of table corruption if a month is rerun.
+        - Allow for input html file with less than 100 or more than 999 lines.
+        - Add option REBUILD_MAINPAGE to recreate a complete home page.
+   gdas_counts.sh:
+    - New.  Copied from /nwprod/util/ush with minor modifications.
+   gdascounts_archive_pyear.sh, satellite_daily.pl, satellite_html.pl:
+    - New.  Copied from /nwprod/util/ush.
+   
+ Source code changes:
+   gdascounts_ave (build_new.f and makefile):
+    - New.  Copied from /nwprod/util/sorc and modified as follows:
+       - build_new.f: Initialized ob type count variables and corrected a loop
+                      termination parameter.
+       - makefile: Added install target and debug options plus minor cleanup.
+                   Added documentation similar to that in other obsproc managed
+                   makefiles. 
+
+ Fixed file changes:
+   gdascounts_base.shtml:
+    - New.  Used as input to regenerate main page upon request.
+   gdascounts_html:
+    - New.  Copied from /nwprod/util/fix and modified as follows:
+        - % Input values in Conventional Obs table are masked due to
+          innacuracy and ambiguity.
+   gdascounts_avg.awk, gdascounts_types, satellite_counts.tbl:
+    - New.  Copied from /nwprod/util/fix.
+
+
+ Output changes:
+ ---------------
+   This upgrade improves content sent to http://www.nco.ncep.noaa.gov/pmb/nwprod/gdas/
+   by job JGDAS_PREP_POST (in obsproc_global package).
+
+
+ Libraries:
+ ----------
+   w3nco   2.0.6 (global_postevents)
+   w3emc   2.2.0 (global_postevents)
+   bufr   10.2.5 (global_postevents)
+   bacio   2.0.1 (global_postevents)
+   sigio   1.0.1 (global_postevents)
+   sp      2.0.2 (global_postevents)
+
+
+ Build Instructions:
+ -------------------
+   - See sorc/README.build
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   Test J*PREP_POST for any model upgrading to this version. Changes
+   here should only impact obsproc_global/jobs/JGDAS_PREP_POST.
+   To test gdas counts changes, test 18Z JGDAS_PREP_POST.
+   Exact details depend on the timing of the test run. Try:
+     export PDY=$(date -d yesterday +%Y%m%d)
+     export monsummary_dat=$PDY
+     export SATCOM_monsum_base=/com/gfs/prod
+     export DATCOM_monsum_base=/com/arch/prod 
+     export REBUILD_MAINPAGE=YES
+   Contact ObsProc Team for assistance.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v5.0.0.
+   This must be implemented either simultaneously with or after the
+   implementation of:
+      v2.6.0 of obsproc_satingest.
+   This must be implemented simultaneously with the implementations of:
+      v2.0.4 of obsproc_cdas,
+      v3.2.1 of obsproc_dump,
+      v1.2.2 of obsproc_dump_monitor,
+      v2.0.1 of obsproc_dump_post,
+      v2.1.1 of obsprod_global,
+      v2.0.3 of obsproc_nam,
+      v3.5.0 of obsproc_prep,
+      v2.0.3 of obsproc_rap,
+      v2.0.4 of obsproc_rtma,
+      v2.0.4 of obsproc_urma,
+      v1.1.0 of radar_reflectivity_ref2grb,
+      v1.2.0 of obsproc_shared/bufr_dumplist.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver file
+   is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.0.2 --> released Jun 30, 2015
+                                --> implemented Jun 30, 2015
+
+ only change:
+
+ M  obsproc_prep_post/scripts/exprep_post.sh.ecf
+
+( M - modified)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Updated to send the RAP Quality Controlled (QC) non-restricted prepbufr
+      files from WCOSS to NOMADS for http and ftp download.
+
+This release was generated by NCO/PMB.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.0.1 --> released Sep 14, 2014
+                                --> implemented Nov 4, 2014
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/load_libs.rc
+ M obsproc_prep_post/sorc/setlibs.rc
+
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Removed all processing for PROCESS_SATELLITE_COUNTS since 
+      /nwprod/ush/global_satcount.sh is obsolete.
+
+ Source code changes:
+   load_libs.rc and setlibs.rc in sorc directory:
+    - Increment the sp version from v2.0.1 to v2.0.2 to link to the newest
+      operational version of this library.
+   load_libs.rc in sorc directory:
+    - remove "module use -a /nwprod/lib/modulefiles" and
+             "module avail"
+      BENEFIT: No longer needed and can slow down compilation.
+
+
+ Output changes:
+ ---------------
+   No changes. (PROCESS_SATELLITE_COUNTS was previously set to NO in all
+   applicable network PREP_POST jobs.)
+
+
+ Shared Software:
+ ----------------
+    - Source code global_postevents:
+         links to version 2.0.6 of w3nco library
+         links to version 10.2.5 of bufr library
+         links to version 2.2.0 of w3emc library
+         links to version 2.0.1 of bacio library
+         links to version 2.0.2 of sp library (previously version 2.0.1)
+         links to version 1.0.1 of sigio library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post will be part of the parallel-production test of the
+   OBSPROC FY14Q4 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v4.0.0.
+   This must be implemented simultaneously with the implementations of:
+      v1.2.1 of obsproc_dump_monitor,
+      v2.0.2 of obsproc_global, obsproc_nam, obsproc_rap, obsproc_rtma,
+      v2.0.2 of obsproc_urma,
+      v2.3.0 of obsproc_satingest,
+      v3.2.0 of obsproc_dump, obsproc_prep,
+      v1.0.0 of obsproc_dump_alert, radar_reflectivity_mosaic,
+      v1.0.0 of radar_reflectivity_ref2grb,
+      v1.0.1 of obsproc_shared/bufr_avgdata.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver file
+   is not needed.
+
+   Remove /nwprod/ush/global_satcount.sh from production.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+obsproc_prep_post release 2.0.0 --> released May, 5 2014
+                                --> implemented Jun 24, 2014
+
+Initial population of vertical structure.
+
+Files added, modified or deleted since last release:
+ M obsproc_prep_post/scripts/exprep_post.sh.ecf
+ M obsproc_prep_post/sorc/global_postevents.fd/makefile
+ M obsproc_prep_post/sorc/global_postevents.fd/postevents.f
+ A obsproc_prep_post/sorc/build.sh
+ A obsproc_prep_post/sorc/clean.sh
+ A obsproc_prep_post/sorc/install.sh
+ A obsproc_prep_post/sorc/load_libs.rc
+ A obsproc_prep_post/sorc/README.build
+ A obsproc_prep_post/sorc/setlibs.rc
+ M obsproc_prep_post/ush/global_postevents.sh
+  
+( A - added,  M - modified, D - deleted)
+
+
+ Model script changes:
+   exprep_post.sh.ecf:
+    - Environment variable $REMX (complete path to bufr_remorest executable)
+      no longer defaults to /nwprod/exec/bufr_remorest but rather to
+      $EXECobsproc_shared_bufr_remorest/bufr_remorest as bufr_remorest package
+      has been populated into vertical structure.
+    - Modified to change path to ush bufr_remorest.sh from $ushscript_remorest
+      to $USHobsproc_shared_bufr_remorest as bufr_remorest package has been
+      populated into vertical structure.
+
+ USH script changes:
+   global_postevents.sh:
+    - No changes (other than move to vertical structure).
+
+ Source code changes:
+   build.sh in sorc directory:
+    - New. Used to build executable global_postevents in the
+      global_postevents.fd sub-directory of the sorc directory.  Reads either
+      load_libs.rc or setlibs.rc file to point to library version numbers
+      needed by makefile.
+   clean.sh in sorc directory:
+    - New. Used to "make clean" global_postevents.fd sub-directory in the sorc
+      directory (generally after a build).
+   install.sh in sorc directory:
+    - New. Used to install (move) executable global_postevents (after build) in
+      exec directory (assumed to be in same root directory as sorc).
+   load_libs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if setlibs.rc is read.)
+   README.build in sorc directory:
+    - New. Documentation on using build.sh, install.sh and clean.sh.
+   setlibs.rc in sorc directory:
+    - New. Read by build.sh - contains library version numbers needed by
+      makefile.  (Not read if load_libs.rc is read.)
+   global_postevents:
+      gblevents (in w3emc library - version 2.2.0):
+       - The changes in gblevents are not applicable to global_postevents
+         because it runs in the "POSTEVENTS" mode.
+      gblevents:
+       - No change to source.
+    - Makefile modified to use environment variables to point to library
+      version numbers and to add sample build script and info in sorc
+      directory.  This generalizes the library version information.
+
+
+ Output changes:
+ ---------------
+   No changes.
+
+
+ Compute Resource Information:
+ -----------------------------
+   Source code global_postevents:
+    - continues to link to version 2.0.6 of w3nco library
+    - continues to link to version 10.2.5 of bufr library
+    - now links to version 2.2.0 of w3emc library (previously linked to
+      version 2.0.5)
+    - continues to link to version 2.0.1 of bacio library
+    - continues to link to version 2.0.1 of sp library
+    - continues to link to version 1.0.1 of sigio library
+
+
+ Preimplementation Testing Requirements:
+ ---------------------------------------
+   There are no jobs in obsproc_prep_post.  All jobs executing this version of
+   obsproc_prep_post will be part of the parallel-production test of the
+   OBSPROC Phase 2 bundle.
+
+
+ Dissemination:
+ --------------
+   See information about dissemination in the latest release notes for
+   obsproc_<NETWORK> packages which execute this version of obsproc_prep_post.
+
+
+ Special Instructions:
+ ---------------------
+   This is part of OBSPROC.v3.0.0.
+   This must be implemented simultaneously with the implementations of
+   obsproc_dump_monitor.v1.2.0, obsproc_global.v2.0.0, obsproc_nam.v2.0.0,
+   obsproc_rap.v2.0.0, obsproc_rtma.v2.0.0, obsproc_urma.v2.0.0,
+   obsproc_dump.v3.1.0, obsproc_dump_post.v2.0.0, obsproc_prep.v3.0.0,
+   obsproc_satingest.v2.2.0, obsproc_shared/bufr_remorest.v1.0.0 and
+   obsproc_shared/bufr_avgdata.v1.0.0.
+
+   This must also be implemented simultaneously with or immediately after the
+   w3emc_v2.2.0 implementation.
+
+   Since there are no jobs in obsproc_prep_post, an obsproc_prep_post.ver file
+   is not needed.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
