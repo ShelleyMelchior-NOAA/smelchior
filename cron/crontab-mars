@@ -1,0 +1,626 @@
+#/*===================================================================================================================================================================================*/
+##/* Sample crontab entries with best practices:                                                                                                                                       */
+##/*                                                                                                                                                                                   */
+##/* 1. TEST to make sure target script exists BEFORE executing, and                                                                                                                   */
+##/*                                                                                                                                                                                   */
+##/* 2. Be sure to handle STDOUT/STEDERR appropriately.                                                                                                                                */
+##/*                                                                                                                                                                                   */
+##/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+##10 * * * * test -f /gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.ksh && /gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.ksh 1>/gpfs/dell1/ptmp/User.Name/cron/mycronscript-1.log 2>&1
+##20 * * * * test -f /gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.ksh && /gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.ksh 1>/gpfs/dell2/ptmp/User.Name/cron/mycronscript-2.log 2>&1
+##30 * * * * test -f /gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.ksh && /gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.ksh 1>/gpfs/dell3/ptmp/User.Name/cron/mycronscript-3.log 2>&1
+##/*===================================================================================================================================================================================*/
+###
+#############################################################
+# OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
+#############################################################
+##### JMODS trigger to test BUFR marine tanks 
+## started on: 20210907
+## turned off: 20220702
+## ----------------------------
+#30 14 * * * jtyp=mods cyc=14 PDY=`date +\%Y\%m\%d` desc=bufrmarine bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jmods.ph3.lsf.bufrmarine > /dev/null 2>&1
+###
+##### JCDAS_DUMP trigger for prod para 
+## started on: 20210615
+## turned off: 
+## -----------------------------
+#10 16,22 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf.prod > /dev/null 2>&1
+#10 04,10 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf.prod > /dev/null 2>&1
+###
+##### jglobal_dump + jglobal_prep trigger for dumping subpfl data and including in nsstbufr
+## started on: 20210409
+## turned off: 20220702
+## -----------------------------
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=subpfl bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.subpfl > /dev/null 2>&1
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=subpfl bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.subpfl > /dev/null 2>&1
+####
+##### JNAM_DUMP trigger for prod para
+## started on: 20200701
+## turned off: 20220702
+## -----------------------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger for port to Dell-p3
+## started on: 20190708
+## turned off: 20220702           -- ph1 dcom gone
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf > /dev/null 2>&1
+##08 0 * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=Dell-p3-ph1dcom bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.ph1-dcom > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf > /dev/null 2>&1
+###
+### JRAP_DUMP trigger to test WCOSS2 architecture
+# started on: 20210830
+# turned off: 20220702
+# -----------------------------
+#00 7,19 * * * jtyp=rap_p cyc=`date --date='-4 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date='-3 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#00 9,21 * * * jtyp=rap_p cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#---
+#26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_e_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#---
+#26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+#---
+#58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JCDAS_DUMP trigger to test WCOSS2 architecture 
+## started on: 20210827
+## turned off: 20220702
+## -----------------------------
+#10 16,22 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.wc2.lsf > /dev/null 2>&1
+#10 04,10 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JNAM_DUMP trigger to test WCOSS-2 architecture 
+## started on: 20210827
+## turned off: 20220702
+## -----------------------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JMODS trigger to test WCOSS-2 architecture 
+## started on: 20210827
+## turned off: 20220702
+## ----------------------------
+#30 14 * * * jtyp=mods cyc=14 PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jmods.wc2.lsf > /dev/null 2>&1
+###
+### JGLOBAL_* trigger to test WCOSS-2 architecture 
+# started on: 20210612
+# turned off: 20220702
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.wc2.lsf > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JDUMP_MONITOR trigger to test WCOSS-2 architecture
+## started on: 20210825
+## turned off: 20220702
+## -----------------------------
+#30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jdump_monitor.wc2.lsf > /dev/null 2>&1
+###
+##### JURMA_DUMP trigger to test WCOSS2 architecture 
+## started on: 20210825
+## turned off: 20220702
+## -----------------------------
+#30 6-23 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.wc2.lsf > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger for port to WCOSS-2 
+## started on: 20210811
+## turned off: 20220702
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.wc2.lsf > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.wc2.lsf > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.wc2.lsf > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.wc2.lsf > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=wc2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.wc2.lsf > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger for 3D RTMA
+## started on: 20210406
+## turned off: 20220702
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=3d bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.3d > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=3d bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.3d > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=3d bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.3d > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=3d bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.3d > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=3d bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.3d > /dev/null 2>&1
+####
+##### JRTMA_DUMP trigger for prod para 
+## started on: 20210326
+## turned off: 20220702
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+####
+### JGLOBAL_* trigger for prod para
+# started on: 20192018
+# turned off: 20220702
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.prod > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.prod > /dev/null 2>&1
+###
+# Submit WAM hourly global GDAS DUMPS at GDAS T+05:50 cut-off time (most types dumped over +/- 0.5 hour time window) (requested by SWPC)
+# started on: 20200225
+# turned off: 20220702
+# -----------------------------
+#50 * * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=WAM bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.WAM > /dev/null 2>&1
+###
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
+## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
+## started on: 20200220
+## turned off: 20220702
+## -----------------------------
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.hrly > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.hrly2 > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.hrly3 > /dev/null 2>&1
+###
+###### JGLOBAL_DUMP_POST trigger for making 48-hour old aircft and aircar dumps which are 100% non-restricted.
+###### JGLOBAL_PREP_POST trigger for making 48-hour old prepbufr files which are 100% non-restricted.
+###### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
+###### Kate Friedman is archiving in GDA.
+## started on: 20200129
+## turned off: 20220702
+## -----------------------------
+#52 07 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gdas 00 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gdas.`date +\%Y\%m\%d`.00.out
+#07 08 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gdas 00 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gdas.`date +\%Y\%m\%d`.00.out
+#53 07 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gfs 00 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gfs.`date +\%Y\%m\%d`.00.out
+#08 08 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gfs 00 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gfs.`date +\%Y\%m\%d`.00.out
+#52 13 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gdas 06 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gdas.`date +\%Y\%m\%d`.06.out
+#07 14 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gdas 06 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gdas.`date +\%Y\%m\%d`.06.out
+#53 13 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gfs 06 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gfs.`date +\%Y\%m\%d`.06.out
+#08 14 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gfs 06 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gfs.`date +\%Y\%m\%d`.06.out
+#52 19 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gdas 12 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gdas.`date +\%Y\%m\%d`.12.out
+#07 20 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gdas 12 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gdas.`date +\%Y\%m\%d`.12.out
+#53 19 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gfs 12 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gfs.`date +\%Y\%m\%d`.12.out
+#08 20 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gfs 12 `date +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gfs.`date +\%Y\%m\%d`.12.out
+#52 01 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gdas 18 `date --date='-1 day' +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gdas.`date --date='-1 day' +\%Y\%m\%d`.18.out
+#07 02 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gdas 18 `date --date='-1 day' +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gdas.`date --date='-1 day' +\%Y\%m\%d`.18.out
+#53 01 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_DUMP_POST-ph3/trigger.sh gfs 18 `date --date='-1 day' +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/DUMP_POST/gfs.`date --date='-1 day' +\%Y\%m\%d`.18.out
+#08 02 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/DKcrons/GBL_PREP_POST-ph3/trigger.sh gfs 18 `date --date='-1 day' +\%Y\%m\%d` &> /gpfs/dell2/stmp/Shelley.Melchior/CRON/PREP_POST/gfs.`date --date='-1 day' +\%Y\%m\%d`.18.out
+###
+### Run monthly marine data archive
+# started on: 06/28/2021
+# turned off: 07/02/2022
+# -----------------------------
+#07 11 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/ush/mdat > /gpfs/dell2/ptmp/Shelley.Melchior/mdat.`date +\%Y\%m\%d`.log 2>&1
+###
+### Make sure /gpfs/dell2/stmp/Shelley.Melchior/CRON is present via a mkdir every 10 minutes throughout the day ###
+# -----------------------------
+#00,10,20,30,40,50 * * * * mkdir -p /gpfs/dell2/stmp/Shelley.Melchior/CRON > /dev/null 2>&1
+###
+### GrADS plots for tank counts
+# started on: 02/13/2020
+# turned off: 07/02/2022
+#08 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/misc/plot_dumps/driver_plot_tnk_cnts.ph3 > /gpfs/dell2/ptmp/Shelley.Melchior/plot_tnkcnts/driver.log 2>&1
+###
+### ObsProc File Listing ###
+# started on: 11/28/2018
+# turned off: 07/02/2022
+# normal operating time: 1205 (server is UTC)
+# -----------------------------
+#05 12 * * 2-6 /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/crons/VS/driver > /dev/null 2>&1
+###
+### GrADS plot for tanks contents: b000, b001, b002, b004, etc ...
+# started on 02/07/2020
+# turned off: 07/02/2022
+# normal operating time: 1106 (server is UTC)
+#06 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/misc/plot_dumps/driver_plot_dumps_grads.ph3 > /gpfs/dell2/ptmp/Shelley.Melchior/plot_dumps/driver.log 2>&1
+###
+##### JURMA_DUMP trigger to test BUFR format ship + cman data 
+## started on: 20210616
+## turned off: 20210915
+## -----------------------------
+#30 6-23 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.shipsb > /dev/null 2>&1
+###
+##### JCDAS_DUMP trigger to test BUFR format ship + cman data
+## started on: 20210615
+## turned off: 20210914
+## -----------------------------
+#10 16,22 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#10 04,10 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf.shipsb > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger to test BUFR format ships and cman data 
+## started on: 20210326
+## turned off: 20210914
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=shipsb-tideg bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.shipsb-tideg > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=shipsb-tideg bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.shipsb-tideg > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=shipsb-tideg bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.shipsb-tideg > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=shipsb-tideg bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.shipsb-tideg > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=shipsb-tideg bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.shipsb-tideg > /dev/null 2>&1
+####
+### JGLOBAL_* trigger for shipsb T2B 
+# started on: 20210612
+# turned off: 20210912
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.shipsb > /dev/null 2>&1
+###
+##### JNAM_DUMP trigger to test BUFR format ships + cman data
+## started on: 20210615
+## turned off: 20210827
+## -----------------------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=shipsb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.shipsb > /dev/null 2>&1
+###
+### JGLOBAL_PREP trigger to address aircft prod failure
+# started on: 20210813
+# turned off: 20210818 
+# ------------------------------
+#57 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=pf bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_prep.ph3.lsf.prod-failure
+#59 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=pf bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_prep.ph3.lsf.prod-failure
+###
+##### dumpjb_adpsfc.sh + jglobal_prep trigger for dupsyp bug correction 
+## started on: 20210218
+## turned off: 20210615
+## -----------------------------
+#50 5,11,17,23 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_adpsfc.sh $(date --date='-5 hours' +\%H) gdas > /dev/null 2>&1
+#47 2,8,14,20 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_adpsfc.sh $(date --date='-2 hours' +\%H) gfs > /dev/null 2>&1
+###
+##### JNAM_DUMP trigger for commercial gpsro
+## started on: 20210115 (for 20210112 12Z catch up cycle)
+## turned off: 20210615
+## -----------------------------
+#10 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm06 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#14 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm05 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#18 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm04 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#22 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm03 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#26 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm02 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#30 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm01 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+#34 00 * * * jtyp=nam cyc=12 PDY=20210112 tmmark=tm00 desc=gpsro-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf.gpsro > /dev/null 2>&1
+###
+### JGLOBAL_* trigger for prod para to test enhanced EPRM
+# started on: 20210517
+# turned off: 20210520
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.eprm > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.eprm > /dev/null 2>&1
+###
+### JGLOBAL_* trigger to test obspoc_* support for GFSv16 and GFSv15.2
+# started on: 20200219
+# turned off: 20210517
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16 > /dev/null 2>&1
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16-atmos bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16-atmos > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16 > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16-atmos bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16-atmos > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger to test BUFR format synoptic and buoy data + GFSv16 + dump patch
+## started on: 20201021
+## turned off: 20210517 
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=T2B-dump-patch bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.T2B.dump-patch > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=T2B-dump-patch bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.T2B.dump-patch > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=T2B-dump-patch bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.T2B.dump-patch > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=T2B-dump-patch bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.T2B.dump-patch > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=T2B-dump-patch bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.T2B.dump-patch > /dev/null 2>&1
+###
+##### JURMA_DUMP trigger to test prod vs enhanced EPRM 
+## started on: 20210329
+## turned off: 20210420
+## -----------------------------
+#30 6-23 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.prod > /dev/null 2>&1
+#30 6-23 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.eprm > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.prod > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf.eprm > /dev/null 2>&1
+###
+##### JRTMA_DUMP trigger for prod sdmedit vs ballooned sdmedit 
+## started on: 20210329
+## turned off: 20210406
+## -----------------------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.eprm > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.eprm > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.eprm > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.eprm > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.prod > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=eprm bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrtma_dump.ph3.lsf.eprm > /dev/null 2>&1
+###
+### JRAP_* trigger for prod: dump + dump_post + prep + prep_post
+### JRAP_* trigger for dev: dump to test mtiasi (MetOp-C IASI all FOVs/FORs) 
+# started on: 20190305
+# turned off: 20210326
+# -----------------------------
+#05 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf > /dev/null 2>&1
+#05 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_mtiasi bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.mtiasi > /dev/null 2>&1
+#---
+#05 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf > /dev/null 2>&1
+#05 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_mtiasi bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.mtiasi > /dev/null 2>&1
+#05 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf > /dev/null 2>&1
+#05 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_mtiasi bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.mtiasi > /dev/null 2>&1
+#---
+#37 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf > /dev/null 2>&1
+#37 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_mtiasi bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.mtiasi > /dev/null 2>&1
+###
+### JRAP_DUMP trigger for Haidao Lin at GSD to support RAPv5
+# GTS DB: crisdb, atmsdb, iasidb; crisf4; gsrasr, gsrcsr; satwnd (include 005030, 005031, 005032, 005034, 005039)
+# started on: 20190305
+# turned off: 20210326
+# -----------------------------
+#00 7,19 * * * jtyp=rap_p cyc=`date --date='-4 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date='-3 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#00 9,21 * * * jtyp=rap_p cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#---
+#26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_e_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#---
+#26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+#---
+#58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb > /dev/null 2>&1
+###
+##### JDUMP_MONITOR trigger to test new meteosat tanks
+## started on: 20200902
+## turned off: 20210326
+## -----------------------------
+#30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=meteosat bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jdump_monitor.ph3.lsf.meteosat > /dev/null 2>&1
+###
+### JRAP_DUMP trigger for Haidao Lin at GSD to support RAPv5 --- !! devonprod !! ---
+# GTS DB: crisdb, atmsdb, iasidb; crisf4; gsrasr, gsrcsr; satwnd (include 005030, 005031, 005032, 005034, 005039)
+# started on: 20190305
+# turned off: 20210326
+# -----------------------------
+#00 7,19 * * * jtyp=rap_p cyc=`date --date='-4 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date='-3 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#00 9,21 * * * jtyp=rap_p cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=rap_p_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#---
+#26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_e_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#---
+#26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+#---
+#58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=rap_dump_GTSdb-prod bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jrap_dump.ph3.lsf.GTSdb.devonprod > /dev/null 2>&1
+###
+##### dumpjb_gpsro.sh trigger for commercial GPS-RO data to support GFSv16.1 para during dev outage+CWD
+## started on: 20210317
+## turned off: 20210326
+## -----------------------------
+#50 5,11,17,23 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_gpsro.sh $(date --date='-5 hours' +\%H) gdas > /dev/null 2>&1
+#47 2,8,14,20 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_gpsro.sh $(date --date='-2 hours' +\%H) gfs > /dev/null 2>&1
+###
+##### JMODS trigger to test bufrlib v11.3.0
+## started on: 20201106
+## turned off: 20210109
+## ----------------------------
+#30 14 * * * jtyp=mods cyc=14 PDY=`date +\%Y\%m\%d` desc=blib bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jmods.ph3.lsf > /dev/null 2>&1
+###
+### JGLOBAL_DUMP trigger to test BUFR format synoptic and buoy data
+# started on: 20200623
+# turned off: 20201104
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=T2B bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.T2B > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=T2B bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.T2B > /dev/null 2>&1
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=T2B-DEBUG bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.T2B-DEBUG > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=T2B-DEBUG bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.T2B-DEBUG > /dev/null 2>&1
+###
+### dumpjb for adpsfc tanks (synop*) ###
+# started on  20200206
+# turned off: 20201023
+# normal operating time 1103 (server is UTC)
+# -----------------------------
+#03 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/tac2bufr_monitor/trigger_dumpjb_synop.ph3 > /dev/null 2>&1
+###
+##### JNAM_PREP trigger for netcdf history files encoded in prepbufr
+## started on: 20200613
+## turned off: 20200921
+## -----------------------------
+#26 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#23 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#49 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#09 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#08 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#38 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#31 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#49 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#09 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#08 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#38 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+#31 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_prep.ph3.lsf.GFSv16 > /dev/null 2>&1
+###
+#### JNAM_DUMP trigger for mtiasi (SAID=5), lgycld (SAID=271), and nonxrd (002018) 
+## started on: 20200306
+## turned off: 20200817
+## -----------------------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=mtiasi-lgycld-vadwnd bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+###
+### dumpjb_crsfdb for GFSv15.2
+# started on: 20200408
+# turned off: 20200519
+# -----------------------------
+#47 2,8,14,20 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_crsfdb.sh `date --date='-2 hours' +\%H` gfs > /gpfs/dell2/stmp/Shelley.Melchior/gfs.crsfdb.`date +\%Y\%m\%d`.`date --date='-2 hours' +\%H`.out 2>&1
+#50 5,11,17,23 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_crsfdb.sh `date --date='-5 hours' +\%H` gdas > /gpfs/dell2/stmp/Shelley.Melchior/gdas.crsfdb.`date +\%Y\%m\%d`.`date --date='-5 hours' +\%H`.out 2>&1
+###
+###### JCDAS_DUMP trigger for port to Dell-p3
+## started on: 20190910
+## turned off: 20200311
+## -----------------------------
+#10 16,22 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date +\%Y\%m\%d` desc=Dell-trial bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf > /dev/null 2>&1
+#10 04,10 * * * jtyp=cdas cyc=`date --date='-16 hour' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=Dell-trial bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jcdas_dump.ph3.lsf > /dev/null 2>&1
+###
+### JGLOBAL_DUMP trigger to support GFSv16
+# started on: 20191212
+# turn off: 20200219
+# -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16 > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=GFSv16 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf.GFSv16 > /dev/null 2>&1
+###
+###### JAIRNOW_DUMP trigger for port to Dell-p3
+## started on: 20191218
+## turned off:
+## -----------------------------
+#00 21 * * * jtyp=airnow cyc=12 PDY=`date +\%Y\%m\%d` desc=Dell bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jairnow_dump.ph3.lsf > /dev/null 2>&1
+###
+#### Generate dbuoyb and mbuoyb bufr dump files to be cat'd into nsstbufr file; POC = Xu Li
+## started on: 20190116
+## turned off: 20191209
+## normal operating time: 00Z 06Z 12Z 18Z for GDAS and GFS
+## -----------------------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date='-2 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=dump-prep-cron bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date='-5 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=dump-prep-cron bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jglobal_dump.ph3.lsf > /dev/null 2>&1
+###
+#### dumpjb_nexrad.sh -- to produce sample NAM nexrad dump files for evaluation
+## started on: 20190920 on dev
+## turned off: 20190923 on dev
+## -----------------------------
+#18 0,6,12,18 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date +\%H` nam 01 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#15 1,7,13,19 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='-1 hour' +\%H` nam 00 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#41 3,9,15 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+3 hours' +\%H` nam 06 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#01 4,10,16 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+2 hours' +\%H` nam 05 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#00 4,10,16 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+2 hours' +\%H` nam 04 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#30 4,10,16 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+2 hours' +\%H` nam 03 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#23 5,11,17 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+1 hour' +\%H` nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#23 5,11,17 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh `date --date='+1 hour' +\%H` nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#41 21 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh 00 nam 06 `date --date='+1 day' +\%Y\%m\%d` > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#01 22 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh 00 nam 05 `date --date='+1 day' +\%Y\%m\%d` > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#00 22 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh 00 nam 04 `date --date='+1 day' +\%Y\%m\%d` > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#30 22 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh 00 nam 03 `date --date='+1 day' +\%Y\%m\%d` > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+#23 23 * * * /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_nexrad.sh 00 nam 02 `date --date='+1 day' +\%Y\%m\%d` > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_nexrad_nam.out 2>&1
+###
+### dumpjb_satwnd_1bamua_1bmhs.sh -- to produce global dump files from NCO SPA para of obsproc_satingest.v3.8.3
+## started on: 20190910 on prod (mars)
+## turned off: 20190917
+## -----------------------------
+#46 02 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 00 gfs > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_00_gfs.out 2>&1 
+#50 05 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 00 gdas > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_00_gdas.out 2>&1 
+#47 08 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 06 gfs > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_06_gfs.out 2>&1 
+#50 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 06 gdas > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_06_gdas.out 2>&1 
+#46 14 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 12 gfs > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_12_gfs.out 2>&1 
+#50 17 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 12 gdas > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_12_gdas.out 2>&1 
+#47 20 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 18 gfs > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_18_gfs.out 2>&1 
+#50 23 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_satwnd_1bamua_1bmhs.sh 18 gdas > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_satwnd_1bamua_1bmhs_18_gdas.out 2>&1 
+###
+#### JNAM_DUMP trigger for port to Dell-p3
+## started on: 20190614
+## turned off: 20190826
+## -----------------------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date='-1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date='+3 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date='+2 hours' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date='+1 hour' +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm06 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm05 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm04 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm03 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date='+1 day' +\%Y\%m\%d` tmmark=tm02 desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jnam_dump.ph3.lsf > /dev/null 2>&1
+###
+##### JURMA_DUMP trigger for port to Dell-p3
+## started on: 20190709
+## turned off: 20190822
+## -----------------------------
+#30 6-23 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date='-6 hours' +\%H` PDY=`date --date='-1 day' +\%Y\%m\%d` desc=Dell-p3 bash -l /u/Shelley.Melchior/bin/cycbsub /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/jobs/jurma_dump.ph3.lsf > /dev/null 2>&1
+###
+### dumpjb for METOP-C AMSUA and MHS data
+# started on: NAM, RAP - 4/12/19
+# turned off: NAM - 4/17/19; RAP - 5/1/19
+# ---NAM-----------------------
+#20 00 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 01 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_01.out 2>&1
+#17 01 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 00 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_00.out 2>&1
+#43 03 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 06 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_06.out 2>&1
+#03 04 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 05 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_05.out 2>&1
+#02 04 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 04 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_04.out 2>&1
+#32 04 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 03 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_03.out 2>&1
+#25 05 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_02.out 2>&1
+#20 06 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 01 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_01.out 2>&1
+#17 07 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 nam 00 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_nam_00.out 2>&1
+#43 09 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 06 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_06.out 2>&1
+#03 10 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 05 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_05.out 2>&1
+#02 10 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 04 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_04.out 2>&1
+#32 10 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 03 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_03.out 2>&1
+#25 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_02.out 2>&1
+#20 12 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 01 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_01.out 2>&1
+#17 13 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 nam 00 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_nam_00.out 2>&1
+#43 15 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 06 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_06.out 2>&1
+#03 16 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 05 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_05.out 2>&1
+#03 16 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 04 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_04.out 2>&1
+#32 16 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 03 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_03.out 2>&1
+#25 17 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_02.out 2>&1
+#20 18 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 01 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_01.out 2>&1
+#17 19 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 nam 00 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_nam_00.out 2>&1
+#43 21 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 06 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_06.out 2>&1
+#03 22 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 05 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_05.out 2>&1
+#02 22 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 04 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_04.out 2>&1
+#32 22 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 03 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_03.out 2>&1
+#25 23 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 nam 02 > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_nam_02.out 2>&1
+# ---RAP-----------------------
+#58 00 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 00 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_00_rap.out 2>&1
+#26 01 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 01 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_01_rap.out 2>&1
+#26 02 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 02 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_02_rap.out 2>&1
+#26 03 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 03 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_03_rap.out 2>&1
+#26 04 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 04 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_04_rap.out 2>&1
+#26 05 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 05 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_05_rap.out 2>&1
+#26 06 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 06 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_06_rap.out 2>&1
+#26 07 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 07 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_07_rap.out 2>&1
+#26 08 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 08 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_08_rap.out 2>&1
+#26 09 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 09 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_09_rap.out 2>&1
+#26 10 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 10 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_10_rap.out 2>&1
+#26 11 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 11 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_11_rap.out 2>&1
+#58 12 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 12 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_12_rap.out 2>&1
+#26 13 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 13 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_13_rap.out 2>&1
+#26 14 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 14 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_14_rap.out 2>&1
+#26 15 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 15 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_15_rap.out 2>&1
+#26 16 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 16 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_16_rap.out 2>&1
+#26 17 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 17 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_17_rap.out 2>&1
+#26 18 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 18 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_18_rap.out 2>&1
+#26 19 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 19 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_19_rap.out 2>&1
+#26 20 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 20 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_20_rap.out 2>&1
+#26 21 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 21 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_21_rap.out 2>&1
+#26 22 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 22 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_22_rap.out 2>&1
+#26 23 * * * bash -l /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/ush/dumpjb_1bamua_1bmhs.sh 23 rap > /gpfs/dell2/stmp/Shelley.Melchior/dumpjb_1bamua_1bmhs_23_rap.out 2>&1
