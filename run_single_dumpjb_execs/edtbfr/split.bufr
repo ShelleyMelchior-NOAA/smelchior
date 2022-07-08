@@ -1,0 +1,172 @@
+set -x
+
+test $# -ne 2 && exit
+
+# Set up $DATA based on this server
+dir=edtbfr/split.bufr_X             # for when this program is run in conjunction with edtbfr
+this_srvr=$(hostname -s | cut -c1)
+if [ "$this_srvr" = "g" ]; then     # WCOSS gyre
+  DATA=/stmpp1/$USER/$dir
+elif [ "$this_srvr" = "t" ]; then   # WCOSS tide
+  DATA=/stmpp1/$USER/$dir
+elif [ "$this_srvr" = "l" ]; then   # Cray luna
+  DATA=/gpfs/hps/stmp/$USER/$dir
+elif [ "$this_srvr" = "s" ]; then   # Cray surge
+  DATA=/gpfs/hps/stmp/$USER/$dir
+else
+  echo "Unknown server!"
+  exit
+fi
+
+mkdir -p $DATA
+cd $DATA
+err=$?
+
+# determine system/phase
+module load prod_util
+sys_tp=$(getsystem.pl -tp)
+echo $sys_tp
+
+module purge
+
+case $sys_tp in
+ Cray-XC40)
+   module load PrgEnv-intel;
+   module load craype-sandybridge;
+   module swap intel/16.3.210;
+   lib_build="intel";
+   export FC=ftn;
+   ;;
+ IBM-p1|IBM-p2)
+   module load ics/12.1;
+   ;;
+ *) echo unexpected system.  Update for $sys_tp;;
+esac
+
+#####[ "$err" -eq '0' ]  && rm *
+
+#######################################################################
+
+set +x
+cat <<inputEOF > source.f
+
+C-----------------------------------------------------------------------
+C  MAIN PROGRAM SPLIT.BUFR
+C
+C  THIS CODE WILL COPY ALL UNIQUE MESSAGE TYPES FROM AN INPUT BUFR
+C  FILE (DUMP OR PREPBUFR) TO SEPARATE OUTPUT FILES (SPLITS IT UP)
+C
+C-----------------------------------------------------------------------
+ 
+      CHARACTER*20 FILNAME
+      CHARACTER*8  SUBSET,SUBSET_LAST(30)
+      DIMENSION  IRECO(51:80),ISUBO(51:80)
+      LOGICAL    NEW
+ 
+      DATA  IUNITI/11/,IRECI/0/,IRECO/30*0/
+      DATA  SUBSET_LAST/30*'XXXXXXXX'/
+
+C  OPEN INPUT BUFR FILE - READ IN DICTIONARY MESSAGES
+C   (TABLE A, B, D ENTRIES)
+ 
+      CALL DATELEN(10)
+      CALL OPENBF(IUNITI,'IN',IUNITI)
+      PRINT 100, IUNITI
+  100 FORMAT(/5X,'===> BUFR DATA SET IN UNIT',I3,' SUCCESSFULLY',
+     $ ' OPENED FOR INPUT; FIRST MESSAGE CONTAINS BUFR TABLES A,B,D'/)
+
+   10 CONTINUE
+ 
+C READ IN NEXT INPUT DATA MESSAGE
+ 
+      CALL READMG(IUNITI,SUBSET,IDATE,IRET)
+      IF(IRET.NE.0)  GO TO 99
+      CALL UFBCNT(IUNITI,IRECI,ISUB)
+      PRINT 102, IRECI,SUBSET,IDATE
+  102 FORMAT(/5X,'===> READ IN BUFR DATA MESSAGE NUMBER ',I5,' -- ',
+     $ 'TABLE A ENTRY IS "',A8,'" AND DATE IS',I11/)
+      NEW=.TRUE.
+      DO II=1,30
+         IF(SUBSET.EQ.SUBSET_LAST(II))  THEN
+            IUNIT_OUT=50+II
+            NEW=.FALSE.
+            EXIT
+         ELSE  IF(SUBSET_LAST(II).EQ.'XXXXXXXX')  THEN
+            IUNIT_OUT=50+II
+            SUBSET_LAST(II) = SUBSET
+            EXIT
+         END IF
+      END DO
+
+      IF(NEW)  THEN
+         FILNAME='${2}'//'_'//SUBSET
+         OPEN(UNIT=IUNIT_OUT,FILE=FILNAME,STATUS='NEW',
+     $    FORM='UNFORMATTED')
+         CALL OPENBF(IUNIT_OUT,'OUT',IUNITI)
+         PRINT 101, IUNIT_OUT,FILNAME
+  101    FORMAT(/5X,'===> BUFR DATA SET IN UNIT',I3,
+     $    ' (FILE "',A,'") SUCCESSFULLY OPENED FOR OUTPUT'/)
+      END IF
+
+      CALL COPYMG(IUNITI,IUNIT_OUT)
+      CALL UFBCNT(IUNIT_OUT,IRECO(IUNIT_OUT),ISUBO(IUNIT_OUT))
+      PRINT 103, SUBSET,IDATE,IUNIT_OUT,IRECO(IUNIT_OUT)
+  103 FORMAT(/5X,'---> COPIED THIS MSG W/ ENTRY "',A8,'" &',
+     $ ' DATE ',I11,' TO OUTPUT UNIT',I3,' - NO. OF BUFR MSGS ',
+     $ 'WRITTEN TO THIS UNIT SO FAR: ',I5/)
+
+      GO TO 10
+
+   99 CONTINUE
+ 
+C ALL MESSAGES IN WORKING BUFR FILE HAVE BEEN EXAMINED AND WRITTEN
+
+      IRECOT = 0
+      DO I = 51,80
+         IRECOT = IRECOT + IRECO(I)
+      ENDDO
+
+      PRINT 3030, IRECI,IRECOT
+ 3030 FORMAT(/10X,'==> ALL BUFR MESSAGES READ IN: TOTAL ',
+     $ 'NUMBER OF DATA MESSAGES IN INPUT BUFR FILE IS:',I5//
+     $ 39X,': TOTAL NUMBER OF DATA MESSAGES WRITTEN TO OUTPUT BUFR',
+     $ ' FILES IS:',I5//)
+
+      STOP
+
+      END
+
+inputEOF
+set -x
+#######################################################################
+
+w3nco_ver=v2.0.6
+bufr_ver=v11.1.0
+W3NCO_LIB4=/gpfs/hps/nco/ops/nwprod/lib/w3nco/${w3nco_ver}/${lib_build}/libw3nco_${w3nco_ver}_4.a
+BUFR_LIB4=/gpfs/hps/nco/ops/nwprod/lib/bufr/${bufr_ver}/${lib_build}/libbufr_${bufr_ver}_4_64.a
+#LIBS=$W3NCO_LIB4 $BUFR_LIB4
+
+#ifort -c -O2 -convert big_endian -list -auto source.f
+$FC -O2 -convert big_endian -g -traceback -c -o source.o source.f
+
+#ifort source.o -L/nwprod/lib -lw3nco_4 -lbufr_v10.2.3_4_64 -o source.x
+$FC -o source.x source.o $W3NCO_LIB4 $BUFR_LIB4
+
+rm fort.*
+ln -sf $1          fort.11
+time -p ./source.x >split.bufr.out 2> errfile
+
+err=$?
+
+cat errfile >> split.bufr.out
+
+if test "$err" -ne '0'
+then
+     echo "split.bufr failed - abnormal stop"
+
+else
+     echo "split.bufr successful - all done"
+fi
+##cat split.bufr.out
+
+rm fort.*
