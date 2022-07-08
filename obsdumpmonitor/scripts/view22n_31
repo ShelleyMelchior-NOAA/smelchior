@@ -1,0 +1,129 @@
+## view22n_31 ##
+## Determine prod vs dev machine ##
+## too many levels in adpupa listing  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine"
+   echo " "
+fi
+
+if [ $mach = prod ]; then
+
+  echo " "
+  echo "+++++++++++++++++++++++"
+  echo " "
+
+  echo " ===> Check for too many levels in ADPUPA listing (prod machine only)"
+  echo " "
+
+  LAST_COMOUT_DATE_6=00000000
+  [ -s $HOME/LAST_COMOUT_DATE_6 ] && LAST_COMOUT_DATE_6=`cat $HOME/LAST_COMOUT_DATE_6`
+  cwd=`pwd`
+  if [ -d /com2/nam/$mach/nam.* ]; then
+    cd /com2/nam/$mach
+  else
+    cd /com/nam/$mach
+  fi
+  for ndir in `ls -d nam.*[0-9]` ; do
+    ndir_1=`echo $ndir | cut -f2 -d"."`
+    if [ -d /com2/nam/$mach/nam.* ]; then
+      cd /com2/nam/$mach
+    else
+      cd /com/nam/$mach
+    fi
+    [ $ndir_1 -lt $LAST_COMOUT_DATE_6 ]  && continue
+    cd $ndir
+    LAST_COMOUT_DATE_6=`/nwprod/util/exec/ndate -24 ${ndir_1}00`
+    LAST_COMOUT_DATE_6=`echo $LAST_COMOUT_DATE_6 | cut -c1-8`
+    echo $LAST_COMOUT_DATE_6 > $HOME/LAST_COMOUT_DATE_6
+    echo
+    echo `pwd`:
+    for n in `ls *adpupa*list*`; do
+      grep -l "limit has already been reached" $n
+      grep -e "limit has already been reached" $n
+    done
+  done
+  cd $cwd
+  LAST_COMOUT_DATE_7=00000000
+  [ -s $HOME/LAST_COMOUT_DATE_7 ] && LAST_COMOUT_DATE_7=`cat $HOME/LAST_COMOUT_DATE_7`
+  cwd=`pwd`
+  wc=`ls -d /com2/gfs/$mach/gfs.*[0-9] | wc -l`
+  if [ $wc -gt 0 ]; then
+    cd /com2/gfs/$mach
+  else
+    cd /com/gfs/$mach
+  fi
+  for ndir in `ls -d gfs.*[0-9]` ; do
+    ndir_1=`echo $ndir | cut -f2 -d"."`
+    wc=`ls -d /com2/gfs/$mach/gfs.* | wc -l`
+    if [ $wc -gt 0 ]; then
+      cd /com2/gfs/$mach
+    else
+      cd /com/gfs/$mach
+    fi
+    [ $ndir_1 -lt $LAST_COMOUT_DATE_7 ]  && continue
+    cd $ndir
+    LAST_COMOUT_DATE_7=`/nwprod/util/exec/ndate -24 ${ndir_1}00`
+    LAST_COMOUT_DATE_7=`echo $LAST_COMOUT_DATE_7 | cut -c1-8`
+    echo $LAST_COMOUT_DATE_7 > $HOME/LAST_COMOUT_DATE_7
+    echo
+    echo `pwd`:
+    for n in `ls *adpupa*list*`; do
+      grep -l "limit has already been reached" $n
+      grep -e "limit has already been reached" $n
+    done
+  done
+  cd $cwd
+  LAST_COMOUT_DATE_8=00000000
+  [ -s $HOME/LAST_COMOUT_DATE_8 ] && LAST_COMOUT_DATE_8=`cat $HOME/LAST_COMOUT_DATE_8`
+  cwd=`pwd`
+  wc=`ls -d /com2/gfs/$mach/gdas.* | wc -l`
+  if [ $wc -gt 0 ]; then
+    cd /com2/gfs/$mach
+  else
+    cd /com/gfs/$mach
+  fi
+  for ndir in `ls -d gdas.*[0-9]` ; do
+    ndir_1=`echo $ndir | cut -f2 -d"."`
+    wc=`ls -d /com2/gfs/$mach/gdas.* | wc -l`
+    if [ $wc -gt 0 ]; then
+      cd /com2/gfs/$mach
+    else
+      cd /com/gfs/$mach
+    fi
+    [ $ndir_1 -lt $LAST_COMOUT_DATE_8 ]  && continue
+    cd $ndir
+    LAST_COMOUT_DATE_8=`/nwprod/util/exec/ndate -24 ${ndir_1}00`
+    LAST_COMOUT_DATE_8=`echo $LAST_COMOUT_DATE_8 | cut -c1-8`
+    echo $LAST_COMOUT_DATE_8 > $HOME/LAST_COMOUT_DATE_8
+    echo
+    echo `pwd`:
+    for n in `ls *adpupa*list*`; do
+      grep -l "limit has already been reached" $n
+      grep -e "limit has already been reached" $n
+    done
+  done
+  cd $cwd
+else
+  echo "This check is only done on the prod machine."
+fi
+

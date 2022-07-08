@@ -1,0 +1,48 @@
+## view22n_10 ##
+## Tropical cyclone bogus summary ##
+echo " ===> Tropical Cyclone Bogus summary"
+echo " "
+echo "    --> TROPCY_QC_RELOC"
+echo " "
+
+grep -h \
+ -Fe "SYNDAT_GETJTBUL  completed normally" \
+ -Fe "SYNDAT_QCTROPCY  completed normally" \
+ -Fe "no records available for program  SYNDAT_QCTROPCY" \
+ -Fe "RELOCATION PROCESSING SUCCESSFULLY" \
+ -Fe "NO TCVITAL RECORDS FOUND FOR" \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com2/logs/jlogfile | cut -c1-132 | \
+ grep -h -v -Fe "para" | \
+ grep -h -v -Fe "_test"
+
+echo " "
+echo "    --> PREP"
+echo " "
+grep -h \
+ -Fe "Tropical cyclone RELOCATION" \
+ -Fe "TCVITALS EMPTY-NO" \
+ -Fe "DO_BOGUS=" \
+ -Fe "syndat_syndata completed normally" \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com2/logs/jlogfile | cut -c1-132 | \
+ grep -h -v -Fe "para" | \
+ grep -h -v -Fe "_test" | \
+ grep -h -v -Fe "rtma" | \
+ grep -h -v -Fe "urma" | \
+ grep -h -v -Fe "rap" | \
+ grep -h -v -Fe "pcpn" | \
+ grep -h -v -Fe "cdas"
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

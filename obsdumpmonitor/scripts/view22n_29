@@ -1,0 +1,68 @@
+## view22n_29 ##
+## Determine prod vs dev machine ##
+## Syntax errors or BUFRLIB warnings in dump output  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine"
+   echo " "
+fi
+
+syntaxDUMP_chk=yes
+
+if [ $syntaxDUMP_chk != no ];then
+  echo " "
+  echo "+++++++++++++++++++++++"
+  echo " "
+
+  echo " ===> Check for any syntax errors or BUFRLIB warnings in DUMP output"
+  echo "      also check for seg faults in DUMP output"
+  echo " "
+
+  LAST_COMOUT_DATE_4=00000000
+  [ -s $HOME/LAST_COMOUT_DATE_4 ] && LAST_COMOUT_DATE_4=`cat $HOME/LAST_COMOUT_DATE_4`
+  cwd=`pwd`
+  cd /com/output/$mach
+  for ndir in `ls -d *` ; do
+    ndir_1=`echo $ndir | cut -c1`
+    cd /com/output/$mach
+    [ $ndir_1 != '2' ]  && continue
+    [ $ndir -lt $LAST_COMOUT_DATE_4 ]  && continue
+    cd $ndir
+    LAST_COMOUT_DATE_4=`/nwprod/util/exec/ndate -24 ${ndir}00`
+    LAST_COMOUT_DATE_4=`echo $LAST_COMOUT_DATE_4 | cut -c1-8`
+    echo $LAST_COMOUT_DATE_4 > $HOME/LAST_COMOUT_DATE_4
+    echo
+    echo `pwd`:
+#    for n in `ls *dump* *mods* *ofs_atl_assim_sst*`; do
+    for n in \*dump\* \*mods\* \*ofs_atl_assim_sst\*; do
+#      grep -l -i -e "Syntax error" -e "BUFRLIB:" -e "Segmentation fault" $n
+      grep -i -e "Syntax error" -e "BUFRLIB:" -e "Segmentation fault" $n | grep -v -e "DEGREE OF" -e "THE RECORD LENGTH OF ALL BUFR MESSAGES" -e "COULD NOT BACKSPACE" -e "INTERNAL DICTIONARY MESSAGE READ"
+    done
+##grep -i -e "Syntax error" -e "BUFRLIB:" *dump* *mods* *ofs_atl_assim_sst*
+  done
+  cd $cwd
+fi
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

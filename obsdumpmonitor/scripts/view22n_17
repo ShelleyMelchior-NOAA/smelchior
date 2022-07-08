@@ -1,0 +1,12 @@
+## view22n_17 ##
+## how recent are the "repeat" files in /dcom/ingest_hist?  ##
+
+echo " ===> how recent are the "repeat" files in /dcom/ingest_hist?"
+echo " "
+
+ls -l -t /dcom/us*/ingest_hist/*repeat*
+
+echo " "
+echo "++++++++DONE++++++++"
+echo " "
+

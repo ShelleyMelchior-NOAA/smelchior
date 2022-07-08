@@ -1,0 +1,249 @@
+/* CSS stylesheet file */
+
+p {padding:0 10px;}
+img {
+   border: none;
+   padding:0 2px 0 2px;
+   }
+
+#p {
+    padding: 7px 3px 7px 7px;
+    }
+#p.gray {
+   background: #cccccc;
+   margin:5px;
+   }
+#p.ut {
+   clear:both;
+   }
+#p.ul {
+   border-bottom: 2px solid #ccc;
+   background: #cccccc;
+   }
+#p.l {
+   clear:both;
+   text-align:left;
+   }
+#p.r select {
+   font-size:9pt;
+   }
+
+#nav {
+   background:#1569C7;
+   float:left;
+   width:794px;
+   text-align:left;
+   border-top:2px solid #fff;
+   border-bottom:2px solid #fff;
+   padding: 3px;
+   color:#fff;
+   font-size:9pt;
+   }
+/*
+#menuh-container {
+   position:absolute;
+   top: 50px;
+   }
+*/
+#menuh {
+   font-size:8pt;
+   font-family: arial, helvetica, sans-serif;
+   width:100%;
+   float:left;
+   margin:0em;
+   margin-top: 0em;
+   }
+#menuh a {
+   text-align: center;
+   font-weight: normal;
+   display:block;
+   border-right: 1px solid #ccc;
+   border-bottom: 1px solid #ccc;
+   white-space:nowrap;
+   margin:0;
+   padding: 0.3em;
+   font: 14px, arial;
+   }
+#menuh a:link, #menuh a:visited, #menuh a:active {	/* menu at rest */
+   color: #ffff99;
+   background-color: #1569C7;
+   text-decoration:none;
+   font-weight: normal;
+   font: 14px, arial;
+   }
+#menuh a:hover {
+   color:#1569C7;
+   background-color:#ffff99;
+   text-decoration:none;
+   font:14px, arial;
+   }
+#menuh a:hover {	/* menu at mouse-over  */
+   color: #1569C7;
+   background-color: #ffff99;
+   text-decoration:none;
+   font: 14px, arial;
+   }	
+#menuh a.bold {font-weight:bold;}
+#menuh a.active {
+   font-weight:bold;
+   color: #1569C7;
+   background-color: #ffff99;
+   font: 14px, arial;
+   }
+#menuh a.wrap {
+   white-space:normal;
+   border-right: 1px solid #000;
+   border-bottom: 1px solid #000;
+   }
+#menuh a.sublist {
+   white-space:normal;
+   border-right: 1px solid #000;
+   border-bottom: 1px solid #000;
+   }
+#menuh a.top_parent, #menuh a.top_parent:hover { 
+   font-weight: bold;
+   }
+#menuh a.top_parent-active, #menuh a.top_parent-active:hover { 
+   font-weight: bold;
+   color: #1569C7;
+   background-color: #ffff99;
+   font: 14px, arial;
+   }
+#menuh a.parent, #menuh a.parent:hover {
+   }
+#menuh ul {
+   list-style:none;
+   margin:0;
+   padding:0;
+   float:left;
+   width:198px;	/* width of all menu boxes; 16 total - 132px for 2x6+4, 198px for 4x4 */
+   }
+#menuh li {
+   position:relative;
+   min-height: 1px; 			/* Sophie Dennis contribution for IE7 */
+   vertical-align: bottom; /* Sophie Dennis contribution for IE7 */
+   }
+#menuh ul ul {
+   position:absolute;
+   z-index:500;
+   top:auto;
+   display:none;
+   padding: 1em;
+   margin:-1em 0 0 -1em;
+   }
+#menuh ul ul ul {
+   top:0;
+   left:100%;
+   }
+div#menuh li:hover {
+   cursor:pointer;
+   z-index:100;
+   }
+div#menuh li:hover ul ul,
+div#menuh li li:hover ul ul,
+div#menuh li li li:hover ul ul,
+div#menuh li li li li:hover ul ul
+{display:none;}
+div#menuh li:hover ul,
+div#menuh li li:hover ul,
+div#menuh li li li:hover ul,
+div#menuh li li li li:hover ul
+{display:block;}
+
+#main {
+    background:#fff;
+    float:left;
+    width:797px;
+    /*margin: 5px 0px 5px 3px;
+    padding:5px;*/
+    font-family: arial, verdana;
+    font-size: 9pt;
+    border: 2px solid #1569C7; /* blue */
+    }
+
+font.green {
+    color: green;
+    }
+font.red {
+    color: red;
+    }
+font.blue {
+    color: blue;
+    }
+font.black {
+    color: black;
+    }
+
+h1 {
+   font-size:14px;
+   }
+font.courier {
+   font-family: courier;
+   }
+font.small {
+   font-size:10px;
+   }
+
+#dtg-bc {
+   }
+#dtg {
+   float:left;
+   text-align:left;
+   padding: 3px 0 3px 3px;
+   font-weight:bold;
+   width:160px;
+   border-top: solid 1px #ccc;
+   border-bottom: solid 1px #ccc;
+   margin: 6px 0 0 0;
+   }
+#bc {
+   float:right;
+   text-align:right;
+   font-weight:bold;
+   font-size:12px;
+   padding: 3px 5px 3px 0;
+   width:626px;
+   border-top: solid 1px #ccc;
+   border-bottom: solid 1px #ccc;
+   margin: 6px 0 0 0;
+   }
+#col-container {
+   clear:both;
+   height:50px; /* some value; not meaningful*/
+   }
+#col-left {
+   float:left;
+   width:398px;
+   }
+#col-right {
+   float:right;
+   width:398px;
+   }
+#title {
+   float:left;
+   width:480px;
+   }
+#devprod {
+   float: right;
+   width:290px;
+   }
+#devprod a.active {
+   color: #ffff99; /* yellow */
+   }
+#script {
+   font-size: 10px;
+   text-align: right;
+   }
+span.highlightr {
+   background-color: #ff7070; /* red */
+   }
+span.highlighty {
+   background-color: #ffff99; /* yellow */
+   }
+span.highlightg {
+   background-color: #32CD32; /* green */
+   }
+
+#map {
+   border: 1px solid #1569C7;
+   }

@@ -1,0 +1,8 @@
+host=$(hostname)
+echo host: $host
+
+testdev=$(cat /etc/dev)
+echo dev: $testdev
+
+testprod=$(cat /etc/prod)
+echo prod: $testprod

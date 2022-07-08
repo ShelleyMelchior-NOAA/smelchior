@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>NOAA - NCEP - EMC Obs Dump Monitor</title>
+<style type="text/css" media="all" title="stylesheet">@import url(css/container.css);</style>
+<style type="text/css" media="all" title="stylesheet">@import url(css/master.css);</style>
+<link rel="icon" type="image/ico" href="icon/favicon.ico" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="description" content="NOAA - NCEP - EMC Data Processing"> 
+</head>
+<body>
+
+<?php 
+// get incoming url argument(s), if any
+$log=$_GET['log'];
+if ($_GET['ccs']!="" && $_GET['ccs']!="dev" && $_GET['ccs']!="prod") 
+ {
+  print("Invalid ccs option: \"$_GET['ccs']\"");
+  exit;
+ }
+else
+ {
+  $ccs=$_GET['ccs'];
+ }
+if (isset($_POST['fsdtg']))
+ {
+  if (preg_match("[0-9]{10}",$_POST['fsdtg']))
+   {
+    $archivedtg=$_POST['fsdtg'];
+   }
+  else
+   { 
+    print("Invalid format for date: $_POST[\'fsdtg\']");
+    exit;
+   }
+ }
+
+# set date from filestats log (latest run)
+require("date.php");
+
+# if no ccs selected, default to prod machine 
+if ($ccs=="") {$ccs="prod";}
+# determine which machine is prod and which machine is dev
+require("devprod.php");
+?>
+
+<div id="wrap">
+<div id="header">
+ <?php require("header.php"); ?>
+</div> <!-- header -->
+
+<div id="nav">
+ <?php require("nav.php"); ?>
+</div> <!-- nav -->
+
+<div id="main"> 
+
+<div id="dtg-bc">
+<div id="dtg">
+<?php
+$today=date("Ymd H:i T"); 
+print("[ $today ]"); 
+?>
+</div>
+
+<? # load breadcrumb file 
+require("breadcrumb.php");
+?>
+</div>
+
+<? # load appropriate index page based on arguments: $log, $ccs 
+if ($log=="" || $log=="home")
+ {require("home.php");} 
+else 
+ {
+  # load selected log file
+  require("logs.php");
+ } # end else of if ($log=="" || $log=="home")
+?>
+
+ </div> <!-- main -->
+
+ <div id="footer">
+  <?php require("footer.php"); ?> 
+ </div> <!-- footer -->
+
+</div> <!-- wrap -->
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+## view22n_22 ##
+## *.out rej/bad date tosses  ##
+
+echo " ===> *.out rej/bad date tosses"
+echo " "
+
+grep -e "REJ DATE" /dcom/us*/*.out
+grep -e "REJECTED DATE:" /dcom/us*/*.out
+grep -e "BAD DATE" /dcom/us*/*.out
+grep -e "(ONLY FIRST 100 PRINTED)" /dcom/us*/*.out
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

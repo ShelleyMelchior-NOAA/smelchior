@@ -1,0 +1,41 @@
+## view22n_7 ##
+## RC=22 listing  ##
+
+echo " ===> R.C. 22 LISTING (except for Job rap_dump, rtma_dump and urma_dump runs"
+echo "      (does not include monitor data dumps)"
+echo " "
+
+grep -h \
+ -Fe "RC=22" \
+ -e " table NOT updated " \
+ -e "DATA COUNT AVERAGE" \
+ -Fe "Data group" \
+ /com/logs/jlogfile.old.1 /com2/logs/jlogfile.old.1 \
+ /com/logs/jlogfile.old.2 /com2/logs/jlogfile.old.2 \
+ /com/logs/jlogfile.old.3 /com2/logs/jlogfile.old.3 \
+ /com/logs/jlogfile.old.4 /com2/logs/jlogfile.old.4 \
+ /com/logs/jlogfile.old.5 /com2/logs/jlogfile.old.5 \
+ /com/logs/jlogfile.old.6 /com2/logs/jlogfile.old.6 \
+ /com/logs/jlogfile.old.7 /com2/logs/jlogfile.old.7 \
+ /com/logs/jlogfile.old.8 /com2/logs/jlogfile.old.8 \
+ /com/logs/jlogfile.old.9 /com2/logs/jlogfile.old.9 \
+ /com/logs/jlogfile.old.10 /com2/logs/jlogfile.old.10 \
+ /com/logs/jlogfile.old.11 /com2/logs/jlogfile.old.11 \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com/logs/jlogfile | \
+ grep -h -v -Fe "LLrap_dump" | \
+ grep -h -v -Fe "LLrtma_dump" | \
+ grep -h -v -Fe "LLurma_dump" | \
+ grep -h -v -Fe "has size 0" | \
+ grep -h -v -Fe "para"  | \
+ grep -h -v -Fe "_test"  | \
+ grep -h -v -Fe "dump_monitor" 
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

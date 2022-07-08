@@ -1,0 +1,37 @@
+## view22n_15 ##
+## how recent are the error files in /dcom?  ##
+
+echo " ===> how recent are the error files in /dcom?"
+echo "       (and is there a bufrtab.011 or bufrtab.*** ?)"
+echo " "
+
+ls -l -t /dcom/us*/*err*
+
+echo
+echo
+
+present=$(ls -l -u /dcom/us*/bufr*.011 | wc -l)
+test "$present" = 0
+if $test
+then
+  echo "No /dcom/us*/bufr*.011 file"
+else
+  ls -l -u /dcom/us*/bufr*.011
+fi
+
+echo
+echo
+
+present=$(ls -l -u /dcom/us*/bufr*.\*\*\* | wc -l)
+test "$present" = 0
+if $test
+then
+  echo "No /dcom/us*/bufr*.\*\*\* file"
+else
+  ls -l -u /dcom/us*/bufr*.\*\*\*
+fi
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

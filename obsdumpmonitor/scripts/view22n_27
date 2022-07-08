@@ -1,0 +1,103 @@
+## view22n_27 ##
+## Determine prod vs dev machine ##
+## connection & syntax-type problems and seg faults in ingest output  ##
+## also check for bufrlib warnings  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine"
+   echo " "
+fi
+
+echo " ===> Check for connection & other syntax-type problems in ingest output"
+echo "      also check for BUFRLIB warnings"
+echo "      also check for seg faults in ingest output"
+echo " "
+
+LAST_COMOUT_DATE_2=00000000
+[ -s $HOME/LAST_COMOUT_DATE_2 ] && LAST_COMOUT_DATE_2=`cat $HOME/LAST_COMOUT_DATE_2`
+cwd=`pwd`
+cd /com/output/$mach
+for ndir in `ls -d *` ; do
+  ndir_1=`echo $ndir | cut -c1`
+  cd /com/output/$mach
+  [ $ndir_1 != '2' ]  && continue
+  [ $ndir -lt $LAST_COMOUT_DATE_2 ]  && continue
+  cd $ndir
+  LAST_COMOUT_DATE_2=`/nwprod/util/exec/ndate -24 ${ndir}00`
+  LAST_COMOUT_DATE_2=`echo $LAST_COMOUT_DATE_2 | cut -c1-8`
+  echo $LAST_COMOUT_DATE_2 > $HOME/LAST_COMOUT_DATE_2
+  echo
+  echo `pwd`:
+   for n in `ls *radwnd* *airs* *npp* *qscatter* *radsnd* *satwnd* *ssmi*`; do
+     grep -l -i -e "unable to open data connection" \
+     -e " A remote host did not respond" \
+     -e "Unknown host" \
+     -e "The specified number is not valid for this command" \
+     -e "Syntax error" \
+     -e "BUFRLIB:" \
+     -e "Segmentation fault" \
+     -e " OOPS:" -e " successful on try no. 2" \
+     -e "?Invalid command" $n
+     grep -i -e "unable to open data connection" \
+     -e " A remote host did not respond" \
+     -e "Unknown host" \
+     -e "The specified number is not valid for this command" \
+     -e "Syntax error" \
+     -e "BUFRLIB:" \
+     -e "Segmentation fault" \
+     -e " OOPS:" \
+     -e " successful on try no. 2 " \
+     -e "?Invalid command" $n
+   done
+   for n in `ls *tovs* *oes_sst* *ozone* *shf* *aerosol* *shef* *snow*`; do
+     grep -l -i -e "unable to open data connection" \
+     -e " A remote host did not respond" \
+     -e "Unknown host" \
+     -e "The specified number is not valid for this command" \
+     -e "Syntax error" \
+     -e "BUFRLIB:" \
+     -e "Segmentation fault" \
+     -e " OOPS:" \
+     -e " successful on try no. 2" \
+     -e "?Invalid command" $n
+     grep -i -e "unable to open data connection" \
+     -e " A remote host did not respond" \
+     -e "Unknown host" \
+     -e "The specified number is not valid for this command" \
+     -e "Syntax error" \
+     -e "BUFRLIB:" \
+     -e "Segmentation fault" \
+     -e " OOPS:" \
+     -e " successful on try no. 2 " \
+     -e "?Invalid command" $n
+   done
+   for n in `ls poes_sst*`; do
+     grep -l "CONSISTENT TIME STAMP AT RECORD" $n
+     errgrep=$?
+     [ $errgrep -eq 0 ] && echo "Diagnostic INCONSISTENT TIME STAMP AT RECORD ... is found in "`grep -c "CONSISTENT TIME STAMP AT RECORD" $n`" lines in this file"
+   done
+done
+cd $cwd
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "

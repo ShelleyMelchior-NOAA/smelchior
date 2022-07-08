@@ -1,0 +1,25 @@
+# cron job started on: 03/23/12 on emcdev 
+# cron job turned off:
+# normal operating time: 1217 (server is on UTC)
+
+basedir="/var/www/html/smelchior/obsdumpmonitor"
+cirrusdir="$basedir/cirrus"
+stratusdir="$basedir/stratus"
+crondir="$basedir/cron"
+
+# cycle through all log file directories to see how old the files are
+# files older than 14 days are deleted (-mtime +12)
+
+echo ---CIRRUS---
+for script in `ls $cirrusdir` ; do
+  echo -----$script-----
+  find $cirrusdir/$script -mtime +12 -type f -exec ls -ltr {} \;
+  find $cirrusdir/$script -mtime +12 -type f -exec rm -rf {} \;
+done
+echo
+echo ---STRATUS---
+for script in `ls $stratusdir` ; do
+  echo -----$script-----
+  find $stratusdir/$script -mtime +12 -type f -exec ls -ltr {} \;
+  find $stratusdir/$script -mtime +12 -type f -exec rm -rf {} \;
+done

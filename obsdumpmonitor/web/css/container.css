@@ -1,0 +1,50 @@
+a:link {color: #1569C7;}
+a:visited {color: #1569C7;}
+a:active {color: #1569C7;}
+a:hover {color: #000;}
+a {text-decoration: none;}
+
+body,
+html {
+    margin:6px 0px 0px 0px;
+    padding:0;
+    background:#fff;
+    color:#000;
+    min-width:800px;
+    font-family:arial,verdana,sans-serif;
+    }
+
+#header {
+      background:#1569C7;
+      padding: 3px 3px 0 3px;
+      color:#fff;
+      text-align:right;
+      font-size: 9pt;
+      }
+#header h1 {
+    font-size:13pt;
+    }
+#header a {
+    color:white;
+    }
+
+#wrap {
+    background:#fff;
+    /* margin:0 auto; */ 
+    margin-left: 10px;
+    width:800px;
+    }
+
+#footer {
+    clear: both;
+    text-align:right;
+    background:#1569C7;
+    color:#fff;
+    padding: 5px;
+    border-top: 2px solid #fff;
+    font-size: 10pt;
+    margin: 0 0 6px 0;
+    }
+#footer a {
+    color: #fff;
+    }

@@ -1,0 +1,55 @@
+## view22n_9 ##
+## other messages  ##
+
+echo " ===> other messages (except for Job rap_dump, rtma_dump and urma_dump runs)"
+echo " "
+
+grep -h \
+ -Fe "REMOTE FTP INGEST: No data" \
+ -Fe "NO DATA OF THIS TYPE" \
+ -Fe "status unknown" \
+ -Fe "status file already exists" \
+ -Fe "*WARNING: Program LIST" \
+ -Fe "WARNING: PREPOBS_ACARSQC" \
+ -Fe "NO ACARS data " \
+ -Fe "###ERROR: Previous " \
+ -Fe "trying to Copying with PRINT_TEXT" \
+ -Fe ">>" \
+ -Fe "NO DUMPS PRODUCED" \
+ -Fe "data dump failed" \
+ -Fe "***WARNING" \
+ -Fe "will kill itself" \
+ /com/logs/jlogfile.old.1 /com2/logs/jlogfile.old.1 \
+ /com/logs/jlogfile.old.2 /com2/logs/jlogfile.old.2 \
+ /com/logs/jlogfile.old.3 /com2/logs/jlogfile.old.3 \
+ /com/logs/jlogfile.old.4 /com2/logs/jlogfile.old.4 \
+ /com/logs/jlogfile.old.5 /com2/logs/jlogfile.old.5 \
+ /com/logs/jlogfile.old.6 /com2/logs/jlogfile.old.6 \
+ /com/logs/jlogfile.old.7 /com2/logs/jlogfile.old.7 \
+ /com/logs/jlogfile.old.8 /com2/logs/jlogfile.old.8 \
+ /com/logs/jlogfile.old.9 /com2/logs/jlogfile.old.9 \
+ /com/logs/jlogfile.old.10 /com2/logs/jlogfile.old.10 \
+ /com/logs/jlogfile.old.11 /com2/logs/jlogfile.old.11 \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com2/logs/jlogfile | \
+ grep -h -v -Fe "LLrap_dump" | \
+ grep -h -v -Fe "LLjrtma_dump" | \
+ grep -h -v -Fe "LLjurma_dump" | \
+ grep -h -v -Fe "LLbuoy." | \
+ grep -h -v -Fe "LLairc." | \
+ grep -h -v -Fe "LLjglofs_dump" | \
+ grep -h -v -Fe "LLdumpbuoy_goessst" | \
+ grep -h -v -Fe "LLrw" | \
+ grep -h -v -Fe "has size 0" | \
+ grep -h -v -Fe "para"  | \
+ grep -h -v -Fe "_test"  | \
+ grep -v -Fe "TCVITALS EMPTY-NO TROP. CYCLONE" 
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

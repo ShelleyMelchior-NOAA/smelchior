@@ -1,0 +1,97 @@
+# rename (mv) files and then copy (cp) them to the rzdm server via
+# passwordless ssh
+
+dateflag=$(date +%Y%m%d)
+
+logdir="/meso/save/wx24sm/obs_dump/util/CIRRUS/log"
+rzdmdir="/home/people/emc/www/htdocs/mmb/obsdumpmonitor/cirrus"
+rzdmsrvr="rzdm.ncep.noaa.gov"
+rzdmusr="smelchior"
+
+mv $logdir/serverstats.log $logdir/serverstats.$dateflag.log
+mv $logdir/view11.log $logdir/view11.$dateflag.log
+mv $logdir/view22n.log $logdir/view22n.$dateflag.log
+mv $logdir/view22n_2.log $logdir/view22n_2.$dateflag.log
+mv $logdir/view22n_3.log $logdir/view22n_3.$dateflag.log
+mv $logdir/view22n_4.log $logdir/view22n_4.$dateflag.log
+mv $logdir/view22n_5.log $logdir/view22n_5.$dateflag.log
+mv $logdir/view22n_6.log $logdir/view22n_6.$dateflag.log
+mv $logdir/view22n_7a.log $logdir/view22n_7a.$dateflag.log
+mv $logdir/view22n_7b.log $logdir/view22n_7b.$dateflag.log
+mv $logdir/view22n_8.log $logdir/view22n_8.$dateflag.log
+mv $logdir/view22n_9.log $logdir/view22n_9.$dateflag.log
+mv $logdir/view22n_10.log $logdir/view22n_10.$dateflag.log
+mv $logdir/view22n_11.log $logdir/view22n_11.$dateflag.log
+mv $logdir/view22n_12.log $logdir/view22n_12.$dateflag.log
+mv $logdir/view22n_13.log $logdir/view22n_13.$dateflag.log
+mv $logdir/view22n_14.log $logdir/view22n_14.$dateflag.log
+mv $logdir/view22n_15.log $logdir/view22n_15.$dateflag.log
+mv $logdir/view22n_16.log $logdir/view22n_16.$dateflag.log
+mv $logdir/view22n_17.log $logdir/view22n_17.$dateflag.log
+mv $logdir/view22n_18.log $logdir/view22n_18.$dateflag.log
+mv $logdir/view22n_19.log $logdir/view22n_19.$dateflag.log
+mv $logdir/view22n_20.log $logdir/view22n_20.$dateflag.log
+mv $logdir/view22n_21.log $logdir/view22n_21.$dateflag.log
+mv $logdir/view22n_22.log $logdir/view22n_22.$dateflag.log
+mv $logdir/view22n_23.log $logdir/view22n_23.$dateflag.log
+mv $logdir/view22n_26.log $logdir/view22n_26.$dateflag.log
+mv $logdir/view22n_27.log $logdir/view22n_27.$dateflag.log
+mv $logdir/view22n_28.log $logdir/view22n_28.$dateflag.log
+mv $logdir/view22n_29.log $logdir/view22n_29.$dateflag.log
+mv $logdir/view22n_30.log $logdir/view22n_30.$dateflag.log
+mv $logdir/view22n_31.log $logdir/view22n_31.$dateflag.log
+mv $logdir/view22y.log $logdir/view22y.$dateflag.log
+mv $logdir/view22y_2.log $logdir/view22y_2.$dateflag.log
+mv $logdir/view22y_3.log $logdir/view22y_3.$dateflag.log
+mv $logdir/view22y_4.log $logdir/view22y_4.$dateflag.log
+mv $logdir/view22y_5.log $logdir/view22y_5.$dateflag.log
+mv $logdir/viewfail.log $logdir/viewfail.$dateflag.log
+
+# remove all files that do not contain the current $dateflag
+find $logdir -type f ! -name "*$dateflag*" | xargs rm
+
+# generate filestats log (listing of $logdir)
+ls -l $logdir | cut -c37- > $logdir/filestats.$dateflag.log
+
+# connect to rzdm and send files over
+scp $logdir/viewspalog.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/viewspalog
+scp $logdir/filestats.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/filestats
+scp $logdir/serverstats.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/serverstats
+scp $logdir/view11.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view11
+scp $logdir/view22n.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n
+scp $logdir/view22n_2.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_2
+scp $logdir/view22n_3.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_3
+scp $logdir/view22n_4.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_4
+scp $logdir/view22n_5.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_5
+scp $logdir/view22n_6.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_6
+scp $logdir/view22n_7a.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_7a
+scp $logdir/view22n_7b.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_7b
+scp $logdir/view22n_8.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_8
+scp $logdir/view22n_9.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_9
+scp $logdir/view22n_10.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_10
+scp $logdir/view22n_11.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_11
+scp $logdir/view22n_12.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_12
+scp $logdir/view22n_13.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_13
+scp $logdir/view22n_14.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_14
+scp $logdir/view22n_15.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_15
+scp $logdir/view22n_16.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_16
+scp $logdir/view22n_17.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_17
+scp $logdir/view22n_18.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_18
+scp $logdir/view22n_19.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_19
+scp $logdir/view22n_20.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_20
+scp $logdir/view22n_21.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_21
+scp $logdir/view22n_22.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_22
+scp $logdir/view22n_23.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_23
+scp $logdir/view22n_26.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_26
+scp $logdir/view22n_27.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_27
+scp $logdir/view22n_28.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_28
+scp $logdir/view22n_29.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_29
+scp $logdir/view22n_30.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_30
+scp $logdir/view22n_31.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22n_31
+scp $logdir/view22y.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22y
+scp $logdir/view22y_2.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22y_2
+scp $logdir/view22y_3.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22y_3
+scp $logdir/view22y_4.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22y_4
+scp $logdir/view22y_5.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/view22y_5
+scp $logdir/viewfail.$dateflag.log $rzdmusr@$rzdmsrvr:$rzdmdir/viewfail
+

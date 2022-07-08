@@ -1,0 +1,20 @@
+## view22n_25 ##
+## Bulletins in wbfrbul/tropcyc  ##
+
+echo " ===> See what bulletins are in wbfrbul/tropcyc files in /dcom"
+echo " "
+
+echo "Latest wbfrbul/tropcyc files:"
+ls -l /dcom/us*/*/wbfrbul/tropcyc
+ls -l /dcom/us*/*/wbfrbul/tropcyc | wc -l
+
+##grep -h "^^C[A-Z,0-9]" /dcom/us*/*/wbfrbul/tropcyc | grep -v "ISXK40 ADRM" | \
+##grep -v -e "ISXC40 RJTD"
+
+#grep -h "[^C,A-Z,0-9]" /dcom/us*/*/wbfrbul/tropcyc | grep -v "ISXK40 ADRM" | \
+#grep -v -e "ISXC40 RJTD"
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

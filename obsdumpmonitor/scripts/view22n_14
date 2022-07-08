@@ -1,0 +1,67 @@
+## view22n_14 ##
+## Tank diff-ing  ##
+
+echo " ===> diff tanks in 10 days ago YYYYMMDD directory vs."
+echo "       those in yesterday's YYYYMMDD directory"
+echo " "
+
+cwd=`pwd`
+cd /dcom/us007003
+pwd
+
+#ls -ld ./* | grep -e "..:.. [0-9]"
+ls -ld ./* | grep -e "./ [0-9]"
+
+PDYyesterday=`/nwprod/util/exec/ndate -24 | cut -c1-8`
+PDY10daysago=`/nwprod/util/exec/ndate -240 | cut -c1-8`
+PDYoldest=$PDY10daysago
+
+echo $PDYyesterday
+echo $PDY10daysago
+
+[ -d /stmpp1/$USER ] || mkdir /stmpp1/$USER
+ls -d1 $PDY10daysago/b*/* | cut -c9- > /stmpp1/$USER/oldest
+ls -d1 $PDYyesterday/b*/* | cut -c9- > /stmpp1/$USER/yesterday
+
+[ -d /stmpp1/$USER ] || mkdir /stmpp1/$USER
+##diff /stmpp1/$USER/oldest /stmpp1/$USER/yesterday
+
+#VVVV added because old incomplete tanks are on WCOSS VVVV
+diff /stmpp1/$USER/oldest /stmpp1/$USER/yesterday | \
+sed "s/^[0-9]/       /g" > /stmpp1/$USER/DIFF
+until [ `cat /stmpp1/$USER/DIFF | wc -l` -lt 50 ]; do
+   echo
+   echo "$PDYoldest is INCOMPLETE - advance 1-day"
+   echo
+   PDYoldest=`/nwprod/util/exec/ndate 24 ${PDYoldest}00`
+   PDYoldest=`echo $PDYoldest | cut -c1-8`
+   if [ $PDYoldest -gt $PDYyesterday ]; then
+      echo
+      echo "STOP - can't advance beyond $PDYyesterday!!"
+      echo
+      break
+   fi
+   rm /stmpp1/$USER/oldest /stmpp1/$USER/yesterday /stmpp1/$USER/DIFF
+   ls -d1 $PDYoldest/b[0-9]*/* | cut -c9- > /stmpp1/$USER/oldest
+   ls -d1 $PDYyesterday/b[0-9]*/* | cut -c9- > /stmpp1/$USER/yesterday
+#   echo
+#   echo "diff $PDYoldest $PDYyesterday"
+#   echo
+   diff /stmpp1/$USER/oldest /stmpp1/$USER/yesterday | \
+   sed "s/^[0-9]/       /g" > /stmpp1/$USER/DIFF
+done
+#^^^^ added because old incomplete tanks are on WCOSS ^^^^
+
+echo
+echo "diff $PDYoldest $PDYyesterday"
+echo
+diff /stmpp1/$USER/oldest /stmpp1/$USER/yesterday | \
+sed "s/^[0-9]/       /g"
+##diff /stmpp1/$USER/oldest /stmpp1/$USER/yesterday | grep -v ^[0-9] 
+rm /stmpp1/$USER/oldest /stmpp1/$USER/yesterday /stmpp1/$USER/DIFF
+cd $cwd
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

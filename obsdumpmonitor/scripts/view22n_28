@@ -1,0 +1,68 @@
+## view22n_28 ##
+## Determine prod vs dev machine ##
+## Lapsed data hourwait calc. problem in ingest output  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine"
+   echo " "
+fi
+
+## Set lapse_chk to "off"
+lapse_chk=no
+echo "lapse check is disabled"
+
+if [ $lapse_chk != no ];then
+  echo " "
+  echo "+++++++++++++++++++++++"
+  echo " "
+
+  echo " ===> Check for lapsed data hourwait calc. problem in ingest output"
+  echo " "
+
+  LAST_COMOUT_DATE_3=00000000
+  [ -s $HOME/LAST_COMOUT_DATE_3 ] && LAST_COMOUT_DATE_3=`cat $HOME/LAST_COMOUT_DATE_3`
+  cwd=`pwd`
+  cd /com/output/$mach
+  for ndir in `ls -d *` ; do
+    ndir_1=`echo $ndir | cut -c1`
+    cd /com/output/$mach
+    [ $ndir_1 != '2' ]  && continue
+    [ $ndir -lt $LAST_COMOUT_DATE_3 ]  && continue
+    cd $ndir
+    LAST_COMOUT_DATE_3=`/nwprod/util/exec/ndate -24 ${ndir}00`
+    LAST_COMOUT_DATE_3=`echo $LAST_COMOUT_DATE_3 | cut -c1-8`
+    echo $LAST_COMOUT_DATE_3 > $HOME/LAST_COMOUT_DATE_3
+    echo
+    echo `pwd`:
+    for n in `ls *radwnd* *airs* *npp* *qscatter* *radsnd* *satwnd* *ssmi* *tovs*`; do
+      grep -l -i "/nwprod/ush/ingest_check_lapsed_data\[" $n
+      grep -i "/nwprod/ush/ingest_check_lapsed_data\[" $n
+    done
+##grep -i "nwprod/ush/ingest_check_lapsed_data\[" *radwnd* *airs* *euscatter* *qscatter* *radsnd* *satwnd* *ssmi* *tmi* *tovs* 
+  done
+  cd $cwd
+fi
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

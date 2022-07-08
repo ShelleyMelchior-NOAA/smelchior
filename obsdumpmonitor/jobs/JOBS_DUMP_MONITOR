@@ -1,0 +1,188 @@
+set -xa
+date -u
+
+if [ -n "$obsproc_dump_monitor_ver" ]; then
+   set +x
+   echo
+   echo "Current OBSPROC_DUMP_MONITOR version is $obsproc_dump_monitor_ver"
+   echo
+   set -x
+fi
+
+###################################################################
+# Set DEBUG LEVEL - modifies info in execution trace prompt string
+###################################################################
+export DEBUG_LEVEL=${DEBUG_LEVEL=1}
+case $DEBUG_LEVEL in
+  1) export PS4='+ ${SECONDS}s + ' ;;       # add seconds (this is typical case)
+  0) export PS4='+ ';;                      # don't include seconds (useful if
+                                            #  want to diff output from 2 runs)
+  2) export PS4='+ ${SECONDS}s:L$LINENO + ';;         # add script line #
+  3) export PS4='+ ${SECONDS}s:${0##*/}:L$LINENO + ';;# add script name & line #
+  *) echo "Unrecognized DEBUG_LEVEL.  Stay with current PS4 setting";;
+esac
+
+########################################
+# Check that required variables are set
+########################################
+set +x
+echo
+echo cyc is ${cyc:?"###FATAL ERROR \"cyc\" is not set"}
+echo envir is ${envir:?"###FATAL ERROR \"envir\" is not set"}
+echo job is ${job:?"###FATAL ERROR \"job\" is not set"}
+echo
+set -x
+
+###########################
+# Specify NET and RUN Name
+###########################
+export NET=${NET:-dump}
+export RUN=${RUN:-dump}
+
+##############################
+# Specify cycle and time-mark
+##############################
+export cycle=t${cyc}z
+export tmmark=tm00
+
+###############################
+# Create new working directory
+###############################
+host=$(hostname -s)
+if [[ ${USER} == nwprod ]]; then
+  if [[ ${envir} == prod ]]; then
+    DATAROOT=/tmpnwprd1
+  else
+    DATAROOT=/tmpnwprd2
+  fi
+else
+  DATAROOT=${DATAROOT:?"###FATAL ERROR \"DATAROOT\" is not set"}
+  TMPDIR=$DATAROOT  # In the event TMPDIR is reset to a temporary LSF
+                    #  directory when batch jobs are submitted, set it to
+                    #  $DATAROOT so ensure it remains under the user's control
+fi
+export DATA=${DATA:-$DATAROOT/${job}.${host}.$$}
+rm -rf $DATA
+mkdir -p $DATA
+cd $DATA
+
+######################################
+# Set job log file for postmsg output
+######################################
+if [[ ${USER} == nwprod ]]; then
+  if [[ ${envir} == prod ]]; then
+    jlogfile=/com/logs/jlogfiles/jlogfile.${job}.$$
+  else
+    jlogfile=/com/logs/${envir}/jlogfile
+  fi
+else
+  jlogfile=${jlogfile:-${DATA}/jlogfile}
+fi
+
+######################################
+# Determine Job Output Name on System
+######################################
+export pid=$$
+export outid="LL$job"
+[ $envir != prod ]  && export outid="LL${job}_${envir}"
+export jobid="${outid}.o${pid}"
+export pgmout="OUTPUT.${pid}"
+
+##########################################
+# SENDCOM  - Copy files to /com directory
+# SENDECF  - Flag Events on ECFLOW
+# SENDDBN  - Alert output file to TOC
+##########################################
+if [[ ${USER} == nwprod ]]; then
+  export SENDCOM=YES
+  export SENDECF=YES
+  if [[ ${envir} == prod ]]; then
+    export SENDDBN=YES
+  else
+    export SENDDBN=NO
+  fi
+else  # developer
+  export SENDCOM=${SENDCOM:-YES}
+  export SENDECF=NO
+  export SENDDBN=NO
+fi
+
+##########################
+# Specify Execution Areas
+##########################
+
+# -------------------------------
+# Paths for obsproc_network items
+# -------------------------------
+export HOMEobsproc_network=${HOMEobsproc_network:\
+-/nw${envir}/obsproc_dump_monitor.${obsproc_dump_monitor_ver:?\
+"###FATAL ERROR \"obsproc_dump_monitor_ver\" is not set"}}
+
+export SCRIPTSobsproc_dump_monitor=${SCRIPTSobsproc_dump_monitor:\
+-$HOMEobsproc_network/scripts}
+
+###########################
+# Set up the UTILITY paths
+###########################
+export utilscript=${utilscript:-/nwprod/util/ush}
+export utilparm=${utilparm:-/nwprod/util/parm}
+export utilexec=${utilexec:-/nwprod/util/exec}
+
+################################################################
+# Run setup to initialize working directory and utility scripts
+################################################################
+if [[ ${USER} == nwprod ]]; then
+  sh $utilscript/setup.sh
+else
+  sh ${SETUP:-/nwprod/util/ush}/setup.sh
+fi
+
+##########################################
+# Run setpdy and initialize PDY variables
+##########################################
+sh $utilscript/setpdy.sh
+. $DATA/PDY
+
+#########################
+# Define COM directories
+#########################
+if [ "$LSB_UNIXGROUP_INT" = 'prod' ]; then
+  export COMIN=/com/${NET}/${envir}/${RUN}.${PDY}
+  export COMOUT=/com/${NET}/${envir}/${RUN}.${PDY}
+  mkdir -m 775 -p $COMOUT
+else
+  export COMIN_ROOT=${COMIN_ROOT:-/com}
+  export COMIN=${COMIN:-${COMIN_ROOT}/${NET}/${envir}/${RUN}.${PDY}}
+
+# COMOUT_ROOT for developers defaults to unique $DATA/com directory as root to
+#  prevent job from writing into a non-unique directory (e.g.,
+#  /ptmp[p][d]1/$USER/com) that might already have a dump status file in it
+#  from a previous checkout run (this could mess up some logic downstream)
+# ----------------------------------------------------------------------------
+  export COMOUT_ROOT=${COMOUT_ROOT:-${DATA}/com}
+  export COMOUT=${COMOUT:-${COMOUT_ROOT}/${NET}/${envir}/${RUN}.${PDY}}
+  mkdir -m 755 -p $COMOUT
+fi
+
+env
+
+#####################
+# Execute the script
+#####################
+$SCRIPTSobsproc_dump_monitor/exobs_dump_monitor.sh.ecf
+err_dump_monitor=$?
+
+echo "`hostname`  --  `date -u`" > $COMOUT/where_${cycle}_obs_dump_monitor_ran
+
+> $COMOUT/obsproc_version_for_${cycle}_obs_dump_monitor_run
+[ -n "$obsproc_dump_monitor_ver" ]  &&  \
+ echo "Current OBSPROC_DUMP_MONITOR version is $obsproc_dump_monitor_ver" >> \
+ $COMOUT/obsproc_version_for_${cycle}_obs_dump_monitor_run
+
+if [ "${CLEANUP:-YES}" = YES ]; then
+   cd $DATAROOT
+   rm -rf $DATA
+fi
+date -u
+
+exit
