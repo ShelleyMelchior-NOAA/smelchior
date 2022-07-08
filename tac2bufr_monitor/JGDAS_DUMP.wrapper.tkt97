@@ -1,0 +1,186 @@
+########################
+##  Job gdas_dump_00 00Z
+########################
+######################################################
+##
+##  #BSUB -q dev        run on compute nodes, uses full node(s)
+##                      #BSUB -x is forced regardless if in LSF cards
+##                         (running NOT shared)
+##
+##  #BSUB -q shared     run on compute nodes, doesn't use full node(s)
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##
+##  #BSUB -q transfer   run on interactive nodes
+##                      use only for small jobs - can cause memory issues
+##                      can run ftp, ssh, mail, & mv "*" | at now +1 minutes
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##  #BSUB -L /bin/sh should be commented out if importing variables from
+##    executing script, make sure ~Dennis.Keyser/host.list exists
+##
+######################################################
+#BSUB -J jgdas_dump_00
+#BSUB -o /ptmpp1/Shelley.Melchior/gdas_dump_00.o%J
+#BSUB -e /ptmpp1/Shelley.Melchior/gdas_dump_00.o%J
+#BSUB -L /bin/sh
+#BSUB -q dev
+####BSUB -q dev_shared
+######BSUB -q transfer
+######BSUB -R rusage[mem=5000]
+######BSUB -R rusage[mem=4000]  # this is in prod but too small here for some reason
+######BSUB -R affinity[core]
+######BSUB -cwd /ptmpp1/Dennis.Keyser
+###BSUB -a poe               # use to run poe
+###BSUB -n 3                 # use to run poe
+###BSUB -R "span[ptile=3]"   # use to run poe
+#BSUB -W 00:30
+#BSUB -P OBSPROC-T2O
+
+cat /etc/motd
+echo;echo "*************************************************************"
+###[ -z "????" ] || echo "LSF command:  " $???
+[ -z "$LSB_JOBNAME" ] || echo "LSF job name:         " $LSB_JOBNAME
+[ -z "$LSFUSER" ] ||     echo "User:                 " $LSFUSER
+[ -z "$LSB_QUEUE" ] ||   echo "Queue:                " $LSB_QUEUE
+[ -z "$LSB_HOSTS" ] ||   echo "Submitted to Node(s): " $LSB_HOSTS
+echo "*************************************************************";echo
+
+set -xa
+
+
+# --> these are normally not changed and should always be exported here first
+
+export DATAROOT=/ptmpp1/${USER}/tac2bfr_cron
+[ ! -d /ptmpp1/$USER/tac2bfr_cron ] && mkdir -p /ptmpp1/$USER/tac2bfr_cron
+
+envir=prod # scripts point to production (/nwprod) files as default
+
+export DEBUG_LEVEL=1
+
+export CLEANUP=NO
+
+export launcher=back # other than "cfp" or blank causes background threads
+#export launcher=cfp  # "cfp" or blank causes POE processing
+
+# --> these must normally be set based on the particular run you are making
+
+export cyc=00  # must always be exported
+export job=gdas_dump_${cyc} # normally not changed, but needs $cyc
+
+# Find date 1 day ago
+PDY=$(cat /com/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+PDY=$(sh /nwprod/util/ush/finddate.sh $PDY d-1)
+export PDY=${PDY}
+export PDY=20151026 # Add this to force in a different date than in /com/date
+
+#######export PROCESS_DUMP=NO
+#######export PROCESS_GRIBFLDS=NO
+
+#######export SCRIPTSobsproc_global=/meso/save/Dennis.Keyser/HOME/scripts
+
+#export TANK=/dcom/us007003
+export TANK=/dcomdev/us007003
+
+#export LOUD=on
+##export LIST=/meso/save/Dennis.Keyser/fix/bufr_dumplist
+export LIST=/meso/save/Shelley.Melchior/svnwkspc/bufr_dumplist.tkt97.dump-amdar-catchall-tanks/fix/bufr_dumplist
+export DUMP=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/ush/dumpjb
+##export ushscript_dump=/meso/save/Dennis.Keyser/ush
+
+####export EXECbufr=/meso/save/Dennis.Keyser/exec # affects SUPERTMI
+#export EXECbufr=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/exec
+####export FIXbufr=/meso/save/Dennis.Keyser/fix # affects SUPERTMI
+
+###export EPRM=${TANK}/sdmedit
+###export QPRM=${TANK}/quips
+
+export CORX=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/exec/bufr_dupcor
+export AIRX=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/exec/bufr_dupair
+####export CHKX=/meso/save/Dennis.Keyser/source/bufr_chkbfr.fd/bufr_chkbfr
+export SATX=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/exec/bufr_dupsat
+export EDTX=/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_dump/exec/bufr_edtbfr
+
+##export DWSX=/meso/save/Dennis.Keyser/exec/bufr_dcodwindsat
+##export DWST=/meso/save/Dennis.Keyser/fix/bufr_bufrtab.windsat
+
+#  Obtain current OBSPROC_GLOBAL version number (obsproc_global_ver)
+#  Obtain OBSPROC_DUMP version number used by this job (obsproc_dump_ver)
+#  Obtain OBSPROC_SHARED_BUFR_DUMPLIST version number used by this job
+#   (obsproc_shared_bufr_dumplist_ver)
+#  ----------------------------------------------------------------------
+VERSION_FILE=/nwprod/versions/obsproc_global.ver
+# override and set obsproc_global_ver to different ver
+###VERSION_FILE=/meso/save/Shelley.Melchior/svnwkspc/VS/versions/LATEST_GREATEST/obsproc_global.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_global_ver from above:
+# -----------------------------------
+##export HOMEobsproc_network=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_global.${obsproc_global_ver}
+##export HOMEobsproc_network=/meso/save/Shelley.Melchior/svnwkspc/obsproc_global_RB-2.1.1
+
+# -- or --
+# Do not use $obsproc_global_ver:
+# -------------------------------
+#####unset obsproc_global_ver
+#####export HOMEobsproc_network=/meso/save/Dennis.Keyser/SVN/VS/obsproc_global
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+# -- or -- if BOTH above commented out use PRODUCTION
+# (only need this set to get root to JGDAS_DUMP below in this case)
+HOMEobsproc_network=/nwprod/obsproc_global.${obsproc_global_ver}
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+#
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_dump_ver from above:
+# ---------------------------------
+##export HOMEobsproc_dump=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_dump.${obsproc_dump_ver}
+##export HOMEobsproc_dump=/meso/save/Shelley.Melchior/svnwkspc/obsproc_dump_RB-3.2.1
+
+# -- or --
+# Do not use $obsproc_dump_ver:
+# -----------------------------
+#####unset obsproc_dump_ver
+#####export HOMEobsproc_dump=/meso/save/Dennis.Keyser/SVN/VS/obsproc_dump
+
+# -- or -- if BOTH above commented out use PRODUCTION
+
+echo "" > /dev/null # need to avoid syntax error if all is commented out
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+if [ -z "$LIST" ]; then
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_shared_bufr_dumplist_ver from above:
+# -------------------------------------------------
+#####export HOMEobsproc_shared_bufr_dumplist=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver}
+##export HOMEobsproc_shared_bufr_dumplist=/meso/save/Shelley.Melchior/svnwkspc/obsproc_shared_bufr_dumplist_RB-1.2.0
+
+# -- or --
+# Do not use $obsproc_shared_bufr_dumplist_ver:
+# ---------------------------------------------
+#unset obsproc_shared_bufr_dumplist_ver
+#export HOMEobsproc_shared_bufr_dumplist=/meso/save/Dennis.Keyser/SVN/VS/obsproc_shared/bufr_dumplist
+
+# -- or -- if BOTH above commented out use PRODUCTION
+
+echo "" > /dev/null # need to avoid syntax error id all is commented out
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+else
+# $LIST is user-specified above - unset $obsproc_shared_bufr_dumplist_ver,
+# export $HOMEobsproc_shared_bufr_dumplist as /dev/null (to avoid fatal error
+# in job script since $obsproc_shared_bufr_dumplist_ver now unset),
+# and export $FIXobsproc_shared_bufr_dumplist to user-specified directory path
+# ----------------------------------------------------------------------------
+   unset obsproc_shared_bufr_dumplist_ver
+      export HOMEobsproc_shared_bufr_dumplist=/dev/null
+         export FIXobsproc_shared_bufr_dumplist=`dirname $LIST`
+         fi
+
+# Execute the Environmental Equivalence form of the job-script
+# ------------------------------------------------------------
+$HOMEobsproc_network/jobs/JGDAS_DUMP
+
+exit

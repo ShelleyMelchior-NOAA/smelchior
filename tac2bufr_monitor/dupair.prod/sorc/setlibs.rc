@@ -1,0 +1,15 @@
+#  this will only work well if all codes in package need same version of each lib below
+
+w3nco_ver=v2.0.6
+w3emc_ver=v2.2.0
+bufr_ver=v10.2.5
+bacio_ver=v2.0.1
+sp_ver=v2.0.2
+
+export W3NCO_LIB4=/nwprod/lib/w3nco/${w3nco_ver}/libw3nco_${w3nco_ver}_4.a
+export W3EMC_LIB4=/nwprod/lib/w3emc/${w3emc_ver}/libw3emc_${w3emc_ver}_4.a
+export BUFR_LIB4=/nwprod/lib/bufr/${bufr_ver}/libbufr_${bufr_ver}_4_64.a
+export BACIO_LIB4=/nwprod/lib/bacio/${bacio_ver}/libbacio_${bacio_ver}_4.a
+export SP_LIB4=/nwprod/lib/sp/${sp_ver}/libsp_${sp_ver}_4.a
+
+

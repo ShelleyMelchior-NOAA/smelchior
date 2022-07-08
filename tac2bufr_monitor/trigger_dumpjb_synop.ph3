@@ -1,0 +1,30 @@
+source /u/Shelley.Melchior/.bashrc
+
+# Only run this on the dev machine
+host=$(hostname -s | cut -c1)
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testprod"
+then
+  echo "$host is the prod machine."
+  echo "ABORT"
+  exit
+fi
+
+export cyc=00
+PDY=$(cat $COMROOT/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+export PDY=$(sh $UTILROOT/ush/finddate.sh $PDY d-1)
+rundir=/gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitstatic/EMC_obsproc_melchior/tac2bufr_monitor
+runscript=synop_dump.sh.ph3
+ptmproot=/gpfs/dell2/ptmp/Shelley.Melchior
+
+sh ${rundir}/${runscript} &> ${ptmproot}/${PDY}.${cyc}.synop_dump.out
+
+export cyc=06
+sh ${rundir}/${runscript} &> ${ptmproot}/${PDY}.${cyc}.synop_dump.out
+
+export cyc=12
+sh ${rundir}/${runscript} &> ${ptmproot}/${PDY}.${cyc}.synop_dump.out
+
+export cyc=18
+sh ${rundir}/${runscript} &> ${ptmproot}/${PDY}.${cyc}.synop_dump.out

@@ -1,0 +1,48 @@
+Library versions and variables are defined in setlibs.rc.
+Can use load_libs.rc in place of setlibs.rc when library modules are implemented.
+
+
+To build codes one at a time:
+  In sh-like shell:
+     source setlibs.rc
+  This adds the library variables to the current shell environment.
+  Then proceed to each directory:
+     make clobber
+     make
+     make clean
+OR:
+  build.sh <some_code.fd ...>
+will do all of the above.
+
+To build all codes:
+  build.sh
+
+
+To install builds (creating exec dir if necessary):
+  sh install.sh <some_code.fd ...>
+or 
+  sh install.sh
+to install all.
+
+This assumes the exec dir belongs one directory back from this directory (and two 
+directories back from each code directory).  If you don't trust install scripts
+and targets, don't use 'em.
+
+
+To clean directories
+  sh clean.sh <some_code.fd ...>
+or 
+  sh clean.sh
+to clean all.
+
+
+Examples:
+  build.sh
+  install.sh
+  clean.sh
+-or-
+  build.sh bufr_dupsat.fd  bufr_dupsst.fd
+  install.sh bufr_dupsat.fd  bufr_dupsst.fd
+  clean.sh bufr_dupsat.fd  bufr_dupsst.fd
+  
+

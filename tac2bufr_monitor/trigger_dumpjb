@@ -1,0 +1,28 @@
+source /u/Shelley.Melchior/.bashrc
+
+# Only run this on the dev machine
+host=$(hostname -s | cut -c1)
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testprod"
+then
+  echo "$host is the prod machine."
+  echo "ABORT"
+  exit
+fi
+
+export cyc=00
+PDY=$(cat /com/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+export PDY=$(sh /nwprod/util/ush/finddate.sh $PDY d-1)
+rundir=/meso/save/Shelley.Melchior/svnwkspc/melchior/tac2bufr_monitor
+
+sh ${rundir}/aircft_dump.sh &> /ptmpp1/Shelley.Melchior/${PDY}.${cyc}.aircft_dump.out
+
+export cyc=06
+sh ${rundir}/aircft_dump.sh &> /ptmpp1/Shelley.Melchior/${PDY}.${cyc}.aircft_dump.out
+
+export cyc=12
+sh ${rundir}/aircft_dump.sh &> /ptmpp1/Shelley.Melchior/${PDY}.${cyc}.aircft_dump.out
+
+export cyc=18
+sh ${rundir}/aircft_dump.sh &> /ptmpp1/Shelley.Melchior/${PDY}.${cyc}.aircft_dump.out
