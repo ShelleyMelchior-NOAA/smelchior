@@ -1,0 +1,129 @@
+. /u/Shelley.Melchior/.bashrc
+
+# Run dumpjb for dump group: dbuoyb 
+
+set -x
+
+# Determine server and make appropriate settings
+server=$(echo $HOSTNAME | cut -c1)
+if [ "$server" = "m" -o "$server" = "v" ]; then
+  # Dell ph3: mars venus
+  module load ips/18.0.1.163
+  module load prod_util/1.1.3
+  module load prod_envir/1.1.0
+  comroot=/gpfs/dell1/nco/ops/com
+  stmp=/gpfs/dell2/stmp
+  export HOMEobsproc_dump=/gpfs/dell1/nco/ops/nwprod/obsproc_dump.v5.0.2
+  export HOMEobsproc_shared_bufr_dumplist=/gpfs/dell1/nco/ops/nwprod/obsproc_shared/bufr_dumplist.v2.1.0
+elif [ "$server" = "l" -o "$server" = "s" ]; then
+  # Cray: luna surge
+  [ -d /opt/modules ] && . /opt/modules/default/init/sh > /dev/null 2>&1
+  module load prod_envir
+  module load prod_util
+  module load cfp-intel-sandybridge/1.1.0
+  comroot=/gpfs/hps/nco/ops/com
+  stmp=/gpfs/hps3/stmp
+  export HOMEobsproc_dump=/gpfs/hps/nco/ops/nwprod/obsproc_dump.v4.0.0
+  export HOMEobsproc_shared_bufr_dumplist=/gpfs/hps/nco/ops/nwprod/obsproc_shared/bufr_dumplist.v1.5.0
+elif [ "$server" = "t" -o "$server" = "g" ]; then
+  # IBM ph1/2: tide gyre
+  module load prod_envir
+  module load prod_util
+  comroot=/com
+  stmp=/stmpp1
+  export HOMEobsproc_dump=/gpfs/hps/nco/ops/nwprod/obsproc_dump.v4.0.0
+  export HOMEobsproc_shared_bufr_dumplist=/gpfs/hps/nco/ops/nwprod/obsproc_shared/bufr_dumplist.v1.5.0
+else
+  echo "Invalid server - EXITING!"
+  exit
+fi
+
+# Check incoming args; must have 2, but 3rd is optional to run in backfill mode
+test $# -lt 2 && echo "$0: <cyc> <network> (makeup PDY)"
+test $# -lt 2 && exit
+
+# Assign incoming args
+cyc=$1
+network=$2 # gdas,gfs,rap
+pid=$$
+
+# Assign PDY
+export PDY=$(cat $comroot/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+if [ ! -z "$3" ]
+then
+  export PDY=$3  # PDY setting when running in backfill mode
+fi
+#export PDY=20160117 # may need to hard set the date if /com/date/t00z has already been updated
+
+tmmark=00
+CDATE=${PDY}${cyc}
+
+# Assign directories
+workdir=$stmp/$USER/dumpjb_dbuoyb_${network}.${PDY}${cyc}.$$
+[ -d $workdir ] || mkdir -p $workdir
+cd $workdir
+export TMPDIR=$workdir
+
+# Set LALO and CRAD
+if [ "$network" = "gfs" -o "$network" = "gdas" ]; then
+  export LALO=0
+  CRAD=3.0
+elif [ "$network" = "rap" ]; then
+  export LALO=F/gpfs/dell1/nco/ops/nwprod/obsproc_dump.v5.0.2/fix/nam_expdomain_halfdeg_imask.gbl 
+  CRAD=0.5
+else
+  echo " network must be gdas, gfs, or rap - EXIT!"
+  exit
+fi
+
+# Dump BUFR format buoy tanks
+export TANK=$DCOMROOT/dev
+#export TANK=$DCOMROOT/prod
+
+echo $HOMEobsproc_dump/ush/dumpjb $CDATE $CRAD dbuoyb
+$HOMEobsproc_dump/ush/dumpjb $CDATE $CRAD dbuoyb
+
+
+# cp dbuoyb.ibm to /com location that resembles $COMROOT
+# use filename format GSI is expecting
+COMOUT=$stmp/$USER/com/gfs/prod/${2}.${PDY}/${1}
+mkdir -p $COMOUT
+cp $workdir/dbuoyb.ibm $COMOUT/${2}.t${1}z.dbuoyb.tm00.bufr_d
+
+exit  ## Steve, for Xu Li's needs, nothing beyond this exit is needed ##
+
+
+# Run post-processing filter script; removes late reports and reports with missing lat/lon
+echo "running post processing filter script"
+GRDdir=/gpfs/td1/emc/meso/save/Jeff.Whiting/tmp/gfs_lowskill/dump/rwdump/
+GRD=${GRDdir}go_rwdump.bash
+
+GCD=/u/Jeff.Whiting/bin/go_chkdat
+
+DFILEs="$workdir/dbuoyb.ibm $workdir/mbuoyb.ibm"
+set +x
+for DFILE in $DFILEs ; do
+ echo ' ---- ' ; echo $DFILE
+ $GCD $DFILE
+
+ echo ; echo "dbb: running $(basename $GRD) $DFILE $network $PDY $cyc"
+ $GRD $DFILE $network $PDY $cyc
+
+ rc=$?
+ [ $rc != 0 ] && { echo "dbb: rc='$rc' workdir='$workdir'" ;
+                   echo "dbb: exiting" ; exit ; }
+
+ echo ; echo "dbb: output file is ${DFILE}.2:"
+ ls -l ${DFILE}.2
+ $GCD ${DFILE}.2
+done
+set -x
+
+# cp *buoyb.ibm to /com location from which dump archive can retrieve the files
+# use filename format GSI is expecting
+mkdir -p $stmp/$USER/com/prod/${2}.${PDY}
+cp $workdir/dbuoyb.ibm.2 $stmp/$USER/com/prod/${2}.${PDY}/${2}.t${1}z.dbuoyb.tm00.bufr_d
+cp $workdir/mbuoyb.ibm.2 $stmp/$USER/com/prod/${2}.${PDY}/${2}.t${1}z.mbuoyb.tm00.bufr_d
+
+exit
+
