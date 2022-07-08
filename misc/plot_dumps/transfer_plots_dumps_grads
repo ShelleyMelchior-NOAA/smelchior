@@ -1,0 +1,35 @@
+#BSUB -J transfer_plots_dumps_grads
+#BSUB -q "transfer"
+#BSUB -R rusage[mem=1000]
+#BSUB -cwd /ptmpp2/%U
+#BSUB -o /ptmpp2/Shelley.Melchior/transfer_plots_dumps_grads.j%J.out
+#BSUB -W 00:10
+#BSUB -P OBSPROC-T2O
+#BSUB -R affinity[core]
+#BSUB -n 1
+
+set -x
+
+webserver=emc-ls-emcdev.ncep.noaa.gov
+user=smelchior
+path=var/www/html/smelchior/obsdumpmonitor/plots/grads
+
+PDY=$(cat /com/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+export PDY=$(sh /nwprod2/util/ush/finddate.sh $PDY d-1)
+
+# scp files to webserver
+ctldir=/ptmpp1/$USER/plot_dumps
+for f in $ctldir/*.$PDY.*png
+do
+  bdir=$(echo $f | cut -d'/' -f5 | cut -d'.' -f1 | cut -c3-5)
+  echo scp $f ${user}@${webserver}:/${path}/b${bdir}
+  scp $f ${user}@${webserver}:/${path}/b${bdir}
+done
+
+# Email notice of completion
+addy=shelley.melchior@noaa.gov
+sbj="GrADS plots for b000, b002, b004"
+body="SUCCESS!  URL: http://emc-ls-emcdev.ncep.noaa.gov/smelchior/obsdumpmonitor/plots/grads/"
+echo $body | mail -s "$sbj" $addy
+
+exit

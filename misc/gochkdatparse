@@ -1,0 +1,41 @@
+# Parse go_chkdat results to compare aircar dump counts in dev vs. prod
+
+#devdir=/ptmpp2/$USER
+devdir=/globaldump
+proddir=/com2/gfs/prod
+
+arrayPDY=('20170223' '20170224' '20170225' '20170226' '20170227' '20170228' '20170301')
+arrayCYC=('00' '06' '12' '18')
+arrayNET=('gfs' 'gdas')
+
+for PDY in "${arrayPDY[@]}"
+do
+  for CYC in "${arrayCYC[@]}"
+  do
+    for NET in "${arrayNET[@]}"
+    do
+      # build bufr_d aircar file path
+      if [[ "$NET" = "gdas" ]]; then
+        proddump=${proddir}/${NET}.${PDY}/${NET}1.t${CYC}z.aircar.tm00.bufr_d
+        #devdump=${devdir}/dumpjb_aircraft.${NET}.${PDY}${CYC}/${NET}1.t${CYC}z.aircar.tm00.bufr_d
+        devdump=${devdir}/${PDY}${CYC}/${NET}x/aircar.${NET}.${PDY}${CYC}
+      else
+        proddump=${proddir}/${NET}.${PDY}/${NET}.t${CYC}z.aircar.tm00.bufr_d
+        #devdump=${devdir}/dumpjb_aircraft.${NET}.${PDY}${CYC}/${NET}.t${CYC}z.aircar.tm00.bufr_d
+        devdump=${devdir}/${PDY}${CYC}/${NET}x/aircar.${NET}.${PDY}${CYC}
+      fi
+      if [[ -e $proddump ]]; then
+        prodcnt=$(go_chkdat $proddump  | cut -d'r' -f1 | awk -F'NC004004' '{print $2}')
+        echo "$prodcnt - prod ${PDY} ${CYC} ${NET} $proddump"
+      fi
+      if [[ -e $devdump ]]; then
+        devcnt=$(go_chkdat $devdump  | cut -d'r' -f1 | awk -F'NC004004' '{print $2}')
+        echo "$devcnt - dev ${PDY} ${CYC} ${NET} $devdump"
+      fi
+      diff=$((${prodcnt} - ${devcnt}))
+      echo "$diff"
+    done
+  done
+done
+
+exit
