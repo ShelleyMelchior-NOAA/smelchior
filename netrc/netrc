@@ -1,0 +1,62 @@
+machine ftp.emc.ncep.noaa.gov login anonymous password sudhir.nadiga@noaa.gov
+machine ftp.star.nesdis.noaa.gov login anonymous password sudhir.nadiga@noaa.gov
+machine emcrzdm.ncep.noaa.gov login wx24sn password spider$jolly+earth
+machine tempest login wx24sn password spider$jolly+earth
+machine ftp.star.nesdis.noaa.gov login anonymous password wx22dk@
+machine ftp2.star.nesdis.noaa.gov login anonymous password wx22dk@
+machine ftp2.orbit.nesdis.noaa.gov login anonymous password wx22dk@
+machine manati-ftp.star.nesdis.noaa.gov login anonymous password wx22dk@
+machine satepsanone.nesdis.noaa.gov login anonymous password wx22dk@
+machine satepsdist1e.nesdis.noaa.gov login ftp password wx22dk@
+machine satepsanonE.espc.nesdis.noaa.gov login anonymous password wx22dk@
+machine dds.nesdis.noaa.gov login F0042 password R3m0T3cG
+machine 140.90.213.7 login F0042 password R3m0T3cG
+machine 140.90.68.249 login nco_pop password Nc0p0p!
+machine nanuk.eosdis.nasa.gov login public password TArc5255
+machine 140.90.213.152 login airs_public password TArc5255
+machine dds2.nesdis.noaa.gov login F0042 password R3m0T3cG
+machine ftp.misst.org login anonymous password wx22dk@
+machine ddstest.nesdis.noaa.gov login F0042 password R3m0T3cG
+machine sppgw1.nesdis.noaa.gov login F0042 password R3m0T3cG
+machine eosb1.nesdis.noaa.gov login anonymous password wx22dk@
+machine trmmrt.gsfc.nasa.gov login trmmreal password wx22dk@noaa.gov
+machine trmmrtV6.pps.eosdis.nasa.gov login trmmreal password Hur1(aN!
+machine discnrt1.gesdisc.eosdis.nasa.gov login dakeyser password pzh902DK73
+machine ftp.knmi.nl login scatuser password Scat4any
+##machine ftp.knmi.nl login scateurope password G4@epfkd
+machine integrity.larc.nasa.gov login anonymous password sudhir.nadiga@noaa.gov
+machine typhoon.larc.nasa.gov login anonymous password sudhir.nadiga@noaa.gov
+machine gsdftp.fsl.noaa.gov login anonymous password sudhir.nadiga@noaa.gov
+machine ftp.ncep.noaa.gov login anonymous password wx22dk@
+machine ftp.ncosrv.ncep.noaa.gov login anonymous password wx22dk@
+machine 140.90.213.169 login anonymous password wx22dk@
+machine ftp.ssec.wisc.edu login anonymous password sudhir.nadiga@noaa.gov
+machine stratus.ssec.wisc.edu login anonymous password sudhir.nadiga@noaa.gov
+machine 140.90.70.247 login ncep_emc password NDEpa$$4emc
+machine 140.90.70.240 login ncep_emc password NDEpa$$4emc
+machine 140.90.190.143 login NCEP_EMC_SERV1 password Password^78pAssword773
+machine 140.172.119.158 login NCEP_EMC_SERV1 password Password^78pAssword773
+machine 140.90.190.122 login NCEP_EMC_SERV1 password pzh902DKslud850%
+machine 140.90.190.123 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.150 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.153 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.154 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.155 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.156 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.157 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.167 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.170 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.151 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.217 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.90.190.218 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.172.119.139 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.172.119.175 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+machine 140.172.119.176 login NCEP_EMC_SERV1 password b4!#AYY6c*@kH3
+## below are 3 NCO sites which will hold LaRC cloud data - use DNS unless down
+machine ftps-out1.ncep.noaa.gov login wcoss_nasa password haENd5GIJMy44I9fJhHkMQ== # DNS (Primary)
+##machine ftps-out1.cprk.ncep.noaa.gov login wcoss_nasa password haENd5GIJMy44I9fJhHkMQ== # College Park
+##machine ftps-out1.bldr.ncep.noaa.gov login wcoss_nasa password haENd5GIJMy44I9fJhHkMQ== # Boulder
+## below are 2 NCO sites which will hold NAVO mcsst files
+machine ftps-out1.ncep.noaa.gov login wcoss_navosst password diLCyxNh9h2oFguOKht9Qw== # DNS (Primary)
+##machine ftps-out1.cprk.ncep.noaa.gov login wcoss_navosst password diLCyxNh9h2oFguOKht9Qw== # College Park
+##machine ftps-out1.bldr.ncep.noaa.gov login wcoss_navosst password diLCyxNh9h2oFguOKht9Qw== # Boulder
