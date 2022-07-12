@@ -1,0 +1,65 @@
+# Wrapper / driver script around the various obs dump monitor scripts that
+# grep through various log messages
+
+source /u/Shelley.Melchior/.bashrc
+
+# test if this is the prod machine
+host=$(hostname -s | cut -c1)
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testdev"
+then
+  echo "$host is the dev machine."
+else
+  echo "$host is the prod machine."
+fi
+
+rundir="/meso/save/$USER/svnwkspc/melchior/obsdumpmonitor/scripts"
+logdir="/ptmpp1/$USER/obs_dump/log"
+email="Shelley.Melchior@noaa.gov"
+tmpeml="/stmpp1/$USER/tmpeml"
+
+# make sure $rundir exists
+if [ ! -d $rundir ]
+then
+  echo "DNE: $rundir"
+  echo "DNE: $rundir ... ABORT obsdumpmonitor ($HOSTNAME)" > $tmpeml
+  sbj="ABORT obsdumpmonitor ($HOSTNAME)"
+  mail -s "$sbj" $email < $tmpeml
+  rm $tmpeml
+  exit
+fi
+
+# Start email body
+echo "Start: $(date)" > $tmpeml
+
+# set up scripts array
+scriptarr=('serverstats' 'viewfail' 'view22n_2' 'view22n_3' 'view22n_4' \
+           'view22n_5' 'view22n_6' 'view22n_7' 'view22n_8' 'view22n_9' \
+           'view22n_10' 'view22n_11' 'view22n_12' 'view22n_13' 'view22n_14'\
+           'view22n_15' 'view22n_16' 'view22n_17' 'view22n_18' 'view22n_19'\
+           'view22n_20' 'view22n_21' 'view22n_22' 'view22n_23' 'view22n_24'\
+           'view22n_25' 'view22n_26' 'view22n_27' 'view22n_28' 'view22n_29'\
+           'view22n_30' 'view22n_31' 'view22y_2' 'view22y_3' 'view22y_4'\
+           'view22y_5' 'view22y_6' 'view11' 'view99')
+
+for script in "${scriptarr[@]}"
+do
+#  echo "sh $rundir/$script > $logdir/$script.log"
+   sh $rundir/$script > $logdir/$script.log
+done
+
+# Send files from WCOSS to emcdev webserver
+# Temporarily suspend copying of files to webserver while emcdev is inaccessible
+#bsub < $rundir/filemvcpemcdev
+ 
+# Send success email
+echo "Successful run of obsdumpmonitor" >> $tmpeml 
+echo "$HOSTNAME" >> $tmpeml
+echo "prod = $testprod" >> $tmpeml
+echo "Done: $(date)" >> $tmpeml
+echo "URL:http://emc-ls-emcdev.ncep.noaa.gov/smelchior/obsdumpmonitor/" >> $tmpeml
+sbj="SUCCESS obsdumpmonitor ($HOSTNAME)"
+mail -s "$sbj" $email < $tmpeml
+rm $tmpeml
+

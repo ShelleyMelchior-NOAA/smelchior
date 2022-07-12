@@ -1,0 +1,25 @@
+# test if this is the prod machine
+host=$(hostname -s | cut -c1)
+#: <<"IGNORE"
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testdev"
+then
+  echo "$host is the dev machine."
+  if [ -z $1 ]; then
+    echo "0" > /stmpp1/Shelley.Melchior/devprodtest.out
+  else
+    echo "0" > /stmpp1/Shelley.Melchior/devprodtest.$1.out
+  fi
+else
+  echo "$host is the prod machine."
+  echo "ABORT - only run on dev machine"
+  if [ -z $1 ]; then
+    echo "1" > /stmpp1/Shelley.Melchior/devprodtest.out
+  else
+    echo "1" > /stmpp1/Shelley.Melchior/devprodtest.$1.out
+  fi
+fi
+#IGNORE
+
+

@@ -1,0 +1,179 @@
+##########################
+##  Job gdas_prep_00 00Z
+##########################
+######################################################
+##
+##  #BSUB -q dev        run on compute nodes, uses full node(s)
+##                      #BSUB -x is forced regardless if in LSF cards
+##                         (running NOT shared)
+##
+##  #BSUB -q shared     run on compute nodes, doesn't use full node(s)
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##
+##  #BSUB -q transfer   run on interactive nodes
+##                      use only for small jobs - can cause memory issues
+##                      can run ftp, ssh & mail
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##  #BSUB -L /bin/sh should be commented out if importing variables from
+##    executing script, make sure ~Dennis.Keyser/host.list exists
+##
+######################################################
+#BSUB -J jgdas_prep_00
+#BSUB -o /ptmpp1/Shelley.Melchior/gdas_prep_00.o%J
+#BSUB -e /ptmpp1/Shelley.Melchior/gdas_prep_00.o%J
+######BSUB -cwd /ptmpp1/Dennis.Keyser
+#BSUB -R "span[ptile=3]"
+#BSUB -n 3
+#BSUB -q dev
+#####BSUB -q debug
+#BSUB -R affinity[core]
+#BSUB -L /bin/sh
+#BSUB -W 00:25
+#BSUB -P OBSPROC-T2O
+#BSUB -a poe
+#BSUB -x
+
+cat /etc/motd
+echo;echo "*************************************************************"
+###[ -z "????" ] || echo "LSF command:  " $???
+[ -z "$LSB_JOBNAME" ] || echo "LSF job name:         " $LSB_JOBNAME
+[ -z "$LSFUSER" ] ||     echo "User:                 " $LSFUSER
+[ -z "$LSB_QUEUE" ] ||   echo "Queue:                " $LSB_QUEUE
+[ -z "$LSB_HOSTS" ] ||   echo "Submitted to Node(s): " $LSB_HOSTS
+echo "*************************************************************";echo
+
+set -xa
+
+
+# --> these are normally not changed and should always be exported here first
+
+export DATAROOT=/ptmpp1/${USER}
+
+envir=prod # scripts point to production (/nwprod) files as default
+
+export DEBUG_LEVEL=1
+
+export CLEANUP=NO
+
+
+
+# --> these must normally be set based on the particular run you are making
+
+export cyc=00  # must always be exported
+cycle=t${cyc}z
+export job=gdas_prep_${cyc} # normally not changed, but needs $cyc
+
+export PDY=20150722 # Add this to force in a different date than in /com/date
+
+# uncomment line below if previously made a complete set of DUMPS that
+#  differ from ops
+#####export COMIN_ROOT=/stmpp1/$USER/com
+
+###export BUFRLIST=.....
+
+###export SYNDATA=NO
+###export PREPACQC=NO
+######export PROCESS_ACQC=NO
+######export PROCESS_ACPF=NO
+#########export DICT=/nwprod/dictionaries/metar.tbl
+###export PROFCQC=NO
+###export CQCVAD=NO
+###export CQCBUFR=NO
+###export OIQCBUFR=NO
+###export PREPDATA=NO
+###export GETGUESS=NO
+###export DO_QC=NO
+
+#######export SCRIPTSobsproc_global=/meso/save/Dennis.Keyser/HOME/scripts
+
+##export EXECPREP=/meso/save/Dennis.Keyser/HOME/exec/BUFRLIB_TEST
+##export EXECSYND=/meso/save/Dennis.Keyser/HOME/exec/BUFRLIB_TEST
+##export ushscript=/meso/save/Dennis.Keyser/HOME/ush   # to prepobs_makeprepbufr.sh
+##export ushscript=/ptmpp1/Dennis.Keyser/ush   # to prepobs_makeprepbufr.sh
+##export USHVQC=/meso/save/Dennis.Keyser/HOME/ush    # to prepobs_cqcvad.sh
+##export USHCQC=/meso/save/Dennis.Keyser/HOME/ush    # to prepobs_cqcbufr.sh
+##export USHOIQC=/meso/save/Dennis.Keyser/HOME/ush   # to prepobs_oiqcbufr.sh
+##export USHAQC=/meso/save/Dennis.Keyser/HOME/ush    # to prepobs_prepacqc.sh
+##export USHSYND=/meso/save/Dennis.Keyser/HOME/ush   # to prepobs_syndata.sh
+##export USHPQC=/meso/save/Dennis.Keyser/HOME/ush    # to prepobs_profcqc.sh
+
+###export tstsp=/ptmpp1/Dennis.Keyser/com/gfs/${envir}/gdas.${PDY}/${RUN}.${cycle}.
+export tstsp=/ptmpp1/Shelley.Melchior/tac2bfr_cron/gdas_dump_00.t7c28.26377/com/gfs/${envir}/gdas.${PDY}/gdas1.${cycle}.
+##export errPREPDATA_limit=4
+
+##export LISTHDX=/meso/save/Dennis.Keyser/HOME/exec/prepobs_listheaders
+##export MPCOPYX=/ptmpp1/Dennis.Keyser/prepobs_mpcopybufr.fd/prepobs_mpcopybufr
+
+##export VQCX=/meso/save/Dennis.Keyser/HOME/sorc/prepobs_cqcvad.fd/prepobs_cqcvad
+
+##export AQCX=/meso/save/Dennis.Keyser/HOME/sorc/prepobs_prepacqc.fd/NEW/prepobs_prepacqc
+
+##export PQCX=/meso/save/Dennis.Keyser/HOME/sorc/prepobs_profcqc.fd/NEW/prepobs_profcqc
+##export PQCC=/meso/save/Dennis.Keyser/HOME/parm/prepobs_profcqc.gdas.parm
+
+##export PRPC=/ptmpp1/Dennis.Keyser/prepobs_prepdata.gdas.parm
+##export PRPC=/meso/save/Dennis.Keyser/HOME/parm/HOLD/prepobs_prepdata.gdas.parm
+##export PRPT=/meso/save/Dennis.Keyser/HOME/fix/MS_SU_satwinds/NEW/prepobs_prep.bufrtable
+##export PRPT=/meso/save/Dennis.Keyser/HOME/fix/POSTEVENTS/prepobs_prep.bufrtable
+
+##export PRPX=/meso/save/Dennis.Keyser/HOME/exec/prepobs_prepdata
+##export PRPX=/ptmpp1/Dennis.Keyser/DEV/obsproc_prep/exec/prepobs_prepdata
+##export SYNDX=/meso/save/Dennis.Keyser/HOME/exec/syndat_syndata
+##export CQCX=/meso/save/Dennis.Keyser/HOME/exec/prepobs_cqcbufr
+
+##export PRVT=/meso/save/Dennis.Keyser/HOME/fix/prepobs_errtable.global
+##export OIQCX=/meso/save/Dennis.Keyser/HOME/exec/prepobs_oiqcbufr
+##export OIQCT=/meso/save/Dennis.Keyser/HOME/fix/prepobs_oiqc.oberrs
+##export POE=NO
+
+#  Obtain current OBSPROC_GLOBAL version number (obsproc_global_ver)
+#  Obtain OBSPROC_PREP version number used by this job (obsproc_prep_ver)
+#  ----------------------------------------------------------------------
+#VERSION_FILE=/nwprod/versions/obsproc_global.ver
+VERSION_FILE=/meso/save/Shelley.Melchior/svnwkspc/VS/versions/LATEST_GREATEST/obsproc_global.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_global_ver from above:
+# -----------------------------------
+#####export HOMEobsproc_network=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_global.${obsproc_global_ver}
+export HOMEobsproc_network=/meso/save/Shelley.Melchior/svnwkspc/obsproc_global_RB-2.1.1
+
+# -- or --
+# Do not use $obsproc_global_ver:
+# -------------------------------
+#unset obsproc_global_ver
+#export HOMEobsproc_network=/meso/save/Dennis.Keyser/SVN/VS/obsproc_global
+
+# -- or -- if BOTH above commented out use PRODUCTION
+# (only need this set to get root to JGDAS_PREP below in this case)
+#####HOMEobsproc_network=/nwprod/obsproc_global.${obsproc_global_ver}
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_prep_ver from above:
+# ---------------------------------
+#####export HOMEobsproc_prep=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_prep.${obsproc_prep_ver}
+export HOMEobsproc_prep=/meso/save/Shelley.Melchior/svnwkspc/obsproc_prep_RB-3.5.0
+
+# -- or --
+# Do not use $obsproc_prep_ver:
+# -----------------------------
+#unset obsproc_prep_ver
+#####export HOMEobsproc_prep=/meso/save/Dennis.Keyser/SVN/VS/obsproc_prep
+#export HOMEobsproc_prep=/meso/save/Dennis.Keyser/SVN/DEVELOPMENT_BRANCHES_temporary/obsproc_prep.tkt200.JMA_HK_profilers
+#####export HOMEobsproc_prep=/ptmpp1/Dennis.Keyser/DEV/obsproc_prep
+
+# -- or -- if BOTH above commented out use PRODUCTION
+
+#####echo "" > /dev/null # need to avoid syntax error if all is commented out
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+# Execute the Environmental Equivalence form of the job-script
+# ------------------------------------------------------------
+$HOMEobsproc_network/jobs/JGDAS_PREP
+

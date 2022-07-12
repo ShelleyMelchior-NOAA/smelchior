@@ -1,0 +1,150 @@
+### Obs dump monitoring ###
+# output logs are sent to rzdm to be parsed for webpage display
+# started on: 08/08/2010 on s1n6
+# turned off:
+# normal operating time: 0805, 0815 (server is on local time)
+# -----------------------------
+05 * * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/spalogparse.sh > /ptmp/wx24sm/obs_dump/log/spalogparse_capture 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/serverstats > /ptmp/wx24sm/obs_dump/log/serverstats.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/dkgrepFAIL > /ptmp/wx24sm/obs_dump/log/viewfail.log 2>&1
+#05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/dkgrep22-ruc2a+sruc_dump-no > /ptmp/wx24sm/obs_dump/log/view22n.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_2 > /ptmp/wx24sm/obs_dump/log/view22n_2.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_3 > /ptmp/wx24sm/obs_dump/log/view22n_3.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_4 > /ptmp/wx24sm/obs_dump/log/view22n_4.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_5 > /ptmp/wx24sm/obs_dump/log/view22n_5.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_6 > /ptmp/wx24sm/obs_dump/log/view22n_6.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_7a > /ptmp/wx24sm/obs_dump/log/view22n_7a.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_7b > /ptmp/wx24sm/obs_dump/log/view22n_7b.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_8 > /ptmp/wx24sm/obs_dump/log/view22n_8.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_9 > /ptmp/wx24sm/obs_dump/log/view22n_9.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_10 > /ptmp/wx24sm/obs_dump/log/view22n_10.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_11 > /ptmp/wx24sm/obs_dump/log/view22n_11.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_12 > /ptmp/wx24sm/obs_dump/log/view22n_12.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_13 > /ptmp/wx24sm/obs_dump/log/view22n_13.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_14 > /ptmp/wx24sm/obs_dump/log/view22n_14.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_15 > /ptmp/wx24sm/obs_dump/log/view22n_15.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_16 > /ptmp/wx24sm/obs_dump/log/view22n_16.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_17 > /ptmp/wx24sm/obs_dump/log/view22n_17.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_18 > /ptmp/wx24sm/obs_dump/log/view22n_18.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_19 > /ptmp/wx24sm/obs_dump/log/view22n_19.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_20 > /ptmp/wx24sm/obs_dump/log/view22n_20.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_21 > /ptmp/wx24sm/obs_dump/log/view22n_21.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_22 > /ptmp/wx24sm/obs_dump/log/view22n_22.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_23 > /ptmp/wx24sm/obs_dump/log/view22n_23.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_24 > /ptmp/wx24sm/obs_dump/log/view22n_24.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_25 > /ptmp/wx24sm/obs_dump/log/view22n_25.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_26 > /ptmp/wx24sm/obs_dump/log/view22n_26.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_27 > /ptmp/wx24sm/obs_dump/log/view22n_27.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_28 > /ptmp/wx24sm/obs_dump/log/view22n_28.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_29 > /ptmp/wx24sm/obs_dump/log/view22n_29.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_30 > /ptmp/wx24sm/obs_dump/log/view22n_30.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22n_31 > /ptmp/wx24sm/obs_dump/log/view22n_31.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22y_2 > /ptmp/wx24sm/obs_dump/log/view22y_2.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22y_3 > /ptmp/wx24sm/obs_dump/log/view22y_3.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22y_4 > /ptmp/wx24sm/obs_dump/log/view22y_4.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/view22y_5 > /ptmp/wx24sm/obs_dump/log/view22y_5.log 2>&1
+05 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/dkgrep11 > /ptmp/wx24sm/obs_dump/log/view11.log 2>&1
+15 08 * * * sh /meso/save/wx24sm/obs_dump/util/CIRRUS/filemvcpemcdev > /dev/null 2>&1 
+
+### Obsproc File Listing ###
+# started on: 10/29/2010 on s1n6
+# turned off:
+# normal operating time: 0805 (server is on local time)
+# -----------------------------
+05 08 * * 1-6 sh /meso/save/wx24sm/svn/cron/cronsvn > /meso/save/wx24sm/svn/cron/log/err.log 2>&1
+07 08 * * 1-6 sh /meso/save/wx24sm/svn/cron/err.sh > /dev/null/ 2>&1
+
+### parallel of DK's RTMA parallel ###
+# started on: 20120313
+# turned off:
+#-------------------------------------
+30 20 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_00.sh > /stmp/wx24sm/rtma_llsubmit_00.log 2>&1
+30 21 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_01.sh > /stmp/wx24sm/rtma_llsubmit_01.log 2>&1
+30 22 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_02.sh > /stmp/wx24sm/rtma_llsubmit_02.log 2>&1
+30 23 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_03.sh > /stmp/wx24sm/rtma_llsubmit_03.log 2>&1
+30 00 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_04.sh > /stmp/wx24sm/rtma_llsubmit_04.log 2>&1
+30 01 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_05.sh > /stmp/wx24sm/rtma_llsubmit_05.log 2>&1
+30 02 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_06.sh > /stmp/wx24sm/rtma_llsubmit_06.log 2>&1
+30 03 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_07.sh > /stmp/wx24sm/rtma_llsubmit_07.log 2>&1
+30 04 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_08.sh > /stmp/wx24sm/rtma_llsubmit_08.log 2>&1
+30 05 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_09.sh > /stmp/wx24sm/rtma_llsubmit_09.log 2>&1
+30 06 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_10.sh > /stmp/wx24sm/rtma_llsubmit_10.log 2>&1
+30 07 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_11.sh > /stmp/wx24sm/rtma_llsubmit_11.log 2>&1
+30 08 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_12.sh > /stmp/wx24sm/rtma_llsubmit_12.log 2>&1
+30 09 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_13.sh > /stmp/wx24sm/rtma_llsubmit_13.log 2>&1
+30 10 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_14.sh > /stmp/wx24sm/rtma_llsubmit_14.log 2>&1
+30 11 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_15.sh > /stmp/wx24sm/rtma_llsubmit_15.log 2>&1
+30 12 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_16.sh > /stmp/wx24sm/rtma_llsubmit_16.log 2>&1
+30 13 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_17.sh > /stmp/wx24sm/rtma_llsubmit_17.log 2>&1
+30 14 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_18.sh > /stmp/wx24sm/rtma_llsubmit_18.log 2>&1
+30 15 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_19.sh > /stmp/wx24sm/rtma_llsubmit_19.log 2>&1
+30 16 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_20.sh > /stmp/wx24sm/rtma_llsubmit_20.log 2>&1
+30 17 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_21.sh > /stmp/wx24sm/rtma_llsubmit_21.log 2>&1
+30 18 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_22.sh > /stmp/wx24sm/rtma_llsubmit_22.log 2>&1
+30 19 * * * sh /meso/save/wx24sm/rtma/cron/DKparallel/llsubmit_23.sh > /stmp/wx24sm/rtma_llsubmit_23.log 2>&1
+
+### Prepbufr file creation for GDAS - calm surface marine uob/vob ###
+# started on: 20120612
+# turned off:
+#-------------------------------------
+10 02 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh gdas 00 > /meso/save/wx24sm/crons/gdas.00.log 2>&1
+10 08 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh gdas 06 > /meso/save/wx24sm/crons/gdas.06.log 2>&1
+10 14 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh gdas 12 > /meso/save/wx24sm/crons/gdas.12.log 2>&1
+10 20 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh gdas 18 > /meso/save/wx24sm/crons/gdas.18.log 2>&1
+
+### vvvvvv DISABLED vvvvv ###
+
+### NRLACQC output log monitoring ###
+# started on: 20120524 
+# turned off: 20120719 (NRLACQC code implemented 20120717)
+# normal operating time: 0305 (server is on local time)
+# -----------------------------
+#05 03 * * * sh /meso/save/wx24sm/crons/nrlacqc_mntr.sh > /stmp/wx24sm/nrlacqc_mntr.log 
+
+### CQCVAD testing for GDAS ###
+# started on: 20120120 
+# turned off: 20120524 
+# reenabled:  20120716
+# -----------------------------
+#30 01 * * * sh /meso/save/wx24sm/crons/mkcqcvad.sh gdas 00 > /stmp/wx24sm/cqcvad.cron.00
+#30 07 * * * sh /meso/save/wx24sm/crons/mkcqcvad.sh gdas 06 > /stmp/wx24sm/cqcvad.cron.06
+#30 13 * * * sh /meso/save/wx24sm/crons/mkcqcvad.sh gdas 12 > /stmp/wx24sm/cqcvad.cron.12
+#30 19 * * * sh /meso/save/wx24sm/crons/mkcqcvad.sh gdas 18 > /stmp/wx24sm/cqcvad.cron.18
+
+### DMA dump counts ###
+# started on: 201102171230Z (0730 local)
+# turned off: 201102191215Z (0715 local)
+# normal operating time: every 15 minutes for every hour for 2 days
+# -----------------------------
+#00,15,30,45 * * * * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 12 20110217
+#00,15,30,45 * * * * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 18 20110228
+#00,15,30,45 * * * * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 19 20110228
+#00,15,30,45 * * * * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 21 20110228
+
+### RTMA dump counts ###
+# started on: 2011040608 
+# turned off: 2011040808
+# normal operating time: every 2 minutes from 20 min to 46 min past cycle time 
+# -----------------------------
+#20,22,24,26,28,30,32,34,36,38,40,42,44,46 08 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 12 20110406
+#20,22,24,26,28,30,32,34,36,38,40,42,44,46 11 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 15 20110406
+#20,22,24,26,28,30,32,34,36,38,40,42,44,46 12 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 16 20110406
+#20,22,24,26,28,30,32,34,36,38,40,42,44,46 14 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 18 20110406
+#20,22,24,26,28,30,32,34,36,38,40,42,44,46 08 08 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 12 20110408
+
+### RTMA dump counts ###
+# started on: 2011040608 
+# turned off: 2011040808
+# get dump total 4 hours after cycle time
+# -----------------------------
+#30 12 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 12 20110406
+#30 15 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 15 20110406
+#30 16 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 16 20110406
+#30 18 06 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 18 20110406
+#30 12 08 4 * sh /meso/save/wx24sm/rtma/cron/llsubmit_dma.sh 12 20110408
+
+### Prepbufr file creation for NAM ###
+#35 03 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh nam 06 > /meso/save/wx24sm/crons/nam.06.log 2>&1
+#35 09 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh nam 12 > /meso/save/wx24sm/crons/nam.12.log 2>&1
+#35 15 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh nam 18 > /meso/save/wx24sm/crons/nam.18.log 2>&1
+#35 21 * * * sh /meso/save/wx24sm/crons/mkprpbfr.sh nam 00 > /meso/save/wx24sm/crons/nam.00.log 2>&1

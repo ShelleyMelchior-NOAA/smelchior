@@ -1,0 +1,107 @@
+source /u/Shelley.Melchior/.bashrc
+
+# Only run this on the dev machine
+host=$(hostname -s | cut -c1)
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testprod"
+then
+  echo "$host is the prod machine."
+  echo "ABORT"
+  exit
+fi
+
+# load modules
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+. $userROOT/gitstatic/fix/moduleload
+module load GrADS/2.2.0
+
+# Run on 1-day old tanks
+export cyc=00
+PDY=$(cat $COMROOT/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+export PDY=$(sh $UTILROOT/ush/finddate.sh $PDY d-1)
+
+# Set up tank array
+#tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" "NC002001" "NC002002" "NC002003" "NC002004" "NC002005" "NC002101" "NC002102" "NC002103" "NC002104" "NC002105" "NC004001" "NC004002" "NC004003" "NC004004" "NC004006" "NC004103" "NC004010" "NC007001" "NC007002" "NC021037" "NC021038" "NC021039" "NC021212" "NC021213" "NC021239" "NC021241" "NC021033" "NC021035" "NC021036" )
+#tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" "NC002001" "NC002002" "NC002003" "NC002004" "NC002005" "NC002101" "NC002102" "NC002103" "NC002104" "NC002105" "NC004001" "NC004002" "NC004003" "NC004004" "NC004006" "NC004103" "NC004010" "NC007001" "NC007002" )
+tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" )
+#tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" "NC001002" "NC001003" "NC001102" "NC001103" "NC002008" "NC002013" "NC002014" "NC002017" "NC002018" )
+
+# Run plot_dumps_grads.sh on each available tank
+rundir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/EMC_obsproc_melchior/misc/plot_dumps
+script=plot_dumps_grads.sh.ph3
+dcomdev=$DCOMROOT/dev/$PDY
+dcom=$DCOMROOT/prod/$PDY
+
+for tank in ${tankarr[@]}
+do
+  echo "Processing tank ${tank} ..."
+  b=$(echo $tank | cut -c3-5)
+  xx=$(echo $tank | cut -c6-8)
+  tankfile=${dcomdev}/b${b}/xx${xx}
+  if [ "$b" = "000" -o "$b" = "001" -o "$b" = "021" -o "$xx" = "008" -o "$xx" = "017" ]
+  then
+    tankfile=${dcom}/b${b}/xx${xx}
+  fi
+  if [ -f ${tankfile} ]
+  then
+    echo ${rundir}/${script} ${tankfile} ${tank} ${PDY}
+    sh ${rundir}/${script} ${tankfile} ${tank} ${PDY} 
+  fi
+done
+
+exit
+
+# Plot overlays of TAC and BUFR tank data
+ctldir=/gpfs/dell2/ptmp/$USER/plot_dumps
+tactankarr=( "NC000000" "NC000001" "NC000002" "NC001002" "NC001003" "NC002001" "NC002002" "NC002003" "NC002004" "NC002005" "NC004003" )
+for tactank in ${tactankarr[@]}
+do
+  b=$(echo $tactank | cut -c1-5) 
+  xx=$(echo $tactank | cut -c6-8)
+  x1=$(echo $xx | cut -c1)
+  if [ $x1 -eq 0 ]
+  then
+    x1=$((x1+1))
+    x23=$(echo $xx | cut -c2-3)
+    bufrtank=${b}${x1}${x23}
+    echo $tactank $bufrtank
+    ctlfile=$ctldir/$tactank.$PDY.ctl
+    ctlfile2=$ctldir/$bufrtank.$PDY.ctl
+    # skip overlay graphic if either ctl file is missing
+    [ ! -f $ctlfile ] && continue
+    [ ! -f $ctlfile2 ] && continue
+    set -x
+    grads -lbcx "$rundir/plot_overlays_grads.gs.ph3 $ctlfile $ctlfile2 $tactank $bufrtank $PDY"
+  fi
+done
+
+# Plot overlay of TAC NC004006 and BUFR NC004103
+# This graphic no longer needed; Germany ceased sending BUFR format Eurpoean AMDAR data
+# to GTS, so no longer populating tank NC004103.
+# 7/28/2016 - Restarted graphic; EU reports are once again populating tank NC004103.
+#: <<"OBSOLETE"
+tactank="NC004006"
+bufrtank="NC004103"
+ctlfile=$ctldir/$tactank.$PDY.ctl
+ctlfile2=$ctldir/$bufrtank.$PDY.ctl
+# skip overlay graphic if either ctl file is missing
+[ ! -f $ctlfile ] && continue
+[ ! -f $ctlfile2 ] && continue
+grads -lbcx "$rundir/plot_overlays_grads.gs.ph3 $ctlfile $ctlfile2 $tactank $bufrtank $PDY"
+#OBSOLETE
+
+# Plot overlay of TAC NC004001 and BUFR NC004103
+tactank="NC004001"
+bufrtank="NC004103"
+ctlfile=$ctldir/$tactank.$PDY.ctl
+ctlfile2=$ctldir/$bufrtank.$PDY.ctl
+# skip overlay graphic if either ctl file is missing
+[ ! -f $ctlfile ] && continue
+[ ! -f $ctlfile2 ] && continue
+grads -lbcx "$rundir/plot_overlays_grads.gs.ph3 $ctlfile $ctlfile2 $tactank $bufrtank $PDY"
+
+# scp files to webserver
+#bsub < ${rundir}/transfer_plots_dumps_grads
+
+exit

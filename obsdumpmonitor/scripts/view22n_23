@@ -1,0 +1,12 @@
+## view22n_23 ##
+## *.out rejected due to meaningless date tosses  ##
+
+echo " ===> *.out rejected due to meaningless date tosses"
+echo " "
+
+grep -e "REJECTED DUE TO MEANINGLESS" /dcom/us*/*.out
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

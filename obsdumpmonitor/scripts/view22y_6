@@ -1,0 +1,48 @@
+## view22y_6 ##
+## Determine prod and dev machines ##
+## check satingest standard output files  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine but check in /com/output/prod"
+   echo " "
+fi
+
+echo " ===> Check obsproc_satingest standard output for:"
+echo "unexpected end of file"
+echo " "
+
+# build output file name array
+filename=( "iaerosol" "iairs" "iavhrr" "goes_cloud" "igoes_radsnd" "igoes_sst" "inpp" "iozone14" "iozone_orbit" "ipoes_sst" "iqscatter" "issmi" "isnow" "isstfld" "isatwnd" "itovs" )
+
+#for ndir in `ls -d /com/output/$mach/*` ; do
+for ndir in `ls -d /com/output/prod/[0-9]???????` ; do
+  [ $ndir = /com/output/$mach/today ] && continue
+  for elem in ${filename[@]} ; do
+#   grep -l "obsproc_satingest" ${dir}/${elem}_*
+    grep -l "unexpected end of file" ${ndir}/${elem}_*
+  done
+done
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

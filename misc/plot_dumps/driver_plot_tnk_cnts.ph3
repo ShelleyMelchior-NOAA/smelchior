@@ -1,0 +1,56 @@
+source /u/Shelley.Melchior/.bashrc
+
+# Only run this on the dev machine
+host=$(hostname -s | cut -c1)
+testdev=$(cat /etc/dev | cut -c1)
+testprod=$(cat /etc/prod | cut -c1)
+if test "$host" = "$testprod"
+then
+  echo "$host is the prod machine."
+  echo "ABORT"
+  exit
+fi
+
+# Set up tank array
+tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" "NC002001" "NC002002" "NC002003" "NC002004" "NC002005" "NC002101" "NC002102" "NC002103" "NC002104" "NC002105" "NC004003" "NC004004" "NC004006" "NC004009" "NC004011" "NC004103" )
+
+# Run plot_tnk_cnts.sh on each available tank
+rundir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/EMC_obsproc_melchior/misc/plot_dumps
+script=plot_tnk_cnts.sh.ph3
+
+for tank in ${tankarr[@]}
+do
+  echo ${rundir}/${script} ${tank}
+  sh ${rundir}/${script} ${tank}
+done
+
+
+# Plot overlays of counts from TAC and BUFR tanks
+ctldir=/gpfs/dell2/ptmp/$USER/plot_tnkcnts
+mkdir -p $ctldir
+tactankarr=( "NC000000" "NC000001" "NC000002" "NC002001" "NC002002" "NC002003" "NC002004" "NC002005" "NC004003" )
+for tactank in ${tactankarr[@]}
+do
+  b=$(echo $tactank | cut -c1-5)
+  xx=$(echo $tactank | cut -c6-8)
+  x1=$(echo $xx | cut -c1)
+  if [ $x1 -eq 0 ]
+  then
+    x1=$((x1+1))
+    x23=$(echo $xx | cut -c2-3)
+    bufrtank=${b}${x1}${x23}
+    echo $tactank $bufrtank
+    ctlfile=$ctldir/$tactank.10dycnt.ctl
+    ctlfile2=$ctldir/$bufrtank.10dycnt.ctl
+    # skip overlay graphic if either ctl file is missing
+    [ ! -f $ctlfile ] && continue
+    [ ! -f $ctlfile2 ] && continue
+    set -x
+    grads -lbcx "$rundir/plot_overlays_10dycnts.gs.ph3 $ctlfile $ctlfile2 $tactank $bufrtank"
+  fi
+done
+
+# scp 10dycnt overlay files to webserver
+#bsub < ${rundir}/transfer_plots_tnk_cnts
+
+exit

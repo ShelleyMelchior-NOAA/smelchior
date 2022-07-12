@@ -1,0 +1,56 @@
+# This program runs SB's table extractor; pulls BUFR table from a
+# BUFR data file.
+
+# Check incoming args; must have 2
+test $# -lt 2 && echo "USAGE ... $0: <full path input BUFR file> <output path+bufrtable>"
+test $# -lt 2 && exit
+
+set -x
+
+host=$(hostname | cut -c1)
+inbufr=$1    # BUFR file whose table will be extracted
+outtable=$2  # output path+bufrtable
+table=$(basename $outtable)
+outdir=$(dirname $outtable)
+mkdir -p $outdir
+if [ $? -ne 0 ]; then
+  echo "mkdir -p $outtable failed!"
+  exit
+fi
+
+cd $outdir
+if [ $? -ne 0 ]; then
+  echo "cd $outdir failed!"
+  exit
+fi
+
+rm fort.11 fort.51
+ln -sf $inbufr fort.11
+ln -sf $table fort.51
+
+# directory where tablextractor.x is located
+if [ "$host" = m -o "$host" = v ]; then
+  ushdir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitstatic/ush/tablextractor
+# ushdir=/gpfs/dell2/emc/obsproc/noscrub/$USER/gitwkspc/EMC_obsproc/misc/tablextractor  #melchior branch
+elif [ "$host" = g -o "$host" = t ]; then
+  ushdir=/gpfs/${host}d1/emc/meso/save/$USER/gitstatic/ush/tablextractor
+# ushdir=/gpfs/${host}d1/emc/meso/save/$USER/gitwkspc/EMC_obsproc/misc/tablextracotr  #melchior branch
+else
+  echo "unknown platform - EXIT!"
+  exit
+fi
+
+echo "$ushdir/tablextractor.x"
+$ushdir/tablextractor.x
+
+set +x
+
+echo "DONE!"
+echo
+echo "The BUFR table for:"
+echo " $inbufr"
+echo "is in:"
+echo " $outtable"
+echo
+echo
+#cat $outtable 

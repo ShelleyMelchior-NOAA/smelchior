@@ -1,0 +1,153 @@
+. /u/Shelley.Melchior/.bashrc
+
+# Run dumpjb for dump group: aircft aircar
+
+set -x
+
+# Check incoming args
+test $# -ne 1 && echo "$0: <cyc>"
+test $# -ne 1 && exit
+
+cyc=$1
+pid=$$
+# Not required; only defined for catchup runs after dev outage or prod switch
+# comalt = temp com space that contains dump and status files scp'd from prod
+#          server to dev server.
+comalt=$2
+
+# test if this is the prod machine
+# pass in $pid
+ushdir=/meso/save/$USER/svnwkspc/melchior/ush
+sh $ushdir/devprodtest.sh ${pid}
+returnfile=/stmpp1/$USER/devprodtest.${pid}.out
+rc=$(cat $returnfile)
+if [[ $rc != 0 ]]; then
+  echo 'prod machine - exit'
+  rm $returnfile
+  exit
+fi
+rm $returnfile
+
+# compare 2 different date commands - diagnostic
+cat /com2/date/t${cyc}z
+now=$(date +%Y%m%d)
+
+export PDY=$(cat /com2/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+#export PDY=20160117 # may need to hard set the date if /com2/date/t00z has already been updated
+
+# Test that the two dates are equal
+# This test is a safeguard on the occasion that /com2/date/t${cyc}z is delayed in being updated.
+# This most particularly will affect 00Z and 12Z RAP runs.
+if [ ${now} -ne ${PDY} ]; then
+  echo "/com2/date/t${cyc}z has not yet been updated"
+  PDY=${now}
+fi
+
+tmmark=00
+network=rap
+CDATE=${PDY}${cyc}
+CDATEm1=$(/nwprod2/util/exec/ndate -24 $CDATE)
+PDYm1=$(echo $CDATEm1 | cut -c 1-8)
+CDATEp1=$(/nwprod2/util/exec/ndate +24 $CDATE)
+PDYp1=$(echo $CDATEp1 | cut -c 1-8)
+
+#workdir=/ptmpp2/$USER/dumpjb_aircraft_rap.${PDY}${cyc}.$$  # use pid when doing testing
+#workdir=/stmpp2/$USER/dumpjb_aircraft_rap.${PDY}${cyc}
+workdir=/stmpp2/$USER/dumpjb_aircraft_rap.${PDY}${cyc}.$$
+[ -d $workdir ] || mkdir -p $workdir
+cd $workdir
+
+export TMPDIR=$workdir
+
+VERSION_FILE=/nwprod2/versions/obsproc_${network}.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+
+export HOMEobsproc_dump=/nwprod/obsproc_dump.$obsproc_dump_ver
+
+#export LALO="F${HOMEobsproc_dump}/fix/nam_expdomain_halfdeg_imask.gbl"
+export LALO=0
+
+CRAD=3.25
+
+export KEEP_NEARDUP_ACFT=NO
+#export HOMEobsproc_shared_bufr_dumplist=/nwprod/obsproc_shared/bufr_dumplist.${obsproc_shared_bufr_dumplist_ver}
+export HOMEobsproc_shared_bufr_dumplist=/meso/save/$USER/svnwkspc/VS/obsproc_shared/bufr_dumplist
+
+# Pick up V7BUFR MDCRS (NC004004) in /dcomdev
+# Strip subsets with test header "IUTM97 KARP" from /dcomdev since these are not in /dcom
+#miscdir=/meso/save/$USER/svnwkspc/melchior/misc
+#mdcrsout=/stmpp2/$USER/toss_spec_header
+#mkdir -p $mdcrsout/dcomdev/us007003/$PDY/b004
+#mkdir -p $mdcrsout/dcomdev/us007003/$PDYm1/b004
+#mkdir -p $mdcrsout/dcomdev/us007003/$PDYp1/b004
+#sh $miscdir/toss_spec_header.sh /dcomdev/us007003/$PDY/b004/xx004 \
+#   $mdcrsout/dcomdev/us007003/$PDY/b004
+#sh $miscdir/toss_spec_header.sh /dcomdev/us007003/$PDYm1/b004/xx004 \
+#   $mdcrsout/dcomdev/us007003/$PDYm1/b004
+#sh $miscdir/toss_spec_header.sh /dcomdev/us007003/$PDYp1/b004/xx004 \
+#   $mdcrsout/dcomdev/us007003/$PDYp1/b004
+#if [ -e $mdcrsout/dcomdev/us007003/$PDY/b004/bufrout ]
+#then
+#  cp -p $mdcrsout/dcomdev/us007003/$PDY/b004/bufrout $mdcrsout/dcomdev/us007003/$PDY/b004/xx004
+#fi
+#if [ -e $mdcrsout/dcomdev/us007003/$PDYm1/b004/bufrout ]
+#then
+#  cp -p $mdcrsout/dcomdev/us007003/$PDYm1/b004/bufrout $mdcrsout/dcomdev/us007003/$PDYm1/b004/xx004
+#fi
+#if [ -e $mdcrsout/dcomdev/us007003/$PDYp1/b004/bufrout ]
+#then
+#  cp -p $mdcrsout/dcomdev/us007003/$PDYp1/b004/bufrout $mdcrsout/dcomdev/us007003/$PDYp1/b004/xx004
+#fi
+#export TANK_004004=$mdcrsout/dcomdev/us007003
+
+#export DCOMROOT=/dcomdev
+export DCOMROOT=/dcom
+export TANK=${DCOMROOT}/us007003
+
+# Remove IUAX91, IUAX96, IUAX97 from production sdmedit file so that they are not rejected
+#sed -e '/IUAX91/d;/IUAX96/d;/IUAX97/d' /dcom/us007003/sdmedit > $workdir/sdmedit
+#export EPRM=$workdir/sdmedit
+
+$HOMEobsproc_dump/ush/dumpjb $CDATE $CRAD aircft aircar
+echo $HOMEobsproc_dump/ush/dumpjb $CDATE $CRAD aircft aircar
+
+# copy aircar.ibm and aircft.ibm to name prep processing is expecting
+mv $workdir/aircar.ibm $workdir/${network}.t${cyc}z.aircar.tm${tmmark}.bufr_d
+mv $workdir/aircft.ibm $workdir/${network}.t${cyc}z.aircft.tm${tmmark}.bufr_d
+export tstsp=$workdir/${network}.t${cyc}z.
+
+mv $workdir/aircar.out $workdir/aircar.${network}.out
+mv $workdir/aircft.out $workdir/aircft.${network}.out
+
+# Generate cycle and tmmark specific J-job
+local_template=/meso/save/$USER/svnwkspc/melchior/jobs/JRAP_PREP.template
+cp $local_template $workdir
+cd $workdir
+#  sed "s/XCCX/${cyc}/;s/XTSTSPX/${tstsp}/" $local_template > bscript
+sed "s=XCCX=${cyc}=g;s=XTSTSPX=${tstsp}=;s=XPDYX=$PDY=" $local_template > bscript
+# check that the dump files are all available
+# once available, submit bscript; otherwise keep sleeping for 20s for 60 iterations (20 mins).
+statusfl=/com2/${network}/prod/${network}.${PDY}/${network}.t${cyc}z.status.tm${tmmark}.bufr_d
+# test if alternate com directory is specified ($comalt)
+# This is defined in cases when a dev outage or production switch results
+# in a delay in the transfer of production files from the prod server
+# to the dev server.
+if [ "$comalt" != "" ]; then
+  statusfl=$comalt/${network}.t${cyc}z.status.tm${tmmark}.bufr_d
+  # will also need to set up a comsp to use in JRAP_PREP.template
+  # some script rearrangement is still in order.
+fi
+i=1
+while [ "$i" -ne 0 ]
+do
+  if [ -f ${statusfl} ]; then
+    bsub < bscript
+    i=0
+  else
+    echo "sleep 20"
+    sleep 20
+    i=$((i + 1))
+    if [ "$i" -eq 60 ]; then break; fi
+  fi
+done
+

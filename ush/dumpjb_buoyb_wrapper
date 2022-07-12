@@ -1,0 +1,19 @@
+netarr=( "gdas" "gfs" )
+cycarr=( "00" "06" "12" "18" )
+#pdyarr=( "20181215" "20181216" "20181217" "20181218" "20181219" "20181220" "20181221" "20181222" "20181223" "20181224" "20181225" "20181226" "20181227" "20181228" "20181229" "20181230" "20181231" )
+#pdyarr=( "20190106" "20190107" "20190108" "20190109" "20190110" "20190111" "20190112" "20190113" "20190114" "20190115" )
+pdyarr=( "20190101" "20190102" "20190103" "20190104" "20190105" )
+
+for net in ${netarr[@]}
+do
+  for cyc in ${cycarr[@]}
+  do
+    for pdy in ${pdyarr[@]}
+    do
+      echo ""
+      echo "$cyc $net dump for $pdy"
+      echo "sh /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitwkspc/EMC_obsproc/ush/dumpjb_buoyb.sh $cyc $net $pdy >& /gpfs/dell2/stmp/$USER/buoyb.dumpjb.${net}.${pdy}${cyc}.out"
+      sh /gpfs/dell2/emc/obsproc/noscrub/Shelley.Melchior/gitwkspc/EMC_obsproc/ush/dumpjb_buoyb.sh $cyc $net $pdy >& /gpfs/dell2/stmp/$USER/buoyb.dumpjb.${net}.${pdy}${cyc}.out
+    done
+  done
+done

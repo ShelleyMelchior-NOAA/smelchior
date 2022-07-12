@@ -1,0 +1,25 @@
+<div id="col-container">
+<div id="title">
+<h1><a href="index.php">Obs Dump Monitor</a></h1>
+</div>
+
+<?php
+print("<div id=\"devprod\">");
+print("<strong>");
+if ($ccs=="prod")
+ {
+  print("<a class=\"active\" href=\"?ccs=$ccsarr[0]\">$ccsarr[0] [$ccsarr[1]]</a>");
+  print(" / ");
+  print("<a href=\"?ccs=$offarr[0]\">$offarr[0] [$offarr[1]]</a>");
+ }
+else if ($ccs="dev")
+ {
+  print("<a href=\"?ccs=$offarr[0]\">$offarr[0] [$offarr[1]]</a>");
+  print(" / ");
+  print("<a class=\"active\" href=\"?ccs=$ccsarr[0]\">$ccsarr[0] [$ccsarr[1]]</a>");
+ }
+print("</strong>");
+print("</div>");
+?> 
+
+</div>

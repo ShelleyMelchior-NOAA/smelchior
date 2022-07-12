@@ -1,0 +1,12 @@
+## view22n_19 ##
+## are the ingest output files nearly current?  ##
+
+echo " ===> are the ingest output files nearly current?"
+echo " "
+
+ls -l -t /dcom/us*/*out* | grep -v errlog
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

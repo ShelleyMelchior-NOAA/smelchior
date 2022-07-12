@@ -1,0 +1,25 @@
+## view22n_24 ##
+## Bulletins in wtxtbul/tropcyc  ##
+
+echo " ===> See what bulletins are in wtxtbul/tropcyc files in /dcom"
+echo " "
+
+echo "Latest wtxtbul/tropcyc files:"
+echo " "
+ls -l /dcom/us*/*/wtxtbul/tropcyc
+ls -l /dcom/us*/*/wtxtbul/tropcyc | wc -l
+
+echo " "
+
+##grep -h "^^C[A-Z,0-9]" /dcom/us*/*/wtxtbul/tropcyc | grep -v -e "ATXX01 KNWC" \
+##-e "WTAU10 ADRM" -e "FXXX40 RJTD" -e "AXXX40 RJTD"  -e "WTNT80 EGRR"
+
+#grep -h "[^C,A-Z,0-9]" /dcom/us*/*/wtxtbul/tropcyc | grep -v -e "ATXX01 KNWC" \
+#-e "WTAU10 ADRM" -e "FXXX40 RJTD" -e "AXXX40 RJTD"  -e "WTNT80 EGRR"
+
+grep -h "^^C[A-Z,0-9]" /dcom/us*/*/wtxtbul/tropcyc
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

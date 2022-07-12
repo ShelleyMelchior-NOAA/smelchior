@@ -1,0 +1,12 @@
+## view22n_2 ##
+## List report counts  ##
+
+echo " ===> REPORT COUNTS"
+echo " "
+if [ -d /com2/arch/prod/obcount_30day/nam ]; then
+  grep "006\.001" /com/arch/prod/obcount_30day/nam/*/*.status.* | grep REPORTS
+else
+  grep "006\.001" /com/arch/prod/obcount_30day/nam/*/*.status.* | grep REPORTS
+fi
+echo " "
+

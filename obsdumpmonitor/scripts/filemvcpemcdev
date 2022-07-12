@@ -1,0 +1,69 @@
+# rename (mv) files and then copy (cp) them to the emcdev server via
+# passwordless ssh
+
+#BSUB -J filemvcpemcdev
+#BSUB -q "transfer"
+#BSUB -R rusage[mem=1000]
+#BSUB -cwd /ptmpp2/%U
+#BSUB -o /ptmpp2/Shelley.Melchior/filemvcpemcdev.j%J.out
+#BSUB -W 00:10
+#BSUB -P OBSPROC-T2O
+#BSUB -R affinity[core]
+#BSUB -n 1
+
+dateflag=$(date +%Y%m%d)
+
+# get server name from which the cron is running to properly assign
+# destination directory on emcdev.
+this_machine=`hostname -s | cut -c1`
+[ $this_machine = t ] && server=tide
+[ $this_machine = g ] && server=gyre
+
+logdir="/ptmpp1/$USER/obs_dump/log"
+
+# set up scripts array
+scriptarr=('serverstats' 'viewfail' 'view22n_2' 'view22n_3' 'view22n_4' \
+           'view22n_5' 'view22n_6' 'view22n_7' 'view22n_8' 'view22n_9' \
+           'view22n_10' 'view22n_11' 'view22n_12' 'view22n_13' 'view22n_14' \
+           'view22n_15' 'view22n_16' 'view22n_17' 'view22n_18' 'view22n_19' \
+           'view22n_20' 'view22n_21' 'view22n_22' 'view22n_23' 'view22n_24' \
+           'view22n_25' 'view22n_26' 'view22n_27' 'view22n_28' 'view22n_29' \
+           'view22n_30' 'view22n_31' 'view22y_2' 'view22y_3' 'view22y_4' \
+           'view22y_5' 'view22y_6' 'view11' 'view99')
+
+for script in "${scriptarr[@]}" ; do
+  mv $logdir/${script}.log $logdir/${script}.${dateflag}.log
+done
+
+mv $logdir/view11.log $logdir/view11.$dateflag.log
+mv $logdir/view22n.log $logdir/view22n.$dateflag.log
+mv $logdir/view22y.log $logdir/view22y.$dateflag.log
+mv $logdir/viewfail.log $logdir/viewfail.$dateflag.log
+mv $logdir/driver.log $logdir/driver.$dateflag.log
+
+# remove all files that do not contain the current $dateflag
+find $logdir -type f ! -name "*$dateflag*" | xargs rm
+
+# generate filestats log (listing of $logdir)
+ls -l $logdir | cut -c37- > $logdir/filestats.$dateflag.log
+
+# create file so emcdev knows that wcoss processing is complete
+touch $logdir/done.$dateflag
+
+# scp files from wcoss (tide or gyre) to emcdev
+emcdevdir="/var/www/html/smelchior/obsdumpmonitor/$server"
+login="smelchior@emc-ls-emcdev.ncep.noaa.gov"
+
+for script in "${scriptarr[@]}" ; do
+  echo scp $logdir/${script}.${dateflag}.log $login:$emcdevdir/${script}
+  scp $logdir/${script}.${dateflag}.log $login:$emcdevdir/${script}
+done
+
+echo scp $logdir/viewspalog.$dateflag.log $login:$emcdevdir/viewspalog
+echo scp $logdir/filestats.$dateflag.log $login:$emcdevdir/filestats
+echo scp $logdir/view11.$dateflag.log $login:$emcdevdir/view11
+scp $logdir/viewspalog.$dateflag.log $login:$emcdevdir/viewspalog
+scp $logdir/filestats.$dateflag.log $login:$emcdevdir/filestats
+scp $logdir/view11.$dateflag.log $login:$emcdevdir/view11
+
+echo "Done copying files from WCOSS($server) to emcdev"

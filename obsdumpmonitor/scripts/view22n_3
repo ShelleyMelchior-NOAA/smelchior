@@ -1,0 +1,30 @@
+## view22n_3 ##
+## NAM dump start time  ##
+
+echo " ===> nam_dump start time"
+echo " "
+
+grep -h -Fe "HAS BEGUN on" \
+ /com/logs/jlogfile.old.1 /com2/logs/jlogfile.old.2 \
+ /com/logs/jlogfile.old.2 /com2/logs/jlogfile.old.2 \
+ /com/logs/jlogfile.old.3 /com2/logs/jlogfile.old.3 \
+ /com/logs/jlogfile.old.4 /com2/logs/jlogfile.old.4 \
+ /com/logs/jlogfile.old.5 /com2/logs/jlogfile.old.5 \
+ /com/logs/jlogfile.old.6 /com2/logs/jlogfile.old.6 \
+ /com/logs/jlogfile.old.7 /com2/logs/jlogfile.old.7 \
+ /com/logs/jlogfile.old.8 /com2/logs/jlogfile.old.8 \
+ /com/logs/jlogfile.old.9 /com2/logs/jlogfile.old.9 \
+ /com/logs/jlogfile.old.10 /com2/logs/jlogfile.old.10 \
+ /com/logs/jlogfile.old.11 /com2/logs/jlogfile.old.11 \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com2/logs/jlogfile | \
+ grep -h -e "LLnam_dump_..\." 
+
+echo " "
+echo "+++++++++DONE++++++++++"
+echo " "
+

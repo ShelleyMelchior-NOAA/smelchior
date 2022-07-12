@@ -1,0 +1,63 @@
+## view22n_30 ##
+## Determine prod vs dev machine ##
+## ++Command terminated abnormally++ errors in prep output  ##
+## Bufrlib warnings in prep output  ##
+## seg faults in prep output  ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine"
+   echo " "
+fi
+
+echo " ===> Check for any ++Command terminated abnormally++ errors in PREP output"
+echo "      also check for BUFRLIB warnings in PREP output"
+echo "      also check for seg faults in PREP output"
+echo " "
+
+LAST_COMOUT_DATE_5=00000000
+[ -s $HOME/LAST_COMOUT_DATE_5 ] && LAST_COMOUT_DATE_5=`cat $HOME/LAST_COMOUT_DATE_5`
+cwd=`pwd`
+cd /com/output/$mach
+for ndir in `ls -d *` ; do
+  ndir_1=`echo $ndir | cut -c1`
+  cd /com/output/$mach
+  [ $ndir_1 != '2' ]  && continue
+  [ $ndir -lt $LAST_COMOUT_DATE_5 ]  && continue
+  cd $ndir
+  LAST_COMOUT_DATE_5=`/nwprod/util/exec/ndate -24 ${ndir}00`
+  LAST_COMOUT_DATE_5=`echo $LAST_COMOUT_DATE_5 | cut -c1-8`
+  echo $LAST_COMOUT_DATE_5 > $HOME/LAST_COMOUT_DATE_5
+  echo
+  echo `pwd`:
+  for n in `ls *_prep_*`; do
+    [ `echo $n | cut -c1-4` = lamp ] && continue
+    grep -l -e "Command terminated abnormally" -e "BUFRLIB:" -e "Segmentation fault" -e "##W3UNPKB7: NUMBER OF UPPER-AIR" -e "\*\*\*WARNING" $n
+    grep -e "Command terminated abnormally" -e "BUFRLIB:" -e "Segmentation fault" -e "##W3UNPKB7: NUMBER OF UPPER-AIR" -e "\*\*\*WARNING" -e "\*\*\*WARNING" $n
+  done
+# grep -e "Command terminated abnormally" -e "\*\*\*WARNING" *_prep_* 
+done
+cd $cwd
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

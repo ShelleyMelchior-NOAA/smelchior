@@ -1,0 +1,19 @@
+## view22n_18 ##
+## how recent are the sdmedit and quips files in /dcom?  ##
+
+echo " ===> how recent are the sdmedit and quips files in /dcom?"
+echo " "
+
+ls -l /dcom/us*/sdmedit
+echo " "
+echo " - last 10 lines"
+tail -n10 /dcom/us*/sdmedit
+echo " "
+ls -l /dcom/us*/quips
+echo " "
+echo " - last 10 lines"
+tail -n10 /dcom/us*/quips
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "

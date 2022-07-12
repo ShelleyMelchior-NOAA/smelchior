@@ -1,0 +1,102 @@
+
+set -aux
+
+NET=gdas
+##NET=rap
+##NET=nam
+
+# Set up $DATA based on this server
+dir=edtbfr
+this_srvr=$(hostname -s | cut -c1)
+if [ "$this_srvr" = "g" ]; then     # WCOSS gyre
+  DATA=/stmpp1/$USER/$dir
+elif [ "$this_srvr" = "t" ]; then   # WCOSS tide
+  DATA=/stmpp1/$USER/$dir
+elif [ "$this_srvr" = "l" ]; then   # Cray luna
+  DATA=/gpfs/hps/stmp/$USER/$dir
+elif [ "$this_srvr" = "s" ]; then   # Cray surge
+  DATA=/gpfs/hps/stmp/$USER/$dir
+else
+  echo "Unknown server!"
+  exit
+fi
+
+if [ ! -d $DATA ]; then
+  mkdir $DATA
+fi
+cd $DATA
+err=$?
+[ $err -eq 0 ] && rm *
+rm jlogfile
+
+module load prod_envir
+
+#### SET these ###############################
+PDY=20160720
+
+cyc=00
+##cyc=12
+
+MESOroot=/gpfs/hps/emc/meso
+
+EPRM=$DCOMROOT/us007003/sdmedit
+
+#EDTX=$NWROOT/obsproc_dump.v3.2.1/exec/bufr_edtbfr
+EDTX=$MESOroot/noscrub/$USER/svn/obsproc_dump.tkt-351.crayport/exec/bufr_edtbfr
+
+DUMP=$COMROOTp2/gfs/prod/gdas.$PDY/gdas1.t${cyc}z.adpupa.tm00.bufr_d
+
+jlogfile=$DATA/jlogfile
+cp $NWROOTp2/util/ush/postmsg.sh $DATA/postmsg
+##############################################
+
+#DATAroot=$(echo $DATA | cut -d'/' -f2-3)
+
+#rm -r -f $DATAroot/split.bufr_X
+rm -r -f $DATA/split.bufr_X
+
+#sh $MESOroot/saveDennis.Keyser/HOME/prepbufr/split.bufr $DUMP SPLIT
+sh $MESOroot/noscrub/$USER/svn/melchior/run_single_dumpjb_execs/edtbfr/split.bufr $DUMP SPLIT 
+err=$?
+
+[ $err -ne 0 ]  && exit 99
+
+#mv $DATAroot/split.bufr_X/SPLIT_* .
+mv $DATA/split.bufr_X/SPLIT_* .
+
+> files
+for file in `ls SPLIT_NC*`; do
+   mtyp=`echo $file | cut -c9-11`
+   styp=`echo $file | cut -c12-14`
+   mv $file ${mtyp}.${styp}
+   echo ${mtyp}.${styp} >> files
+done
+
+
+RDT1_min=`$NWROOTp1/util/exec/ndate -3 ${PDY}${cyc}`
+RDT2_max=`$NWROOTp1/util/exec/ndate +3 ${PDY}${cyc}`
+
+echo "$RDT1_min $RDT2_max" > dates
+
+set +x
+echo "--------------------------------------------------------------------"
+echo "Apply q.c. changes from SDMEDIT flag file entries to all subtypes in"
+echo "BUFR types 000.* - 002.*, 004.* and 005.* (surface land, surface"
+echo "marine, upper-air, aircraft, satellite-derived wind)"
+echo
+echo "SDMEDIT flag file: $EPRM"
+echo "Program: $EDTX"
+echo
+echo "Date range for checking reports is: $RDT1_min - $RDT2_max"
+echo "--------------------------------------------------------------------"
+set -x
+cp $EPRM fort.20
+time cat dates files | $EDTX > edtbfr.out 2> edtbfr.out
+err=$?
+if [ ! -s fort.60 ]; then
+   rc_edtbfr=99
+else
+   edtbfr_run=yes
+fi
+rm fort.20
+rm fort.60 2>/dev/null

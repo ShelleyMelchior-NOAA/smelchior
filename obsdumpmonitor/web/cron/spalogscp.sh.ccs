@@ -1,0 +1,67 @@
+# cron job started on: 03/22/12 on emcdev 
+# cron job turned off:
+# normal operating time: hourly:10 
+
+# get current date
+dateflag=$(date +%Y%m%d)
+
+# scp files from ccs (cirrus and stratus) to emcdev
+# viewspalog, filestats, serverstats
+
+ccsdir="/ptmp/wx24sm/obs_dump/log"
+emcdevdir="/var/www/html/smelchior/obsdumpmonitor"
+
+# stratus
+echo "begin stratus processing"
+srvr="stratus"
+login="wx24sm@stratus.ncep.noaa.gov"
+emcdevdir_s="$emcdevdir/$srvr"
+
+# Test if spalogparse processing is complete
+scp $login:$ccsdir/viewspalog.* $emcdevdir_s
+if [ $? = 0 ]
+then
+  # spalogparse processing complete; test for most current date
+  datetest=$(ls $emcdevdir_s/viewspalog.????????.log | cut -d'.' -f2)
+  rm $emcdevdir_s/viewspalog.????????.log
+  if [ $dateflag = $datetest ]
+  then
+    echo "dates agree; proceed"
+    scp $login:$ccsdir/viewspalog.$dateflag.log $emcdevdir_s/viewspalog
+    scp $login:$ccsdir/filestats.$dateflag.log $emcdevdir_s/filestats
+    scp $login:$ccsdir/serverstats.$dateflag.log $emcdevdir_s/serverstats
+    echo "stratus processing complete"
+  else
+    echo "dates do not agree; abort"
+  fi
+else
+  echo "spalogparse file missing; abort"
+fi
+
+# cirrus 
+echo "begin cirrus processing"
+srvr="cirrus"
+login="wx24sm@cirrus.ncep.noaa.gov"
+emcdevdir_c="$emcdevdir/$srvr"
+
+# Test if spalogparse processing is complete
+scp $login:$ccsdir/viewspalog.* $emcdevdir_c
+if [ $? = 0 ]
+then
+  # spalogparse processing complete; test for most current date
+  datetest=$(ls $emcdevdir_c/viewspalog.????????.log | cut -d'.' -f2)
+  rm $emcdevdir_c/viewspalog.????????.log
+  if [ $dateflag = $datetest ]
+  then
+    echo "dates agree; proceed"
+    scp $login:$ccsdir/viewspalog.$dateflag.log $emcdevdir_c/viewspalog
+    scp $login:$ccsdir/filestats.$dateflag.log $emcdevdir_c/filestats
+    scp $login:$ccsdir/serverstats.$dateflag.log $emcdevdir_c/serverstats
+    echo "cirrus processing complete"
+  else
+    echo "dates do not agree; abort"
+  fi
+else
+  echo "spalogparse file missing; abort"
+fi
+

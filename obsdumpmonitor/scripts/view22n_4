@@ -1,0 +1,18 @@
+## view22n_4 ##
+## List status files currently available for datacount averages ##
+
+echo " ===> LISTING of STATUS files currently available for DATACOUNT avgs"
+echo "      and AVERAGE tables themselves."
+echo " "
+
+if [ -d /com2/arch/prod/obcount_30day/nam ]; then
+  ls -l -d /com2/arch/prod/avgdata/* /com2/arch/prod/obcount_30day/*/*
+else
+  ls -l -d /com/arch/prod/avgdata/* /com/arch/prod/obcount_30day/*/*
+fi
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+~
+~

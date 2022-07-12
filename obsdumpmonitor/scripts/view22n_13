@@ -1,0 +1,31 @@
+## view22n_13 ##
+## LL* jobs listing ##
+## LLtovs, LLssmi, LLqscatter, LLeuscatter, LLairs  ##
+
+/meso/save/$USER/obs_dump/dkgrepJOB LLtovs_ | \
+ grep -e "HAS BEGUN" -e "HAS COMPLETED NORMALLY" \
+ -e "ABNORMAL EXIT" -e "HAS COMPLETED ABNORMALLY" | \
+ grep -v _para
+/meso/save/$USER/obs_dump/dkgrepJOB LLssmi_ | \
+ grep -e "HAS BEGUN" -e "HAS COMPLETED NORMALLY" \
+ -e "ABNORMAL EXIT" -e "HAS COMPLETED ABNORMALLY" | \
+ grep -v _para
+/meso/save/$USER/obs_dump/dkgrepJOB LLqscatter_ | \
+ grep -e "HAS BEGUN" -e "HAS COMPLETED NORMALLY" \
+ -e "ABNORMAL EXIT" -e "HAS COMPLETED ABNORMALLY" | \
+ grep -v _para
+/meso/save/$USER/obs_dump/dkgrepJOB LLeuscatter_ | \
+ grep -e "HAS BEGUN" -e "HAS COMPLETED NORMALLY" \
+ -e "ABNORMAL EXIT" -e "HAS COMPLETED ABNORMALLY" | \
+ grep -v _para
+/meso/save/$USER/obs_dump/dkgrepJOB LLairs_ | \
+ grep -e "HAS BEGUN" -e "HAS COMPLETED NORMALLY" \
+ -e "ABNORMAL EXIT" -e "HAS COMPLETED ABNORMALLY" | \
+ grep -v _para
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+
+~
+

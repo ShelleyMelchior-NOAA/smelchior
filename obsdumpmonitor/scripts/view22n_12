@@ -1,0 +1,32 @@
+## view22n_12 ##
+## Dump script tank suddenly off-line listing  ##
+
+echo " ===> Dump script tank suddenly off-line listing"
+echo " "
+
+grep -h -Fe "(suddenly offline?)" \
+ -Fe "30 seconds" \
+ -Fe "no longer empty!" \
+ -Fe "still empty" \
+ /com/logs/jlogfile.old.1 /com2/logs/jlogfile.old.1 \
+ /com/logs/jlogfile.old.2 /com2/logs/jlogfile.old.2 \
+ /com/logs/jlogfile.old.3 /com2/logs/jlogfile.old.3 \
+ /com/logs/jlogfile.old.4 /com2/logs/jlogfile.old.4 \
+ /com/logs/jlogfile.old.5 /com2/logs/jlogfile.old.5 \
+ /com/logs/jlogfile.old.6 /com2/logs/jlogfile.old.6 \
+ /com/logs/jlogfile.old.7 /com2/logs/jlogfile.old.7 \
+ /com/logs/jlogfile.old.8 /com2/logs/jlogfile.old.8 \
+ /com/logs/jlogfile.old.9 /com2/logs/jlogfile.old.9 \
+ /com/logs/jlogfile.old.10 /com2/logs/jlogfile.old.10 \
+ /com/logs/jlogfile.old.11 /com2/logs/jlogfile.old.11 \
+ /com/logs/jlogfile.old.12 /com2/logs/jlogfile.old.12 \
+ /com/logs/jlogfile.old.13 /com2/logs/jlogfile.old.13 \
+ /com/logs/jlogfile.old.14 /com2/logs/jlogfile.old.14 \
+ /com/logs/jlogfile.old.15 /com2/logs/jlogfile.old.15 \
+ /com/logs/jlogfile.old.16 /com2/logs/jlogfile.old.16 \
+ /com/logs/jlogfile /com2/logs/jlogfile
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+

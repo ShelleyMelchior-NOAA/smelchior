@@ -1,0 +1,108 @@
+# Run dumpjb for dump group: adpsfc (synop, synopm, synopb, synpmb) 
+
+set -x
+
+#PDY=20150203    # exported from trigger
+#cyc=00          # exported from trigger
+CDATE=${PDY}${cyc}
+
+userROOT=/gpfs/dell2/emc/obsproc/noscrub/$USER
+
+module load ips/18.0.1.163
+module load prod_util/1.1.0
+module load prod_envir/1.1.0
+module use ${NWROOT}/obsproc_dump.v5.0.2/modulefiles
+module load dumpjb/5.0.2
+module use $userROOT/gitstatic/EMC_obsproc_shared_bufr_dumplist.TAC2BUFR_SYNOP/modulefiles
+#module use ${NWROOT}/obsproc_shared/bufr_dumplist.v2.1.0/modulefiles
+module load bufr_dumplist/2.1.0
+
+workdir=/gpfs/dell2/ptmp/$USER/dump_synop.$CDATE.$$
+[ -d $workdir ] || mkdir -p $workdir
+cd $workdir
+
+export TMPDIR=$workdir
+
+export LALO=0
+
+CRAD=3.0
+
+export DTIM_latest_adpsfc=+2.99
+
+export HOMEobsproc_dump=$NWROOT/obsproc_dump.v5.0.2
+export obsproc_shared_bufr_dumplist_ver=v2.1.0
+#export HOMEobsproc_shared_bufr_dumplist=$NWROOT/obsproc_shared/bufr_dumplist.v2.1.0
+export HOMEobsproc_shared_bufr_dumplist=$userROOT/gitstatic/EMC_obsproc_shared_bufr_dumplist.TAC2BUFR_SYNOP
+export LIST=$HOMEobsproc_shared_bufr_dumplist/fix/bufr_dumplist
+
+export TANK=$DCOMROOT/dev
+
+$HOMEobsproc_dump/ush/dumpjb $CDATE $CRAD adpsfc
+
+# Perform adpsfc data monitoring
+
+cd $workdir
+bufrd=adpsfc.ibm
+emailfile=email.${PDY}${cyc}.synop
+
+# Do a quick bufr inventory
+echo "---- BINV ----"
+which binv
+binv $workdir/${bufrd} | tee $emailfile
+
+# Add key to emailfile
+echo "" >> $emailfile
+echo "-- KEY --" >> $emailfile
+echo "NC000000 - synopr" >> $emailfile
+echo "NC000001 - synop" >> $emailfile
+echo "NC000002 - synopm" >> $emailfile
+echo "NC000100 - synpbr" >> $emailfile
+echo "NC000101 - synopb" >> $emailfile
+echo "NC000102 - synpmb" >> $emailfile
+
+# Build tank array
+tankarr=( "NC000000" "NC000001" "NC000002" "NC000100" "NC000101" "NC000102" )
+
+# Run gsb to split $bufrd into constituents
+# gsb /com/gfs/prod/gdas.${PDY}/gdas1.t${cyc}z.adpsfc.tm00.bufr_d
+# output writes to /stmpp1/$USER/sb
+
+which gsb
+gsb ${workdir}/${bufrd}
+for tank in ${tankarr[@]}
+do
+  if [[ -e "/gpfs/dell2/stmp/$USER/sb/split_${tank}" ]] ; then
+    cp /gpfs/dell2/stmp/$USER/sb/split_${tank} $workdir/${tank}.${PDY}${cyc}
+  fi
+done
+
+# Run ue on split_NC000?0? to list out stn IDs and lat/lon 
+# ue /stmpp1/Shelley.Melchior/sb/split_NC000000 "RPID | CLAT CLON" quiet
+# output writes to cwd/ufbtab_example.out
+
+which ue
+for tank in ${tankarr[@]}
+do
+  if [[ -e "${tank}.${PDY}${cyc}" ]] ; then
+    if [[ ${tank} == NC0001* ]] ; then
+      ue ${tank}.${PDY}${cyc} "RPID | CLATH CLONH" quiet
+    else
+      ue ${tank}.${PDY}${cyc} "RPID | CLAT CLON" quiet
+    fi
+    cp ufbtab_example.out ${tank}.${PDY}${cyc}.ue.out
+    cat ${tank}.${PDY}${cyc}.ue.out | cut -d')' -f2 > ${tank}.${PDY}${cyc}.ue.out.stripped
+  fi
+done
+
+# email cron summary
+addy="shelley.melchior@noaa.gov, jiarui.dong@noaa.gov"
+sbj="synop tanks summary - ${PDY}${cyc} - dumpjb"
+mail -s "$sbj" $addy < $emailfile
+
+# generate xml files to plot w/ google maps
+xmldir=$userROOT/gitstatic/EMC_obsproc_melchior/misc/plot_dumps
+#sh $xmldir/plot_dumps.sh
+#rc=$?
+#echo $rc
+
+exit

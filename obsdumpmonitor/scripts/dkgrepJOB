@@ -1,0 +1,4 @@
+grep -h -e LL${1} -e ll${1} /com/logs/jlogfile.old.12 /com/logs/jlogfile.old.13 /com/logs/jlogfile.old.14 /com/logs/jlogfile.old.15 /com/logs/jlogfile.old.16 /com/logs/jlogfile 
+err=$?
+
+[ "$err" -ne '0' ] && grep -h ${1} /com/logs/jlogfile.old.12 /com/logs/jlogfile.old.13 /com/logs/jlogfile.old.14 /com/logs/jlogfile.old.15 /com/logs/jlogfile.old.16 /com/logs/jlogfile 

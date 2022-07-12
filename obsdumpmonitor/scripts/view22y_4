@@ -1,0 +1,49 @@
+## view22y_4 ##
+## Determine prod and dev machines ##
+## check for too much data in getbufr ##
+
+this_machine=`hostname -s | cut -c1`
+if [ -s /etc/prod ]; then
+   prod_machine=`cat /etc/prod | cut -c1`
+else
+   prod_machine=unknown
+fi
+
+if [ $this_machine = $prod_machine ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PROD machine"
+   echo " "
+elif [ $prod_machine = unknown ];then
+   mach=prod
+   echo " "
+   echo " -- this is the PSEUDO-PROD machine"
+   echo " "
+else
+   mach=dev
+   echo " "
+   echo " -- this is the DEV machine but check in /com/output/prod"
+   echo " "
+fi
+
+echo " ===> Check for too much data in GETBUFR"
+echo " "
+
+wc=`ls /com2/output/prod/*/*rap*prep* | wc -l`
+if [ $wc -gt 0 ]; then
+  comroot=/com2/output/prod
+else
+  comroot=/com/output/prod
+fi
+for ndir in `ls -d $comroot/*` ; do
+[ $ndir = $comroot/today ] && continue
+cd $ndir
+grep \
+ -l "while processing" \
+ *rap*prep* 
+done
+
+echo " "
+echo "++++++++DONE+++++++++++"
+echo " "
+

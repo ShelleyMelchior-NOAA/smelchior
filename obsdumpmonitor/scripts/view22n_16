@@ -1,0 +1,12 @@
+## view22n_16 ##
+## ACF entries in sdmedit  ##
+
+echo " ===> check the ACF entries in sdmedit.."
+echo " "
+
+grep " ACF " /dcom/us007003/sdmedit
+
+echo " "
+echo "++++++++DONE++++++++"
+echo " "
+

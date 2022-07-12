@@ -1,0 +1,15 @@
+## view22n_20 ##
+## check no. of AIRNOW reports dumped in last few days  ##
+
+echo " ===> check number of AIRNOW reports dumped in last few days"
+echo " "
+
+if [ -d /com2/hourly/prod/hourly.* ]; then
+  cat /com2/hourly/prod/hourly.*/aqm.t12z.status.tm00.bufr_d | grep " HAS  "
+else
+  cat /com/hourly/prod/hourly.*/aqm.t12z.status.tm00.bufr_d | grep " HAS  "
+fi
+
+echo " "
+echo "++++++++DONE++++++++"
+echo " "

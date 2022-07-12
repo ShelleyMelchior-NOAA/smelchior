@@ -1,0 +1,492 @@
+########################
+##  Job gdas_dump_18 18Z
+########################
+######################################################
+##
+##  #BSUB -q dev        run on compute nodes, uses full node(s)
+##                      #BSUB -x is forced regardless if in LSF cards
+##                         (running NOT shared)
+##
+##  #BSUB -q shared     run on compute nodes, doesn't use full node(s)
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##
+##  #BSUB -q transfer   run on interactive nodes
+##                      use only for small jobs - can cause memory issues
+##                      can run ftp, ssh, mail, & mv "*" | at now +1 minutes
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##  #BSUB -L /bin/sh should be commented out if importing variables from
+##    executing script, make sure ~Dennis.Keyser/host.list exists
+##
+######################################################
+#BSUB -J jgdas_dump_18
+#BSUB -o /ptmpp1/Shelley.Melchior/gdas_dump_18.o%J
+#BSUB -e /ptmpp1/Shelley.Melchior/gdas_dump_18.o%J
+#BSUB -L /bin/sh
+#BSUB -q dev
+######BSUB -q transfer
+######BSUB -R rusage[mem=5000]
+######BSUB -R rusage[mem=4000]  # this is in prod but too small here for some reason
+######BSUB -R affinity[core]
+######BSUB -cwd /ptmpp1/Dennis.Keyser
+#BSUB -W 00:30
+#BSUB -P OBSPROC-T2O
+
+cat /etc/motd
+echo;echo "*************************************************************"
+###[ -z "????" ] || echo "LSF command:  " $???
+[ -z "$LSB_JOBNAME" ] || echo "LSF job name:         " $LSB_JOBNAME
+[ -z "$LSFUSER" ] ||     echo "User:                 " $LSFUSER
+[ -z "$LSB_QUEUE" ] ||   echo "Queue:                " $LSB_QUEUE
+[ -z "$LSB_HOSTS" ] ||   echo "Submitted to Node(s): " $LSB_HOSTS
+echo "*************************************************************";echo
+
+set -xa
+
+
+# --> these are normally not changed and should always be exported here first
+
+export DATAROOT=/ptmpp1/${USER}/tac2bfr_cron
+[ ! -d /ptmpp1/$USER/tac2bfr_cron ] && mkdir -p /ptmpp1/$USER/tac2bfr_cron
+
+envir=prod # scripts point to production (/nwprod) files as default
+
+export DEBUG_LEVEL=1
+
+export CLEANUP=NO
+
+
+
+# --> these must normally be set based on the particular run you are making
+
+export cyc=18  # must always be exported
+export job=gdas_dump_${cyc} # normally not changed, but needs $cyc
+
+#export PDY=20141105 # Add this to force in a different date than in /com/date
+# Find date 1 day ago
+PDY=$(cat /com/date/t${cyc}z | cut -d' ' -f3 | cut -c1-8)
+PDY=$(sh /nwprod/util/ush/finddate.sh $PDY d-1)
+
+#######export PROCESS_DUMP=NO
+#######export PROCESS_GRIBFLDS=NO
+
+#######export SCRIPTSobsproc_global=/meso/save/Dennis.Keyser/HOME/scripts
+
+###export TANK=....
+
+#export LOUD=on
+##export LIST=/meso/save/Dennis.Keyser/fix/bufr_dumplist
+export LIST=/meso/save/Shelley.Melchior/svnwkspc/bufr_dumplist.tkt97.dump-amdar-catchall-tanks/fix/bufr_dumplist.004103
+####export DUMP=/meso/save/Dennis.Keyser/ush/dumpjb
+##export ushscript_dump=/meso/save/Dennis.Keyser/ush
+
+####export EXECbufr=/meso/save/Dennis.Keyser/exec # affects SUPERTMI
+####export FIXbufr=/meso/save/Dennis.Keyser/fix # affects SUPERTMI
+
+###export EPRM=${TANK}/sdmedit
+###export QPRM=${TANK}/quips
+
+####export CORX=/meso/save/Dennis.Keyser/source/bufr_dupcor.fd/bufr_dupcor
+####export CHKX=/meso/save/Dennis.Keyser/source/bufr_chkbfr.fd/bufr_chkbfr
+####export SATX=/meso/save/Dennis.Keyser/exec/bufr_dupsat
+##export EDTX=/meso/save/Dennis.Keyser/sorc/bufr_edtbfr.fd/RFC_VERSION_FIXED/NEW/bufr_edtbfr
+
+##export DWSX=/meso/save/Dennis.Keyser/exec/bufr_dcodwindsat
+##export DWST=/meso/save/Dennis.Keyser/fix/bufr_bufrtab.windsat
+
+#  Obtain current OBSPROC_GLOBAL version number (obsproc_global_ver)
+#  Obtain OBSPROC_DUMP version number used by this job (obsproc_dump_ver)
+#  ----------------------------------------------------------------------
+VERSION_FILE=/nwprod/versions/obsproc_global.ver
+##VERSION_FILE=/meso/save/Dennis.Keyser/HOME/versions/obsproc_global.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+# override and set obsproc_global_ver to previous ver
+export obsproc_global_ver=v2.0.2
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_global_ver from above:
+# -----------------------------------
+##export HOMEobsproc_network=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_global.${obsproc_global_ver}
+
+# -- or --
+# Do not use $obsproc_global_ver:
+# -------------------------------
+#####unset obsproc_global_ver
+#####export HOMEobsproc_network=/meso/save/Dennis.Keyser/SVN/VS/obsproc_global
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+# -- or -- if BOTH above commented out use PRODUCTION
+# (only need this set to get root to JGDAS_DUMP below in this case)
+ HOMEobsproc_network=/nwprod/obsproc_global.${obsproc_global_ver}
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+#
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_dump_ver from above:
+# ---------------------------------
+##export HOMEobsproc_dump=/meso/save/Dennis.Keyser/HOME/TEST_VS/obsproc_dump.${obsproc_dump_ver}
+
+# -- or --
+# Do not use $obsproc_dump_ver:
+# -----------------------------
+#####unset obsproc_dump_ver
+#####export HOMEobsproc_dump=/meso/save/Dennis.Keyser/SVN/VS/obsproc_dump
+
+# -- or -- if BOTH above commented out use PRODUCTION
+
+echo "" > /dev/null # need to avoid syntax error if all is commented out
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+# Execute the Environmental Equivalence form of the job-script
+# ------------------------------------------------------------
+$HOMEobsproc_network/jobs/JGDAS_DUMP
+
+# This section onward is for tac2bfr monitor cron
+set +xa
+
+cd $DATAROOT
+# find the directory that was just generated by the JGDAS_DUMP run
+datadir=$(ls -ltr | tail -n1 | cut -d':' -f2 | cut -d' ' -f2)
+echo $datadir
+datadir=${DATAROOT}/${datadir}
+cd $datadir
+bufrd=gdas1.t${cyc}z.aircft.tm00.bufr_d
+com=com/gfs/prod/gdas.${PDY}
+emailfile=${datadir}/${com}/email.${PDY}${cyc}
+
+# Do a quick bufr inventory on NC004003 and NC004103
+echo "---- BINV ----"
+which binv
+binv $datadir/${com}/${bufrd} | tee $emailfile
+
+# Get average count of reports for ${cyc}
+tendaydir=/meso/noscrub/${USER}/TAC2BUFR/10day
+subsetsummary=${tendaydir}/subsetsummary.txt
+avg=$(cat ${subsetsummary} | grep "Avg rpts for ${cyc}z:" | cut -d':' -f2 | sed 's/^ *//g')
+echo "Baseline average NC004003 report counts for ${cyc}z: ${avg}"
+echo "Baseline average NC004003 report counts for ${cyc}z: ${avg}" >> $emailfile
+
+# Run gsb to split bufr_d file into contituents
+# gsb /com/gfs/prod/gdas.${PDY}/gdas1.t${cyc}z.aircft.tm00.bufr_d
+# output writes to /stmpp1/$USER/sb
+
+which gsb
+gsb $datadir/${com}/${bufrd}
+cp /stmpp1/$USER/sb/split_NC004003 $datadir/${com}/NC004003.${PDY}${cyc}
+cp /stmpp1/$USER/sb/split_NC004103 $datadir/${com}/NC004103.${PDY}${cyc}
+
+# Run ue on split_NC004003 to list out ACID
+# ue /stmpp1/Shelley.Melchior/sb/split_NC004003 "ACID | " quiet
+# output writes to cwd/ufbtab_example.out
+
+cd $datadir/${com}
+which ue
+ue NC004003.${PDY}${cyc} "ACID | " quiet
+cp ufbtab_example.out NC004003.${PDY}${cyc}.ue.out
+cat NC004003.${PDY}${cyc}.ue.out | cut -d')' -f2 > NC004003.${PDY}${cyc}.ue.out.stripped
+
+# Run ue on split_NC004103 to list out ACRN
+# ue /stmpp1/Shelley.Melchior/sb/split_NC004103 "ACRN | " quiet
+# output writes to cwd/ufbtab_example.out
+
+ue $datadir/${com}/NC004103.${PDY}${cyc} "ACRN | " quiet
+cp ufbtab_example.out NC004103.${PDY}${cyc}.ue.out
+cat NC004103.${PDY}${cyc}.ue.out | cut -d')' -f2 > NC004103.${PDY}${cyc}.ue.out.stripped
+
+# parse through ufbtab_example.out to gather report counts
+# tank: NC004003
+echo "" >> $emailfile
+echo "NC004003" >> $emailfile
+echo "" >> $emailfile
+fileroot=NC004003.${PDY}${cyc}
+# AFZA
+grep AFZA ${fileroot}.ue.out.stripped > ${fileroot}.AFZA
+ttlcnt=$(grep AFZA ${fileroot}.AFZA | wc -l)
+echo "Total AFZA reports: $ttlcnt" >> ${fileroot}.AFZA
+avg=$(cat ${subsetsummary} | grep "AFZA reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total AFZA reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep AFZA ${fileroot}.AFZA | sort | uniq | wc -l) - 1)
+echo "Total AFZA unique IDs: $unq" >> ${fileroot}.AFZA
+echo "Total AFZA unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+AFZAarr=( "AFZA0" "AFZA1" "AFZA2" "AFZA3" "AFZA4" "AFZA5" "AFZA6" "AFZA7" "AFZA8" "AFZA9" )
+for elem in ${AFZAarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.AFZA | wc -l)
+  echo "Total ${elem}* reports: $res" >> ${fileroot}.AFZA
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+# AU
+grep AU ${fileroot}.ue.out.stripped > ${fileroot}.AU
+ttlcnt=$(grep AU ${fileroot}.AU | wc -l)
+echo "Total AU reports: $ttlcnt" >> ${fileroot}.AU
+avg=$(cat ${subsetsummary} | grep "AU reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total AU reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep AU ${fileroot}.AU | sort | uniq | wc -l) - 1)
+echo "Total AU unique IDs: $unq" >> ${fileroot}.AU
+echo "Total AU unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+AUarr=( "AU00" "AU01" )
+for elem in ${AUarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.AU | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.AU
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+# CNC
+grep CNC ${fileroot}.ue.out.stripped > ${fileroot}.CNC
+ttlcnt=$(grep CNC ${fileroot}.CNC | wc -l)
+echo "Total CNC reports: $ttlcnt" >> ${fileroot}.CNC
+avg=$(cat ${subsetsummary} | grep "CNC reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total CNC reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep CNC ${fileroot}.CNC | sort | uniq | wc -l) - 1)
+echo "Total CNC unique IDs: $unq" >> ${fileroot}.CNC
+echo "Total CNC unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+CNCarr=( "CNCOVM" "CNCOVL" "CNCMVT" "CNCMTS" "CNCSVN" "CNCSZT" "CNCSXK" "CNCSZN" "CNCSVM" )
+for elem in ${CNCarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.CNC | wc -l)
+  echo "Total ${elem} reports: ${res}" >> ${fileroot}.CNC
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem} reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+# CNF
+grep CNF ${fileroot}.ue.out.stripped > ${fileroot}.CNF
+ttlcnt=$(grep CNF ${fileroot}.CNF | wc -l)
+echo "Total CNF reports: $ttlcnt" >> ${fileroot}.CNF
+avg=$(cat ${subsetsummary} | grep "CNF reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total CNF reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep CNF ${fileroot}.CNF | sort | uniq | wc -l) - 1)
+echo "Total CNF unique IDs: $unq" >> ${fileroot}.CNF
+echo "Total CNF unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+CNFarr=( "CNFL" "CNFM" "CNFN" "CNFO" "CNFP" "CNFQ" "CNFR" )
+for elem in ${CNFarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.CNF | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.CNF
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+# No longer need to process EU reports in NC004003.  All EU reports
+# are now populating dedicated tank, NC004006.
+: <<"OBSOLETE"
+# EU
+grep EU ${fileroot}.ue.out.stripped > ${fileroot}.EU
+ttlcnt=$(grep EU ${fileroot}.EU | wc -l)
+echo "Total EU reports: $ttlcnt" >> ${fileroot}.EU
+avg=$(cat ${subsetsummary} | grep "EU reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total EU reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep EU ${fileroot}.EU | sort | uniq | wc -l) - 1)
+echo "Total EU unique IDs: $unq" >> ${fileroot}.EU
+echo "Total EU unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+EUarr=( "EU0" "EU1" "EU2" "EU3" "EU4" "EU5" "EU6" "EU7" "EU8" "EU9" )
+for elem in ${EUarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.EU | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.EU
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+OBSOLETE
+echo "EU reports no longer populate NC004003" >> $emailfile
+echo "EU report counts in NC004006:" >> $emailfile
+# Get report counts from b004/xx006
+eufile=/meso/noscrub/${USER}/TAC2BUFR/10day/NC004006.EU
+/u/Jeff.Whiting/bin/go_chkdat /dcom/us007003/${PDY}/b004/xx006 >> $emailfile
+test=$(grep "${PDY}" ${eufile} | wc -l)
+if [ "$test" -eq "0" ]; then
+  /u/Jeff.Whiting/bin/go_chkdat /dcom/us007003/${PDY}/b004/xx006 >> $eufile
+fi
+echo "" >> $emailfile
+# JP
+grep JP ${fileroot}.ue.out.stripped > ${fileroot}.JP
+ttlcnt=$(grep JP ${fileroot}.JP | wc -l)
+echo "Total JP reports: $ttlcnt" >> ${fileroot}.JP
+avg=$(cat ${subsetsummary} | grep "JP reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total JP reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep JP ${fileroot}.JP | sort | uniq | wc -l) - 1)
+echo "Total JP unique IDs: $unq" >> ${fileroot}.JP
+echo "Total JP unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+JParr=( "JP9Z4" "JP9Z5" "JP9Z8" "JP9ZV" "JP9ZX" )
+for elem in ${JParr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.JP | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.JP
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+# NZL
+grep NZL ${fileroot}.ue.out.stripped > ${fileroot}.NZL
+ttlcnt=$(grep NZL ${fileroot}.NZL | wc -l)
+echo "Total NZL reports: $ttlcnt" >> ${fileroot}.NZL
+avg=$(cat ${subsetsummary} | grep "NZL reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+change=$(echo "scale=2; (${ttlcnt}-${avg})/(${avg})*100" | bc)
+echo "Total NZL reports: ${ttlcnt} (${avg}) ... ${change}%" >> $emailfile
+unq=$(expr $(grep NZL ${fileroot}.NZL | sort | uniq | wc -l) - 1)
+echo "Total NZL unique IDs: $unq" >> ${fileroot}.NZL
+echo "Total NZL unique IDs: $unq" >> $emailfile
+# get avg baseline counts and write to $emailfile
+NZLarr=( "NZL00" "NZL01" "NZL02" "NZL03" "NZL04" "NZL05" "NZL06" "NZL07" "NZL08" "NZL09" )
+for elem in ${NZLarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.NZL | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.NZL
+  avg=$(cat ${subsetsummary} | grep ${elem} | grep "reports for ${cyc}z" | cut -d':' -f2 | sed 's/^ *//g')
+  echo "Total ${elem}* reports: ${res} (${avg})" >> $emailfile
+done
+echo "" >> $emailfile
+
+# parse through ufbtab_example.out to gather report counts
+# tank: NC004103
+echo "NC004103" >> $emailfile
+echo "" >> $emailfile
+fileroot=NC004103.${PDY}${cyc}
+# AFZA
+grep AFZA ${fileroot}.ue.out.stripped > ${fileroot}.AFZA
+ttlcnt=$(grep AFZA ${fileroot}.AFZA | wc -l)
+ttlcnt_afza=$ttlcnt
+echo "Total AFZA reports: $ttlcnt" >> ${fileroot}.AFZA
+echo "Total AFZA reports: $ttlcnt" >> $emailfile
+echo "" >> $emailfile
+# AU
+grep AU ${fileroot}.ue.out.stripped > ${fileroot}.AU
+ttlcnt=$(grep AU ${fileroot}.AU | wc -l)
+ttlcnt_au=$ttlcnt
+echo "Total AU reports: $ttlcnt" >> ${fileroot}.AU
+echo "Total AU reports: $ttlcnt" >> $emailfile
+echo "" >> $emailfile
+# CNC
+grep CNC ${fileroot}.ue.out.stripped > ${fileroot}.CNC
+ttlcnt=$(grep CNC ${fileroot}.CNC | wc -l)
+ttlcnt_cnc=$ttlcnt
+echo "Total CNC reports: $ttlcnt" >> ${fileroot}.CNC
+echo "Total CNC reports: $ttlcnt" >> $emailfile
+echo "" >> $emailfile
+# CNF
+grep CNF ${fileroot}.ue.out.stripped > ${fileroot}.CNF
+ttlcnt=$(grep CNF ${fileroot}.CNF | wc -l)
+ttlcnt_cnf=$ttlcnt
+echo "Total CNF reports: $ttlcnt" >> ${fileroot}.CNF
+echo "Total CNF reports: $ttlcnt" >> $emailfile
+echo "" >> $emailfile
+# EU
+grep EU ${fileroot}.ue.out.stripped > ${fileroot}.EU
+ttlcnt=$(grep EU ${fileroot}.EU | wc -l)
+ttlcnt_eu=$ttlcnt
+echo "Total EU reports: $ttlcnt" >> ${fileroot}.EU
+echo "Total EU reports: $ttlcnt" >> $emailfile
+echo "" >> $emailfile
+# JP
+grep JP ${fileroot}.ue.out.stripped > ${fileroot}.JP
+ttlcnt=$(grep JP ${fileroot}.JP | wc -l)
+ttlcnt_jp=$ttlcnt
+echo "Total JP reports: $ttlcnt" >> ${fileroot}.JP
+echo "Total JP reports: $ttlcnt" >> $emailfile
+unq=$(expr $(grep JP ${fileroot}.JP | sort | uniq | wc -l) - 1)
+echo "Total JP unique IDs: $unq" >> ${fileroot}.JP
+echo "Total JP unique IDs: $unq" >> $emailfile
+JParr=( "JP9Z4" "JP9Z5" "JP9Z8" "JP9ZV" "JP9ZX" )
+for elem in ${JParr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.JP | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.JP
+  echo "Total ${elem}* reports: ${res}" >> $emailfile
+done
+echo "" >> $emailfile
+# NZL
+grep NZL ${fileroot}.ue.out.stripped > ${fileroot}.NZL
+ttlcnt=$(grep NZL ${fileroot}.NZL | wc -l)
+ttlcnt_nzl=$ttlcnt
+echo "Total NZL reports: $ttlcnt" >> ${fileroot}.NZL
+echo "Total NZL reports: $ttlcnt" >> $emailfile
+unq=$(expr $(grep NZL ${fileroot}.NZL | sort | uniq | wc -l) - 1)
+echo "Total NZL unique IDs: $unq" >> ${fileroot}.NZL
+echo "Total NZL unique IDs: $unq" >> $emailfile
+NZLarr=( "NZL00" "NZL01" "NZL02" "NZL03" "NZL04" "NZL05" "NZL06" "NZL07" "NZL08" "NZL09" )
+for elem in ${NZLarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.NZL | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.NZL
+  echo "Total ${elem}* reports: ${res}" >> $emailfile
+done
+echo "" >> $emailfile
+# HK
+grep HK0 ${fileroot}.ue.out.stripped > ${fileroot}.HK
+ttlcnt=$(grep HK0 ${fileroot}.HK | wc -l)
+ttlcnt_hk=$ttlcnt
+echo "Total HK reports: $ttlcnt" >> ${fileroot}.HK
+echo "Total HK reports: $ttlcnt" >> $emailfile
+unq=$(grep HK0 ${fileroot}.HK | sort | uniq | wc -l)
+echo "Total HK unique IDs: $unq" >> ${fileroot}.HK
+echo "Total HK unique IDs: $unq" >> $emailfile
+HKarr=( "HK0001" "HK0002" "HK0004" "HK0006" )
+for elem in ${HKarr[@]}
+do
+  res=$(grep ${elem} ${fileroot}.HK | wc -l)
+  echo "Total ${elem}* reports: ${res}" >> ${fileroot}.HK
+  echo "Total ${elem}* reports: ${res}" >> $emailfile
+done
+echo "" >> $emailfile
+# AXM
+grep AXM ${fileroot}.ue.out.stripped > ${fileroot}.AXM
+ttlcnt=$(grep AXM ${fileroot}.AXM | wc -l)
+ttlcnt_axm=$ttlcnt
+echo "Total AXM reports: $ttlcnt" >> ${fileroot}.AXM
+echo "Total AXM reports: $ttlcnt" >> $emailfile
+unq=$(expr $(grep AXM ${fileroot}.AXM | sort | uniq | wc -l) - 1)
+echo "Total AXM unique IDs: $unq" >> ${fileroot}.AXM
+echo "Total AXM unique IDs: $unq" >> $emailfile
+echo "" >> $emailfile
+# MXD
+grep MXD ${fileroot}.ue.out.stripped > ${fileroot}.MXD
+ttlcnt=$(grep MXD ${fileroot}.MXD | wc -l)
+ttlcnt_mxd=$ttlcnt
+echo "Total MXD reports: $ttlcnt" >> ${fileroot}.MXD
+echo "Total MXD reports: $ttlcnt" >> $emailfile
+unq=$(expr $(grep MXD ${fileroot}.MXD | sort | uniq | wc -l) - 1)
+echo "Total MXD unique IDs: $unq" >> ${fileroot}.MXD
+echo "Total MXD unique IDs: $unq" >> $emailfile
+echo "" >> $emailfile
+
+# add logic to deal w/ the missing/garbled IDs
+ttlrpts=$(expr $(cat ${fileroot}.ue.out.stripped | wc -l) - 5)
+ttl_badIDs=$(expr ${ttlrpts} - ${ttlcnt_afza} - ${ttlcnt_au} - ${ttlcnt_cnc} - ${ttlcnt_cnf} - ${ttlcnt_eu} - ${ttlcnt_jp} - ${ttlcnt_nzl} - ${ttlcnt_hk} - ${ttlcnt_axm} - ${ttlcnt_mxd})
+echo "Total bad ID reports:" $ttl_badIDs >> $emailfile
+
+# Write NC004006 counts to $emailfile for comparison; 00Z cycle only
+if [ "$cyc" == "00" ]; then
+  echo "" >> $emailfile
+  cat ${eufile} >> $emailfile
+fi
+
+# add note/key to bottom of email
+echo "" >> $emailfile
+echo "" >> $emailfile
+echo "Numbers set off in '(' and ')' represent averages calculated from the 10 day baseline for NC004003." >> $emailfile
+
+# email cron summary
+addy=shelley.melchior@noaa.gov
+sbj="amdar tank summary - ${PDY}${cyc}"
+mail -s "$sbj" $addy < $emailfile
+
+echo "---- DONE ----"

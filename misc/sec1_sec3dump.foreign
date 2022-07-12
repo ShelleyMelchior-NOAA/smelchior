@@ -1,0 +1,177 @@
+
+set -x
+
+## This script reads Section 1 and Section 3 from a foreign
+##  or NCEP BUFR file (after blocking!) and lists Section 1
+##  quantities and Section 3 descriptors
+## Must first run /nwprod/ush/cwordsh block <input> <output>
+##   on a foreign file pulled over from NESDIS server to block.
+
+# 2 incoming args:
+# 1) tank directory (e.g., /dcom/us007003/20161129/b021/xx249)
+# 2) suffix identifier for output file (e.g., 021249)
+
+[ $# -ne 2 ]  &&  exit 99
+
+DATA=/stmpp1/$USER/sec1_sec3dump.foreign
+mkdir -p $DATA
+cd $DATA
+err=$?
+
+########[ "$err" -eq '0' ]  && rm *
+
+#######################################################################
+
+cat <<\inputEOF > source.f
+
+      CHARACTER*6   CDS3(700)
+      DIMENSION MBAY(500000)
+
+      DATA LUBFI /20/
+ 
+      IREC = 0
+
+      LCDS3 = 700
+
+      CALL OPENBF(LUBFI,'INX',LUBFI)
+      CALL WRDLEN
+
+    1 CONTINUE
+
+      CALL RDMSGW(LUBFI,MBAY,IER)
+      IF(IER.EQ.-1)  GOTO 900
+      IF(IER.EQ.-2)  GOTO 901
+
+      IREC = IREC + 1
+
+      IEDTN = IUPBS01(MBAY,'BEN')
+
+      print 100, IUPBS01(MBAY,'LENM')
+  100 format(/'Section 0:  BUFR message length (bytes) is : ',i6)
+      print 101, IUPBS01(MBAY,'LEN0')
+  101 format(/'Section 0:  BUFR Sec. 0 length (bytes) is : ',i4)
+      print 102, IEDTN
+  102 format(/'Section 0:  BUFR edition number is : ',i3)
+      print 103, IUPBS01(MBAY,'LEN1')
+  103 format(/'Section 1:  BUFR Sec. 1 length (bytes) is : ',i4)
+      print 104, IUPBS01(MBAY,'BMT')
+  104 format(/'Section 1:  BUFR master table is : ',i3)
+      if(IEDTN.eq.3 .or. IEDTN.eq.4) print 105, IUPBS01(MBAY,'GSES')
+  105 format(/'Section 1:  Originating sub-center is : ',i3.3)
+      print 106, IUPBS01(MBAY,'OGCE')
+  106 format(/'Section 1:  Originating center is : ',i3.3)
+      print 107, IUPBS01(MBAY,'USN')
+  107 format(/'Section 1:  Update sequence number is : ',i3)
+      print 108, IUPBS01(MBAY,'ISC2')
+  108 format(/'Section 1:  Flag indicating optional Sec. 2 is : ',i3)
+      print 109, IUPBS01(MBAY,'MTYP')
+  109 format(/'Section 1:  Data category is : ',i3.3)
+      print 111, IUPBS01(MBAY,'MSBT')
+      if(IEDTN.eq.4) print 110, IUPBS01(MBAY,'MSBTI')
+  110 format(/'Section 1:  Data sub-category (international) is : ',
+     $ i3.3)
+  111 format(/'Section 1:  Data sub-category (local) is : ',i3.3)
+      print 112, IUPBS01(MBAY,'MTV')
+  112 format(/'Section 1:  Version number of master table is : ',i3.3)
+      print 113, IUPBS01(MBAY,'MTVL')
+  113 format(/'Section 1:  Version number of local tables is : ',i3.3)
+      if(IEDTN.eq.2 .or. IEDTN.eq.3) then
+         print 114, IUPBS01(MBAY,'YCEN'),IUPBS01(MBAY,'MNTH'),
+     $              IUPBS01(MBAY,'DAYS'),IUPBS01(MBAY,'HOUR'),
+     $              IUPBS01(MBAY,'MINU')
+  114 format(/'Section 1:  Date (YY MM DD HH MM) is :  ',5(i2.2,1x))
+         print 115, IUPBS01(MBAY,'CENT')
+  115 format(/'Section 1:  Century is :  ',i2.2/)
+      else
+         print 116, IUPBS01(MBAY,'YEAR'),IUPBS01(MBAY,'MNTH'),
+     $              IUPBS01(MBAY,'DAYS'),IUPBS01(MBAY,'HOUR'),
+     $              IUPBS01(MBAY,'MINU'),IUPBS01(MBAY,'SECO')
+  116 format(/'Section 1:  Date (YYYY MM DD HH MM SS) is :  ',i4.4,1x,
+     $ 5(i2.2,1x)/)
+      end if
+
+C----------------------------------------------------------------------
+C New section added to read msg receipt time out of Sec. 1 if present
+C  -- only possible if bytes 19-20 (YYYY), 21 (MM), 22 (DD), 23 (HH)
+C                        and 24 (MM) are present for Edition 3 messages
+C                   - or -
+C                   if bytes 23-24 (YYYY), 25 (MM), 26 (DD), 27 (HH)
+C                        and 28 (MM) are present for Edition 4 messages
+
+      IF(IUPBS01(MBAY,'BEN').EQ.4) THEN
+        IS1BYT = 23
+      ELSE
+        IS1BYT = 19
+      ENDIF
+           ! Check whether the message contains a tank receipt time
+      IF(IS1BYT+5.LE.IUPBS01(MBAY,'LEN1')) THEN
+
+C  IS1BYT is a starting byte number relative to the beginning of
+C   Sec. 1, so we still need to account for Sect. 0 when specifying the
+C   actual byte numbers to unpack within the overall message
+
+         IMGBYT = IS1BYT + IUPBS01(MBAY,'LEN0')
+
+         IYR = IUPB(MBAY,IMGBYT,16)
+         IMO = IUPB(MBAY,IMGBYT+2,8)
+         IDY = IUPB(MBAY,IMGBYT+3,8)
+         IHR = IUPB(MBAY,IMGBYT+4,8)
+         IMI = IUPB(MBAY,IMGBYT+5,8)
+         print 117, IYR,IMO,IDY,IHR,IMI
+  117 format('Section 1:  Receipt time (YYYY MM DD HH MM) is :  ',i4.4,
+     $ 1x,4(i2.2,1x)/)
+      ELSE
+         print 300
+  300 format('Receipt time not read from Section 1 -- NCEP/NCO file ',
+     $ 'did not encode it'/)
+      END IF
+C----------------------------------------------------------------------
+
+      CALL UPDS3(MBAY,LCDS3,CDS3,NDS3)
+      print 125, nds3
+  125 format(/'Descriptors in Section 3 (',i4,' in total)')
+      do  i = 1,nds3
+         print 126, cds3(i)
+  126    format(1x,A6)
+      enddo
+      go to 1
+      STOP
+
+ 901  CONTINUE
+      print *, 'Error reading unit ',lubfi
+      call errexit(99)
+
+ 900  CONTINUE
+      IF(IREC.EQ.0)  THEN
+         PRINT 400, lubfi
+  400    FORMAT(/1X,' BUFR FILE IN UNIT',I3,' DOES NOT EXIST'/)
+      ENDIF
+
+      STOP
+
+      END
+
+
+inputEOF
+#######################################################################
+
+ifort -O2 -g -traceback -list -auto -o source.x source.f /nwprod/lib/libw3nco_4.a /nwprod/lib/libbufr_v10.2.1_4_64.a
+
+rm fort.*
+ln -sf $1   fort.20
+time -p ./source.x >sec1_sec3dump.out.$2 2> errfile
+
+err=$?
+
+cat errfile >> sec1_sec3dump.out.$2
+
+if test "$err" -ne '0'
+then
+     echo "sec1_sec3dump.foreign failed - abnormal stop"
+
+else
+     echo "sec1_sec3dump.foreign successful - all done"
+fi
+#####cat sec1_sec3dump.out.$2
+
+rm fort.*

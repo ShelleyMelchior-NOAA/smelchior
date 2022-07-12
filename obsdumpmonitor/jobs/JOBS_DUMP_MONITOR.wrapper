@@ -1,0 +1,109 @@
+########################
+##  Job rtma_prep_15 15Z
+########################
+######################################################
+##
+##  #BSUB -q dev        run on compute nodes, uses full node(s)
+##                      #BSUB -x is forced regardless if in LSF cards
+##                         (running NOT shared)
+##
+##  #BSUB -q shared     run on compute nodes, doesn't use full node(s)
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##
+##  #BSUB -q transfer   run on interactive nodes
+##                      use only for small jobs - can cause memory issues
+##                      can run ftp, ssh, mail, & mv "*" | at now +1 minutes
+##                      must specify memory limits
+##                         #BSUB -R rusage[mem=xxxx]
+##                         #BSUB -R affinity[zzzz]
+##  #BSUB -L /bin/sh should be commented out if importing variables from
+##    executing script, make sure ~Dennis.Keyser/host.list exists
+##
+######################################################
+#BSUB -J jrtma_prep_15
+#BSUB -o /ptmpp1/Shelley.Melchior/rtma_prep_15.o%J
+#BSUB -e /ptmpp1/Shelley.Melchior/rtma_prep_15.o%J
+#BSUB -L /bin/sh
+#BSUB -q dev
+##BSUB -q transfer
+##BSUB -R rusage[mem=4000]
+##BSUB -R affinity[core]
+##BSUB -cwd /ptmpp1/Shelley.Melchior
+#BSUB -W 00:30
+#BSUB -P OBSPROC-MTN
+
+cat /etc/motd
+echo;echo "*************************************************************"
+###[ -z "????" ] || echo "LSF command:  " $???
+[ -z "$LSB_JOBNAME" ] || echo "LSF job name:         " $LSB_JOBNAME
+[ -z "$LSFUSER" ] ||     echo "User:                 " $LSFUSER
+[ -z "$LSB_QUEUE" ] ||   echo "Queue:                " $LSB_QUEUE
+[ -z "$LSB_HOSTS" ] ||   echo "Submitted to Node(s): " $LSB_HOSTS
+echo "*************************************************************";echo
+
+set -xa
+
+
+# --> these are normally not changed and should always be exported here first
+
+export DATAROOT=/stmpp1/${USER}
+
+envir=prod # scripts point to production (/nwprod) files as default
+
+export DEBUG_LEVEL=1
+
+export CLEANUP=NO
+
+
+
+# --> these must normally be set based on the particular run you are making
+
+export cyc=15  # must always be exported
+export job=rtma_prep_${cyc} # normally not changed, but needs $cyc
+
+export PDY=20140819 # Add this to force in a different date than in /com/date
+
+export PRPX=/meso/save/Shelley.Melchior/svnwkspc/obsproc_prep.tkt-109-derive-pmsl/exec/prepobs_prepdata
+
+#  Obtain current OBSPROC_RTMA version number (obsproc_rtma_ver)
+#  Obtain OBSPROC_PREP version number used by this job (obsproc_prep_ver)
+#  ----------------------------------------------------------------------
+VERSION_FILE=/nwprod/versions/obsproc_rtma.ver
+##VERSION_FILE=/meso/save/Shelley.Melchior/versions/LATEST_GREATEST/obsproc_rtma.ver
+[ -f $VERSION_FILE ]  &&  . $VERSION_FILE
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_rtma_ver from above:
+# ---------------------------------
+#export HOMEobsproc_network=/meso/save/Shelley.Melchior/TEST_VS/obsproc_rtma.${obsproc_rtma_ver}
+
+# -- or --
+# Do not use $obsproc_rtma_ver:
+# -----------------------------
+#####unset obsproc_rtma_ver
+#####export HOMEobsproc_network=/meso/save/Dennis.Keyser/SVN/VS/obsproc_rtma
+HOMEobsproc_network=/nwprod/obsproc_rtma.${obsproc_rtma_ver}
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+#v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v-v
+# Use $obsproc_prep_ver from above:
+# ---------------------------------
+##export HOMEobsproc_prep=/meso/save/Shelley.Melchior/TEST_VS/obsproc_prep.${obsproc_prep_ver}
+
+# -- or --
+# Do not use $obsproc_prep_ver:
+# -----------------------------
+#####unset obsproc_prep_ver
+#####export HOMEobsproc_prep=/meso/save/Dennis.Keyser/SVN/VS/obsproc_prep
+
+# -- or -- if BOTH above commented out use PRODUCTION
+
+echo "" > /dev/null # need to avoid syntax error if all is commented out
+#^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+# Execute the Environmental Equivalence form of the job-script
+# ------------------------------------------------------------
+$HOMEobsproc_network/jobs/JRTMA_PREP
+#/meso/save/Shelley.Melchior/svnwkspc/VS/obsproc_rtma/jobs/JRTMA_PREP

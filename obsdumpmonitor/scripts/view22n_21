@@ -1,0 +1,12 @@
+## view22n_21 ##
+## No. of lines in tranjb*.out files  ##
+
+echo " ===> how many lines are in the tranjb*.out files?"
+echo " "
+
+wc -l /dcom/us007003/tranjb*.out 
+
+echo " "
+echo "+++++++++DONE+++++++++"
+echo " "
+
