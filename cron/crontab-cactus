@@ -9,9 +9,18 @@
 00 16 * * * find /lfs/h2/emc/*tmp/shelley.melchior/* -type f -mtime +10 -exec rm {} \;
 01 16 * * * find /lfs/h2/emc/*tmp/shelley.melchior/CRON/*/com/ -type d -empty -delete
 ###
-### Clean out stmp/ptmp files older than 5 days
+### Clean out stmp/ptmp files older than 10 days
 # ---------------
-#14 18 * * * find /lfs/h2/emc/*tmp/shelley.melchior/* -mtime +5 -exec ls {} \;
+14 18 * * * find /lfs/h2/emc/*tmp/shelley.melchior/ -mtime +10 -type d | xargs rm -f -r 
+###
+### JSFCSHIP prod para for O&M support (VPPPGB)
+# started on: 20220927 
+# turned off:
+20 00,03,06,12,15,18 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw1.pbs > /dev/null 2>&1
+40 00,12 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw2.pbs > /dev/null 2>&1
+20 01,04,07,10,13,16,19,22 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw3.pbs > /dev/null 2>&1
+40 01,13 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw4.pbs > /dev/null 2>&1
+20 02,05,08,14,17,20 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw5.pbs > /dev/null 2>&1
 ###
 ### JOBSPROC_MODS prod para for WCOSS2
 # runs daily at 14:30
