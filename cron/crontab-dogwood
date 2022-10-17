@@ -7,6 +7,10 @@
 # ---------------
 00 16 * * * find /lfs/h2/emc/*tmp/shelley.melchior/CRON/*/com/ -type d -empty -delete
 ###
+### Clean out stmp/ptmp files older than 10 days
+# ---------------
+05 20 * * * find /lfs/h2/emc/*tmp/shelley.melchior/ -mtime +10 -type d | xargs rm -f -r
+###
 ### JOBSPROC_MODS prod para for WCOSS2
 # runs daily at 14:30
 # started on: 20220119
