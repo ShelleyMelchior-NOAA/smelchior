@@ -1,0 +1,100 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Generator" content="WordPerfect 9">
+   <meta name="DATE" content="5/4/1995">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; U) [Netscape]">
+   <meta name="Author" content="Dennis Keyser">
+   <meta name="Description" content="Last revised 5/25/2001">
+   <title>REASON CODES ASSOCIATED WITH STEP CQCVAD, PROGRAM CODE 012</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#551A8B" alink="#FF0000">
+&nbsp;
+<br>Table 17.&nbsp;&nbsp; Reason codes associated with step "CQCVAD", program
+code 012 (last revised 10/02/2001).<span STYLE="font-size: 10pt"></span>
+<br>&nbsp;
+<p><span STYLE="font-size: 10pt">KEY:
+<br>&nbsp;&nbsp;&nbsp;&nbsp; IN "R.CODE" COLUMN:</span>
+<br><span STYLE="font-size: 10pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B - OCCURS IN ALL OPERATIONAL VERSIONS OF CQCVAD EXCEPT CDAS (THE CQCVAD
+STEP DOES NOT RUN IN THE CDAS NETWORK).</span>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER WIDTH="100%" >
+<tr VALIGN=TOP>
+<td><span STYLE="font-size: 10pt"></span><span STYLE="font-size: 10pt"></span><span STYLE="font-size: 10pt"></span><span STYLE="font-size: 10pt">R.CODE</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">MEANING</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">MNEMONICS AFFECTED AND NEW VALUE FOR
+OBS, Q.M.</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">01 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WIND OBSERVATION ON A SINGLE LEVEL FAILED
+Q.C. CHECKS (AND REASON CODE 04 AND 05 BELOW DO NOT APPLY).</span><span STYLE="font-size: 10pt"></span></td>
+
+<td VALIGN=TOP><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">02 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WIND OBSERVATIONS ON ADJACENT LEVELS
+FAILED Q.C. CHECKS&nbsp; (AND REASON CODES 04 AND 05 BELOW DO NOT APPLY).</span><span STYLE="font-size: 10pt"></span></td>
+
+<td VALIGN=TOP><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">03 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">COMBINATION OF REASON CODES 01 AND 02
+ABOVE.</span><span STYLE="font-size: 10pt"></span></td>
+
+<td VALIGN=TOP><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">04 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WIND OBSERVATION HAS SPEED LESS THAN
+1 METER/SECOND.</span><span STYLE="font-size: 10pt"></span></td>
+
+<td VALIGN=TOP><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr VALIGN=TOP>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">05 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WIND OBSERVATION IS AFFECTED BY BIRD
+MIGRATION (AND REASON CODE 04 ABOVE DOES NOT APPLY).</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr VALIGN=TOP>
+<td VALIGN=TOP><span STYLE="font-size: 10pt">07 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">THE MAGNITUDE OF THE WIND INCREMENT (EITHER
+U- OR V-COMPONENT) (OBSERVATION - GUESS) IS GREATER THAN 12 METERS/SECOND
+(AND REASON CODES 01-05 ABOVE DO NOT APPLY).</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+
+<tr VALIGN=TOP>
+<td><span STYLE="font-size: 10pt">09 B</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">NO FIRST GUESS WIND INFORMATION IS AVAILABLE.</span><span STYLE="font-size: 10pt"></span></td>
+
+<td><span STYLE="font-size: 10pt">WRC-> WQM=13</span><span STYLE="font-size: 10pt"></span></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+                                            September 28, 2010
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #9 -- 
+                 DATACARD UPDATE # 9.0 - NETWORK: RTMA)
+
+Implemented 12Z 28 September 2010:
+
+RTMA:
+     - SSM/I wind speed and tpw reports are no longer processed.  [Namelist
+       switches JPSSMI(:,1) and JPSSMI(:,2) changed from 0 to 9999.]
+     - QuikSCAT scatterometer wind reports no longer processed.  [Namelist
+       switch JPQKSD changed from 6*0 to 6*9999.]
+     - ASCAT scatterometer wind reports now processed in all six latitude
+       bands (but actually limited to dump domain).  [Namelist switch JPASCD(6)
+       added and set to 6*0.]
+     - The earliest and latest times for accepting ASCAT scatterometer wind
+       reports is set to -6 and 0 hours, respectively, relative to PREPBUFR
+       center time (this is the same as the dump window).  [Namelist switch
+       IAWNDO(2) added and set to -6, 0.]
+     - WindSAT scatterometer wind reports now processed in all six latitude
+       bands (but actually limited to dump domain).  [Namelist switch JPWDCD(6)
+       changed from 6*9999 to 6*0.]
+     - The earliest and latest times for accepting WindSAT scatterometer wind
+       reports is set to -6 and 0 hours, respectively, relative to PREPBUFR
+       center time (this is the same as the dump window).  [Namelist switch
+       IWWNDO(2) changed from the default of -3, +3 to -6, 0.]
+     - Satellite-derived wind reports from GOES IR, GOES water vapor imager
+       (cloud-top and deep-layer), JMA IR, JMA visible, AQUA/TERRA (MODIS) IR,
+       and AQUA/TERRA (MODIS) water vapor imager (cloud-top and deep-layer) now
+       processed.  [Namelist switch JSWIND changed from 9999 to 0000.]
+     - Satellite-derived wind reports from EUMETSAT METEOSAT-7 IR and
+       EUMETSAT METEOSAT-7 visible now processed.  Satellite-derived wind
+       reports from EUMETSAT METEOSAT-9 IR and EUMETSAT METEOSAT-9 visible now
+       processed but flagged with quality mark 15 (can, at most, only be
+       monitored by analysis).  [Namelist switch JSWIND changed from 9999 to
+       0199.]
+     - Satellite-derived wind reports from GOES visible, JMA water vapor imager
+       (cloud-top and deep-layer), and EUMETSAT water vapor imager (cloud-top
+       and deep-layer), now processed but flagged with quality mark 15 (can, at
+       most, only be monitored by analysis).  [Namelist switch JSWIND changed
+       from 9999 to 0099.]
+     - The earliest time for accepting satellite-derived wind reports from all
+       types except EUMETSAT IR, EUMETSAT water vapor imager (cloud-top and
+       deep-layer), and EUMETSAT visible is set to -2.5 hours, relative to
+       PREPBUFR center time (this is the same as the dump window).  [Namelist
+       switch SWINDO_e changed from -050 to -250.]
+     - The earliest time for accepting satellite-derived wind reports from
+       EUMETSAT IR, EUMETSAT water vapor imager (cloud-top and deep-layer), and
+       EUMETSAT visible is set to -0.75 hours, relative to PREPBUFR center time
+       (this is the same as the dump window).  [Namelist switch SWINDO_e
+       changed from -050 to -075.]
+     - The latest time for accepting satellite-derived wind reports from all
+       types except EUMETSAT IR, EUMETSAT water vapor imager (cloud-top and
+       deep-layer), and EUMETSAT visible is set to +2.5 hours, relative to
+       PREPBUFR center time (this is actually limited to the dump window of
+       +0.5 hours).  [Namelist switch SWINDO_l changed from +050 to +250.]
+     - The latest time for accepting satellite-derived wind reports from
+       EUMETSAT IR, EUMETSAT water vapor imager (cloud-top and deep-layer), and
+       EUMETSAT visible is set to +0.25 hours, relative to PREPBUFR center time
+       (this is the same as the dump window).  [Namelist switch SWINDO_l
+       changed from +050 to +025.]

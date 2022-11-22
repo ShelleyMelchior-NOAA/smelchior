@@ -1,0 +1,74 @@
+                                                           August 22, 2006
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 4)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+fourth time.  UPDATE #4 was implemented on the IBM-CCS-II machine at 12Z on
+August 22, 2006.  Except where noted, the changes below affect all six
+versions: NAM, GFS, GDAS, RUC, CDAS and (new) RTMA.
+
+*************** I B M - C C S   U P D A T E   # 4 **************
+
+
+I. GENERAL CHANGES
+
+     1) Added new parm cards for new RTMA (Real Time Mesoscale Analysis)
+network.  This network has been added to production. [DATACARDS]
+
+     2) Added new subroutine BALLOON_DRIFT which contains the balloon drift
+logic.  This was moved out of subroutine STOROB where it was executed in two
+places (once for mass and again for wind processing - wind processing needs it
+if mass processing did not occur).  Subroutine STOROB now simply calls
+BALLOON_DRIFT in these two places.  [STOROB, BALLOON_DRIFT]
+
+     3)  The W3LIB routine GBLEVENTS, which this program calls, was modified 
+to have the first guess vertical interpolation use the pressure profile
+directly instead of the pressure profile converted to sigma as before.  This
+change will allow this routine to read in and properly interpolate a hybrid
+guess.  In production a sigma guess is still read in - this change will result
+in a very small change in the values of the interpolated sigma guess.
+[GBLEVENTS]
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A. CHANGES TO UPPER-AIR (RADIOSONDE, PIBAL, RECONNAISSANCE, DROPWINSONDE)
+      DATA PROCESSING
+      
+     1)  BALLOON-DRIFT UPGRADE [BALLOON_DRIFT]
+          a) Expanded the degree of diagnostic print in the balloon drift
+calculation for any reports specified in namelist switch STNPRT passed in from
+datacards.
+          b) Corrected logic errors in balloon drift processing which had led
+to previously undetected array overflows and level indexing mis-matches.  This
+seemed to happen mainly where there was a problem in the balloon drift
+calculation from one level to the next (e.g. a drift of > 1 degree in latitude
+or longitude) and the previous level values were moved to the level where
+there was a problem in the calculation.  One result of the array overflow
+problem was a sudden jump in the drift time calculation between adjacent
+levels (> 3 hours!).
+          c) Previously, drift time and lat/lon was not calculated on any
+levels at or above a level where there was a negative drift time calculation
+from the level below to the next level above.  Will now allow the calculation
+to proceed if the time difference is < 5 seconds (the time and lat/lon for the
+level below is used and then the calculation continues).  Many reports have a
+small 1-2 second negative time calculation between adjacent levels at the very
+bottom of the profile.
+
+     2) Now prints a diagnostic warning and sends a diagnostic to the
+production joblog file is the number of mass and wind levels processed (and
+sent to subroutine FILLX) for a particular report are not the same (they
+should still always be the same at this point).  [STOROB]
+
+     3) The wind quality mark is set to 15 if a reported wind is found on a
+level which is below ground.  [STOROB]
+
+     4) GFS, GDAS only: Gulf Stream dropwinsonde moisture observations
+(specific humidity) are no longer flagged.  These should now be assimilated by
+the Global-SSI.  (They are still flagged in all other networks as is USAF drop
+moisture in all networks.)  [DATACARDS]

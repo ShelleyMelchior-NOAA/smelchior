@@ -1,0 +1,22 @@
+                                             October 25, 1995
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (July 12, 1995 Version --
+                 AVN, FNL DATACARD UPDATE # 2.1)
+
+Implemented 12Z 25 October 1995:
+
+TOVS (NOAA-12) retrievals are no longer processed operationally.
+(TOVBFR set to FALSE.)
+
+Indian radiosonde mass reports are now processed operationally.
+(PG4243 set to FALSE.)
+
+ERS-1 scatterometer data is now merged with the PREPBUFR file after
+PREPDATA but before SYNDATA.
+
+Wind profiler data is present in the PREPBUFR files (-3 to +2-hours
+about cycle time) but it has never been (up to this point)
+assimilated by the SSI-analyses.

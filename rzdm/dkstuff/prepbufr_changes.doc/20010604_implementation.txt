@@ -1,0 +1,15 @@
+                                                June 4, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        CRISIS change to IBM-SP Data Preprocessor
+                (PREPDATA)
+
+CRISIS!!!!
+Subroutine IW3UNPBF was modified to handle expanded quality
+information in the EUMETSAT wind reports in the input "satwnd"
+data dump files.  On 5 June 2001, EUMETSAT is adding quality
+information which is not based on a first guess, in addition to
+quality information currently present which is based on a first
+guess.  The quality information based on a first guess will
+continue to be decoded here.  [IW3UNPBF]

@@ -1,0 +1,41 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 4)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a fourth time.  UPDATE #4 was
+implemented on 1200 UTC 29 July 1997.  All changes now affect
+only OBUFR = TRUE switch.  Except where noted, the changes below
+affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 4  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Corrected some COMMON block and subroutine argument
+inconsistencies that may have contributed to storage being
+"clobbered".
+
+     2) Established a new PREPBUFR Table A message type GOESND to
+hold GOES-I radiances and retrievals.  Prior to this, GOES-I data
+would have been combined with TOVS data under the SATEMP Table A
+message type.  This change allows GOES-I data to be identified
+quicker in the PREPBUFR file.  TOVS data remains under Table A
+message type SATEMP.  Note: GOES-I data is still not processed
+operationally into the PREPBUFR file.
+
+     3) The input prep.bufrtable file was modified to add the new
+Table A message type GOESND (see 2 above).
+
+     4) Elements 21-30 in the namelist switch IWINDO, which
+pertain to the time window for GOES-I data acceptance, were
+modified from whole hours to hours x 100 (still integer).  This
+allows a more precise time window for these data.  Note: Since
+these data are not operational, the operational data cards had
+been modified in preparation for this source change without a
+formal JIF.  Elements 1-20, the time window for TOVS and DMSP
+data, are still expected to be in whole hours as before.

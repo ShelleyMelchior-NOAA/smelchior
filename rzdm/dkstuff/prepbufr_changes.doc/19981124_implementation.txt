@@ -1,0 +1,14 @@
+                                           November 24, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version --
+                 R3DV, AVN, FNL DATACARD UPDATE # 2.2; 
+                 RUC DATACARD UPDATE # 2.3)
+
+Implemented 12Z 24 November 1998:
+
+Removed flag on GOES-10 sounding data (no actual actual change to
+AVN, FNL SSI since SSI uses GOES radiances; For R3DV and RUC
+affects layer PW retrievals.

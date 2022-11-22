@@ -1,0 +1,25 @@
+                                              September 16, 2008
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 8)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+eighth time.  UPDATE #8 was implemented on the IBM-CCS machines at 15Z on
+September 16, 2008.  Except where noted, the changes below affect all eight
+versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 8 **************
+
+
+I. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO AIRCRAFT DATA PROCESSING
+
+     1) Modified to recognize that TAMDAR reports can now appear in "AIRCFT"
+dump message types NC004012 (PenAir) and NC004013 (Chautauqua), in addition to
+message type NC004008 (Mesaba). [MAIN, PREP, IW3UNPBF]
+
+

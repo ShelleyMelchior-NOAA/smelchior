@@ -1,0 +1,21 @@
+                                                 March 17, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- UPDATE # 2)
+
+The February 17, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the second time as a CRISIS.  UPDATE
+#2 was implemented on 1200 UTC 17 March 1998.  Except where
+noted, the changes below affect all three versions, 3DVAR, OI,
+and SSI.
+
+*********************  U P D A T E   # 2  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Bumped up the array size for an unpacked report out of
+external subroutine IW3UNPBF and W3LIB routine IW3GAD from 1608
+to 2500 as a result of an operational failure at 12Z 16 March
+1998 in the FNL network. [IW3UNPBF] 

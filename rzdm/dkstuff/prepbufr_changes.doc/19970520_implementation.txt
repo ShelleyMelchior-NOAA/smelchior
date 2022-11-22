@@ -1,0 +1,105 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 1)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for the first time.  UPDATE #1 was
+implemented on 1200 UTC 20 May 1997.  All changes now affect only
+OBUFR = TRUE switch.  Except where noted, the changes below
+affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 1  ***********************
+
+I.  GENERAL CHANGES
+
+      1) The arrays NOBS, DAT, and TMP were expanded to hold four
+more words on each level, namely the reason codes for pressure,
+temperature, moisture and wind.  For NOBS, the parameter MXWRDL
+was increased from 7 to 11.
+
+      2) Reason codes are now stored for certain situations (see
+II.A.1 below).
+
+      3) All references to the NAS/HDS were removed.
+
+      4) The standard output print for reports was expanded to
+include reason codes on each level (GETUPA, SMERGE, FILLX,
+SATBFR, GOESDG).
+     
+      5) In the processing of winds-by-height in subroutine
+WNDBYZ (for upper-air data), reports are always sorted by height
+in order to insert the category 4 levels into the report
+properly.  It was always assumed the height increased as pressure
+decreased, so a sort by height would not cause pressure to no
+longer monotonically decrease with height.  This may not now be
+the case, because raob reports no longer undergo any form of cqc
+prior to PREPDATA.  Reports with erroneous heights may violate
+this.  In order to assure that all reports in the PREPBUFR file
+always have pressure that decreases monotonically, a final
+pressure sort is now made in WNDBYZ after the category 4
+processing.  This will, for cases of "bad" data, result in some
+reports with heights that no longer monotonically increase with
+decreasing pressure.  The feeling is that CQCBUFR will correct
+these heights, or at least flag them as bad.
+
+
+
+      6) In testing the change above, the new executable aborted
+at the beginning of the processing of ADPSFC data, in W3LIB
+routine w3fs22.  This abort had nothing to do with the change
+above, but rather was the result of an incompatibility in the
+PREPDATA code which was causing memory to be clobbered. 
+Apparently this incompatibility was present for some time in the
+code, but was never in a place that caused any problem when the
+program ran until now.  The position of the clobbered memory must
+have changed to a "critical" location when PREPDATA was
+recompiled with updated versions of both the W3LIB and the
+BUFRLIB.  The PREPDATA source was carefully examined, and some
+"possible" problems related to equivalences between variables in
+COMMON and longer non-COMMON variables were discovered.  The
+source code was modified to remove this and the new executable
+then ran fine.  Hopefully this memory clobbering problem has been
+corrected, not just shifted to a non-critical memory location by
+the fixes to the source code. 
+
+       7) The original subroutine STOROB was removed because it
+is no longer called.  The previous subroutine STORXX was renamed
+to STOROB.
+
+       8) Reason code are now encoded into the output PREPBUFR
+file if they are non-missing (W3FIZZ, FIZZ01).
+
+
+II.  OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF UPPER-AIR DATA
+
+      1) Reason codes 100, 101-103 and 105 can now be stored with
+report levels for all variables.  (See Reason Code documentation
+for their meaning.)  Currently reason codes 101-103 and 105 can
+only be placed on radiosonde, pibal, dropwinsonde, multi-level
+reconnaissance, and wind profiler data.  The default reason code
+of 100 will appear in all cases for all other data types. 
+
+       2) The ON29 category value for "special levels" was
+changed from 6 to 7 to avoid confusion with the Cat. 6 aircraft
+and satwnd data levels.
+
+       3) Tropopause levels in the PREPBUFR file are now ALWAYS
+assigned ON29 category 5.  This was not the case before.
+
+       4) Levels in the PREPBUFR file are now assigned the proper
+ON29 category.
+
+
+
+
+       5) The baseline check has been turned off (Namelist switch
+IDELEV set to 99999 in data cards).  The downstream program
+CQCBUFR already performs a more sophisticated baseline check, and
+in fact, the PREPDATA baseline check may have led to erroneous
+corrections later by CQCBUFR.

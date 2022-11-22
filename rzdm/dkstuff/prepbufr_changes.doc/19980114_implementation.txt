@@ -1,0 +1,17 @@
+                                           January 14, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (May 1, 1997 Version --
+                 AVN, ETA, MSO, R3DV, EDS, RDS, RGL, FNL
+                 DATACARD UPDATE # 7.2;
+                 CDAS DATA CARD UPDATE #7.1, 7.2;
+                 RUC DATACARD UPDATE # 7.3)
+
+Implemented 12Z 14 January 1998:
+
+ALL versions.
+
+Began using moisture at all levels from Gulf Stream drops. (Switch
+FLDMGS=FALSE.)

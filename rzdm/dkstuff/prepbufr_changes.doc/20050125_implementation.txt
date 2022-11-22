@@ -1,0 +1,624 @@
+                                                January 25, 2005
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 1)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was
+updated for the first time.  UPDATE #1 was implemented on the
+IBM-CCS-II machine at 12Z on January 25, 2005.  Except where noted, the
+changes below affect all five versions: NAM (previously ETA), GFS (previously
+AVN), GDAS (previously FNL), RUC and CDAS.
+
+*************** I B M - C C S   U P D A T E   # 1 **************
+
+
+I. GENERAL CHANGES
+
+     1) Recompilation to bring in changes in W3LIB routine GBLEVENTS -
+changes include:
+        a) NAM and RUC only: Include the four GOES retrieved layer
+precipitable water values (PW1*,PW2*, PW3*, PW4*), setting their observation
+error values (PW1E, PW2E, PW3E, PW4E) to the single value which is read for
+total precipitable water for the appropriate report types from the
+observational error table.  An event is generated with a rejected quality
+marker for the four layer precipitable water values if the observation error
+read in is missing.  This change will allow the future NAM/GSI analysis to
+process observation errors in the PREPBUFR file in the same manner as the
+NAM/3DVAR analysis currently does when reading the observation errors from an
+external file.
+        b) Add the capability to read guess files from either HYBRID or, as
+before, SIGMA global forecast files.
+           i) CDAS only: If reading a T62 sigma guess file, it will bypass the
+SIGMA vs. HYBRID test and default to SIGMA since the header is shorter in the
+T62 guess.
+        c) For "RASSDA" message types, it will encode a simple copy of the
+reported (virtual) temperature as a "VIRTMP" event with reason code 3 if
+virtual temperature processing is switched on.
+
+     2) "Instrument Type" is no longer defined as BUFR Code Table 0-02-011 for
+non-ADPUPA type reports and it is initialized as missing instead of "99"
+[IW3UNPBF, RPTLBL]
+
+     3) Data types decoded from BUFR dumps via interface routine W3UNPKB7
+(types never historically in Office Note 29 format) can now be skipped over
+via the existing namelist switch SUBSKP (connected to new input argument
+SUBSKP to W3UNPKB7).  This capability had already existed for data types
+decoded from BUFR dumps via interface routine IW3UNPBF (types historically in
+Office Note 29 format). [W3UNPKB7]
+       a) SUBSKP is a two-dimensional logical array where element 1 refers to
+a particular BUFR type (range 0-255) and element 2 refers to a particular BUFR
+subtype (range 0-200).  If SUBSKP is set to TRUE for a particular BUFR type
+and subtype, then any BUFR message of this type read in will be skipped over
+{no subsets (reports) will be decoded out of it and returned to the calling
+program, instead this subroutine will move on to read the next BUFR message in
+the file and again use SUBSKP to see if any subsets should be decoded out of
+it}. Allows this subroutine to quickly pass by any BUFR messages with a type/
+subtype that the calling program does not want decoded.  The length of this
+array should always be hardwired to (0:255,0:200).
+
+     4) NAM only: Namelist switch DOBERR changed from FALSE to TRUE [obs
+errors are now read into PREPBUFR file in NAM version in preparation for
+future GSI analysis, the operational 3DVAR analysis ignores the obs errors in
+PREPBUFR and still reads them in itself. [DATACARDS]
+        a) Note: PREPBUFR processing reads them from a NEW file which is
+identical to the 3DVAR obs error file except surface land temperature obs
+error is not missing in the former (so that FVS verification will use the
+data)]
+
+     5) Replaced call to BUFRLIB routine BORT with call to W3LIB routine
+ERREXIT, with condition code 59 if there are more than 255 levels in a report
+at the time it is about to be encoded into the PREPBUFR file [FIZZ01]
+
+     6) Added new value of 8 for namelist switch IRNMRK to indicate hourly
+(GOES cloud data) runs  [MAIN]
+
+     7) Namelist switch PROFIL (scalar) changed to PRFLER (4 words - one for
+each wind profiler type) (process/don't process wind profiler reports)
+(default 4*TRUE) [PREP, DATACARDS]
+
+     8) Namelist switch NWINDO (word 1/2 - earliest/latest time relative to
+cycle time for accepting wind profiler reports of all types) replaced with
+PWINDO (time window about cycle time for accepting reports, 4-words - one for
+each wind profiler type) (default 4*300.) [PREP, DATACARDS]
+		
+     9) Namelist switch VADWND (scalar) changed to VADWIN (scalar) (process/
+don't process VAD wind reports) (default FALSE) [PREP, DATACARDS]
+
+    10) Namelist switch MWINDO (word 1/2 - earliest/latest time relative to
+cycle time for accepting VAD wind reports) replaced with VWINDO (time window
+about cycle time for accepting VAD wind reports, scalar) (default 300.) [PREP,
+DATACARDS]
+        a) In those versions where processed, now same radius about cycle time
+as other "nominal" data types [should have no effect on number of reports
+selected since dump window is still the same except for RUC where window is
++/- 1.0 hours (but since dump window is not changed it should not have any
+effect on number of reports selected)]
+
+    11) Now prints "*" (format overflow) for missing quality marks (before set
+them to "15") [FILLX]
+
+    12) Some Table B mnemonics given a more logical naming system: CDTP_FC,
+CDTP_AN, CDTP_OE, CDTP_QM, CDTP_PC, CDTP_RC changed to CTPFC, CTPAN, CTPOE,
+CTPQM, CTPPC, CTPRC, respectively; Table B mnemonics REQ6_FC, REQ6_AN,
+REQ6_OE, REQ6_QM, REQ6_PC, REQ6_RC changed to RRTFC, RRTAN, RRTOE, RRTQM,
+RRTPC, RRTRC, respectively; and Table B mnemonics PFC_MOD, ZFC_MOD, UFC_MOD,
+VFC_MOD, TFC_MOD, QFC_MOD, PWF_MOD, PW1F_MOD, PW2F_MOD, PW3F_MOD, PW4F_MOD
+changed to PFCMOD, ZFCMOD, UFCMOD, VFCMOD, TFCMOD, QFCMOD, PWFMOD, PW1FMOD,
+PW2FMOD, PW3FMOD, PW4FMOD, respectively.  None of these mnemonics are
+currently being stored or read.  None of the attributes for these mnemonics
+are being changed with the exception of CTPOE, CTPPC and RRTPC  (see I.13
+below). [W3FIZZ, BUFRTABLE]
+
+    13) BUFRTABLE CHANGES
+       a) Most of the local Table B descriptors are being changed so that they
+have unique values in the overall NCEP database and can then be added to the
+Master Table B.
+       b) The bit width for all program code Table B mnemonics (PPC, ZPC, WPC,
+DFP, TPC, RRTPC, QPC, CTPPC, PWP, PW1P, PW2P, PW3P, PW4P) changed from 4 to 5
+to handle more program codes (i.e., more code table values) in the future.
+       c) The following observation error Table B mnemonics can be packed into
+fewer bits that what had been allotted, so their bit width has been reduced:
+PWE, PW1E, PW2E, PW3E, PW4E reduced from 11 to 10 bits; POE, CTPOE reduced
+from 14 to 10 bits.
+       d) The scale value for Table B mnemonic QOE is changed from 0 to 1 in
+response to the change to encode obs errors into the PREPBUFR file in the NAM/
+NDAS (see I.4) (the NAM/NDAS obs error table contains moisture error values in
+tenths of % RH while the highest precision in the GFS/GDAS obs error table,
+currently read into PREPBUFR, is whole % RH).  The bit width for   QOE is
+actually reduced from 16 to 10 because it had been much higher than needed
+before (as was the case for several other obs error types, see I.13.c above).
+       e) The bit width for Table B mnemonics TCOR (obs time) and TSB (report
+sub-type) is changed from 2 to 3 to allow these indicators to have more code
+table values in the future.
+       f) The bit width for Table B mnemonic PWO is changed from 10 to 11 so
+it can use the same local descriptor that is currently used for total
+precipitable water in the overall NCEP database.  This frees up a local
+descriptor for future use in the Master Table B.
+       g) In response to I.13.f above, the bit width for several other Table B
+mnemonics related to precipitable water (PW1O, PW2O, PW3O, PW4O, PWF, PWE,
+PWA, PW1F, PW1E, PW1A, PW2F, PW2E, PW2A, PW3F, PW3E, PW3A, PW4F, PW4E, PW4A,
+PWFMOD, PW1FMOD, PW2FMOD, PW3FMOD, PW4FMOD) is changed from 10 to 11.
+       h) Table B mnemonic TMSK is changed from scale 1 and bit width 12 to
+scale 2 and bit width 16 so it can be defined as a standard descriptor (its
+old local descriptor was in conflict with a local descriptor in the Master
+Table B)
+       i) The bit width for Table B mnemonic TMBR is changed from 19 to 16 so
+it can be defined as a standard descriptor (its old local descriptor was in
+conflict with a local descriptor in the Master Table B).  Although its scale
+remains 2, there is no danger of bit overflow because the input brightness
+temperatures from the dump files are currently defined with this same standard
+descriptor and mnemonic.
+       j) All of the existing Table D mnemonics have been renamed to be 8
+characters long (to distinguish them from usually shorter Table B mnemonics)
+and to give them a more logical naming system.
+       k) Many new Table B mnemonics have been added (see last two pages of
+this document).
+       l) The following new Table D sequences have been created in association
+with the new Table B mnemonics (see I.13.k above): SST1SQ (sea temp), TOPC_SEQ
+(total precip./total water equivalent), PREWXSEQ (present weather), CLOUDSEQ
+(observed cloud # 1), HOCT_SEQ (height of top of cloud), TMXMNSEQ (max/min
+temp),  SWELLSEQ (swell wave), DBSS_SEQ (depth below sea surface), VISB1SEQ
+(visibility #1), VISB2SEQ (visibility # 2), VTVI_SEQ (vertical visibility),
+PSTWXSEQ (past weather), PKWNDSEQ (peak wind), GUST1SEQ (maximum wind gust 
+# 1), GUST2SEQ (maximum wind gust # 2), TPRECSEQ (total precip.), TP12_SEQ
+(total precip. past 12 hours), SUNSHSEQ (total sunshine), CLOU2SEQ (obs cloud
+# 2), XWSPDSEQ (extrapolated wind speed), SWINDSEQ (surface wind), SNOW_SEQ
+(snow depth), WAVE_SEQ (wave), SHIP_SEQ (ship dir/speed), PTENDSEQ (pressure
+tendency), PTE24SEQ (24-hr pressure tendency), SST_INFO (sea temp
+information), SSTEVENT (sea temp event), SSTBACKG (sea temp background),
+SSTPOSTP (sea temp postprocessing)
+
+    14) An expanded number single-level variables are now decoded from the
+various dump files and encoded into the PREPBUFR file
+        a) Expanded OBS2 from 2 to 41-words, adding return of altimeter
+setting (Pa), sea-surface temperature (K) and various single-level sensible
+weather elements directly from BUFR dump and hardwiring OBS2(41), sea-surface
+temperature quality marker, to 2 (neutral quality) when sea-surface
+temperature is present (otherwise, if sea-surface temperature is missing so is
+its quality marker) (see Docblock remarks for content) [IW3UNPBF]
+        b) Now returns 41-word (rather than 2-word) array OBS2 out of call to
+IW3UNPBF, where words 3-41 contain altimeter setting (Pa) [which had been
+returned in category 8, code figure 20, now only altimeter table value (q.m.)
+returned from here], sea-surface temperature (K), various single-level
+sensible weather elements and sea-surface temperature table value (quality
+marker) (see IW3UNPBF Docblock for more information). All new parameters
+[i.e., SST (obs. and q.m.) and sensible weather elements] in OBS2 are encoded
+into PREPBUFR file, but only in the mass "piece" of a report (unless there is
+no mass piece, then they are encoded into the wind piece).  See last two pages
+of this document for a summary of all new parameters that are encoded into the
+PREPBUFR file.  [UNPREPBF, STOROB, GETC06, SFCDTA, W3FIZZ, BUFRTABLE]
+
+
+    15) New multi-level variables are now decoded from the various dump files
+and encoded into the PREPBUFR file
+        a) Added new 3-dimensional output argument OBS3 [size (5,255,5)] which
+returns various multiple-level sensible weather elements directly from BUFR dump
+and new 5-word output argument NOBS3 which indicates the number of levels of
+data in the OBS3(X,Y,1) through OBS3(X,Y,5) arrays (see Docblock remarks for
+content)  [IW3UNPBF]
+        b) Now returns new 3-dimensional array argument OBS3 [size (5,255,5)]
+and 5-word array argument NOBS3 out of call to IW3UNPBF where OBS3 contains
+various multiple-level sensible weather elements and NOBS3 defines the number
+of levels of data in the OBS3(x,y,1) to OBS3(x,y,5) arrays (see IW3UNPBF
+Docblock for more information).  All new parameters [i.e., sensible weather
+elements] in OBS3 are encoded into PREPBUFR file, but only in the mass "piece"
+of a report (unless there is no mass piece, then they are encoded into the
+wind piece).  See last two pages of this document for a summary of all new
+parameters that are encoded into the PREPBUFR file.  [UNPREPBF, STOROB,
+GETC06, SFCDTA, W3FIZZ, BUFRTABLE]
+
+    16) Some of the information now returned in OBS2 (see I.14.a above) and
+OBS3 (see I.15.a above) arrays had been previously returned in the
+conventional "categories", these categories have now been modified as follows:
+[IW3UNPBF]
+        a) Removed all references to categories 7, 9 and 52 since there are
+now no data returned in these categories
+        b) Replaced some information that had been returned in category 51
+with missing values (indicated as "reserved" in Docblock) and reduced the
+number of values in category 51 from 25 to 13
+        c) Removed category 8 code figures 001 (maximum wind gust speed), 002
+(maximum wind gust direction), 081 (calendar day maximum temperature), 082
+(calendar day minimum temperature), 083 (6-hr maximum temperature), 084 (6-hr
+minimum temperature), 085 (precipitation over past 1-hr), 098 (duration of
+sunshine for calendar day)
+        d) Changed meaning of the following category 8 code figures: 005 from
+total precipitation over 1-hr (with indicator 2 being its quality marker) to
+quality marker for total precipitation over 1-hr (indicator 2 now missing);
+006 from total precipitation over 24-hr (with indicator 2 being its quality
+marker) to quality marker for total precipitation over 24-hr (indicator 2 now
+missing); 020 from altimeter setting (with indicator 2 being its quality
+marker) to quality marker for altimeter setting (indicator 2 now missing)
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A. CHANGES TO UPPER-AIR (RADIOSONDE, PIBAL, RECONNAISSANCE, DROPWINSONDE)
+      DATA PROCESSING
+      
+     1) Will now calculate upper-air (RAOB, DROP) specific humidity and
+virtual temperature even if surface pressure quality mark is 15 (bad), but
+will set the specific humidity quality mark to 15.  Before, did not calculate
+either quantity, but subsequent step VIRTMP still did calculate specific
+humidity as long as the dew point temperature was present - thus the VIRTMP
+specific humidity was the lowest event in the stack.  This change ensures that
+the lowest event in the specific humidity stack will always be from the PREPRO
+step.  (Note: This was discovered because drops near hurricanes can receive
+surface pressure q.m. of 15 due to failing the D-VAL check - these were then
+not calculating specific humidty or virtual temperature in the PREPRO step.)
+[MAIN, STOROB]
+
+
+   B.  CHANGES TO SATELLITE-DERIVED WIND DATA PROCESSING
+
+     1) Picture triplet cloud drift winds (PREPBUFR report type 255) in all
+latitude bands from the even and odd GOES satellites are no longer processed
+        a) The default value for namelist switch JSWIND(X,1,10) and
+JSWIND(X,2,10) (where X=1,6) is changed from 0 to 9999 [BLOCK DATA]
+        b) Namelist switches JSWIND(X,1,10) and JSWIND(X,2,10) (where X=1,6)
+changed from 0 to 9999 [DATACARDS]
+
+     2) Logic added to select which pressure (height assign.) and wind to use
+for goes SATWND reports (still hardwired to "final" value) [IW3UNPBF]
+
+
+   C.  CHANGES TO AIRCRAFT DATA PROCESSING
+      
+     1) Processes ACARS flight number (MDCRS ACARS aircraft only)
+        a) Now stored in reserve word 2 (character) [IW3UNPBF]
+        b) Now prints out and encodes ACARS flight number (Table B mnemonic
+ACID) into MDCRS ACARS reports in the PREPBUFR file [FILLX, W3FIZZ, BUFRTABLE]
+
+     2) No longer gives all variable quality marks (P, Z, T, Q, W) in aircraft
+reports other than MDCRS ACARS a keep (0) or purge (14) flag if either the
+temperature or wind q.m. has a keep or purge flag - the q.m. for each variable
+remains unchanged from what is read in [usually neutral (2) except for the
+case of a wind q.m. read in with a purge flag (14), in which case the
+temperature q.m. also gets a purge flag (14)] [IW3UNPBF]
+
+
+   D.  CHANGES TO SURFACE LAND DATA PROCESSING
+
+     1) Surface types now always store instrument type as missing rather than
+packing in synoptic format flag, automated station type, and ship location
+flag [IW3UNPBF]
+
+     2) Now stores type of hourly report ("METAR", "SPECI" or "LWIS"),
+determined from BUFR mnemonic THRPT, stored in bytes 1-5 of header reserve
+character word 2 (METAR reports only) [IW3UNPBF]
+
+     3) Code table value for corrected report indicator (BUFR mnemonic CORN)
+stored in byte 8 of header reserve character word 2 (METAR reports only)
+[IW3UNPBF]
+
+     4) (All networks except CDAS) Namelist switch LFMAXI changed from 53 to 0
+[DATACARDS]
+        a) When LFMAXI is 53 (previous case), all variables in surface land
+mass and wind reports which have a missing station pressure and an elevation
+greater than 7.5 m are flagged with q.m.=15, if they are outside the LFM
+domain.  Also, ALL surface land winds in reports outside the LFM domain are
+flagged with q.m.=15, regardless of their elevation or whether or not their
+surface pressure is missing.
+       b) This change will allow a few report type 281, 284 and 287 winds in
+the NAM/NDAS to now be assimilated (those outside the LFM domain).  There is
+no change in the GFS/GDAS since surface land winds are not assimilated.  None
+of the versions currently assimilates surface mass data in reports with
+missing station pressure and elevation > 7.5 m (report type 183).
+
+     5) Added logic (currently not invoked) to separate METAR reports into
+their own messages in the ADPSFC message type, but with a unique message sub-
+type of 7 (see comments in code). [W3FIZZ]
+
+
+   E. CHANGES TO SSM/I DATA PROCESSING (ALL VERSIONS EXCEPT CDAS)                                                                                                                
+   
+     1) Logic modified to transition from local to WMO mnemonics for input
+SSM/I data - now looks for total precipitable water in WMO mnemonic TPWT
+first, if not found looks in PH2O, looks for total snow depth in WMO mnemonic
+TOSD first, if not found looks in SNDP, looks for ocean surface wind speed in
+WMO mnemonic WSPD (wind speed) first, if not found looks in WSOS (this also
+allows for historical reruns) [IW3UNPBF]
+
+     2) (GFS AND GDAS versions only) Table B mnemonic REQ6 (rainfall rate), a
+local descriptor with scale 6, reference value 0 and bit width 18, is being
+changed to standard descriptor with Table B mnemonic REQV - although REQV has
+scale 4, reference value 0 and bit width 12, operator descriptors are used to
+store it with same precision (i.e., same scale and bit width) as was stored
+for REQ6.  This allows REQ6 to be removed from the Master Table B and frees up
+its local descriptor for future use. [W3FIZZ, BUFRTABLE]
+
+   F. CHANGES TO GOES SATELLITE SOUNDING PROCESSING (NAM AND RUC VERSIONS
+      ONLY)
+
+     1) For GOES PW retrievals, if total precipitable water is not found under
+local Table B mnemonic PH2O, now looks for it in WMO Table B mnemonic TPWT,
+this allows for future transition from PH2O to TPWT in reports in dump files
+and also allows historical reruns to read old dump files [W3UNPKB7]
+
+
+   G. CHANGES TO WIND PROFILER DATA PROCESSING (ALL VERSIONS EXCEPT CDAS)
+
+     1) Wind profiler reports originating from PILOT (PIBAL) bulletins now get
+a unique PREPBUFR report type of 229 (before lumped in with NPN profilers in
+report type 223) [PREP, W3FIZZ]
+
+     2) Time window for all wind profiler types expanded 1.0 hour on each side
+of cycle time from "nominal" dump window to improve performance of new
+PREPOBS_PROFCQC program (which winnows down time window to original value)
+(Note: In an earlier implementation, the PROFLR dump window was expanded by
+1.0 hour on each side of central dump -cycle- time, but for historical PROFLR
+dumps the time window will still be the "nominal" value for the particular
+network) [DATACARDS]
+
+
+   H.  CHANGES TO QUIKSCAT DATA PROCESSING (GFS AND GDAS ONLY)
+
+     1) Corrected bug in QuikSCAT processing which would have stored along-
+track row number into instrument type location (mnemonic ITP) (now correctly
+stores missing here) [GETSCATT]
+
+   I.  E-ADAS AIRCRAFT DATA (NEW DATA TYPE) (ALL VERSIONS EXCEPT RUC)
+
+     1) Added ability to process E-ADAS aircraft reports out of the AIRCFT
+dump file, returned in data level category 6, dump report type 41, sub-type 6
+[IW3UNPBF]
+
+     2) Added processing of E-ADAS aircraft reports now included in AIRCFT
+dump file dump report type 41, sub-type 6, included with existing PREPBUFR
+report types 131/231, processed into PREPBUFR file under existing Table A
+entry (message type) AIRCFT [PREP, GETC06]
+        a) Word 3 in 2'nd element of namelist switch AWINDO and word 3 in
+1-dimensional namelist switches JAMASS, JAWIND and IACFTL now refers to E-ADAS
+(before was not used) [PREP, GETC06, DATACARDS]
+           i) Namelist switch SUBSKP(004,006) set to FALSE (default)
+[DATACARDS]
+
+
+   J.  MOBILE SYNOPTIC LAND DATA (NEW DATA TYPE) (GFS, FDAS and CDAS VERSIONS
+       ONLY)
+
+     1) Added ability to process mobile surface land synoptic reports out of
+ADPSFC dump file, returned in data level categories 51-52, dump report type
+514 [IW3UNPBF]
+        a) Reads in station elevation quality mark and stores in output header
+word 12 (previously missing and still set to missing for all other data types)
+[IW3UNPBF]
+
+     2) Added processing of mobile surface synoptic land reports now included
+in ADPSFC dump file dump report type 514, included with existing PREPBUFR
+report types 181/183/281/284, processed into PREPBUFR file under existing
+Table A entry (message type) ADPSFC [SFCDTA]
+        a) These can have an elevation q.m. - if it's poor set PSTN and PMSL
+(if present) q.m. to 15 (bad), if it's fair set PSTN and PMSL (if present)
+pressure q.m. to 3 (suspect) [SFCDTA]
+        b) Expanded namelist switches FWINDO, JSURFM and JSURFW from 9-words
+to 11-words to add mobile synoptic land in word 11 (default FWINDO(11)=300.,
+JSURFM(11)=0, JSURFW(11)=0) [SFCDTA, DATACARDS]
+           i) Namelist switch SUBSKP(000,002) set to FALSE (default)
+[DATACARDS]
+
+
+
+III.  NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO GOES SATELLITE SOUNDING PROCESSING
+
+     1) Added logic to handle future GOES 1x1 (SFOV) sounding (radiance/
+retrieval) data: does not q.c. any 1x1 data (cloud as before, but now also
+soundings) by number of FOV's (still does so for non-radiance 5x5 data)
+[W3UNPKB7]
+
+
+   B. MESONET SURFACE DATA (NEW DATA TYPE - NOT ASSIMILATED BECAUSE OBS ERROR
+      SET TO MISSING) (NAM and RUC versions only)                                                                                                                                                                                                                                                                                                                          
+   
+     1) Added ability to read Mesonet NCEP BUFR dump file (MSONET), returned
+in data level categories 51-52, dump report type 540 [IW3UNPBF]
+        a) Mesonet ID strings for provider and sub-provider stored in reserve
+words 1 and 2, resp. (both character) [IW3UNPBF]
+     
+     2) Accounts for transition of Mesonet reports from low- to high-
+resolution lat/lon in early 2004 [IW3UNPBF]
+
+     3) Added processing of Mesonet data, read from MSONET dump file dump
+report type 540, get PREPBUFR report type 188/288, processed into PREPBUFR
+file under new Table A entry (message type) MSONET [FILLX, SFCDTA, W3FIZZ,
+FIZZ01, BUFRTABLE]
+	   a) If Mesonet report has a missing station pressure (mean-sea-level
+pressure always missing) but a valid altimeter setting, generate station
+pressure from observed altimeter and observed elevation - character 8 of
+station id is set to 'a' to identify these (they still get PREPBUFR report
+type 188/288) [SFCDTA]
+        b) If mesonet report has a missing station pressure (mean-sea-level
+pressure always missing) and a missing altimeter setting, generate station
+pressure from standard atmosphere mean sea-level pressure (1013.25 mb),
+observed temperature and elevation - character 8 of station id is set to 'x'
+to identify these (they still get PREPBUFR report type 188/288) [SFCDTA]
+        c) Expanded namelist switches FWINDO, JSURFM and JSURFW from 9-words
+to 11-words to add Mesonet in word 10 (default FWINDO(10)=300., JSURFM(10)=0,
+JSURFW(10)=0) [SFCDTA, DATACARDS]
+           i) Mesonet processed in NAM and RUC exactly like synoptic land [RUC
+dumps w/ +/- 0.5-hr time window even though FWINDO(10)=150.; ETA dumps w/
++/- 1.5-hr time window, and FWINDO(10)=150.] [DATACARDS]
+
+
+   C.  COOPERATIVE AGENCY (WIND) PROFILERS (CAP) (NEW DATA TYPE - NOT
+       ASSIMILATED BECAUSE OBS ERROR SET TO MISSING) (NAM AND RUC VERSIONS
+       ONLY)
+   
+     1) Added Cooperative Agency Profiler (CAP) wind profiler reports (002/011
+- returned in data level category 11, dump report type 75) to processing for
+wind profilers not originating from PILOT (PIBAL) bulletins [W3UNPKB7]
+
+     2) Added processing of Cooperative Agency Profiler (CAP) winds now
+included in PROFLR dump file dump report type 75, gets PREPBUFR report type
+227, processed into PREPBUFR file under existing Table A entry (message type)
+PROFLR [PREP, W3FIZZ]
+        a) CAP profilers processed in NAM (dump and PREPBUFR time window both
++/- 2.5 hrs, winnowed back to +/- 1.5 hrs by new PREPOBS_PROFCQC) and RUC
+(dump and PREPBUFR time window both +/- 1.5 hrs, winnowed back to +/- 0.5 hrs
+by new program PREPOBS_PROFCQC) [DATACARDS]
+           i) Namelist switch SUBSKP(002,011) set to FALSE (default)
+[DATACARDS]
+
+
+   D.  JAPANESE METEOROLOGICAL AGENCY WIND PROFILERS (JMA) (NEW DATA TYPE -
+       NOT ASSIMILATED BECAUSE OBS ERROR SET TO MISSING) (GFS AND GDAS
+       VERSIONS ONLY)
+     
+     1) Added Japanese wind profiler reports (002/013 - returned in data level
+category 11, dump report type 76) to processing for wind profilers not
+originating from PILOT (PIBAL) bulletins [W3UNPKB7]
+
+     2) Added processing of Japanese wind profilers now included in PROFLR
+dump file dump report type 76, gets PREPBUFR report type 228, processed into
+PREPBUFR file under existing Table A entry (message type) PROFLR [PREP,
+W3FIZZ]
+       a) Japanese profilers processed in GFS and GDAS (dump and PREPBUFR time
+window both +/- 4.0 hrs, winnowed back to +/- 3.0 hrs by new PREPOBS_PROFCQC)
+[DATACARDS]
+         i) Namelist switch SUBSKP(002,013) set to FALSE (default)
+[DATACARDS]
+
+
+   E.  NOAA PROFILER NETWORK (NPN) AND COOPERATIVE AGENCY PROFILER (CAP) RASS
+       VIRTUAL TEMPERATURES (NEW DATA TYPE - NOT ASSIMILATED BECAUSE OBS
+       ERROR SET TO MISSING) (NAM AND RUC VERSIONS ONLY)
+
+     1) Added processing of NOAA Profiler Network (NPN) and Cooperative Agency
+Profiler (CAP) RASS reports here (002/012) now that they are packed in an NCEP
+BUFR file (RASSDA - returned in new data level category 15, dump report type
+77) [W3UNPKB7]
+
+     2) Added processing of NOAA Profiler Network (NPN) and Cooperative Agency
+Profiler (CAP) RASS data, read from RASSDA dump file in new data level
+category 15 dump report type 77, get PREPBUFR report type 126, processed into
+PREPBUFR file under new Table A entry (message type) RASSDA [PREP, GETUPA,
+W3FIZZ, FIZZ01, BUFRTABLE]
+        a) New namelist switches TWINDO (time window about cycle time for
+accepting RASS reports), scalar (default 300.) and RASS (process/don't process
+RASS reports), scalar (default FALSE) [PREP, DATACARDS]
+           i) Processed in NAM with time window +/- 1.5 hours (same as dump
+window), in RUC with time window +/- 1.5 hours (dump window is +/- 0.5 hours)
+[DATACARDS]
+
+
+   F.  GPS-INTEGRATED PRECIPITABLE WATER (GPS-IPW) (NEW DATA TYPE - NOT
+       ASSIMILATED BECAUSE OBS ERROR SET TO MISSING) (NAM AND RUC VERSIONS
+       ONLY)
+
+     1) Added processing of GPS-IPW reports here now that they are packed in
+an NCEP BUFR file (GPSIPW - returned in new data level category 14, dump
+report type 74) [W3UNPKB7]
+
+     2) Added processing of GPS-IPW data, read from GPSIPW dump file dump
+report type 74, get PREPBUFR report type 153, processed by new subroutine
+GETGPSIPW into PREPBUFR file under new Table A entry (message type) GPSIPW
+[PREP, FILLX, GETPWATER, GETGPSIPW, W3FIZZ, FIZZ01, BUFRTABLE]
+       a) New namelist switches GWINDO (time window about cycle time for
+accepting GPS-IPW reports, scalar (default 300.) and JPGPSD (process/don't
+process GPS-IPW reports, 6-words, one for each lat. band) (default 6*9999)
+[PREP, GETGPSIPW, DATACARDS]
+          i) Processed in NAM with time window +/- 1.5 hours (same as dump
+window), in RUC with time window +/- 1.5 hours (dump window is -1.0 to -0.1
+hrs) [DATACARDS]
+
+
+   G.  NASA/MODIS POES AQUA/TERRA SATELLITE-DERIVED WINDS (NEW DATA TYPE - NOT
+       ASSIMILATED BECAUSE OBS ERROR SET TO MISSING) (GFS AND GDAS VERSIONS
+       ONLY)
+
+     1) Added logic to handle future MODIS (Aqua/Terra) winds [IW3UNPBF]
+  
+     2) Added processing of NASA/MODIS POES Aqua/Terra satellite-derived
+winds, now included in SATWND dump file existing dump report type 63, get
+PREPBUFR report types 257 (IR cloud-drift), 258 (water vapor imager cloud-top)
+and 259 (water vapor imager deep layer), processed into PREPBUFR file under
+existing Table A entry (message type) SATWND [PREP, SWNTBL, GETC06]
+        a) Expanded namelist switches SWINDO_e, SWINDO_l, SWNLND, JSWIND and
+JSMASS from (6,5,10) to (6,7,10) to account for Aqua and Terra in second
+dimension, words 6 and 7, respectively (defaults for both are SWINDO_e=-300.,
+SWINDO_l=+300., SWNLND=TRUE, JSMASS=9999 and JSWIND=9999 across all values in
+dimensions 1 and 3 [PREP, SWNTBL, GETC06, DATACARDS]
+           i) IR cloud-drift and water vapor imager cloud-top winds processed,
+water vapor imager deep layer not processed [DATACARDS]
+           ii) Namelist switches SUBSKP(005,070) and SUBSKP(005,071) set to
+FALSE (default) [DATACARDS]                                         
+
+
+New parameters encoded into PREPBUFR file
+
+Single-level:
+
+- SST1, SSTQM, SSTPC, SSTRC, SSTFC, SSTOE, SSTAN (sea temperature: obs, K,
+  0-22-043;; quality marker, program code and reason code; code table; 0-22-246,
+  -247, -248;; background value, observation error and analyzed value; K;
+  0-22-249, -250, -251) in ADPSFC, SFCSHP, ADPUPA
+- DBSS (depth below surface for SST meas., m, 0-07-062) in SFCSHP (present
+  only from drifting buoys)                                
+- MSST (method of SST measurement, code table, 0-02-028) in ADPSFC (SYNOPs
+  only), SFCSHP (all types except for drifting buoy)
+- .REHOVI (relationship to horizontal visibility, code table, 0-08-201) in
+  ADPSFC (METARs only)
+- HOVI (horizontal visibility, m, 0-20-001) in ADPSFC, SFCSHP (all types
+  except for drifting buoy)
+- VTVI (vertical visibility, m, 0-20-002) in ADPSFC, SFCSHP (ships only)
+- PSW1, PSW2 (past weather-1 and -2; code table; 0-20-004, -005) in ADPSFC
+  (SYNOPs only), SFCSHP (all types except for drifting buoy)
+- PKWDSP, PKWDDR (peak wind speed, m/s, 0-11-203; peak wind direction, deg,
+  0-11-202) in ADPSFC (METARs only), SFCSHP (moored buoy and C-MAN only)
+- .DTMMXGS,  MXGS (maximum wind speed: duration in time over which measured,
+  min, 0-04-032; value, m/s, 0-11-041) in ADPSFC, SFCSHP (all types except
+  for drifting buoy), MSONET (only MXGS)
+- MXGD (maximum wind gust direction, deg, 0-11-043) in MSONET
+- TP01, TP03, TP06, TP12, TP24 (total precipitation past 1, 3, 6, 12, 24
+  hours; kg/m**2, 0-13-019, -020, -021, -022, -023) in ADPSFC (SYNOPs only
+  for TP12)
+- TOSS (total sunshine, min, 0-14-031) in ADPSFC (METARs only)
+- TOCC (total cloud cover, percent, 0-20-010) I, ADPSFC (SYNOPs only), SFCSHP
+  (ships only)
+- HBLCS (height above surface of base of lowest cloud seen, code table,
+  0-20-201) in ADPSFC (SYNOPs only), SFCSHP (ships only), ADPUPA
+- XS10, XS20 (10- and 20-meter extrapolated wind speed; m/s; 0-11-223, -224)
+  in SFCSHP (moored buoy and C-MAN only)
+- WDIR1 (surface wind direction, deg, 0-11-200) in ADPUPA (RECCOs only)
+- WSPD1 (surface wind speed, m/s, 0-11-201) in ADPUPA (RECCOs only)
+- .DTHDOFS (duration of time over which depth of fresh snow measured, hrs,
+  0-04-031) in ADPSFC (SYNOPs only)
+- DOFS, TOSD (depth of fresh snow, total snow depth; m, 0-13-012, -013) in
+  ADPSFC
+- HOWV, HOWW (height of waves, height of wind waves; m; 0-22-021, -022) in
+  ADPSFC (SYNOPs only), SFCSHP (all types except for drifting buoy in HOWW)
+- POWV, POWW (period of waves, period of wind waves; sec; 0-22-011, -012) in
+  ADPSFC (SYNOPs only), SFCSHP (all types except for drifting buoy in HOWW)
+- TDMP (true direction of motion of ship during last 3-hrs, code table,
+  0-01-193) in SFCSHP (ships only)
+- ASMP (average speed of motion of ship during last 3-hrs, code table,
+  0-01-200) in SFCSHP (ships only)
+- CHPT (characteristic of pressure tendency, code table, 0-10-063) in
+  ADPSFC, SFCSHP
+- 3HPC, 24PC (3- and 24-hour pressure change; Pa; 0-10-061, -062) in
+  ADPSFC (SYNOPs only for 24PC) and SFCSHP (ships only for 24PC) 
+
+
+Multiple-level:
+
+- {.DTHTOPC TOPC} (total precip./total water equivalent: duration in time
+  over which measured, hrs, 0-04-031; value, kg/m**2, 0-13-011) in ADPSFC
+  (SYNOPs only), MSONET
+- {PRWE} (present weather, code table, 0-20-003) in ADPSFC, SFCSHP (all 
+  types except drifting buoy), ADPUPA (RECCOs only), AIRCFT (PIREPs only)
+- {VSSO CLAM CLTP HOCB HOCT} (vertical significance surface observations,
+  code table, 0-08-002; cloud amount, code table, 0-20-011; cloud type,
+  code table, 0-20-012; height of base and top of cloud, m, 0-20-013, -014)
+  in ADPSFC (SYNOPs only for HOCT), ADPUPA (VSSO not present in any type,
+  HOCT present only in RECCOs) and AIRCFT (PIREPs only, VSSO not present)
+- {.DTHMXTM .DTHMITM MITM MXTM } (duration in time over which max. and min.
+  temp. measured, hrs, 0-04-031; max. and min. temp., K, 0-12-111, -112) in
+  ADPSFC
+- {DOSW HOSW POSW} (dir. of swell waves, deg, 0-22-003; height of swell
+  waves, m, 0-22-023; period of swell waves, sec, 0-22-013) in ADPSFC
+  (SYNOPs only), SFCSHP (all types except for drifting buoy)

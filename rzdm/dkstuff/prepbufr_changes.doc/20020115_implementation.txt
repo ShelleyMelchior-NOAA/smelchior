@@ -1,0 +1,94 @@
+                                               January 18, 2002
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 9)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the ninth time.  UPDATE #9 was implemented on the
+IBM-SP machine at 12Z on January 15, 2002.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 9  ***************
+
+
+I. GENERAL CHANGES
+
+     1) Added new namelist switch IACFTH which provides an upper
+altitude limit above which AIREP/PIREP (word 1), AMDAR/ASDAR
+(word 2) and ACARS (word 4) reports are flagged (all variables)
+with q.m. 15 (word 3 is reserved).  The default is 18000 meters
+(approx. 75 mb) for AIREP/PIREP and AMDAR/ASDAR, and 16500 meters
+(approximately 95 mb) for ACARS.  The default values are
+currently used in all networks. [MAIN, GETC06, DATACARDS]
+
+
+II. OERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO AIRCRAFT DATA PROCESSING
+
+     1) All ACARS reports with altitude above 16500 meters
+(approx. 95 mb) are now flagged (all variables) with q.m. 15 (see
+I.1 above). [MAIN, GETC06]
+
+     2) All AIREP/PIREP and AMDAR/ASDAR reports with altitude
+above 18000 meters (approx. 75 mb) are now flagged (all
+variables) with q.m. 15 (see I.1 above). [MAIN, GETC06]
+
+     3) ACARS and RECCO reports with calculated dewpoint
+temperature less than namelist value TDLIM (set to default of 215
+K) now encode calculated dewpoint temperature (TDO), calculated
+or reported specific humidity (QOB), and calculated virtual
+temperature (TVO) in the PREPBUFR file, but set the moisture
+quality marker (QQM) to 15 so these data will not be assimilated
+by the analyses.  Prior to this, such levels set the dewpoint
+temperature and specific humidity to missing, and set the virtual
+temperature to the sensible temperature (TOB) value. [MAIN,
+GETC06, FIZZ01]
+
+     4) ETA only: ACARS moisture data (specific humidity) are no
+longer unilaterally flagged with quality mark 15.  This change
+allows these data to be considered by the verification codes. 
+This is accomplished by changing namelist switch FLACMS from TRUE
+to FALSE in the eta datacards. {The 3DVAR observational error for
+ACARS moisture has been set to missing on all levels, so these
+data will still not be assimilated by the 3DVAR analyses.}
+[DATACARDS]
+
+
+  B. CHANGES TO UPPER-AIR (RAOB, DROPWINSONDE) DATA PROCESSING
+
+     1) Levels with reported dewpoint temperature less than
+namelist value TDLIM (set to default of 215 K) now encode
+dewpoint temperature (TDO), calculated specific humidity (QOB),
+and calculated virtual temperature (TVO) in the PREPBUFR file,
+but set the moisture quality marker (QQM) to 15 so these data
+will not be assimilated by the analyses.  Prior to this, such
+levels set the dewpoint temperature and specific humidity to
+missing, and set the virtual temperature to the sensible
+temperature (TOB) value. [MAIN, SMERGE, FIZZ01]
+
+
+  C. CHANGES TO SURFACE DATA PROCESSING
+
+     1) Levels with reported dewpoint temperature less than
+namelist value TDLIM (set to default of 215 K - OF COURSE SHOULD
+ALMOST NEVER OCCUR AT SURFACE!) now encode dewpoint temperature
+(TDO), calculated specific humidity (QOB), and calculated virtual
+temperature (TVO) in the PREPBUFR file, but set the moisture
+quality marker (QQM) to 15 so these data will not be assimilated
+by the analyses.  Prior to this, such levels set the dewpoint
+temperature and specific humidity to missing, and set the virtual
+temperature to the sensible temperature (TOB) value. [MAIN,
+SFCDTA, FIZZ01]
+
+  D. CHANGES TO quikSCAT SCATTEROMETER WIND DATA PROCESSING
+
+     1) AVN, FNL only: quikSCAT scatterometer wind reports are
+now encoded in the PREPBUFR file under report type 285 and will
+be assimilated by the Global SSI analyses.  This is accomplished
+by changing namelist switch JPSSMI from 6*9999 to 6*0 in the avn
+and fnl datacards. [DATACARDS]

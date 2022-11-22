@@ -1,0 +1,1804 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:w="urn:schemas-microsoft-com:office:word"
+ xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=windows-1252">
+  <meta name="ProgId" content="Word.Document">
+  <meta name="Generator" content="Microsoft Word 11">
+  <meta name="Originator" content="Microsoft Word 11">
+  <link rel="File-List" href="NAVY_SST_files/filelist.xml">
+  <title>NAVY Sea-Surface Temperature Temporary Observation File</title>
+<!--[if gte mso 9]><xml> <o:DocumentProperties> <o:Author>Dennis A. Keyser</o:Author> <o:LastAuthor>Dennis A. Keyser</o:LastAuthor> <o:Revision>2</o:Revision> <o:TotalTime>1</o:TotalTime> <o:Created>2010-01-22T21:53:00Z</o:Created> <o:LastSaved>2010-01-22T21:53:00Z</o:LastSaved> <o:Pages>3</o:Pages> <o:Words>676</o:Words> <o:Characters>3857</o:Characters> <o:Company>NOAA/NWS/NCEP/EMC/MMB</o:Company> <o:Lines>32</o:Lines> <o:Paragraphs>9</o:Paragraphs> <o:CharactersWithSpaces>4524</o:CharactersWithSpaces> <o:Version>11.9999</o:Version> </o:DocumentProperties> </xml><![endif]--><!--[if gte mso 9]><xml> <w:WordDocument> <w:PunctuationKerning/> <w:DrawingGridHorizontalSpacing>6 pt</w:DrawingGridHorizontalSpacing> <w:DisplayHorizontalDrawingGridEvery>2</w:DisplayHorizontalDrawingGridEvery> <w:DisplayVerticalDrawingGridEvery>2</w:DisplayVerticalDrawingGridEvery> <w:ValidateAgainstSchemas/> <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid> <w:IgnoreMixedContent>false</w:IgnoreMixedContent> <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText> <w:Compatibility> <w:BreakWrappedTables/> <w:SnapToGridInCell/> <w:WrapTextWithPunct/> <w:UseAsianBreakRules/> <w:DontGrowAutofit/> </w:Compatibility> <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> </w:WordDocument> </xml><![endif]--><!--[if gte mso 9]><xml> <w:LatentStyles DefLockedState="false" LatentStyleCount="156"> </w:LatentStyles> </xml><![endif]-->
+  <style>
+<!--
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+{mso-style-parent:"";
+margin:0in;
+margin-bottom:.0001pt;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+{color:purple;
+text-decoration:underline;
+text-underline:single;}
+@page Section1
+{size:8.5in 11.0in;
+margin:1.0in 1.0in 1.0in 1.0in;
+mso-header-margin:.5in;
+mso-footer-margin:.5in;
+mso-paper-source:0;}
+div.Section1
+{page:Section1;}
+-->
+  </style><!--[if gte mso 10]> <style> /* Style Definitions */ table.MsoNormalTable {mso-style-name:"Table Normal"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; mso-style-noshow:yes; mso-style-parent:""; mso-padding-alt:0in 5.4pt 0in 5.4pt; mso-para-margin:0in; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} table.MsoTableGrid {mso-style-name:"Table Grid"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; border:solid windowtext 1.0pt; mso-border-alt:solid windowtext .5pt; mso-padding-alt:0in 5.4pt 0in 5.4pt; mso-border-insideh:.5pt solid windowtext; mso-border-insidev:.5pt solid windowtext; mso-para-margin:0in; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} </style> <![endif]-->
+</head>
+<body lang="EN-US" link="blue" vlink="purple">
+<div class="Section1">
+<p class="MsoNormal">Dataset
+Format Description</p>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal">NAVY
+MCSST Temporary Observation File (effective 12/01/2015)</p>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<o:p></o:p>
+<p class="MsoNormal">This
+file is a sequential data set with
+fixed-length data records.<span style="">&nbsp;
+</span>The data record
+length is 104 bytes.<span style=""></span></p>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal">Following
+normal convention, the first (most
+significant)
+bit in the byte sequence for each value is the sign bit (0-positive,
+1-negative).</p>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class="MsoNormal">Below
+are the contents of each data record in this
+file.</p>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+<table class="MsoTableGrid"
+ style="border: medium none ; border-collapse: collapse;" border="1"
+ cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border: 1pt solid windowtext; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">BYTE(S)</p>
+      </td>
+      <td
+ style="border-style: solid solid solid none; border-color: windowtext windowtext windowtext -moz-use-text-color; border-width: 1pt 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">VALUE</p>
+      </td>
+      <td
+ style="border-style: solid solid solid none; border-color: windowtext windowtext windowtext -moz-use-text-color; border-width: 1pt 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">UNITS</p>
+      </td>
+      <td
+ style="border-style: solid solid solid none; border-color: windowtext windowtext windowtext -moz-use-text-color; border-width: 1pt 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">NOTE</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">1-8</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Spares<span style=""> </span></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">=0</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">9</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Type
+of SST observation/retrieval</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><a target="_blank"
+ href="http://www.emc.ncep.noaa.gov/mmb/data_processing/table_local_await-val.htm#0-06-193">See
+local BUFR code table 0-06-193</a>. <i style=""><span
+ style="color: red;">(Currently see values of 151,
+152, 159.)</span></i> </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">SST
+observation source</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><a target="_blank"
+ href="http://www.emc.ncep.noaa.gov/mmb/data_processing/table_local_await-val.htm#0-06-194">See
+local BUFR code table 0-06-194</a>.<span style="font-style: italic;"></span><i
+ style=""><span style="color: red;"></span></i></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">11</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">2-digit
+year</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 00 to 99.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">12</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Month
+of year</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 1 to 12.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">13-14</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Latitude</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">degrees*100
+(N+, S-)</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -9000 to 9000. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">15-16</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Longitude</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">degrees*100
+(E+, W-)</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -18000 to 17999. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">17</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Day
+of month</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 1 to 31.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">18</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Hour
+(UTC)</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 23.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">19</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Minute</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 59.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">20</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Second</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 59.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">21-22</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">SST</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">deg
+C*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -20 to 350. A value of -3000 means
+the data is missing.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">23-24</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Standard
+deviation of <span style="">&nbsp;</span>SST
+retrieval</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">deg
+C*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767 although values should
+usually not be much above 150.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">25-26</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Solar
+zenith angle</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">degrees*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 1800. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">27-28</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Satellite
+zenith angle</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">degrees*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -600 to 600. A value of -3000 means
+the data is missing.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">29-30</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Analyzed
+Field SST</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">deg
+C*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -20 to 350. A value of -3000 means
+the data is missing.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">31-32</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Bias
+in SST retrieval</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><span style="">&nbsp;</span>deg
+C*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -150 to 150.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">33-34</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Solar
+azimuth angle</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">degrees*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 1800. A value of -3000 means
+the data is missing.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">35-36</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Climatological
+SST</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">deg
+C*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -20 to 350. A value of -3000 means
+the data is missing.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">37</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Reliability
+classification</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Values
+are either 1 (clear), 2 (probably
+clear) or 3(questionable). See this&nbsp;<a target="_blank"
+ href="sea_tech_reli-1.pdf">link</a>
+for more information.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">38</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p style="width: 187px;" class="MsoNormal">Proximity
+confidence value</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Values
+are &ldquo;6 minus the
+reliability&nbsp;classification (byte&nbsp;37) plus
+100&rdquo;. This
+is&nbsp;either 105 (clear), 104
+&nbsp;(probably cear) or 103 (questionable)&nbsp;.&nbsp;See
+this <a href="sea_tech_reli-1.pdf" target="_blank">link</a>
+for
+more&nbsp;information.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">39-40</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160"><br>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP and
+NOAA<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+1 albedo</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">percent*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 10000. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;S-NPP<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; vertical-align: top; width: 119.7pt; white-space: nowrap;">
+      <p class="MsoNormal">VIIRS
+M-Band channel 5</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">41-42</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160"><br>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP and
+NOAA<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+2 albedo</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">percent*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 10000. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;S-NPP<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; vertical-align: top; width: 119.7pt; white-space: nowrap;">
+      <p class="MsoNormal">VIIRS
+M-Band channel 7</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">43-44</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160"><br>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP and
+NOAA &nbsp; &nbsp; &nbsp; &nbsp;morning satellites<a
+ style="text-decoration: none;" href="#ampersand"><sup>&amp;</sup></a></p>
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;<span style="font-style: italic;">daytime</span></p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+3 albedo</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">percent*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 10000. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP
+and
+NOAA &nbsp; &nbsp; &nbsp; &nbsp;morning satellites<a
+ style="text-decoration: none;" href="#ampersand"><sup>&amp;</sup></a></p>
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;<span style="font-style: italic;">nighttime</span></p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+3</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP
+and
+NOAA &nbsp; &nbsp; &nbsp; &nbsp;afternoon satellites<a
+ style="text-decoration: none;" href="#percent"><sup>%</sup></a><a
+ style="text-decoration: none;" href="NAVY_SST_newXXX.htm#ampersand"><sup></sup></a></p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+3</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;S-NPP<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; vertical-align: top; width: 119.7pt; white-space: nowrap;">
+      <p class="MsoNormal">VIIRS
+M-Band channel 12</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">45-46</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160"><br>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP and
+NOAA<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+4</p>
+      <p class="MsoNormal">brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;S-NPP<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; vertical-align: top; width: 119.7pt; white-space: nowrap;">
+      <p class="MsoNormal">VIIRS
+M-Band channel 15</p>
+      <p class="MsoNormal">brightness
+temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">47-48</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160"><br>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid dashed; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;METOP and
+NOAA<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">AVHRR
+Channel
+5</p>
+      <p class="MsoNormal">brightness temperature</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid dashed none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">&nbsp;
+&nbsp; &nbsp;S-NPP<br>
+      </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; vertical-align: top; width: 119.7pt; white-space: nowrap;">
+      <p class="MsoNormal">VIIRS
+M-Band channel 16</p>
+      <p class="MsoNormal">brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. </p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">49-50</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Navy
+Aerosol Analysis and Prediction System
+(NAAPS) sulfate optical depth</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric*1000</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. <span style="">&nbsp;</span><i style=""><span
+ style="color: red;">(Range observed is 4 to 475)</span></i></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">51-52</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Navy
+Aerosol Analysis and Prediction System
+(NAAPS) smoke optical depth</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric*1000</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. <i style=""><span style="color: red;">(Range observed
+is 0 to 203) </span></i></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">53-54</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Navy
+Aerosol Analysis and Prediction System
+(NAAPS) dust optical depth</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric*1000</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. <i style=""><span style="color: red;">(Range observed
+is 13 to 188)</span></i></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">55-58</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Spares</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">=0</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">59-60</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">4-digit
+year </p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 1998 to present year.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">61-62</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Navy
+Aerosol Analysis and Prediction System
+(NAAPS) total optical depth</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Numeric*1000</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767. <i style=""><span style="color: red;">(Range observed
+is 27 to 623)<o:p></o:p></span></i></p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">63-64</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Gridded
+1/10<sup>th</sup>
+degree SST</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">deg
+C*10</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is -20 to 350. A value of -800 means
+the data is over land.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">65-66<sup><a style="text-decoration: none;"
+ href="#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 1 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">67-68<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 2 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">69-70<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 3 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">71-72<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 4 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">73-74<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 5 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">75-76<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 6 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">Range
+is 0 to 32767.</td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">77-78<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 7 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">79-80<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 8 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">81-82<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 9 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">83-84<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 10 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">85-86<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 11 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">87-88<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 12 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">89-90<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 13 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">Range
+is 0 to 32767.</td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">91-92<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 14 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">Range
+is 0 to 32767.</td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">93-94<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 15 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">95-96<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 16 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">97-98<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 17 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">99-100<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 18 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">101-102<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 19 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">Range
+is 0 to 32767.</p>
+      </td>
+    </tr>
+    <tr style="page-break-inside: avoid;">
+      <td
+ style="border-style: none solid solid; border-color: -moz-use-text-color windowtext windowtext; border-width: medium 1pt 1pt; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">103-104<sup><a style="text-decoration: none;"
+ href="NAVY_SST_new.htm#pound_sign">#</a></sup></p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">HIRS
+Channel 20 brightness&nbsp;temperature</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">
+      <p class="MsoNormal">K*100</p>
+      </td>
+      <td
+ style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 0in 5.4pt; width: 119.7pt;"
+ valign="top" width="160">Range
+is 0 to 32767.</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<sup><a name="ampersand"></a>&amp;</sup>
+- morning satellites
+include&nbsp;NOAA-15 (SST
+observation source = 4),&nbsp;NOAA-17 (SST
+observation source = 6), METOP-2(A) (SST
+observation source = 12) and METOP-1(B) (SST
+observation source = 11)<br>
+<br>
+<sup><a name="percent"></a>%</sup>
+- afternoon&nbsp;satellites include
+NOAA-14 (SST
+observation source = 3), NOAA-16 (SST
+observation source = 2), NOAA-18 (SST
+observation source = 7), NOAA-19&nbsp;(SST
+observation source = 8). &nbsp;S-NPP (SST
+observation source = 9) is also an afternoon satellite but it is not
+applicable here.<br>
+<br>
+<a name="pound_sign"></a>#
+- bytes 65-104 are spares (=0) for S-NPP
+satellite (SST
+observation source = 9) since there is no HIRS instrument<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</div>
+</body>
+</html>

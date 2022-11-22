@@ -1,0 +1,235 @@
+                                              November 15, 1999
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 21, 1998 Version -- UPDATE # 5)
+
+The data preprocessor program (PREPDATA) was implemented on the
+new IBM-SP machine at 12Z on September 27, 1999.  The source code
+evolved from the version that had existed on the CRAY (September
+21, 1998 version, update Number 4).  This memo describes the
+changes made to the CRAY version.  This version is considered to
+be the fifth update (for the IBM-SP ONLY) to the September 21,
+1999 version.  Except where noted, the changes below affect all
+three versions: 3DVAR, SSI and RUC.
+
+**************** I B M - S P   U P D A T E   # 5  ***************
+
+I.  GENERAL CHANGES
+
+     
+     1) Numerous small source code changes necessary to port the
+program from the Cray (64-bit machine) to the IBM (32-bit and 64-
+bit machine). [MAIN]
+
+     2) The "PREVENTS" function (which prior to this was a
+separate PREVENTS program running subsequent to this program) is
+now performed by PREPDATA via a call to a new W3LIB routine
+GBLEVENTS.  This is more efficient than the method. [MAIN,
+W3FIZZ]
+
+     3) Removed subroutine W3ERSUNP and the call to it.  This was
+needed on the Cray because the input reprocessed ERS data dump
+file was in WMO BUFR format.  This file on the IBM is in NCEP
+BUFR format and is read in via subroutine W3UNPK07 (see I.4).
+[MAIN, GETERS]
+
+     4) Subroutine W3UNPKB7 was modified to handle the
+reprocessed ERS data dump file now in NCEP BUFR format. [MAIN,
+GETERS,W3UNPKB7]
+
+     5) Removed subroutine UNPREP and the call to it. Also
+removed call to W3LIB routine IW3UNP29. All of this was needed on
+the Cray because the input reprocessed SSM/I data dump file was
+in ON29 format.  This file on the IBM is in NCEP BUFR format and
+is read in via subroutine IW3UNPBF (see I.6).  [MAIN, GETSMI]
+
+     6) Subroutine IW3UNPBF was modified to handle the
+reprocessed SSM/I data dump file now in NCEP BUFR format. [MAIN,
+UNPREPBF, GETSMI, IW3UNPBF]
+
+     7) The "Tableb" and "Tabled" files are no longer input into
+to this program since the reprocessed ERS data dump file is now
+NCEP BUFR rather than WMO BUFR (see I.2). [MAIN, GETERS] 
+
+     8) Removed the following unused mnemonics from each report's
+header in the PREPBUFR file: RQM, DUP, PRG, SRC, RUC.  These were
+once used for reanalysis on the Cray but in the productions runs
+they were always set to missing and were wasting a lot of space
+in the PREPBUFR file. [MAIN, W3FIZZ, FIZZ01, bufrtable]
+
+     9) Modified the definition of the third element in the
+namelist switches SWINDO, SWNLND, JSWIND, and JSMASS such that
+the value of 1 now refers only to conventional IR cloud drift
+(had referred to both conventional IR and conventional visible
+cloud drift) and the value of 3 now refers to conventional
+visible cloud drift (had referred to now-obsolete gradient
+winds).  There currently apply only to foreign satellite wind
+products. [MAIN, GETC06]
+
+     10) Added new definitions for report types 250 (now Japanese
+GMS water vapor satwinds), 254 (now EUMETSAT water vapor
+satwinds) and 256 (now INSAT water vapor satwinds). The first two
+types are now being decoded and the IBM version of the dump
+script will dump them as part of the "satwnd" dump.   [MAIN,
+GETC06]
+
+     11) Replaced in-line sort subroutine SHELL and call to it
+with call to W3LIB routine ORDERS.  Subroutine ORDERS is not only
+a more efficient sort routine, but it allows for multiple sort
+keys which ensures that the sort will produce the same ordering
+regardless of the order of the input data that is being sorted.
+[MAIN, SMERGE, WNDBYP, WNDBYZ] 
+
+     12) Replaced call to W3LIB routine W3FI04 with call to new
+in-line subroutine WORDLENGTH to determine REAL and INTEGER
+machine wordlength in order to pass proper sort key into W3LIB
+routine ORDERS. (W3LIB routine W3FI04 only returned INTEGER
+machine word length - IBM allows REAL and INTEGER word length to
+differ.)  [MAIN, IW3UNPBF]
+
+     13) Stop condition code 22 was removed because it could
+never occur. [MAIN]
+
+     14) A return code of 4 will now occur when no reports from
+either the input "adpupa" dump or "adpsfc" dump are actually
+written into the PREPBUFR file.  In this situation, one or both
+of these files may actually contain reports but these reports are
+skipped in the PREPBUFR processing.  Prior to this, this return
+code could occur only when one of these input dump files were
+actually empty. [MAIN, PREP, SFCDTA]
+
+     15) Added two new Table D entries in the program codes list: 
+CQCVAD with a program code of 012, and R3DVAR with a program code
+of 013. [bufrtable]
+     
+     17) Namelist switch PREVEN moved from namelist "LDTA" to new
+namelist "GBLEVN".  If the namelist "GBLEVN" is not found in the
+data cards, then PREVEN defaults to FALSE.  This allows the call
+to W3LIB routine GBLEVENTS to be controlled at the script level. 
+For example, in the RUC version at those times not divisible by
+3, the make_prepbufr script will NOT append namelist "GBLEVN" to
+the beginning of the data card parm file. [MAIN]     
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  
+  A. CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1) GMS water vapor satwinds (report type 250), EUMETSAT
+water vapor satwinds (report type 254) and INSAT water vapor
+satwinds (report type 256) can now be processed.  Only the first
+two are currently available.  In the SSI version, all types will
+be processed if found, but they will be flagged for non-use by
+the analysis. In the 3DVAR version, the first two types will be
+processed if found but they will be flagged for non-use by the
+analysis. [MAIN, GETC06, IW3UNPBF]
+
+     2) The report id for all foreign satwind types is now
+reprocessed in the same way as for the GOES satwind types.  In
+particular, even vs. odd METEOSAT and GMS satellites now get
+unique identifying character in position 1 of the id.  They also
+get a unique character in position 6 of the id based on the
+product type (IR, visible or water vapor). [IW3UNPBF]
+
+
+  B. CHANGES TO AIRCRAFT DATA PROCESSING  
+
+     1) The following variables are now encoded into the PREPBUFR
+file under unique mnemonic names: Aircraft Phase of Flight
+(mnemonic POAF), all aircraft types; Aircraft Degree of
+Turbulence (mnemonic DGOT), for non-ACARS aircraft types. [MAIN,
+FILLX, GETC06, W3FIZZ, FIZZ01, bufrtable]
+
+     2) Added processing of ACARS moisture data into PREPBUFR
+file (as specific humidity), if available. [Currently only a few
+flights report mixing ratio.] Reported mixing ratio is converted
+to dewpoint depression and then to specific humidity.  Currently,
+all ACARS moisture observations are given a quality mark of 15 so
+they will not be used by any analysis. [Note: a virtual
+temperature will not be calculated in GBLEVENTS since the
+moisture obs. is bad.] [MAIN, GETC06, W3FIZZ, FIZZ01, PREVENTS,
+IW3UNPBF]
+
+
+ 
+
+
+ C. CHANGES TO SURFACE DATA PROCESSING
+
+
+     1) Updated logic to properly process Australian sea-level
+pressure bogus (PAOB) data.  This type currently not processed
+(except in CDAS version). [MAIN, SFCDTA, ISSEL]
+
+
+  D.  CHANGES TO UPPER-AIR (RAOB, PIBAL, PROFILER, VADWND) DATA   
+      PROCESSING
+     
+     1) For RAOBS and PIBALS only: All input tropopause levels
+are processed into the PREPBUFR file with a singular category of
+5.  Prior to this, tropopause levels were processed as both
+category 3 and 5 (like the old Office Note 29).  This change will
+allow users of the PREPBUFR file to better define the tropopause
+levels. [IW3UNPBF]
+
+     2) For RAOBS and PIBALS only: All mandatory levels
+containing only wind information (no mass data) are now processed
+into the PREPBUFR file with a category of 1.  Prior to this,
+these levels were processed as category 3 (like the old Office
+Note 29). [IW3UNPBF]
+
+     3) For RAOBS only: Removed the special truncation of U.S.
+RAOBS wind-by-height heights above the 100 mb level.  (Heights
+above 100 mb were truncated down to next 10 meter level like the
+old ON29 convention.) [IW3UNPBF]   
+
+     4) For RAOBS and PIBALS only: All variables on duplicate
+pressure levels (for category 2 and 3) or on duplicate height
+levels (for category 4) [as read in from the report in the BUFR
+data dump] are now flagged with a quality mark of 14 when one or
+more of the non-vertical coordinate data are different.  Prior to
+this, both levels were processed into the PREPBUFR file.  The
+idea is that if the two levels disagree it is better to throw
+them both out than to retain any bad data. [IW3UNPBF]
+
+     5) For RAOBS only: The radiosonde balloon drift lat/lon is
+now calculated on every level and encoded into the PREPBUFR file
+with mnemonics XDR and YDR.  These are not yet used by any
+analyses. [MAIN, STOROB, W3FIZZ, FIZZ01, bufrtable]
+
+
+
+
+
+
+
+
+
+
+
+
+     6) For VAD wind and Wind Profiler only in 3DVAR version
+only: The time window for processing either data type (in the
+namelist) is strictly honored.  If no data are found in the time
+window specified, then no data are processed into the PREPBUFR
+file.  Prior to this, if only a single hour was specified in the
+time window switch for either VAD wind or wind profiler data, and
+if no data were found at that time, the code would do the
+following: 1) step back 1-hour from the original time and check
+for data then; 2) if data found, this data would be processed
+into PREPBUFR file; 3) if no data found, code would step up 1-
+hour from the original time and check for data then; 4) if data
+found, this data would be processed into PREPBUFR file; 5) if no
+data found, then no data would be processed into PREPBUFR file. 
+The old logic was written in an attempt to always provide data to
+the OI-RGL and OI-ETA runs which could not handle data from the
+same report at two different times. It had been left over in the
+3DVAR version on the Cray for wind profiler processing.  The
+3DVAR data cards have been changed to process wind profiler data
+over three hours (1-hour before analysis hour, analysis hour, and
+1-hour after analysis hour) rather than over just a single hour.
+[MAIN, PREP]

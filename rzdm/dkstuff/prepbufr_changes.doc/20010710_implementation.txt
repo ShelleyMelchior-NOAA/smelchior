@@ -1,0 +1,190 @@
+                                                  July 10, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 5)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the fifth time.  UPDATE #5 was implemented on the
+IBM-SP machine at 12Z on July 10, 2001.  Except where noted, the
+changes below affect all five versions: ETA, AVN, FNL, RUC and
+CDAS.
+
+**************** I B M - S P   U P D A T E   # 5  ***************
+
+I.  GENERAL CHANGES
+
+
+     1) Added new subroutine TIMCHK which performs time window
+checking for all reports.  This step had been included in
+subroutine RPTLBL, but it was separated to allow separate time
+window checking to be performed on sounding/radiance,
+precipitable waterm and cloud-top reports all generated from a
+single decoded GOES sounding/radiance/retrieval report which
+otherwise only needs to call subroutine RPTLBL a single time for
+each decoded report. [MAIN, PREP, RPTLBL, TIMCHK, GETC06, SATEDS,
+SATBFR, GOESCHK, SFCDTA, GETSMI, GETSCATT]
+
+     2) Existing namelist switches GOESND, GOESPW and GOESRD
+expanded from logical scalars to 1-dimensional arrays of size 2. 
+The first word refers to GOES 5x5 fov sounding/radiance/retrieval
+data (low-resolution, as before) and the second word refers to
+GOES 1x1 fov sounding/radiance/retrieval data (high-resolution,
+new).  All default to 2*FALSE. [MAIN, PREP, GOESDG, DATACARDS]
+
+     3) Added new namelist switch GOESCT, a logical 1-dimensional
+array of length 2 which controls the processing of GOES cloud top
+reports from either 5x5 fov sounding/radiance/retrieval data
+(word 1) or 1x1 fov data (word 2).  Defaults to 2*FALSE. [MAIN,
+PREP, GOESDG, DATACARDS]
+
+     
+
+
+
+
+
+
+
+     4) Modified namelist switches IWINDO, SATMST, ISATLS, IRTRV
+and KTOP to be 3-dimensional arrays of length (5,4,4) rather than
+2-dimensional arrays of length (5,6).  The second dimension now
+refers specifically to the satellite (even-1, odd-1, even-2, odd-
+2 for GOES; even, odd, reserved, reserved for RTOVS/ATOVS).  The
+third dimension refers to the type of report being processed
+(RTOVS/ATOVS soundings/radiances, GOES soundings/radiances, GOES
+precipitable water retrievals, GOES cloud top retrievals).  See
+code for defaults. (Note: There are two new possible values for
+IRTRV - 118 which means exclude only unknown path types and 4
+which means process pnly unknown path types.  Both apply only to
+GOES data since cloud top reports have unknown path type.) 
+[MAIN, SATEDS, SNDTBL, SATBFR, GOESDG, DATACARDS]
+
+     5) As a result of I.4, namelist switches JSATLS and FLGOES
+are no longer needed and are removed. [MAIN, SNDTBL, GOESDG,
+DATACARDS]
+
+     6) Modified subroutine SNDTBL to add new input argument
+IDSAT (length 4, where 1 is GOES even-1 sat. or RTOVS/ATOVS even
+sat, 2 is GOES odd-1 sat. or RTOVS.ATOVS odd sat., 3 is GOES
+even-2 sat., and 3 is GOES odd-2 sat.).  These replace input
+arguments IEVSAT and IODSAT, and allow the pairs of even and odd
+GOES satellite numbers to to printed out in the table
+information. [MAIN, SATEDS, SNDTBL, SATBFR, GOESDG]
+
+     7) Changed the length of the array holding counts of total 
+satellite (RTOVS/ATOVS or GOES) sounding/radiance/retrieval data
+(NUMOB)from (5,4,2,2) to (5,4,2,4,4); and changed the length of
+the number kept (KEPOB), and number of moisture data kept (MSTOB)
+from (5,4,2) to (5,4,2,4).  These changes allow counts to be kept
+based on pairs of even or odd GOES satellites rather than just a
+single even and a single odd satellite (the expansion of the
+fourth element in NUMOB from 2 to 4) and based on the 4 types of
+reports that can be processed (the new fifth element in NUMOB and
+the new fourth element in MSTOB and KEPOB. [MAIN, SATEDS, SNDTBL,
+SATBFR, GOESDG]
+
+     8) Subroutine SNDTBL has been extensively modified to
+present an improved satellite sounding/radiance/retrieval table,
+especially for the GOES data. [MAIN, SNDTBL]
+
+     9) Added a new Table D sequence PLEVLG which will be used to define the
+Table A entry GOESND pressure level sequence.  It is different from PLEVL
+(which still defines pressure level sequence for all other Table A entries) in
+that in includes the cloud top information sequence (CTINFO which itself
+contains the new sequences CTPEVN, CTPBAK and CTPPST) and it doesn't include
+any wind information sequence.  Also, because of this change, PLEVL no longer
+includes the precipitable water information sequence since no Table A entries
+need it. [BUFRTABLE] 
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO WIND PROFILER DATA PROCESSING
+
+     1) Subroutine IW3UNPBF modified to remove a temporary fix
+which hardwired the vertical significance (VSIG) to 2 (if
+surface, never was) or 64 (winds-by-height) for wind profilers
+from PIBAL bulletins.  This had been in place because the
+profilers from PIBAL bulletins do not contain VSIG.  The decoder
+has since been modified to hardwire these values. [IW3UNPBF]
+
+
+  B. CHANGES TO GOES DATA PROCESSING
+
+     1) Added new subroutine GOESCHK which performs the checks on
+GOES sounding/radiance/retrieval reports that had been done in
+subroutine GOESDG [e.g., report outside domain, outside time
+window, over land (when only want over ocean), over ocean (when
+only want oner land), or with unwanted path].  This makes the
+code more consise now that these checks are performed separately
+on sounding/radiance, precipitable water, and cloud-top reports
+all generated from a single decoded GOES
+sounding/radiance/retrieval report. [MAIN, GOESDG, GOESCHK]
+
+     2) Subroutine W3UNPKB7 modified to generate proper station
+id character 8 for reports with an unknown satellite path (either
+K or S for even-1 or even-2, or N or T for odd-1 or odd-2
+satellite).  It also writes an H in the first character of the
+station id for 1x1 fov reports to identify them as such.  Note:
+All of this is invoked only if the station id wasn't already
+generated in the upstream program BUFR_DUPSAT.  [W3UNPKB7]
+
+     3) Subroutine W3UNPKB7 modified to recognize BUFR
+type/subtype 003/002 (GOES 1x1 fov data) as part of the "GOESND"
+dump file.  Reports in this subtype currently do not have any
+decoded profile levels or radiance channels.  Reports in this
+subtype write cloud cover (BUFR c.f. 0-20-010, per cent) in
+output category 8, code figure 258 rather than cloud amount as
+the old 5x5 fov (003/001) reports do.  [W3UNPKB7]
+
+
+
+
+
+
+
+
+
+
+
+     4) Eta and RUC versions only: Can now read in GOES
+sounding/radiance/retrievals reports from GOES 1x1 fov (high-
+resolution) data, included in the GOESND data dump file under
+BUFR type/subtype 003/002.  Currently, only GOES cloud top
+retrievals are available in the input dump.  The GOES cloud top
+reports are encoded into the PREPBUFR file under report type 151
+(switch GOESCT=FALSE,TRUE).  They have station id's with first
+character H, and the eighth character identifies the satellite
+under the unknown path type combinations (see II.A.2).
+Information encoded into report type 151 include the new
+mnemonics CDTP (cloud top pressure observation), TOCC (cloud
+cover observation), GCDTT (cloud top temperature observation),
+CDTP_QM (cloud top pressure quality marker), CDTP_PC (cloud top
+pressure program code), and CDTP_RC (cloud top pressure reason
+code).  In addition, slots are left open for other programs to
+someday encode CDTP_AN (cloud top pressure analyzed value),
+CDTP_FC (cloud top pressure forecast value), and CDTP_OE (cloud
+top pressure observation error).  Currently, a report will not be
+written into the PREPBUFR file if the cloud top presssure
+observation is missing.  These data are not yet assimilated
+(report type 151 is not recognized), but will eventually be
+assimilated into the RUC analysis and used directly by the Eta
+model.  [MAIN, FILLX, SNDTBL, GOESDG, W3FIZZ, FIZZ01, BUFRTABLE] 
+
+     5) Subroutine GOESDG has been extensively modified to
+streamline the processing of GOES reports. [MAIN, GOESDG]
+
+     6) Set GOES precipitable water report reason codes (PW1R,
+PW2R, PW3R, PW4R) to 100 (were missing). [MAIN, FIZZ01]
+
+
+  C. CHANGES TO SSM/I DATA PROCESSING
+
+     1) Set SSM/I precipitable water report reason code (PWR) to
+100 (was missing). [MAIN, FIZZ01]
+
+     2) Set SSM/I rainfall rate reason code (REQ6_RC) to 100 (was
+missing). [MAIN, FIZZ01]

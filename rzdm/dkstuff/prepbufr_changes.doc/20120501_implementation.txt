@@ -1,0 +1,31 @@
+                                                   May 1, 2012
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #11 -- 
+                 DATACARD UPDATE # 11.0 - NETWORK: RAP)
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+eleventh time.  UPDATE #11 was implemented on the IBM-CCS machines at 12Z on
+May 1, 2012.  Changes below affect only the RAP network.
+
+*************** I B M - C C S   U P D A T E   # 11 **************
+
+
+I. GENERAL CHANGES
+
+     1) All references to "RUC" (Rapid Update Cycle) are replaced with "RAP"
+(Rapid Refresh).  NCEP model run marker (IRNMRK) 4 now refers to "RAP"
+network.
+
+     2) The "rap" parm cards (prepobs_prepdata.rap.parm) replace the previous
+"ruc" parm cards (prepobs_prepdata.ruc.parm) as update # 11.0).  They are
+identical to the ruc" parm cards except for these changes:
+          a) turn on the processing of both WindSat and ASCAT scatterometer
+             data, both processed with a default time window of +/- 3.00 hours
+             about center time (but constrained by their dump time window to
+             +/- 2.00 hours about center time for full cycle runs and +/- 0.50
+             hours about center time for partial cycle runs)
+          b) no longer flag MDCRS-ACARS or TAMDAR aircraft moisture data.
+             These will be available to the RAP-GSI,

@@ -1,0 +1,128 @@
+                                              November 15, 1999
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to CRAY Data Preprocessor (PREPDATA)
+                (September 21, 1998 Version -- UPDATE # 5)
+
+The September 21, 1998 CRAY version of the data preprocessor
+program (PREPDATA) was updated for the fifth time.  UPDATE #5 was
+implemented on 1200 UTC 09 November 1999.  Except where noted,
+the changes below affect all four versions: 3DVAR, OI, SSI, and
+RUC.
+
+**************** C R A Y   U P D A T E   # 5  *******************
+
+I.  GENERAL CHANGES
+
+     1) When the existing data card switches are set-up to
+exclude a particular BUFR type and subtype, the program now looks
+for BUFR messages in the input dump files that have Table A
+entries defining the BUFR type and subtype.  Such messages are
+now skipped over without decoding any reports. This makes the
+program more efficient than before, when reports that were not
+processed into the PREPBUFR file were still decoded from the
+input dump files.  (This currently applies only to upper-air and
+surface data types read in via subroutine IW3UNPBF). [MAIN, PREP,
+SFCDTA, IW3UNPBF]
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO SURFACE DATA PROCESSING
+
+     1) Namelist switches FWINDO, SFMASS, and SFWIND can now
+differentiate between surface land synoptic and surface land
+METAR reports. [MAIN, SFCDTA]
+
+     2) SSI version only: In response to C90 fire on 9/27/1999,
+data card changes turned off the processing of the METAR data
+(the METAR data had been turned off in the AVN/SSI since
+approximately 10/5/1999 via a temporary change in the AVN
+"adpsfc" data dump to exclude the METAR data.  This
+implementation turns the METAR processing off in the FNL as
+well).  
+
+
+
+
+
+
+
+
+  B.  CHANGES TO UPPER-AIR (RAOB, PIBAL, PROFILER, VADWND) DATA   
+      PROCESSING
+     
+     1) In the processing of category 4 (winds-by-height) levels,
+a manual (SDM) keep flag on a wind observation is now honored. 
+Prior to this, all wind quality marks on category 4 levels were
+set to at best (lowest) 2 (default).  This is still the case for
+winds originally containing a good (1) quality marker. [MAIN,
+WNDBYZ]
+
+     2) For RAOBS and PIBALS only: All input tropopause levels
+are processed into the PREPBUFR file with a singular category of
+5.  Prior to this, tropopause levels were processed as both
+category 3 and 5 (like the old Office Note 29).  This change will
+allow users of the PREPBUFR file to better define the tropopause
+levels. [IW3UNPBF]
+
+     3) For RAOBS and PIBALS only: All mandatory levels
+containing only wind information (no mass data) are now processed
+into the PREPBUFR file with a category of 1.  Prior to this,
+these levels were processed as category 3 (like the old Office
+Note 29). [IW3UNPBF]
+
+     4) For RAOBS and PIBALS only: All variables on duplicate
+pressure levels (for category 2 and 3) or on duplicate height
+levels (for category 4) [as read in from the report in the BUFR
+data dump] are now flagged with a quality mark of 14 when one or
+more of the non-vertical coordinate data are different.  Prior to
+this, both levels were processed into the PREPBUFR file.  The
+idea is that if the two levels disagree it is better to throw
+them both out than to retain any bad data. [IW3UNPBF]
+
+
+  C.  CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1) SSI version only: In response to C90 fire on 9/27/1999,
+data card changes turned off the processing of Indian IR and
+visible satwinds (done approximately 10/5/1999).  (Note: Reports
+were flagged anyway.)
+
+     2) SSI and 3DVAR versions only: In response to C90 fire on
+9/27/1999, data card changes turned off the processing of NESDIS
+high-density visible satwinds (done approximately 10/5/1999 in
+SSI and done with this implementation in 3DVAR). (Note: Reports
+were flagged by all versions anyway.) 
+
+
+  D.  CHANGES TO VAD WIND DATA PROCESSING
+     
+     1) SSI and 3DVAR versions only: In response to C90 fire on
+9/27/1999, data card changes turned off the processing of these
+data (done approximately 10/5/1999 in SSI and done with this
+implementation in 3DVAR). (Note: Reports were flagged by all
+versions anyway.)
+
+  E.  CHANGES TO SSM/I DATA PROCESSING
+
+     1) SSI version only: In response to C90 fire on 9/27/1999,
+data card changes turned off the processing of SSM/I wind speed
+and total precipitable water (done approximately 10/5/1999). 
+(Note: SSM/I precipitable water reports were flagged anyway.)
+(A subsequent change, implemented 12Z 07 December 1999, turned
+off the processing of SSM/I wind speed and TPW in the 3dvar
+version]
+
+
+  F.  CHANGES TO ERS DATA PROCESSING
+
+     1) SSI version only: In response to C90 fire on 9/27/1999,
+data card changes turned off the processing of ERS wind (done
+approximately 10/5/1999).
+
+
+

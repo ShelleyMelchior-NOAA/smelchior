@@ -1,0 +1,15 @@
+                                             January 7, 1999
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version --
+                 CDAS, RUC, AFOSPLT, EDS, R3DV, AVN, FNL DATACARD
+                 UPDATE # 3.0)
+
+Implemented 12Z 07 January 1999:
+
+The moisture data from the Gulf Stream dropwinsondes is being
+flagged at all levels (except in the AFOSPLT and EDS versions
+where it is being set to missing on all levels. [Switch FLDMGS set
+to TRUE (was FALSE)].

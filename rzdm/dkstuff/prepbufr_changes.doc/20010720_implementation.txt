@@ -1,0 +1,23 @@
+                                                 July 20, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 TEMPORARY ETA DATACARD UPDATE)
+
+CRISIS!!!!!!!
+Implemented 18Z 20 July 2001:
+
+ETA only:  TEMPORARY change to turn off the processing of GOES
+SFOV cloud top data into the PREPBUFR files.  [Namelist switch
+GOESCT(2) changed from TRUE to FALSE .]
+
+This was a result of the failure of the 18Z EDAS R3DVAR on 20
+July 2001 as a result of an overflow in a MAXMEM array in
+BUFRLIB routine UFBMEM.  Once the BUFRLIB is corrected to expand
+this array, the GOES SFOV cloud top data will again be encoded
+into the ETA PREPBUFR files.
+
+This change does not affect operations since the R3DVAR does not
+assimilate these data.

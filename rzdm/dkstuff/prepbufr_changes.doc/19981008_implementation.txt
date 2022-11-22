@@ -1,0 +1,144 @@
+                                                October 9, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version -- UPDATE # 1)
+
+The September 21, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the first time.  UPDATE #1 was
+implemented on 1200 UTC 08 October 1998.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 1  ***********************
+
+I.  GENERAL CHANGES
+
+     1) The code has been made both Y2K and FORTRAN 90 compliant. 
+In addition, it will port to the SGI-HA machines and provide the
+same answers down to machine floating point differences.
+
+     2) Replaced call to IW3GAD with IW3UNP29 which returns a
+Y2K-compliant pseudo-ON85 header label for true ON29/124 data
+sets (in this case applies only to SPSSMI file, the only input
+file that is still in true ON29 format). [MAIN, UNPREP]
+ 
+     3) This new version includes an updated form of the old
+PREVENTS program, now merged in as a subroutine.  The combined
+PREPDATA/PREVENTS processing is significantly faster than running
+them as individual programs.  Subroutine PREVENTS is called by
+subroutine W3FIZZ. [MAIN, W3FIZZ, PREVENTS]
+
+     4) New namelist switch PREVEN to control PREVENTS processing
+(=T - process PREVENTS; =F - do not process PREVENTS). [MAIN] 
+
+     5) Data cards contain new Namelist PREVDATA which contains
+switches specific to PREVENTS processing. [MAIN, PREVENTS]
+          a) DOVTMP - controls PREPBUFR processing of virtual
+temperature event for surface land and marine reports (=T -
+encode virtual temperature; =F - retain sensible temperature).
+          b) DOFCST - controls PREPBUFR encoding of forecast
+(guess) background (=T - encode background; =F - do not encode
+background).
+          c) DOBERR - controls PREPBUFR processing of
+observational error (=T - encode obs. error; =F - do not encode
+obs. error).
+
+(NOTE: DOFCST and DOBERR are new; DOVTMP was in old PREVENTS
+program, although the meaning was slightly different.)
+
+     
+     6) The arrangement of the input data set unit numbers,
+controlled by switch IUNIT in Namelist PARM has been changed.
+[MAIN]
+
+     7) If PREVENTS, processing selected, PREVENTS now outputs a
+data filtering events summary to a file in text format. [MAIN,
+PREVENTS]
+
+     8) Removed the following obsolete PREPBUFR Table B mnemonics
+from the prep.bufrtable file: RHO, RHQ, RHF, RHE, RHP, RHR.
+[MAIN, W3FIZZ]
+
+     9) Removed the following obsolete PREPBUFR Table A entry
+from the prep.bufrtable file: SFCBOG. [MAIN, W3FIZZ]
+
+     10) Subr. W3FIZZ streamlined to no longer separate single-
+level and multi-level Table A entry types in PREPBUFR encoding.
+[MAIN, W3FIZZ]
+
+     11) Report headers moved out of NOBS array into new HDR
+array.  HDR array stores Latitude [HDR(1)] in whole degrees (with
+decimal precision to 100'th, N+, S-), Longitude [HDR(2)] in whole
+degrees (with decimal precision to 100'th, EAST), Obs. time
+[HDR(4)] in whole hours (with decimal precision to 1000'th), and
+Receipt time [HDR(11)] in whole hours (with decimal precision to
+100'th).  This streamlines to interface between the BUFR data
+dumps and the PREPBUFR file. [MAIN, IW3UNPBF, W3ERSUNB, W3UNPKB7]
+
+    12) Report level data moved out of NOBS array (NOBS array
+removed) and into new 3-dimensional MOBS array.  Dimension 1 is
+either: 1-obs, 2-PREPBUFR q.m., 3-reason code; Dimension 2 is the
+variable (see PREPDATA Docblock); Dimension 3 is the level. 
+Streamlines the interface between the BUFR data dumps and the
+PREPBUFR file.  Removes the packing and unpacking of the "quality
+marker word". [MAIN]
+
+    13) Streamlined the processing of flight-level reccos = all
+three types: 1) Category 6 only; 2) Category 6 with reported
+mandatory level geopotential; 3) Category 6 with reported mean
+sea-level pressure. [MAIN, IW3UNPBF, PREP, GETC06, SFCDTA]
+          a) OPERATIONAL CHANGE: Corrected problem that the
+reported geopotential heights weren't getting a SUSPECT flag.
+          b) OPERATIONAL CHANGE: Corrected problem that type 3)
+in 13) above were not setting the PMSL height level (elev) to
+zero in cases when no wind data were available (for both
+dropwinsondes and splash-level reports).  What had been happening
+in this case was the PMSL height was set to that of the flight-
+level and the flight-level height was set to missing.
+
+  
+    14) Removed all logic pertaining to TOVS processing. [MAIN,
+SATEDS, SNDPRP, SATBFR]
+
+    15) Internal subroutines TOVSID and TDEW no longer called and
+removed (TOVS processing removed). [MAIN]
+
+    16) W3LIB routines W3TOVUNP and W3TOVEDS no longer called
+(TOVS processing removed). [MAIN]
+
+    17) Namelist switch RTOVS removed since RTOVS is only option
+(TOVS processing removed). [MAIN]
+
+    18) All references to "partly-cloudy" TOVS retrieval path,
+including report types 162 and 172, removed (TOVS processing
+removed, RTOVS can't have a partly cloudy path). [MAIN]
+
+    19) With demise of TOVS, subr. W3CNVTOV modified to process
+only RTOVS data (i.e., no partly-cloudy path possible, only
+essential dat in input unpacked NMCEDS format). Also, only writes
+out Category 1 in IW3UNPBF format since this is all that is
+processed in PREPDATA. [W3CNVTOV]
+
+    20) With demise of TOVS, subr. W3TOVMND (renamed from W3FA07
+to avoid confusion with existing W3LIB routine) modified to
+process only RTOVS data (i.e.,. no trop data processed).
+[W3TOVMND]
+
+    21) Subr. W3RTVEDS modified to call W3FI04 first time in to
+obtain machine word length, rather that hardwiring it to 8 bytes
+as before (used in XMOVEX subroutine). [W3RTVEDS]
+
+    22) Now processes "solar and infrared radiation correction
+indicator" (BUFR Code Table 0-02-013) for rawinsonde reports with
+a valid instrument type.  Read from unpacked iw3unp29 format
+Category 8, code figure 353.  Encoded into PREPBUFR file under
+mnemonic SIRC. [MAIN, RPTLBL, W3FIZZ, FIZZ01]
+
+    23) For processing RTOVS data subsampled at 250 km (namelist
+switch TR80KM=FALSE), the returned Filter Flag from NESDIS is now
+set to 0 for good and 1 for redundant retrievals (a fix by NESDIS
+several months ago).  Code was modified to key on this to
+subsample at 250 km rather than returning every fourth retrieval
+to estimate 250 km subsampling as was done before. [MAIN,
+W3RTVEDS, SATEDS, SATBFR] 

@@ -1,0 +1,79 @@
+                                            September 15, 2008
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #7 -- 
+                 DATACARD UPDATE # 7.1 - NETWORKS: RUC,NAM)
+
+Implemented 12Z 15 April 2007:
+
+RUC:
+    Various changes to now run in "RUC/RapidRefresh" mode:
+     - Obs are now "potentially" processed globally rather than just in the
+Northern Hemisphere since data are now dumped in expanded NAM domain which
+extends to the Southern Hemisphere in the corners of the domain.  (In reality,
+obs will only be processed within the expanded NAM domain set up in the
+dumps and the RUC will still use obs only within its usual domain.)
+[Variables in namelist &RGRID (ALONVT, POLEI, POLEJ and XMESHL) set
+to process obs globally.  Namelist variables JAMASS(1:3,4) and JAWIND(1:3,4)
+changed from 9999 to 0 (ACARS mass and wind data will now be processed
+globally.)]
+     - The dump file "aircft" dump is now read and AIREP/PIREP, AMDAR, E-ADAS,
+TAMDAR and Canadian AMDAR aircraft data are all processed (although none are
+yet assimilated by the RUC). [Namelist switches JAMASS and JAWIND set to 6*0.]
+     - Conventional IR, WV and VIZ JMA satellite winds are now included in the
+"satwnd" dump file that is read in and are now processed here, although WV
+winds are flagged. (None are yet assimilated by the RUC.)  [Namelist switch
+JSWIND changed from 9999 to 0000 (process) for JMA IR and VIZ winds and
+changed from 9999 to 0099 (flag) for JMA WV winds.]  These have a maximum dump
+time window of +/-2.50 hours at some cycles.  That time window is also set
+here.  [Namelist switches SWINDO_e and SWINDO_l changed from (-,+) 200. to 250.]
+     - Conventional IR, WV and VIZ EUMETSAT satellite winds from MET-7 and
+MET-9 are now included in the "satwnd" dump file that is read in and are
+processed here, although MET-8 IR and VIZ winds are flagged and all WV winds
+are flagged.  (None are yet assimilated by the RUC.)  [Namelist switch JSWIND
+changed from 9999 to 0099 (flag MET-8) for odd EUMETSAT IR and VIZ winds,
+changed from 9999 to 0199 (process MET-7, flag MET-9) for even EUMETSAT IR and
+VIZ winds and changed from 9999 to 0099 (flag) for all EUMETSAT WV winds.]
+These have a dump time window of +/-1.50 hour at all cycles.  The time window
+is set to -0.75 to +0.25 hours here so that only one wind set is processed.
+[Namelist switch SWINDO_l changed from +075. to +025.  Namelist switch
+SWINDO_e remains -0.75.]
+     - MODIS (Aqua and Terra) high-density IR,imager cloud-top WV and imager
+deep-layer WV winds are now included in the "satwnd" dump file that is read in
+and are now processed here (over land and water). (None are yet assimilated by
+the RUC.) [Namelist switch JSWIND changed from 9999 to 0000 and switch SWNLND
+changed from 6*F to 6*T to (process) for JMA IR and VIZ winds and changed from 
+9999 to 0099 (flag) for JMA WV winds.]
+     - Wind profilers originating from PILOT (PIBAL) format bulletins are now
+processed (but not yet assimilated by the RUC).  [Namelist switch PRFLER(2)
+changed from FALSE to TRUE.]
+     - GOES 1x1 radiances over land and wanter are now processed (but not yet
+assimilated by the RUC.).  [Namelist switch GOESRD(2) changed from FALSE to TRUE.]
+     - Surface SUYNOPTIC land mass and wind data are now processed and are now
+assimilated by the RUC.  [Namelist switch JSURFM(1) changed from 9999
+(default) to 0; namelist switch JSURFW(1) changed from 9999 to 0.]
+     - QuikSCAT scatterometer wind data are now processed (but not yet
+assimilated by the RUC).  [Namelist switch JPQKSD changed from 6*9999 to 6*0.]
+     - Mandatory level data are now processed up to 1 mb (vs. 10 mb before)
+and are assimilated by the RUC up to this level.  [Namelist switch LEVPM
+changed from 16 (default) to 21.]
+     - Significant level data are now processed up to 1 mb (vs. 50 mb before)
+and are assimilated by the RUC up to this level.  [Namelist switch LEVST
+changed from 13 (default) to 21.]
+     - Moisture levels are now processed up to 1 mb (vs. 250 mb before) and
+are assimilated by the RUC up to this level.  [Namelist switch LEVQQ changed
+from 8 to 21.]
+
+    GOES 5x5 f-o-v layer-PW is replaced with GOES 1x1 f-o-v layer-PW. 
+[Namelist switch GOESPW(1) changed from TRUE to FALSE; namelist switch
+GOESPW(2) changed from FALSE to TRUE.]
+
+
+
+NAM:
+    GOES 5x5 f-o-v radiances and GOES 5x5 f-o-v layer PW are no longer
+processed, as "goesnd" dump file is no longer read.  [Namelist switch
+GOESRD(1) changed from TRUE to FALSE; namelist switch GOESPW(1) changed from
+TRUE to FALSE.]

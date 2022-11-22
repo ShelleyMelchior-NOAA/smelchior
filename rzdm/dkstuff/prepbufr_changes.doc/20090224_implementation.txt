@@ -1,0 +1,17 @@
+                                              February 24, 2009
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS PREPBUFR processing
+
+
+     Effective 02/24/2009 1200 UTC, the GFS and GDAS GSI analyses no longer
+honor the decisions made by the multi-variate quality control program
+PREPOBS_OIQCBUFR.  Instead, the GFS/GDAS GSI now runs its own internal
+variational quality control on the observations.  PREPOBS_OIQCBUFR continues
+to run in the GFS and GDAS networks because other programs still make use of
+its output.  The CDAS analysis still honors the output from PREPOBS_OIQCBUFR.
+
+
+
+

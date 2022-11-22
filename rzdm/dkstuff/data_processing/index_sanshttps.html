@@ -1,0 +1,1296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+
+
+
+  
+  
+  
+  
+  
+  
+  <title>OBSERVATIONAL DATA PROCESSING AT NCEP</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+
+
+  
+  
+  
+  <meta name="keywords" content="" />
+
+
+
+  
+  
+  
+  <meta name="description" content="" />
+
+
+
+  
+  
+  
+  <link href="http://www.emc.ncep.noaa.gov/css/template.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+  
+  
+  
+  <link href="http://www.emc.ncep.noaa.gov/css/layout.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+
+  
+  
+  
+  <link rel="icon" type="image/ico" href="http://www.nco.ncep.noaa.gov/cwi/favicon.ico" />
+</head>
+
+
+<body>
+
+
+
+<!-- Begin Header -->
+<div>
+<table class="tbl1" cellpadding="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <th> <a href="#contents"><img alt="Skip Navigation Links" src="http://www.emc.ncep.noaa.gov/graphics/skipgraphic.gif" height="1" /></a>
+      <a href="http://www.nws.noaa.gov/"><span class="nwslink">www.nws.noaa.gov</span></a>
+      </th>
+
+
+
+    </tr>
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+<table class="tbl2" cellpadding="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <th scope="row" rowspan="2"> <a href="http://www.noaa.gov/"><img alt="NOAA logo - Click to go to the NOAA homepage" src="http://www.emc.ncep.noaa.gov/graphics/noaaleft.jpg" /></a></th>
+
+
+
+      <th scope="row"> <img alt="National Weather Service" src="http://www.emc.ncep.noaa.gov/graphics/nws_title.jpg" /></th>
+
+
+
+      <th scope="row" class="th4" rowspan="2" width="100%"></th>
+
+
+
+      <th scope="row" rowspan="2"> <a href="http://www.nws.noaa.gov/"><img alt="NWS logo - Click to go to the NWS homepage" src="http://www.emc.ncep.noaa.gov/graphics/nwsright.jpg" /></a></th>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <th scope="row"><img alt="EMC Logo" src="http://www.emc.ncep.noaa.gov/graphics/emc.jpg" /></th>
+
+
+
+    </tr>
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+<table class="tbl3" cellpadding="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <th scope="row" align="left" valign="top"><img alt="Navigation Bar Left Cap" src="http://www.emc.ncep.noaa.gov/graphics/navbarleft.jpg" /></th>
+
+
+
+      <th scope="row" class="nav" id="menuitem1"><a href="http://www.emc.ncep.noaa.gov/index.php">Home</a></th>
+
+
+
+      <th scope="row" class="nav" id="menuitem2"><a href="http://www.weather.gov/pa">News</a></th>
+
+
+
+      <th scope="row" class="nav" id="menuitem3"><a href="http://www.weather.gov/organization.php">Organization</a></th>
+
+
+
+      <th scope="row" class="searchinput" align="right">
+      
+      
+      
+      <form method="get" action="http://firstgovsearch.gov/search"> <label for="Search"><span class="ylw">Search</span>&nbsp;&nbsp;</label> <input name="affiliate" value="nws.noaa.gov" id="affiliate" type="hidden" /><input name="v:project" value="firstgov" id="v:project" type="hidden" /><input name="query" size="25" maxlength="256" id="Search" value="Enter text" onfocus="this.value='';" type="text" /><input value="Search" type="submit" /> </form>
+
+
+
+      </th>
+
+
+
+      <th scope="row" align="right" valign="bottom"><img src="http://www.emc.ncep.noaa.gov/graphics/navbarendcap.jpg" alt="Navigation Bar End Cap" /></th>
+
+
+
+    </tr>
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+</div>
+
+
+
+<div id="header"> </div>
+
+
+
+<!-- End Header -->
+<!-- Begin Sidebar Content -->
+<div id="sidebar">
+<div>
+<div id="searchemc">
+<form method="get" action="http://firstgovsearch.gov/search"><label for="Search"> <span class="ylw">Search EMC</span><br />
+
+
+
+  <input name="affiliate" value="ncep.noaa.gov" type="hidden" /> <input name="v:sources" value="firstgov-affiliates-search" type="hidden" /><input name="v:project" value="firstgov" type="hidden" /> <input name="query" value="site:www.emc.ncep.noaa.gov" type="hidden" /><input name="query" value="" size="10" maxlength="256" id="Search" type="text" /> <input value="Go" type="submit" /></label></form>
+
+
+
+</div>
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Branches</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/gcwmb/">Global
+Climate and
+Weather Modeling</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/mmb/">Mesoscale
+Modeling</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/mmab/">Marine
+Modeling and
+Analysis</a>
+</div>
+
+
+
+<br />
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Teams</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?branch=climate">Climate</a>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/gmb/gdas/">Data
+Assimilation</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?branch=ensembapp">Ensembles
+and
+Post Processing</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?branch=landsurface">Land
+Surface</a>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?branch=softwareeng">Software
+Engineering</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?branch=hurricanes">Hurricanes
+</a></div>
+
+
+
+<br />
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Model
+Information</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?doc=doc">Documentation</a>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?modelperf=modelperf">Performance
+Statistics</a><!-- <br /><a href="http://www.emc.ncep.noaa.gov/?data=data">Observations/Data</a> -->
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?data_processing=data_processing">Observational
+Data Processing</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/gmb/gdas/">Data
+Assimilation</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/monsoondesk/">Monsoon
+Desk</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/mtt/">Model
+Transition</a> </div>
+
+
+
+<br />
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Seminars</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/seminars/index.html">Seminar
+Series</a> </div>
+
+
+
+<br />
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Other
+Information</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?collaborators=collaborators">Collaborators</a>
+<br />
+
+
+
+<a href="http://www2.emc.ncep.noaa.gov/">In-House
+Website</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?transitiontoop=transitiontoop">Transition
+<br />
+
+
+
+to Operations</a> <br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?Presentations=Presentations">Presentations</a>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?publications=publications">Publications</a>
+<!--<br /><a href="http://www.ncep.noaa.gov/newsletter/">NCEP Quarterly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Newsletter</a> --><br />
+
+
+
+<a href="http://www.facebook.com/pages/NOAA-NWS-Environmental-Modeling-Center/151823641556512">EMC
+Facebook</a>
+</div>
+
+
+
+<br />
+
+
+
+<div id="sidebarlinks">
+<span class="ylw">Contact
+EMC</span><br />
+
+
+
+<span class="breakLine">&nbsp;</span>
+<br />
+
+
+
+<a href="http://www.emc.ncep.noaa.gov/?webmaster=webmaster">Webmaster</a>
+</div>
+
+
+
+<br />
+
+
+
+<div id="usagov">
+<a href="http://www.usa.gov"><img src="http://www.emc.ncep.noaa.gov/graphics/usagov_logo.gif" alt="logo image for USA dot gov website. USA dot gov is the U.S. Government's official Web portal to all Federal, state and local government Web resources and services." /></a></div>
+
+
+
+<!-- usagov --> </div>
+
+
+
+</div>
+
+
+
+<!-- End Sidebar Content -->
+<!-- Begin Content Body-->
+<div id="page">
+<div id="content">
+<p><a href="http://www.emc.ncep.noaa.gov/?abtemc=misvis"> <font color="#ffffff">&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MISSION /
+VISION</font></a>
+&nbsp;&nbsp; | &nbsp;&nbsp;
+<a href="http://www.emc.ncep.noaa.gov/?abtemc=abtemc"><font color="#ffffff">About EMC</font></a></p>
+
+
+
+<div id="navstyle">
+<center>
+<h3>Observational Data Processing
+at NCEP
+</h3>
+
+
+
+</center>
+
+
+
+<center>
+<h3>Dennis Keyser -
+NOAA/NWS/NCEP/EMC
+<br />
+
+
+
+(Last Revised 2/12/2018 <span style="font-style: italic;">- hopefully&nbsp;up
+to date!</span>)</h3>
+
+
+
+</center>
+
+
+
+<!-- This is a first table -->
+<table cellspacing="0">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td class="hed" colspan="4">
+      
+      
+      
+      <p>Please take a moment to
+read the <b><a target="_blank" href="http://weather.gov/disclaimer.php"><span style="color: rgb(0, 0, 255);">Disclaimer</span></a> </b>for this
+non-operational web page.
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p>Most of the observational
+data at NCEP are stored in WMO <a target="_blank" href="http://www.wmo.ch/pages/prog/www/WDM/Guides/BUFRCREXGuide-English.html"><span style="color: rgb(0, 0, 255);">
+BUFR</span></a>
+format. This format is an international standard and provides an
+efficient
+means for transferring data. In addition it allows for great
+flexibility
+for adding new observation elements. </p>
+
+
+
+      
+      
+      
+      <p>There are a series of
+tables
+associated with BUFR.&nbsp; &ldquo;<a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_BUFR_TableA_en.pdf"><span style="color: rgb(0, 0, 255);">
+Table
+A</span></a>&rdquo;
+defines the data
+category
+associated
+with a particular BUFR message containing report data.&nbsp;
+&ldquo;<a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_BUFRCREX_TableB_en.pdf"><span style="color: rgb(0, 0, 255);">
+Table
+B</span></a>&rdquo;
+classifies and defines data elements, or descriptors, according to
+scale,
+reference value, number of bits and units.&nbsp;&nbsp;
+&ldquo;<a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_BUFR_TableC_en.pdf"><span style="color: rgb(0, 0, 255);">
+Table
+C</span></a>&rdquo;
+defines
+data description operators.&nbsp; &ldquo;<a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_BUFR_TableD_en.pdf"><span style="color: rgb(0, 0, 255);">
+Table
+D</span></a>&rdquo;
+defines the list of
+common
+sequences.&nbsp; In addition, there are <a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_BUFRCREX_CodeFlag_en.pdf"><span style="color: rgb(0, 0, 255);">
+BUFR
+code and flag tables</span></a>
+as
+well
+as <a target="_blank" href="http://www.wmo.int/pages/prog/www/WMOCodes/WMO306_vI2/LatestVERSION/WMO306_vI2_CommonTable_en.pdf"><span style="color: rgb(0, 0, 255);">
+code
+tables common to BUFR and other binary and alphanumeric
+codes</span></a>.&nbsp;
+The need for external tables can make the process for BUFR data
+encoding
+and decoding quite cumbersome for a typical user. </p>
+
+
+
+      
+      
+      
+      <p>As such, a special
+application has been designed at NCEP which
+provides
+user-friendly access to the BUFR files through a series of FORTRAN and
+C subroutines in a machine independent BUFR library (called
+BUFRLIB).&nbsp;
+These routines allow one to encode or decode data into BUFR using
+mnemonics
+to represent the data.&nbsp; The mnemonics are associated with BUFR
+descriptors
+in a special version of the Tables A, B, C and D.&nbsp; When a BUFR
+file
+is created, the mnemonic table is read in from an external location and
+is itself encoded into BUFR messages at the top of the output
+file.&nbsp; <a href="http://www.emc.ncep.noaa.gov/mmb/data_processing/NCEP_BUFR_File_Structure.htm" target="_blank"><span style="color: rgb(0, 0, 255);">
+These messages</span></a>
+have Table A data category (message
+type) 11 (BUFR
+tables).&nbsp;
+This allows each BUFR file to be &ldquo;self
+defined&rdquo;.&nbsp; No external
+tables
+are needed to decode data out of the file. </p>
+
+
+
+      
+      
+      
+      <p>The NCEP BUFRLIB team&nbsp;has written a <a target="_blank" href="http://www.nco.ncep.noaa.gov/sib/decoders/BUFRLIB/"><span style="color: rgb(0, 0, 255);">
+BUFRLIB
+software user guide</span></a>
+which
+provides a detailed explanation of
+the
+NCEP
+BUFRLIB subroutines along with other useful information on BUFR as it
+is
+used at NCEP. <a href="http://www.emc.ncep.noaa.gov/mmb/data_processing/encode_only_BUFR_example.txt" target="_blank"><span style="color: rgb(0, 0, 255);">
+Click here</span></a>
+to view a sample Fortran code which
+uses BUFRLIB routines to encode reports into a BUFR file. </p>
+
+
+
+      
+      
+      
+      <p>Next is a brief outline
+on the current method for processing
+observations
+that arrive at NCEP. Its main function is to provide links to web pages
+which discuss each item in detail.
+&nbsp; <a href="http://www.emc.ncep.noaa.gov/mmb/data_processing/Obs_group_roundtable.doc/dataflow.ppt"><span style="color: rgb(0, 0, 255);">
+Click
+here</span></a>
+to see&nbsp;a flow
+chart depicting the data procesing system
+at NCEP.<br />
+
+
+
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p>1. NCEP receives the
+majority of its data from the <a target="_blank" href="http://www.wmo.int/pages/prog/www/TEM/GTS/index_en.html"><span style="color: rgb(0, 0, 255);">
+Global
+Telecommunications System (GTS)</span></a>
+and the <a target="_blank" href="http://www.nesdis.noaa.gov/"><span style="color: rgb(0, 0, 255);">
+National
+Environmental Satellite, Data, and Information Service (NESDIS)</span></a>.
+      </p>
+
+
+
+      
+      
+      
+      <p>&nbsp;&nbsp;&nbsp;
+a. The GTS and aviation circuit
+bulletins are
+transferred
+from the <a target="_blank" href="http://www.nws.noaa.gov/tg/"><span style="color: rgb(0, 0, 255);">
+NWS
+Telecommunication
+Operations
+Center (TOC/NWSTG)&nbsp;</span></a>
+to <a target="_blank" href="http://www.nco.ncep.noaa.gov/"><span style="color: rgb(0, 0, 255);">
+NCEP's
+Central Operations (NCO) </span></a>and
+networked to one of two
+interactive
+nodes
+on the <a target="_blank" href="http://www.noaanews.noaa.gov/stories2013/2013029_supercomputers.html"><span style="color: rgb(0, 0, 255);">
+NCEP&nbsp;Weather &amp; Climate Operational Supercomputing
+System (WCOSS)</span></a>
+(one production, one
+development)
+using <a target="_blank" href="http://www.unidata.ucar.edu/software/ldm/"><span style="color: rgb(0, 0, 255);">
+LDM
+(Local Data Manager)</span></a>
+and <a target="_blank" href="http://www.nco.ncep.noaa.gov/pmb/docs/dbnet/"><span style="color: rgb(0, 0, 255);">
+DBNet
+(Distributive Brokered Networking)</span></a>
+software
+packages.&nbsp; These
+data
+are then decoded from their native format and encoded into WMO BUFR
+format
+using <a target="_blank" href="http://www.nco.ncep.noaa.gov/sib/decoders/"><span style="color: rgb(0, 0, 255);">
+decoder
+software </span></a>designed
+by <a target="_blank" href="http://www.nco.ncep.noaa.gov/sib/"><span style="color: rgb(0, 0, 255);">
+NCO's
+System's
+Integration Branch</span></a>. </p>
+
+
+
+      
+      
+      
+      <p>&nbsp;&nbsp;&nbsp;
+b. Most of the satellite data
+are processed in
+batch
+mode as they become available from the various NESDIS
+servers.&nbsp;
+Regularly
+scheduled jobs on the WCOSS transfer "new" files from these servers
+and
+encode the data into WMO BUFR format.</p>
+
+
+      
+      
+      <p>&nbsp;See <a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/satellite_ingest.doc/document.htm"><span style="color: rgb(0, 0, 255);">
+http://www.emc.ncep.noaa.gov/data_processing/satellite_ingest.doc/document.htm</span></a>
+for more information. </p>
+
+
+
+      
+      
+      
+      <p>&nbsp;&nbsp;&nbsp;
+c. NCEP receives "Level 3"
+radial wind data from
+158 NEXRAD radar stations via the <a target="_blank" href="http://weather.gov/tg/rpccds.html"><span style="color: rgb(0, 0, 255);">
+radar
+multicast (NIDS format)</span></a>.&nbsp;
+At eight minutes past each
+hour, a
+script
+runs to gather up the most recent radar data into eight pairs of files
+containing the raw data and a station list.&nbsp; At thirty-five
+minutes
+past each hour these raw data are superobed and encoded into BUFR
+format. </p>
+
+
+
+      
+      
+      
+      <p>&nbsp;&nbsp;&nbsp;
+d. NCEP receives on-site
+superobed&nbsp;Level 2
+(which
+we call "Level 2.5") radial wind data from 158 NEXRAD radar stations
+via
+the <a target="_blank" href="http://www.roc.noaa.gov/"><span style="color: rgb(0, 0, 255);">
+NOAA/Radar
+Operations Center
+(ROC)</span></a> <a target="_blank" href="http://www.nssl.noaa.gov/review/science/pdf/jain_open_systems.pdf"><span style="color: rgb(0, 0, 255);">Open
+Systems
+Radar Product Generator (ORPG)</span></a>
+stream from the <a target="_blank" href="http://www.nws.noaa.gov/tg/"><span style="color: rgb(0, 0, 255);">
+NWS
+Telecommunication Operations Center (TOC/NWSTG) </span></a>.&nbsp;
+Raw data
+files
+arriving at NCEP are placed in a holding area.&nbsp; Twice each
+hour at
+five and thirty-five minutes past the hour, all newly arrived files are
+first uncompressed and then encoded into WMO BUFR format.</p>
+
+
+
+      
+      
+      
+      <p>&nbsp; &nbsp; e.
+NCEP receives the full complement of Level 2
+radial
+wind and reflectivity data from 158 NEXRAD radar
+stations&nbsp;via&nbsp;the <a target="_blank" href="http://www.roc.noaa.gov/"><span style="color: rgb(0, 0, 255);">
+NOAA/Radar
+Operations Center
+(ROC)</span></a>
+Radar Data Acquisition
+stream from the <a target="_blank" href="http://www.nws.noaa.gov/tg/"><span style="color: rgb(0, 0, 255);">
+NWS
+Telecommunication Operations Center (TOC/NWSTG) </span></a>.&nbsp;
+Raw data
+files
+arriving at NCEP are placed in a holding area.&nbsp; Four
+times&nbsp;each
+hour at
+ten, twenty-five, forty and fifty-five&nbsp;minutes past the hour,
+all
+newly arrived files are
+first uncompressed, then quality controlled (both radial wind and
+reflectivity) and&nbsp;then encoded into WMO BUFR format.</p>
+
+
+
+      
+      
+      
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;
+f.&nbsp;<a target="_blank" href="http://www-sdd.fsl.noaa.gov/MADIS/mesonet_providers.html"><span style="color: rgb(0, 0, 255);">
+Mesonet
+surface data</span></a>
+are gathered by <a target="_blank" href="http://esrl.noaa.gov/gsd/"><span style="color: rgb(0, 0, 255);">
+NOAA/ESRL/GSD</span></a>
+and then pushed to an NCO server several times each hour.&nbsp; NCO
+converts
+the data from netCDF to WMO BUFR format. </p>
+
+
+
+      
+      
+      
+      <p>All of the encoded BUFR
+data are then appended to the
+appropriate
+files
+in the data base.&nbsp; The files are organized by the WMO BUFR
+type
+and
+local subtype and contain information in 24 hour blocks (based on
+report
+time).&nbsp; Observational files remain on-line for up to 10 days
+before
+migration to off line cartridges.&nbsp; This allows late arriving
+observations
+to be accumulated.&nbsp; While on line, there is open access to
+them
+not
+only for operations, but also for research and study. <br />
+
+
+
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p>2. The various NCEP
+networks access the observational data
+base at a
+set time each day (i.e., the data cutoff time) and perform a
+time-windowed
+dump of requested observations.&nbsp; Observations of a similar
+type
+[e.g.,
+satellite-derived winds ("satwnd"), surface land reports ("adpsfc")]
+are
+dumped into individual BUFR files which maintain the original structure
+of&nbsp; reports, although some interactive quality control is
+applied,
+duplicate reports are removed, and upper-air report "parts" are
+merged.&nbsp;
+See <a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/data_dumping.doc/document.htm"><span style="color: rgb(0, 0, 255);">
+http://www.emc.ncep.noaa.gov/mmb/data_processing/data_dumping.doc/document.htm</span></a>
+for more information. <br />
+
+
+
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p>3. The final step in
+preparing most of the "conventional" observational data
+for
+assimilation
+by the analysis involves the execution of a series of programs which
+read
+in the observations from the various dump files, add forecast ("first
+guess")
+background and observation error information, perform automated quality
+control, and finally output the observations in a monolithic BUFR file
+known as "PREPBUFR".&nbsp; See <a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/document.htm"><span style="color: rgb(0, 0, 255);">
+http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/document.htm</span></a>
+for more information. <br />
+
+
+
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p>4. The PREPBUFR file is
+read by the&nbsp;<a target="_blank" href="http://www.dtcenter.org/com-GSI/users/docs/users_guide/GSIUserGuide_V1.0.pdf"><span style="color: rgb(0, 0, 255);">
+Global
+Statistical Interpolation
+(GSI) analysis</span></a><span style="color: rgb(0, 0, 255);"> <span style="color: rgb(0, 0, 0);">which
+runs in the <a target="_blank" href="http://www.emc.ncep.noaa.gov/index.php?branch=GFS"><span style="color: rgb(0, 0, 255);">
+Global
+Forecast
+System (GFS)</span></a>
+and&nbsp;the&nbsp;Global Data Assimilation System (GDAS)
+(running the Global Spectral Model)</span></span>,
+the&nbsp;regional <a target="_blank" href="http://www.emc.ncep.noaa.gov/index.php?branch=NAM"><span style="color: rgb(0, 0, 255);">
+North
+American Model (NAM)</span></a>&nbsp;[running
+the NOAA Environmental
+Modeling System (NEMS) version of the Non-Hydrostatic Multi-scale Model
+in B-grid (NMMB)], the <a target="_blank" href="http://rapidrefresh.noaa.gov/"><span style="color: rgb(0, 0, 255);">
+Rapid
+Refresh
+(RAP)</span></a>
+[running
+the&nbsp;RAP-configuration of the WRF model with Advanced Rearch
+WRF
+(ARW) core, shared with the&nbsp;<a target="_blank" href="http://ruc.noaa.gov/hrrr/"><span style="color: rgb(0, 0, 255);">
+High-Resolution
+Rapid Refresh (HRRR)</span></a>],
+and
+the&nbsp;<a target="_blank" href="http://www.nco.ncep.noaa.gov/pmb/products/rtma/"><span style="color: rgb(0, 0, 255);">Real-Time
+Mesoscale Analysis (RTMA) and UnRestricted Mesoscale Analysis (URMA)</span></a>.<br />
+
+
+
+&nbsp; </p>
+
+
+
+      
+      
+      
+      <p><i>Here
+are some other links to my web sites
+devoted to data
+processing:</i> </p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_18.htm"><span style="color: rgb(0, 0, 255);">Satellite and radar
+data used by Global
+GFS/GDAS, NAM and&nbsp;Rapid Refresh GSI&nbsp;analysis</span></a></p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_2.htm"><span style="color: rgb(0, 0, 255);">PREPBUFR
+Report Types used by
+Global GFS and GDAS GSI analyses</span></a> </p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_3.htm"><span style="color: rgb(0, 0, 255);">PREPBUFR
+Report Types used by
+Global CDAS/reanalysis analyses</span></a> </p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_4.htm"><span style="color: rgb(0, 0, 255);">PREPBUFR
+Report Types used by
+NAM&nbsp;GSI analyses</span></a> </p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_5.htm"><span style="color: rgb(0, 0, 255);"></span></a><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_5.htm"><span style="color: rgb(0, 0, 255);">PREPBUFR
+Report Types used by
+Rapid Refresh GSI&nbsp;analysis</span></a></p>
+
+
+
+      
+      
+      
+      <p><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_19.htm"><font><b><font><b><font color="#cc0000"><blink>**NEW**</blink></font></b></font></b><span style="color: rgb(0, 0, 255);"> PREPBUFR
+Report
+Types used by
+Real-Time Mesoscale Analysis</span> </font></a></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/Virtual_Temperature_Processing.htm"><span style="color: rgb(0, 0, 255);">Summary
+of Virtual Temperature Processing in PREPBUFR</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/balloon_drift_for_TPB.htm"><span style="color: rgb(0, 0, 255);">RAOB/PIBAL
+Balloon
+Drift Processing in PREPBUFR</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/PROFCQC_Redesign.htm"><span style="color: rgb(0, 0, 255);">Redesign
+of the
+NOAA/NCEP
+Wind Profiler Quality Control Module</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/decode_prepbufr_example.htm"><span style="color: rgb(0, 0, 255);">Sample
+program
+to decode reports from PREPBUFR file</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr_changes.doc/"><span style="color: rgb(0, 0, 255);">Summary
+of Changes to the
+PREPDATA
+Program</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/data_dumping.doc/User_Guide_to_Interpreting_Data_Dump_Counts.htm"><span style="color: rgb(0, 0, 255);">User
+Guide to Interpreting Data Dump Counts in Data Dump Status Files</span></a>
+      </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/bufrtab_tablea.htm"><span style="color: rgb(0, 0, 255);">BUFR
+Table A</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/bufrtab_tableb.htm"><span style="color: rgb(0, 0, 255);">BUFR
+Table B Descriptors and
+Mnemonics
+in NCEP Observational Database</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/bufrtab_tabled.htm"><span style="color: rgb(0, 0, 255);">BUFR
+Table D Descriptors and Mnemonics
+in NCEP Observational Database</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/Satellite_Historical_Documentation.htm"><span style="color: rgb(0, 0, 255);">Satellite
+Historical
+Documentation</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/Non-satellite_Historical_Documentation.htm"><span style="color: rgb(0, 0, 255);">Non-Satellite
+Data Historical Documentation</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/tcvitals_description.htm"><span style="color: rgb(0, 0, 255);">Format
+of Tropical Cyclone
+Vital Statistics Records
+("tcvitals")</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/NCEP_BUFR_File_Structure.htm"><span style="color: rgb(0, 0, 255);">NCEP
+BUFR File Structure [with emphasis on&nbsp;embedded BUFR table (A,
+B,
+D) messages]</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/on29.htm"><span style="color: rgb(0, 0, 255);">NMC
+Office Note 29</span></a> </font></p>
+
+
+
+      
+      
+      
+      <p><font><a target="_blank" href="http://www.emc.ncep.noaa.gov/mmb/data_processing/on124.htm"><span style="color: rgb(0, 0, 255);">NMC
+Office Note 124</span></a> </font></p>
+
+
+
+      </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+</div>
+
+
+
+<div id="content_bottom">
+</div>
+
+
+
+<!-- End Content Body -->
+<!-- Begin Foter -->
+<div id="footer">
+<table border="0" width="100%">
+
+
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <th scope="row">
+      
+      
+      
+      <div id="address"><a href="http://www.noaa.gov">NOAA</a>
+/ <a href="http://www.nws.noaa.gov">National
+Weather Service</a><br />
+
+
+
+      <a href="http://www.ncep.noaa.gov">National
+Centers for
+Environmental Prediction</a><br />
+
+
+
+      <a href="http://www.emc.ncep.noaa.gov">Environmental
+Modeling
+Center</a><br />
+
+
+
+      <br />
+
+
+
+NOAA Center for Weather and Climate Prediction (NCWCP) <br />
+
+
+
+5830 University Research Court<br />
+
+
+
+College Park, MD 20740<br />
+
+
+
+Page Author: EMC Webmaster<br />
+
+
+
+      
+      
+      
+      <script language="JavaScript">
+document.write("Page generated:"+Date())
+      </script><br />
+
+
+
+      </div>
+
+
+
+      </th>
+
+
+
+      <th scope="row"><!-- address -->
+      
+      
+      
+      <div id="orglinks">
+      
+      
+      
+      <div id="orglinksleft"><a href="http://www.weather.gov/disclaimer.php">Disclaimer</a><br />
+
+
+
+      <a href="http://www.weather.gov/credits.php">Credits</a><br />
+
+
+
+      <a href="http://www.weather.gov/glossary">Glossary</a> </div>
+
+
+
+<!-- orglinksleft -->
+      
+      
+      
+      <div id="orglinksright"><a href="http://www.weather.gov/privacy.php">Privacy
+Policy</a><br />
+
+
+
+      <a href="http://www.weather.gov/admin.php">About Us</a><br />
+
+
+
+      <a href="http://www.weather.gov/careers.php">Career
+Opportunities</a> </div>
+
+
+
+<!-- orglinksright --></div>
+
+
+
+      </th>
+
+
+
+    </tr>
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+<!-- orglinks --> </div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+<!-- End Footer Body -->
+</body>
+</html>

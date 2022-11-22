@@ -1,0 +1,116 @@
+                                              November 20, 1996
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version -- UPDATE # 6)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the sixth time.  UPDATE #6 was
+implemented on 1200 UTC 20 November 1996 on the CRAY.  All
+changes now affect only OBUFR = TRUE switch.  Except where noted,
+the changes below affect both the GLOBAL and RGL/ETA models.
+
+*********************  U P D A T E   # 6  ***********************
+
+
+I.  GENERAL CHANGES
+
+      1) Namelist switch IRTRV now dimensioned (5,6) instead of
+(5,6,2) since interactive retrievals are no longer possible.
+
+      2) The true NMCEDS file is now always in IUNIT(6) and the
+JBUFR file is always in IUNIT(7), regradless of whether the
+unpacked NMCEDS format is returned or the 40-level retrieval/28
+radiance format is returned.
+ 
+      3) The 16-bit PREPDA data set in IUNIT(11) is no longer
+written to. This is now HARDWIRED, although commented-out logic
+still allows for it.
+
+      4) New BUFRLIB subroutine DATEBF is now called to get
+center date for satellite retrieval JBUFR data set in subroutines
+SATEDS and SATBFR.  This simplifies the other time checking
+procedures.
+
+      5) Added new namelist switches TOVRAD (default is FALSE)
+and TOVRTV (default is FALSE) (see III.A.2 below).
+
+      6) Subroutine SATEDS was streamlined w.r.t. unit number
+designation and treatment.
+
+      7) Subroutine SATEDS now keeps a count of retrievals
+outside the requested time window, and prints total at end of
+retrieval processing.
+
+      8) All logic related to the processing of TOVS interactive
+retrievals has been removed.
+
+      9) Subroutine INTERP has been removed since TOVS
+interactive retrievals are no longer processed.
+     10) Subroutine FILLX can now include the 28 radiance values
+and other ancillary data for TOVS reports (along with the 40-
+level retrieval) in the printout if these are chosen to be
+processed.  Printout still controlled by NAMELIST switch MODKNT.
+ 
+     11) Reorganized and streamlined most COMMON blocks.
+
+     12) Corrected error in encoding of initial values for
+PREPBUFR header mnemonics RQM, DUP, PRG, SRC, RUC.  These are
+used only by the reanalysis version of PREPDATA. (MAIN, W3FIZZ,
+FIZZ01).
+
+
+     
+II.  SPECIFIC OPERATIONAL CHANGES
+
+
+  A. CHANGES TO UPPER-AIR DATA PROCESSING
+
+      1) The default value for namelist switch IDELEV was changed
+from 20 to 30 (meters).  Since the default is used, this means
+the baseline check for raobs in now more stringent (i.e., it is
+now more difficult for a raob to fail the baseline check.)
+
+      2) If the baseline check fails for a particular raob
+report, any variables with an SDM keep flag already applied to
+them will NOT be flagged as bad. (MAIN, GETUPA).
+
+
+
+III.  SPECIFIC NON-OPERATIONAL CHANGES
+
+
+  A. CHANGES TO TOVS SATELLITE RETRIEVAL PROCESSING
+
+      1) GBL: Although not yet switched on, switches set to
+process TOVS radiances and retrievals at full 80km resolution.
+
+      2) GBL: Now calls W3LIB routine W3TOVUNP instead of W3FI80
+to process TOVS retrievals.  Returns both 40-level retrieval
+information and 28 radiances for each retrieval.  Logic in place
+to save radiances and ancillary information in common block (for
+later encoding into PREPBUFR).  Can process both radiances and
+retrievals or just one or the other based on NAMELIST switches.
+(See I.5 above.) (MAIN, SATBFR).
+
+      3) GBL: Logic changed to now allow TOVS radiances to be
+encoded in PREPBUFR file (not yet switched on). (MAIN, W3FIZZ,
+FIZZ01).
+
+      4) Added skin temperature (SKINT) to list of radiance-
+ancillary information processed and encoded into PREPBUFR. (MAIN,
+FILLX, W3FIZZ, FIZZ01).
+
+
+   B. CHANGES TO ERS-SCATTEROMETER DATA PROCESSING
+
+      1) Added logic to process this new data type in PREPDATA.
+Processed as report type 286, and encoded into PREPBUFR data set. 
+It used to be appended to PREPBUFR data set after the running of
+PREPDATA.  It will not be turned on operationally until parallel
+testing of the new ERS2 data is completed.  New subroutine GETERS
+added.  New namelist switches JPERSD(6) (default = 6*9999) and
+IEWNDO(2) (default = -3, 3) also added.  Also, logic set-up to
+allow timely messages for this data to be output to IUNIT(16).  
+(MAIN, PREP, W3FIZZ, FIZZ01).

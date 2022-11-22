@@ -1,0 +1,229 @@
+                                             September 22, 2000
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 2)
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the second time.  UPDATE#2 was implemented on the
+IBM-SP machine at 12Z on October 4, 2000.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 2  ***************
+
+I.  GENERAL CHANGES
+
+     1) Subroutine GETERS changed to GETSCATT since it process
+both ERS and new QUIKSCAT scatterometer wind reports. [MAIN,
+GETSCATT]
+
+     2) Added the new namelist switch JPQKSD, a 6-word array
+which controls the processing (=0 - YES, =9999 - NO) of QUIKSCAT
+scatterometer wind data in 6 latitude bands.  The default is
+JPQKSD=/6*9999/ . [MAIN, CARDS]
+
+     3) Added the new namelist switch IQWNDO, a 2-word array
+which provides the earliest and latest times for accepting
+QUIKSCAT scatterometer wind reports.  The default is
+IQWNDO=/-3,3/ . [MAIN, CARDS]
+
+     4) Added the new namelist switch IQKSLM which indicates the
+probability of rain threshold (in percent) for processing
+QUIKSCAT scatterometer wind reports.  The default is IQKSLM=/101/
+(all reports are accepted). [MAIN, CARDS]
+
+     5) Added the new namelist switch IQKSSP, a 2-word array
+which indicates the upper (word 1) and lower (word 2) cross-track
+cell number limits for which QUIKSCAT scatterometer winds will
+receive a quality mark of 3 (suspect).  All reports with cross-
+track cell number > IQKSSP(1) and < IQKSSP(2) recive a quality
+mark of 2 (neutral).  The default is IQKSSP=/8,64/. [MAIN, CARDS]
+
+     6) Added the new logical namelist switch APPEND which when
+TRUE assumes that new data is to be appended to an existing
+PREPBUFR file in unit ??.  In this case, the internal BUFR
+mnemonic table in the existing PREPBUFR file is used, rather than
+the external table in unit ??.  When APPEND=FALSE, a new PREPBUFR
+file is generated from the external PREPBUFR mnemonic table, as
+before.  The default is APPEND=FALSE. [MAIN, W3FIZZ, CARDS]
+
+     7) Added call to BUFRLIB routine DATEBF when namelist switch
+APPEND=TRUE to get date from existing PREPBUFR file in unit ??. 
+This date is checked against the expected (production) date.
+[MAIN, W3FIZZ]
+
+     8) New condition code 30 added for case when APPEND=TRUE and
+the date from the existing PREPBUFR file does not match the
+expected (production) date. [MAIN, W3FIZZ]
+
+     9) Condition code 04 (either no ADPUPA data types or no
+ADPSFC data types or none of either type) cannot occur when
+APPEND=TRUE. [MAIN]
+
+     10) Namelist switches FWINDO, JSURFM and JSURFW expanded
+from 8 to 9 words, where word 9 point to new surface marine type
+"Automated Tide Gauge Statons" (see II.A.1 below).  The defaults
+are FINDO(9)=300., JSURFM(9)=0, JSURFW(9)=0. [MAIN, SFCDTA,
+CARDS]
+
+     11) The W3LIB routine GBLEVENTS (which is called by
+PREPOBS_PREPDATA when the namelist switch PREVEN=TRUE) was
+modified to add a new switch QTOP_REJ to the namelist &PREVDTA
+which it reads in.  This new switch indicates the pressure level
+(in mb) above which all specific humidity quality markers are
+"rejected" (set to 9) in GBLEVENTS.  Prior to this, this level
+had been hardwired to 300 mb.  The default is QTOP_REJ=300. . 
+The compilation of PREPOBS_PREPDATA will link in this updated
+W3LIB routine.  Currently, the default value for QTOP_REJ is used
+in all networks, so there is no change in production. [GBLEVENTS]
+
+     12) Removed obsolete logic dealing with the old OI
+processing. {MAIN]
+
+     13) Changed default for namelist switches FILLZ, FILLT,
+FILLW and FILLM from TRUE TO FALSE.  Changed default for namelist
+switch IRNMRK FROM 2 TO -99.  Namelist switch IRNMRK=2 is now
+defined as the NCEP Model Run Marker for the special afos
+graphics run in Job AFPLT.  [MAIN]
+
+
+
+
+
+
+
+
+
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO SURFACE DATA PROCESSING
+
+     1) Subroutine IW3UNPBF was modified to recognize surface
+marine automated tide gauge reports (BUFR type 001, subtype 005),
+which are soon to be added to the "sfcshp" data dump group. 
+These will be given an ON29 report type (T29) of 533. Once these
+are added they will be encoded into the PREPBUFR file. [MAIN,
+IW3UNPBF, SFCDTA, ISSEL]
+
+
+  B. CHANGES TO GOES SATELLITE SOUNDING/RADIANCE DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are -6 AND +6 hours, respectively. In this case, it is
+assumed that all BUFR messages in the file are to be processed
+regardless of their Section 1 time stamp.  This change will
+improve the efficiency of this program in AVN, FNL and CDAS
+network runs.  [W3UNPKB7]
+
+
+  C. CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1) Subroutine IW3UNPBF was further modified (from the
+original modifications in the previous implementation) to
+properly decode and process the new, expanded format for NESDIS
+satellite winds from both GOES and GMS satellites.  This format
+is now operational. [IW3UNPBF].
+
+     2) Changes to account for new BUFR types and subtypes
+representing NESDIS satellite winds.  Type 005, subtype 014
+replaces obsolete type 005, subtype 007 in SUBSKP checks for
+NESDIS/GOES water vapor sounder winds.  Type 005, subtype 013
+added to SUBSKP checks for NESDIS/GOES picture triplet winds. 
+Also in the print for time windows, 005/010 replaces 005/005
+(NESDIS/GOES IR), 005/011 replaces 005/006 (NESDIS/GOES water
+vapor imager), 005/014 replaces 005/007 (NESDIS/GOES water vapor
+sounder), 005/012 replaces 005/008 (NESDIS/GOES visible), and
+005/013 replaces 005/009 (NESDIS/GOES picture triplet). [MAIN,
+PREP]
+ 
+
+
+
+
+
+
+  D. CHANGES TO WIND PROFILER DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to store the rainfall
+rate (W3UNPKB7 Category 10) in units of mm/hour.  Prior to this
+it was stored in units of 10**7 mm/sec (where it had been
+incorrectly documented to be in units of 10**7 m/sec).  Since
+rainfall rate for wind profiler reports is not encoded into the
+PREPBUFR file, this change has no effect on production. 
+[W3UNPKB7]
+
+     2) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are -6 AND +6 hours, respectively. In this case, it is
+assumed that all BUFR messages in the file are to be processed
+regardless of their Section 1 time stamp.  This change will
+improve the efficiency of this program in AVN, FNL and CDAS
+network runs.  [W3UNPKB7]
+
+ 
+  E. CHANGES TO VAD WIND DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are -6 AND +6 hours, respectively. In this case, it is
+assumed that all BUFR messages in the file are to be processed
+regardless of their Section 1 time stamp.  This change will
+improve the efficiency of this program in AVN, FNL and CDAS
+network runs.  [W3UNPKB7]
+
+
+  F. CHANGES TO ERS SCATTEROMETER WIND DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are -6 AND +6 hours, respectively. In this case, it is
+assumed that all BUFR messages in the file are to be processed
+regardless of their Section 1 time stamp.  This change will
+improve the efficiency of this program in AVN, FNL and CDAS
+network runs.  [W3UNPKB7]
+
+
+
+
+
+
+
+
+
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO QUIKSCAT SCATTEROMETER WIND DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 was modified to decode the new
+QUIKSCAT wind scatterometer data from the reprocessed BUFR data
+dump file "qkswnd".  They are given an ON29 report type (T29) of
+582 and a PREPBUFR report type of 285. They are encoded into the
+PREPBUFR file user the Table A Message Entry QKSWND.  In addition
+to the standard header and wind information, the cross-track cell
+number (CTCN), along-track row number (ATRN) and seawinds
+probability of rain (SPRR) are encoded into the PREPBUFR file.  A
+temporary item is the thinning of data by processing only every-
+other unpacked report prior to any checking.  This will
+eventually be moved to the upstream program WAVE_DCODQUIKSCAT. 
+Currently, the defaults for namelist switches JPQKSD, IQWNDO,
+IQKSLM and IQKSSP are used in all netorks and these data are not
+processed operationally. [MAIN, FILLX, GETSCATT, W3FIZZ,
+W3UNPKB7, BUFRTABLE]
+
+     2) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are -6 AND +6 hours, respectively. In this case, it is
+assumed that all BUFR messages in the file are to be processed
+regardless of their Section 1 time stamp.  This change will
+improve the efficiency of this program in AVN, FNL and CDAS
+network runs.  [W3UNPKB7]

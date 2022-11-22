@@ -1,0 +1,20 @@
+                                               October 5, 2010
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #9 -- 
+                 DATACARD UPDATE # 9.1 - NETWORK: GDAS, GFS;
+                 DATACARD UPDATE # 9.0 - NETWORK: NAM, RUC)
+
+Implemented 12Z 05 October 2010:
+
+GDAS, GFS, NAM, RUC:
+     - SSM/I wind speed and tpw reports are no longer processed.  [Namelist
+       switches JPSSMI(:,1) and JPSSMI(:,2) changed from 0 to 9999.]
+     - QuikSCAT scatterometer wind reports no longer processed.  [Namelist
+       switch JPQKSD changed from 6*0 to 6*9999.]
+
+GDAS, GFS:
+     - SSM/I rain rate reports are no longer processed.  [Namelist
+       switche JPSSMI(:,3) changed from 0 to 9999.]

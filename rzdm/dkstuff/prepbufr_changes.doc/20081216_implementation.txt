@@ -1,0 +1,141 @@
+                                              December 16, 2008
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 9)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+ninth time.  UPDATE #9 was implemented on the IBM-CCS machines at 13Z on
+December 16, 2008.  Except where noted, the changes below affect all eight
+versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 9 **************
+
+
+I. GENERAL CHANGES
+
+     1) Added new namelist switch JPASCD (6-word array) to process (=0)/not
+process (=9999) ASCAT scatterometer wind data.  Default is 6*9999.  [MAIN,
+DATACARDS]
+
+     2) Added new namelist switch IAWNDO (2-word array) for earliest (word 1)
+and latest (word 2) times to process ASCAT scatterometer wind data.  Default is
+-3,+3.  [MAIN, DATACARDS]
+
+     3) 1-dimensional array RDATA2 (returned from W3UNPKB7) increased from 21
+to 24 words to handle new ASCAT variables wind vector cell quality, backscatter
+distance and likelihood computed for solution.  [MAIN, W3UNPKB7]
+
+     4) 1-dimensional array OBS2 (returned from IW3UNPBF) increased from 41 to
+42 words to process MSTQ (moisture quality, code table) for ACARS reports.  This
+will be used by future NRLACQC code.  [MAIN, IW3UNPF]
+
+     5) The upper limit for storing calculated specific humidity is changed from
+32767 mg/kg to 99999 mg/kg to ensure that levels with very high specific
+humidity are processed (the 32767 limit was a vestige from the old I*2 PREPDA
+days - there are some high-elevation surface reports with large Td whose
+calculated q can exceed 32.767 g/kg).  [MAIN, STOROB, GETC06, GETPWATER, SFCDTA]
+
+     6) If the nearest integer for calculated specific humidity is 0 mg/kg, it
+is reset to 1 mg/kg (.001 g/kg) to ensure that levels with very low specific
+humidity are processed (q must be > 0 to be processed – some radiosondes at high
+levels with very low Td can have calculated q values of 0.0005 g/kg or less).
+[MAIN, STOROB, GETC06, SFCDTA] 
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO ASCAT DATA PROCESSING
+
+     1) GFS and GDAS only: Now processed over +/- 3-hr time window, reading
+reprocessed dump (currently NOT superobed) from unit 39 (with DUMP report type
+584) (read from Cat. 10 in W3UNPKB7) and writing out into PREPBUFR report type
+290 under message type “ASCATW”.  Includes encoding the following information
+into PREPBUFR (besides standard wind info): cross-track cell number (mnemonic
+CTCN, numeric), wind vector cell quality (mnemonic WVCQ, BUFR Flag
+Table 0-21-155), backscatter distance (mnemonic BSCD, numeric), likelihood
+computed for solution (mnemonic LKCS , numeric).  [MAIN,  PREP, FILLX, GETSCATT,
+W3FIZZ,  W3UNPKB7, DATACARDS]
+
+
+  B. CHANGES TO SATELLITE-DERIVED WIND DATA PROCESSING
+
+     1) EUMETSAT wind reports are no longer flagged with QM=13 based on a low
+"QI with forecast" value or high "manual/automatic Q.C." indicator.  [IW3UNPBF]
+
+
+  C. CHANGES TO AIRCRAFT DATA PROCESSING
+
+     1) The following changes are in preparation for the future downstream NRL
+aircraft Q.C. module (replacing the current downstream PREPACQC and ACARSQC
+modules):
+          a) Some mnemonics that were in the header sequence (i.e., RCT, ROLF,
+POAF. TRBX, TRBX10 TRBX21 TRBX32 TRBX4 and PCAT) are moved into the level data
+sequence since the latter can now "potentially" be replicated (NRL QC code can
+generate profiles).  Only one replication of the level sequence still comes out
+of PREPDATA, however.  [MAIN, W3FIZZ, FIZZ01]
+          b) Now calls BUFRLIB routine DRFINI to allow for possible nested
+replication of sequences PREWXSEQ, CLOUDSEQ, AFIC_SEQ, TURB3SEQ since these
+sequences are in the level data sequence which can now "potentially" be
+replicated (NRL QC code can generate profiles).  Only one replication of the
+level sequence still comes out of PREPDATA, however.  [MAIN, W3FIZZ]
+          c) Added function to correctly calculate pressure altitude from
+pressure for aircraft above 226 mb (via U.S. Standard Atmosphere).  Prior to
+this, the code used U.S. Standard Atmosphere function for calculating pressure
+altitude from pressure below 226 mb at ALL levels, thus the pressure altitude at
+levels above 226 mb was not correct.  This change applies only to MDCRS ACARS
+and TAMDAR aircraft.  [IW3UNPBF]
+          d) The Q.M. for MDCRS ACARS wind is no longer hardwired to 1 (good) if
+not previously set.  Instead, it is set to 2 (neutral).  The new NRL QC code
+will decide on the final Q.M.  [IW3UNPBF]
+          e) Moisture quality (code table) is now encoded into the PREPBUFR file
+for MDCRS ACARS reports.  [MAIN, FILLX, GETC06, W3FIZZ, BUFRTABLE, IW3UNPF]
+
+
+
+III. CHANGES TO THE BUFR TABLE
+
+     1) Message types AIRCFT and AIRCAR now store level data sequence as delayed
+replication to account for profiles that can be added by NRLACQC code (output
+from PREPDATA always stores just one replication, as before).
+          a) Level data stored in new sequence mnemonic PRSLEVLA which holds
+“regular” level data plus RCT, ROLF, MSTQ, IALR plus 8-bit delayed replicated
+sequences NRLQMSEQ (new sequence mnemonic which holds just NRLQM), TURB3SEQ,
+PREWXSEQ, CLOUDSEQ, AFIC_SEQ and 1-bit delayed replicated sequences DRFTINFO,
+ACFT_SEQ, TURB1SEQ, TURB2SEQ.
+               i) IALR (instantaneous aircraft rate), MSTQ (moisture quality)
+and NRLQM (NRL aircraft Q.C. mark) are new.  IALR is currently missing - it will
+be encoded later by PREPDATA program for use by NRLACQC.  NRLQM is also
+currently missing - it will be encoded by the future NRLACQC program.
+
+     2) TYP is expanded from bit width 9 to 10 in order to hold aircraft
+profiles with PREPBUFR report type in the 300-599 range which will be added by
+future NRLACQC program.
+
+     3) HRDR is expanded from scale 3 with bit width 16 to scale 5 with bit
+width 23 in order to match other observation time precision menmonics.  This
+value will be encoded into profiles by NRLACQC program.
+
+
+
+IV.  CHANGES TO EXECUTING USH SCRIPT prepobs_makeprepbufr.sh
+
+     1) Added dump file "ascatw" to default BUFRLIST value and assigned it to
+unit 39 for read into PREPOBS_PREPDATA.
+     
+     2) In preparation for future NRL aircraft QC code NRLACQC, added new script
+variables NRLACQC (default=NO), USHNQC (default=${HOMEALL}/ush), NQCX
+(default=$EXECPREP/prepobs_nrlacqc) and NQCC
+(default=$PARMPREP/prepobs_nrlacqc.${NET}.parm").
+
+     3) If NRLACQC=YES, will execute script USHNQC to perform NRL aircraft QC
+(not yet ready).
+
+
+
+
+
+

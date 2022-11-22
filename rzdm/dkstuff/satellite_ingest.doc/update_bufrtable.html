@@ -1,0 +1,609 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>How to Implement BUFRTable Changes for Satellte Ingest Types</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <link href="http://www.emc.ncep.noaa.gov/css/template.css"
+ rel="stylesheet" type="text/css" media="screen" />
+  <link href="http://www.emc.ncep.noaa.gov/css/layout.css"
+ rel="stylesheet" type="text/css" media="screen" />
+  <link rel="icon" type="image/ico"
+ href="http://www.nco.ncep.noaa.gov/cwi/favicon.ico" />
+</head>
+<body>
+<!-- Begin Header -->
+<div>
+<table class="tbl1" cellpadding="0">
+  <tbody>
+    <tr>
+      <th> <a href="#contents"><img alt="Skip Navigation Links"
+ src="http://www.emc.ncep.noaa.gov/graphics/skipgraphic.gif" height="1" /></a>
+      <a href="http://www.nws.noaa.gov/"><span class="nwslink">www.nws.noaa.gov</span></a>
+      </th>
+    </tr>
+  </tbody>
+</table>
+<table class="tbl2" cellpadding="0">
+  <tbody>
+    <tr>
+      <th scope="row" rowspan="2"> <a href="http://www.noaa.gov/"><img
+ alt="NOAA logo - Click to go to the NOAA homepage"
+ src="http://www.emc.ncep.noaa.gov/graphics/noaaleft.jpg" /></a></th>
+      <th scope="row"> <img alt="National Weather Service"
+ src="http://www.emc.ncep.noaa.gov/graphics/nws_title.jpg" /></th>
+      <th scope="row" class="th4" rowspan="2" width="100%"></th>
+      <th scope="row" rowspan="2"> <a href="http://www.nws.noaa.gov/"><img
+ alt="NWS logo - Click to go to the NWS homepage"
+ src="http://www.emc.ncep.noaa.gov/graphics/nwsright.jpg" /></a></th>
+    </tr>
+    <tr>
+      <th scope="row"><img alt="EMC Logo"
+ src="http://www.emc.ncep.noaa.gov/graphics/emc.jpg" /></th>
+    </tr>
+  </tbody>
+</table>
+<table class="tbl3" cellpadding="0">
+  <tbody>
+    <tr>
+      <th scope="row" align="left" valign="top"><img
+ alt="Navigation Bar Left Cap"
+ src="http://www.emc.ncep.noaa.gov/graphics/navbarleft.jpg" /></th>
+      <th scope="row" class="nav" id="menuitem1"><a
+ href="http://www.emc.ncep.noaa.gov/index.php">Home</a></th>
+      <th scope="row" class="nav" id="menuitem2"><a
+ href="http://www.weather.gov/pa">News</a></th>
+      <th scope="row" class="nav" id="menuitem3"><a
+ href="http://www.weather.gov/organization.php">Organization</a></th>
+      <th scope="row" class="searchinput" align="right">
+      <form method="get" action="http://firstgovsearch.gov/search"> <label
+ for="Search"><span class="ylw">Search</span>&nbsp;&nbsp;</label> <input
+ name="affiliate" value="nws.noaa.gov" id="affiliate" type="hidden" /><input
+ name="v:project" value="firstgov" id="v:project" type="hidden" /><input
+ name="query" size="25" maxlength="256" id="Search" value="Enter text"
+ onfocus="this.value='';" type="text" /><input value="Search"
+ type="submit" /> </form>
+      </th>
+      <th scope="row" align="right" valign="bottom"><img
+ src="http://www.emc.ncep.noaa.gov/graphics/navbarendcap.jpg"
+ alt="Navigation Bar End Cap" /></th>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div id="header">
+</div>
+<!-- End Header -->
+<!-- Begin Sidebar Content -->
+<div id="sidebar">
+<div>
+<div id="searchemc">
+<form method="get" action="http://firstgovsearch.gov/search"><label
+ for="Search"> <span class="ylw">Search EMC</span><br />
+  <input name="affiliate" value="ncep.noaa.gov" type="hidden" /> <input
+ name="v:sources" value="firstgov-affiliates-search" type="hidden" /><input
+ name="v:project" value="firstgov" type="hidden" /> <input name="query"
+ value="site:www.emc.ncep.noaa.gov" type="hidden" /><input name="query"
+ value="" size="10" maxlength="256" id="Search" type="text" /> <input
+ value="Go" type="submit" /></label></form>
+</div>
+<div id="sidebarlinks">
+<span class="ylw">Branches</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/gcwmb/">Global
+Climate and
+Weather Modeling</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/mmb/">Mesoscale
+Modeling</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/mmab/">Marine
+Modeling and
+Analysis</a>
+</div>
+<br />
+<div id="sidebarlinks">
+<span class="ylw">Teams</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?branch=climate">Climate</a>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/gmb/gdas/">Data
+Assimilation</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/?branch=ensembapp">Ensembles
+and
+Post Processing</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/?branch=landsurface">Land
+Surface</a>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?branch=softwareeng">Software
+Engineering</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/?branch=hurricanes">Hurricanes
+</a></div>
+<br />
+<div id="sidebarlinks">
+<span class="ylw">Model
+Information</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?doc=doc">Documentation</a>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?modelperf=modelperf">Performance
+Statistics</a><!-- <br /><a href="http://www.emc.ncep.noaa.gov/?data=data">Observations/Data</a> -->
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?data_processing=data_processing">Observational
+Data Processing</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/gmb/gdas/">Data
+Assimilation</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/monsoondesk/">Monsoon
+Desk</a> </div>
+<br />
+<div id="sidebarlinks">
+<span class="ylw">Seminars</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/seminars/index.html">Seminar
+Series</a> </div>
+<br />
+<div id="sidebarlinks">
+<span class="ylw">Other
+Information</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?collaborators=collaborators">Collaborators</a>
+<br />
+<a href="http://www2.emc.ncep.noaa.gov/">In-House
+Website</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/?transitiontoop=transitiontoop">Transition
+<br />
+to Operations</a> <br />
+<a href="http://www.emc.ncep.noaa.gov/?Presentations=Presentations">Presentations</a>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?publications=publications">Publications</a>
+<!--<br /><a href="http://www.ncep.noaa.gov/newsletter/">NCEP Quarterly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Newsletter</a> --></div>
+<br />
+<div id="sidebarlinks">
+<span class="ylw">Contact
+EMC</span><br />
+<span class="breakLine">&nbsp;</span>
+<br />
+<a href="http://www.emc.ncep.noaa.gov/?webmaster=webmaster">Webmaster</a>
+</div>
+<br />
+<div id="usagov">
+<a href="http://www.usa.gov"><img
+ src="http://www.emc.ncep.noaa.gov/graphics/usagov_logo.gif"
+ alt="logo image for USA dot gov website. USA dot gov is the U.S. Government's official Web portal to all Federal, state and local government Web resources and services." /></a></div>
+<!-- usagov --> </div>
+</div>
+<!-- End Sidebar Content -->
+<!-- Begin Content Body-->
+<div id="page">
+<div id="content">
+<p><a href="http://www.emc.ncep.noaa.gov/?abtemc=misvis"> <font
+ color="#ffffff">&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MISSION /
+VISION</font></a>
+&nbsp;&nbsp; | &nbsp;&nbsp;
+<a href="http://www.emc.ncep.noaa.gov/?abtemc=abtemc"><font
+ color="#ffffff">About EMC</font></a></p>
+<div id="navstyle">
+<center>
+<h2 align="center">How to
+Implement BUFR Table Changes for Satellite Ingest Types</h2>
+</center>
+<center>
+<h3>(bufrtab.003,
+bufrtab.005, bufrtab.008, bufrtab.012 and&nbsp;bufrtab.021)<br />
+</h3>
+<h3>Dennis
+Keyser -
+NOAA/NWS/NCEP/EMC
+<br />
+(Last Revised 11/29/2017)</h3>
+<br clear="all" />
+</center>
+<!-- This is a first table -->
+<table cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="hed" colspan="4">
+      <p>Please take a moment to
+read the&nbsp;<b><a target="_blank"
+ href="http://weather.gov/disclaimer.php"><span
+ style="color: rgb(0, 0, 255);">Disclaimer</span></a> </b>for this
+non-operational web page.
+&nbsp; </p>
+      <p> <img
+ src="http://www2.nco.ncep.noaa.gov/images/icon_printer.gif"
+ alt="Printer image icon." border="0" height="16" width="16" /> <small><a
+ rel="colleague" href="update_bufrtable_printable.html" target="print"><span
+ style="color: rgb(0, 0, 255);">Printer Friendly
+Version</span></a></small> </p>
+      <p> </p>
+      <p> <small><i>NOTE:
+Links open in a new window</i></small> </p>
+      <hr width="75%" /><b style="font-family: Arial;">IMPORTANT: </b>All&nbsp;BUFR
+tables associated with the subtypes generated
+by&nbsp;the
+satellite ingest
+are now separate and distinct from those associated with
+the&nbsp;NCO
+decoder
+processing. Thus any changes to the satellite ingest BUFR tables have
+no affect on NCO
+decoder
+processing. &nbsp;See <a
+ href="http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml"
+ target="_blank"><span style="color: rgb(0, 0, 255);">http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml</span></a><span
+ style="color: rgb(0, 0, 255);"> &nbsp;<span
+ style="color: rgb(0, 0, 255);"><span style="font-family: Arial;"><span
+ style="font-family: Arial;"><span style="color: rgb(0, 0, 0);">for
+instructions
+on implementing BUFR
+table changes to BUFR tables associated with NCO decoder processing.
+&nbsp;(</span><span style="font-weight: bold;"><span
+ style="color: rgb(0, 0, 0);">Note to NCO/SIB: Please
+remove all
+references to satellite ingest in <a style="color: rgb(0, 0, 255);"
+ href="http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml"
+ target="_blank">this web&nbsp;</a></span></span></span><span
+ style="color: rgb(0, 0, 255);"><a style="color: rgb(0, 0, 255);"
+ href="http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml"
+ target="_blank"><span style="font-family: Arial; font-weight: bold;" /></a><span
+ style="font-family: Arial; color: rgb(0, 0, 0);"><span
+ style="font-weight: bold;"><a style="color: rgb(0, 0, 255);"
+ href="http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml"
+ target="_blank">page</a>.)</span><br />
+      <br />
+      </span></span></span><b
+ style="font-family: Arial; color: rgb(0, 0, 0);">PLEASE
+NOTE:</b><span style="font-family: Arial; color: rgb(0, 0, 0);">
+When
+changing BUFR
+tables
+for satellite ingest data types,
+complete the following procedure in its entirety on each
+WCOSS machine &nbsp;in which the satellite ingest is running and
+filling BUFR tanks in /dcom.</span><br
+ style="font-family: Arial; color: rgb(0, 0, 0);" />
+      <br style="font-family: Arial; color: rgb(0, 0, 0);" />
+      <hr width="75%" /><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">BUFR
+table
+changes add an
+extra degree of complexity to an
+implementation,
+because the BUFR tables are used as a definitive layout of the contents
+of a
+particular BUFR type/subtype. Specifically, the same BUFR table that is
+used
+by a WCOSS&nbsp;satellite ingest job&nbsp;to encode a
+particular type of observation into BUFR is
+also
+used by the subsequent </span><span
+ style="font-weight: bold; font-family: Arial; color: rgb(0, 0, 0);">tranjb</span><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">&nbsp;process
+to append those same
+observations
+to the BUFR files for that type within the BUFR database
+/dcom/us007003.
+So whenever the BUFR table is changed for a particular type/subtype, a
+copy of
+the new table needs to be written into all of the satellite ingest BUFR
+files for that
+type/subtype within
+the database, at the point directly before which observations encoded
+according to
+the new table will begin to be appended to each
+file. Applications
+which read these
+satellite ingest database files will then respond to the new table and
+adjust
+accordingly to the new
+layout definition as they continue reading through the files. </span><br
+ style="font-family: Arial;" />
+      <br style="font-family: Arial;" />
+      <span style="font-family: Arial; color: rgb(0, 0, 0);">Note
+that, while one
+might assume that it would only be&nbsp;technically necessary to
+write a copy of
+the new table
+to files of the actual type/subtype(s) which are changing, one cannot
+guarantee 100% success in subsequent&nbsp;</span><span
+ style="font-weight: bold; font-family: Arial; color: rgb(0, 0, 0);">tranjb</span><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">
+processing unless&nbsp;a copy of the new table is appended
+to&nbsp;all satellite ingest files in the database which use the
+same
+table. &nbsp;In other words, if, e.g.,&nbsp;a
+change is being
+made to type/subtype b021/xx201 within bufrtab.021, one
+should&nbsp;update </span><i
+ style="font-family: Arial; color: rgb(0, 0, 0);">all</i><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">
+satellite ingest files of type b021 within the database,&nbsp;not
+just
+the xx201 files.
+The reason for this is two-fold. &nbsp;First, it is possible that a
+change to the BUFR table&nbsp;for a particular BUFR type could
+cause </span><span
+ style="font-weight: bold; font-family: Arial; color: rgb(0, 0, 0);">tranjb</span><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">
+to fail when processing compressed BUFR messages for this BUFR type,
+even for&nbsp;subtypes other than those modified in the table (if
+the new table is not copied into these files). &nbsp;Second, even
+if </span><span
+ style="font-weight: bold; font-family: Arial; color: rgb(0, 0, 0);">tranjb</span><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">
+processing is successful in this case, it is possible that downstream </span><span
+ style="font-weight: bold; font-family: Arial; color: rgb(0, 0, 0);">dumpjb</span><span
+ style="font-family: Arial; color: rgb(0, 0, 0);">
+processing could fail, again even for subtypes other than those
+modified in the table (if the new table is not copied into these
+files). </span><br style="font-family: Arial;" />
+      <br style="font-family: Arial;" />
+      <span style="font-family: Arial; color: rgb(0, 0, 0);">Here
+is
+the&nbsp;procedure to follow for updating satellite ingest files in
+the database when a BUFR table change is&nbsp;being implemented: </span><br
+ style="font-family: Arial; color: rgb(0, 0, 0);" />
+      <br style="font-family: Arial; color: rgb(0, 0, 0);" />
+      <ol>
+        <li style="font-family: Arial; color: rgb(0, 0, 0);">Suspend,
+via
+ECflow,&nbsp;&nbsp;the satellite ingest job(s)
+that encode data into the&nbsp;tankfiles in the database for the
+BUFR table being implemented.</li>
+        <ul style="font-family: Arial; color: rgb(0, 0, 0);">
+          <ul>
+            <li>For changes to
+bufrtab.003, current&nbsp;jobs to suspend
+are:&nbsp;JIGOES_RADSND and&nbsp;JITOV.</li>
+            <li>For changes to
+bufrtab.005, current job to suspend is:&nbsp;JISWD.</li>
+            <li>For changes to
+bufrtab.008, current jobs to suspend are:
+JIOZONE_ORBIT,&nbsp;JIAEROSOL and JINPP.</li>
+            <li>For changes to
+bufrtab.012, current jobs to suspend are: JIIGOES_RADSND,
+JIGOES_SST,&nbsp;JIPOES_SST,&nbsp;JIQST and&nbsp;JISMI.</li>
+            <li>For changes to
+bufrtab.021, current&nbsp;jobs to suspend
+are: JIAIRS, JIAVHRR, JIGOES_RADSND,
+JINPP, JINPP_ATMS, JINPP_CRIS_2211, &nbsp;JINPP_CRIS_431,&nbsp;
+JISMI&nbsp;and&nbsp;JITOV.</li>
+          </ul>
+        </ul>
+        <br style="font-family: Arial; color: rgb(0, 0, 0);" />
+        <li style="font-family: Arial; color: rgb(0, 0, 0);"><span
+ style="font-style: italic;">(no longer applicable - skip to item 3
+below)</span><br />
+          <a
+ href="http://www2.nco.ncep.noaa.gov/sib/decoders/Administrator/index.shtml"
+ target="_blank"> </a></li>
+        <br style="font-family: Arial; color: rgb(0, 0, 0);" />
+        <li style="font-family: Arial; color: rgb(0, 0, 0);">At
+this point, it is
+now safe to cd
+to the BUFR
+table directory&nbsp;<span style="font-weight: bold;">/nwprod/obsproc_satingest.vX.Y.Z/fix</span>
+(where&nbsp;<span style="font-weight: bold;">X.Y.Z</span>
+is the latest version of obsproc_satingest) and actually copy the new
+version of the
+BUFR table from the user
+work area into this directory. This is also the time to implement any
+other changes to
+the underlying satellite ingest processing (i.e. new executables, new
+scripts,
+etc.) by copying
+them into their proper respective locations within <b>/nwprod</b>. <br />
+          <br />
+        </li>
+        <li style="color: rgb(0, 0, 0);"><span
+ style="font-family: Arial;"><span style="font-family: Arial;"> </span><span
+ style="font-style: italic;">(no longer applicable -&nbsp;skip to item
+6 below)</span><br style="font-family: Arial;" />
+          <br style="font-family: Arial;" />
+          </span></li>
+        <li style="font-family: Arial; color: rgb(0, 0, 0);"> <span
+ style="font-style: italic;">(no longer applicable - skip to item 6
+below)</span><br />
+          <br />
+        </li>
+        <li style="color: rgb(0, 0, 0);"><span
+ style="font-family: Arial;">We
+are now ready to
+update the satellite ingest database with the new table.
+We&nbsp;need to update all of the satellite ingest-generated tanks
+in the database corresponding to that BUFR table.</span><br clear="all" />
+          <ul>
+            <ul>
+              <li><span style="font-family: Arial;">For
+changes to bufrtab.003,&nbsp;use: </span><br />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$
+export
+APXDX_TYPE=satingest</span><br
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);"
+ clear="all" />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$&nbsp;/nwprod/util/ush/run_apxdx.sh
+/dcom/us007003
+/nwprod</span><span style="font-family: Courier New; font-weight: bold;"><span
+ style="color: rgb(255, 0, 0);">/obsproc_satingest.v</span>X.Y.Z</span><span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">/fix/bufrtab.003</span><br
+ clear="all" />
+                <span style="font-family: Courier New;">(where <span
+ style="font-weight: bold;">X.Y.Z</span>
+is latest version of obsproc_satingest containing updated bufrtab.003)</span><br
+ style="font-weight: bold;" clear="all" />
+                <br />
+              </li>
+              <li> For changes
+to <span style="font-family: Arial;">bufrtab.</span>005,
+use:<br />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$
+export
+APXDX_TYPE=satingest</span><br
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);"
+ clear="all" />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$&nbsp;/nwprod/util/ush/run_apxdx.sh</span><span
+ style="font-family: Courier New; font-weight: bold;"><span
+ style="color: rgb(255, 0, 0);">
+/dcom/us007003&nbsp;/nwprod/obsproc_satingest.v</span>X.Y.Z<span
+ style="color: rgb(255, 0, 0);">/fix/bufrtab.005</span><br />
+                </span><span style="font-family: Courier New;">(where <span
+ style="font-weight: bold;">X.Y.Z</span>
+is latest version of obsproc_satingest containing updated bufrtab.005)</span><br
+ style="font-weight: bold;" clear="all" />
+                <br />
+              </li>
+              <li> For changes
+to <span style="font-family: Arial;">bufrtab.</span>008,
+use:<br />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$
+export
+APXDX_TYPE=satingest</span><br
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);"
+ clear="all" />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$&nbsp;/nwprod/util/ush/run_apxdx.sh</span><span
+ style="font-family: Courier New; font-weight: bold;"><span
+ style="color: rgb(255, 0, 0);">
+/dcom/us007003&nbsp;/nwprod/obsproc_satingest.v<span
+ style="color: rgb(0, 0, 0);">X</span></span>.Y.Z<span
+ style="color: rgb(255, 0, 0);">/fix/bufrtab.008</span><br />
+                </span><span style="font-family: Courier New;">(where <span
+ style="font-weight: bold;">X.Y.Z</span>
+is latest version of obsproc_satingest containing updated bufrtab.008)</span><br
+ style="font-weight: bold;" clear="all" />
+                <br />
+              </li>
+              <li> For changes
+to <span style="font-family: Arial;">bufrtab.</span>012,
+use:<br />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$
+export
+APXDX_TYPE=satingest</span><br
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);"
+ clear="all" />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$&nbsp;/nwprod/util/ush/run_apxdx.sh</span><span
+ style="font-family: Courier New; font-weight: bold;"><span
+ style="color: rgb(255, 0, 0);">
+/dcom/us007003&nbsp;/nwprod/obsproc_satingest.v</span>X.Y.Z<span
+ style="color: rgb(255, 0, 0);">/fix/bufrtab.012</span><br />
+                </span><span style="font-family: Courier New;">(where <span
+ style="font-weight: bold;">X.Y.Z</span>
+is latest version of obsproc_satingest containing updated bufrtab.012)</span><br
+ style="font-weight: bold;" clear="all" />
+                <br />
+              </li>
+              <li> For changes
+to <span style="font-family: Arial;">bufrtab.</span>021,
+use:<br />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$
+export
+APXDX_TYPE=satingest</span><br
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);"
+ clear="all" />
+                <span
+ style="font-family: Courier New; font-weight: bold; color: rgb(255, 0, 0);">$&nbsp;/nwprod/util/ush/run_apxdx.sh</span><span
+ style="font-family: Courier New; font-weight: bold;"><span
+ style="color: rgb(255, 0, 0);">
+/dcom/us007003&nbsp;/nwprod/obsproc_satingest.v</span>X.Y.Z<span
+ style="color: rgb(255, 0, 0);">/fix/bufrtab.021</span><br />
+                </span><span style="font-family: Courier New;">(where <span
+ style="font-weight: bold;">X.Y.Z</span>
+is latest version of obsproc_satingest containing updated bufrtab.021)</span><br
+ style="font-weight: bold;" clear="all" />
+              </li>
+            </ul>
+          </ul>
+          <br clear="all" />
+In
+each case, the last&nbsp;command may take
+several&nbsp;minutes&nbsp;to complete
+depending on
+the&nbsp;number of
+tankfiles being updated within the database as well as their size (some
+of the b021 files are very large), so be patient! <br />
+          <br />
+        </li>
+        <li style="color: rgb(0, 0, 0);">The
+implementation is
+now complete and we are ready to turn
+back on, via ECflow,&nbsp; the&nbsp;satellite ingest
+job(s) which had been&nbsp;suspended. <br />
+          <br />
+        </li>
+        <li style="color: rgb(0, 0, 0);">Don't forget to notify
+the SDM, operators, etc. that the
+implementation has been completed on this machine (i.e. tide or
+gyre), and don't forget
+to repeat the above
+procedure on the other machine as well! </li>
+        <br />
+      </ol>
+      </span></span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div id="content_bottom">
+</div>
+<!-- End Content Body -->
+<!-- Begin Foter -->
+<div id="footer">
+<table border="0" width="100%">
+  <tbody>
+    <tr>
+      <th scope="row">
+      <div id="address"><a href="http://www.noaa.gov">NOAA</a>
+/ <a href="http://www.nws.noaa.gov">National
+Weather Service</a><br />
+      <a href="http://www.ncep.noaa.gov">National
+Centers for
+Environmental Prediction</a><br />
+      <a href="http://www.emc.ncep.noaa.gov">Environmental
+Modeling
+Center</a><br />
+      <br />
+5830 University Research Court<br />
+College Park, Maryland 20740<br />
+Page Author: EMC Webmaster<br />
+      <script language="JavaScript">
+document.write("Page generated:"+Date())
+      </script>
+      </div>
+      </th>
+      <th scope="row"><!-- address -->
+      <div id="orglinks">
+      <div id="orglinksleft"><a
+ href="http://www.weather.gov/disclaimer.php">Disclaimer</a><br />
+      <a href="http://www.weather.gov/credits.php">Credits</a><br />
+      <a href="http://www.weather.gov/glossary">Glossary</a> </div>
+<!-- orglinksleft -->
+      <div id="orglinksright"><a
+ href="http://www.weather.gov/privacy.php">Privacy
+Policy</a><br />
+      <a href="http://www.weather.gov/admin.php">About Us</a><br />
+      <a href="http://www.weather.gov/careers.php">Career
+Opportunities</a> </div>
+<!-- orglinksright --></div>
+      </th>
+    </tr>
+  </tbody>
+</table>
+<!-- orglinks --> </div>
+</div>
+</div>
+<!-- End Footer Body -->
+</body>
+</html>

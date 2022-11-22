@@ -1,0 +1,31 @@
+                                                    June 3, 2008
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 7)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+seventh time.  UPDATE #7 was implemented on the IBM-CCS machines at 12Z on
+June 3, 2008.  Except where noted, the changes below affect all eight
+versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 7 **************
+
+
+I. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO ATOVS SATELLITE SOUNDING PROCESSING
+
+     1) CDAS only: Can now handle reports from METOP-2 satellite.  [MAIN,
+W3ATOVSUNP, W3XTOVSEDS]
+
+
+  B. CHANGES TO UPPER-AIR RADIOSONDE AND PIBAL PROCESSING
+
+     1) Can handle radiosonde types > 99 which will soon be introduced into
+the BUFR database (based on November 2007 WMO BUFR update) [MAIN, RPTLBL,
+FILLX. IW3UNPF]
+
+

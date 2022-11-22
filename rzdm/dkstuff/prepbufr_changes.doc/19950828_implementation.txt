@@ -1,0 +1,189 @@
+                                                August 25, 1995
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the second time. UPDATE #2 was
+implemented as a CRISIS JIF on 1200 UTC 28 August 1995 on both
+the HDS and CRAY machines.  Except where noted, the changes below
+affect both versions of the data preprocessor.
+
+
+********************  U P D A T E   # 2  ***********************
+ 
+ 
+I.  GENERAL CHANGES
+
+     1)  The default value for namelist switch FWINDO(5) has been
+changed from 300. to 600. (hours).
+
+
+II.  SPECIFIC OPERATIONAL CHANGES
+
+   A. CHANGES TO RECONNAISSANCE AND DROPWINSONDE DATA PROCESSING
+        (See end of this document for more information on the
+         corrections made to the processing of these data.) 
+
+     1) In the previous version, the reported elevation was
+assigned as the height of the surface level for type 182 reports. 
+This was and still is correct for type 182 splash-level drops
+which report an elevation of zero over water.  However, the type
+182 low-level reccos, which report an estimate of sea-level
+pressure, report the flight-level altitude as elevation.  Since
+these flights are several hundred meters above the ground this
+lead to large residuals in the heights of these estimated sea-
+level pressures.  The program GLOBAL OIQC program had thrown out
+most of the data, but some had gotten through.  The change will
+hardwire the height of these low-level recco report type 182
+surface data to zero.
+
+     2) GLOBAL: The previous version contained a lower-limit of
+938 mb for accepting type 182 pressures.  Pressures below this
+limit were flagged as bad, and the report was not used by the
+analysis.  During strong hurricanes, a valid sea-level pressure
+less than this limit could be reported by a drop.  This lower
+limit is being changed to 800 mb to allow such data to pass
+through.  If a type 182 pressure truly is bad, the GLOBAL OIQC
+should flag it.  The REGIONAL version is not being changed, since
+the REGIONAL OIQC program's response to bad pressures here is
+uncertain.
+
+     3) GLOBAL: All surface mass data in the type 132 drops, as
+well as the estimated sea-level pressure (and height) in the type
+132 low-level reccos, are now flagged for non-use by the analysis
+regardless of its quality or value.  This is being done for two
+reasons:
+          a) This surface information is already provided to the 
+             analysis in the type 182 reports.  This will remove
+             the redundancy of information.  
+          b) The type 182 pressures are quality controled by the 
+             GLOBAL OIQC program, but the type 132 surface (sea-
+             level) pressures are not.  In addition, the CQCHT 
+             program does not quality control type 132 reports.  
+             If the reported sea-level pressure is bad, it would 
+             get through to the analysis as a type 132. 
+
+     4) In a rerun case for 06Z 07 February 1995, a dropwinsonde
+was incorrectly coded into ON29 with all cat. 2 level pressure
+values of zero.   In the previous version's GLOBAL processing of
+the type 182 sea- (splash) level pressure report, the 0 mb
+pressure was flagged as bad (since it was below the acceptable
+limit of 938 mb), but it was retained since there was no lower
+limit for processing surface (sea-level) pressure.  (In the
+REGIONAL, levels with a pressure below the limit were/are
+skipped, so the report was not processed.)  The subsequent GLOBAL
+PREVENTS program failed when it encountered this 0 mb pressure
+value.  PREPDATA is changed to place a lower-limit on the sea-
+level pressure in a type 182 report.  The report will not be
+processed if the pressure is less than 1 mb in the GLOBAL and 50
+mb in the REGIONAL. 
+
+     5) GLOBAL: The time window for processing type 182 reports
+is changed from 3-hours to 6-hours on each side of the cycle
+time.  This will be consistent with the time window for
+preocessing type 132/232 recco/drops (see I.1 above).
+
+
+III.  SPECIFIC NON-OPERATIONAL CHANGES
+
+   A. CHANGES TO GOES-I SATELLITE RETRIEVAL PROCESSING 
+
+     1) The temperature, height, and specific humidity on the
+"surface" level of a sounding are now given at best a suspect
+quality mark.  (This is not done for output to the 36-day
+archive.).  In the REGIONAL, the surface level of the mass report
+gets a suspect quality mark of '3'.
+
+
+===================================================================
+
+      Corrections to the Processing of Reconnaissance Data
+                                
+                         Dennis Keyser
+                                
+                       12Z 28 August 1995
+
+Prior to 12Z 28 August 28 1995 the oi-data preprocessor
+(PREPDATA) processed entire flight-level reconnaissance and
+dropwinsonde reports with report types 132(mass) and 232(wind). 
+In addition, the surface level of the drops (splash-level) and
+the estimated sea-level pressure reported from a low-level recco
+flight were processed as marine surface reports with type
+182(mass).  
+
+Several problems in PREPDATA's processing of the type 182 reports
+were discovered in August 1995.  I am submitting a crisis JIF of
+PREPDATA to correct these problems, which I have listed below. 
+This will be implemented at 12Z on 28 August 1995.
+
+     1) Prior to the fix: PREPDATA was assigning the reported
+elevation to the height of the surface level in type 182.  This
+was correct for splash-level drops which report an elevation of
+zero over water.  However, the low-level reccos report the
+flight-level altitude as elevation.  Since these flights are
+several hundred meters above the ground this led to large
+residuals in the heights of these estimated sea-level pressures. 
+OIQC in the GLOBAL system had thrown out most of the data, but
+some had gotten through.  Both the REGIONAL and GLOBAL versions
+of PREPDATA are being changed to hardwire the height of these
+surface data to zero.
+
+     2) Last week (prior to the fix) during hurricane Felix,
+several drops reported a sea-level pressure less than the lower
+limit of 938 mb for acceptance by PREPDATA.  ALL surface types
+with pressures below this limit were flagged as bad.  The GLOBAL
+version of PREPDATA is being changed to accept pressures as low
+as 800 mb for type 182 (the limit is still 938 mb for all other
+surface types).  If a type 182 pressure truly is bad, the GLOBAL
+OIQC should flag it.
+The REGIONAL version of PREPDATA is not being changed, since the
+REGIONAL OIQC's response to bad 182 pressures is uncertain.
+
+     3) The GLOBAL version of PREPDATA is being changed to flag
+all surface mass data in the type 132 drops and the estimated
+sea-level pressure (and height) in the type 132 low-level reccos,
+regardless of its quality or value.  This is being done for two
+reasons:
+          a) This surface information is already provided to the
+             analysis in the type 182 reports.  This change will
+             remove the redundancy of information.  
+          b) The type 182 pressures are QC'd by the GLOBAL OIQC,
+             but the type 132 surface (sea-level) pressure is not
+             In addition, CQCHT does not QC type 132 reports.     
+          Prior to the fix, if the reported sea-level pressure
+             was bad, it would have gotten through to the    
+          analysis as a type 132. 
+The REGIONAL version of PREPDATA is not being changed to flag
+such data.
+
+     4) In a rerun case for 06Z 07 February 1995 using the
+version of PREPDATA before this fix (by Bert Katz), a
+dropwinsonde was incorrectly coded into ON29 with all significant
+level pressure values of zero.  PREPDATA has a lower limit for
+processing upper-air pressure levels; 1 mb in the GLOBAL system
+and 50 mb in the REGIONAL system.  All levels with pressure below
+this limit are skipped.  Thus, these levels with 0 mb pressure
+were not included in the type 132/232 drops report.  In the
+processing of the type 182 sea- (splash) level pressure report,
+the 0 mb pressure was flagged as bad (since it was below the
+acceptable limit of 938 mb), but it was retained since there was
+no lower limit for processing surface (sea-level) pressure in the
+GLOBAL system.  (In the REGIONAL system, levels with a pressure
+below the limit were skipped, so the report was not processed.) 
+The subsequent GLOBAL PREVENTS program failed when it encountered
+this 0 mb pressure value. The REGIONAL and GLOBAL versions of
+PREPDATA are being changed to place a limit on the sea-level
+pressure in a type 182 report.  The report will not be processed
+if the pressure is less than 1 mb in the GLOBAL and 50 mb in the
+REGIONAL (same as pressure check for all levels in the upper-air
+data). 
+
+     5) The time window for processing reccos and drops in the
+GLOBAL version of PREPDATA is 6-hours on each side of the cycle
+time for types 132/232.  However, for the type 182 it had been
+just 3-hours on each side of the cycle time.  The GLOBAL version
+of PREPDATA is being changed to give type 182 reports a 6-hour
+window about the cycle time.

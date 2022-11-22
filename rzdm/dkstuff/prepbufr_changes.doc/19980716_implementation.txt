@@ -1,0 +1,57 @@
+                                                  July 16, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- UPDATE # 4)
+
+The February 17, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the fourth time.  UPDATE #4 was
+implemented on 1200 UTC 16 July 1998.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 3  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Added new namelist logical switch FLGOES which is a 4-
+word array allowing all GOES sounding/retrieval reports from
+every other even or odd GOES satellite to be flagged for non-use
+by the analysis (needed when two even satellites or two odd
+satellites are producing data but only one is to be used
+operationally).  Character 6 of the GOES station id is now unique
+for two different, but consecutive, even or odd satellites.  This
+does NOT apply to GOES radiances. [MAIN, GOESDG] 
+
+ 
+II.  OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A) CHANGES TO WIND PROFILER DATA PROCESSING
+
+     1) Modified Cat. 11 (height, horizontal significance,
+vertical significance) and VAD wind header (station id)
+processing to account for updates to BUFRTABLE mnemonics in
+/dcom. [W3UNPKB7]
+
+
+   B) CHANGES TO GOES SOUNDING/RETRIEVAL/RADIANCE DATA PROCESSING
+
+     1) Changed character 6 of GOES station id to be unique for
+two different, but consecutive, even or odd satellite ids. 
+(Every other even or odd satellite id now gets the same character
+6 tag.) [W3UNPKB7]
+
+     2) All GOES-10 layer PW retrievals are now being flagged
+with q.m.=15 so that they will not be assimilated by the analysis
+during the test period.  This does not apply to GOES radiances
+which do not have a q.m. [DATACARDS]
+
+
+
+
+   C) CHANGES TO GOES SATELLITE WIND DATA PROCESSING
+
+     1) All GOES-10 satellite wind reports (all types) are now
+being flagged with q.m.=15 so that they will not be assimilated
+by the analysis during the test period. [DATACARDS]
+

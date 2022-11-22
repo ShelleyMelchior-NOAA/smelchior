@@ -1,0 +1,745 @@
+QC flags set in call_acftqc_tfile_all.f and acftobs_qc.f
+--------------------------------------------------------
+
+(revised by P.M. Pauley 3/19/2001)
+
+(NAVDAS numeric codes assigned to the quality control variable ichk
+in the subroutine lastpas_qc are listed in parentheses.)
+-------------------------------------------------------------------
+
+Legend for QC flags
+-------------------
+( 1:1 ) info about reject
+        'A'--altitude error (REJECT REPORT!)
+        'B'--report declared bad in decoder or aircraft id = XX999
+             or bad Airbus re-encoded AIREP (REJECT REPORT!)
+        'd'--near duplicate (REJECT REPORT!)
+        'D'--exact duplicate (REJECT REPORT!)
+        'e'--encode error--reject report with missing winds (REJECT REPORT!)
+        'E'--encode error--report rejected (REJECT REPORT!)
+        'N'--duplicate check or stuck value check not performed 
+	'O'--isolated off-track point (REJECT REPORT!)
+	'p'--point closer to last rejected point than to current point (REJECT REPORT!)
+	'P'--unrealistic airspeed (REJECT REPORT!)
+        'r'--redundant report (REJECT REPORT!)
+        's'--small flight--too few reports to check (REJECT REPORT!)
+        'S'--suspect reports--too many rejects for flight (REJECT REPORT!)
+	't'--time error (REJECT REPORT!)
+	'v'--report failed bounce test (REJECT REPORT!)
+	'V'--unrealistic vertical speed (REJECT REPORT!)
+	'W'--waypoint error (REJECT REPORT!)
+	'X'--isolated minimum/maximum altitude (REJECT REPORT!)
+	'2'--second flight with same ident found
+	' '--good report
+        '-'--not checked
+
+	'A'--anomalous
+( 2:2 ) time             \  'B' or 'b'--bad
+( 3:3 ) latitude          | 'E'--encode error
+( 4:4 ) longitude         | 'I' or 'i'--inconsistent
+( 5:5 ) pressure/altitude | 'K'--constant (stuck) values
+( 6:6 ) temperature       | 'M'--missing
+( 7:7 ) direction         | 'N'--not checked
+( 8:8 ) speed             | 'R' or 'r'--rehabilitated [1]
+( 9:9 ) mixing ratio     /  'S' or 's'--suspect
+                            '-'--not checked
+	' '--passed checks
+
+(10:10) black lists
+        'C'--aircraft reports temperature in whole deg C
+        'F'--aircraft reports flipped winds (not checked here)
+        'L'--aircraft reports decimal lat/lon (not checked here)
+        'T'--temperature blacklisted
+        'W'--winds blacklisted
+        'O'--both temperature and winds blacklisted
+        ' '--passed black-list checks
+(11:11) flight phase
+        'a'--low-resolution ascent
+        'A'--high-resolution ascent
+	'd'--low-resolution descent
+        'D'--high-resolution descent
+	'I'--isolated report
+        'L'--level flight
+	'N'--time difference too great to permit check
+        'U'--unknown
+
+[1] If altitude is read and pressure computed, c_qc(ii)(5:5) = 'R'
+    If pressure is read and altitude computed, c_qc(ii)(5:5) = 'r'
+
+
+call_acftqc_tfile_all.f
+-----------------------
+
+1)   The QC flag array (c_qc) is initialized as '-----------'.  A dash therefore
+     indicates that that particular variable was not checked.
+
+2)   Most aircraft data either gives pressure or (pressure) altitude.  Only MDCRS
+     lists both.  Therefore, c_qc(ii)(5:5) is set to signal which was computed from
+     the other.
+
+     c_qc(ii)(5:5) = 'r'    if pressure is read and altitude computed (NAVDAS = -6)
+
+     c_qc(ii)(5:5) = 'R'    if altitude is read and pressure computed (NAVDAS = -8)
+
+     These flags are informational only and do not indicate that the report was rejected.
+
+
+3)   If odd values of various parameters are detected in reading the MDCRS data,
+     the report is flagged as bad in column 1.  (REJECT REPORT!) (NAVDAS = 28)
+
+     c_qc(ii)(1:1) = 'B'    if a non-alphanumeric character is found
+                                 in the flight id or tail number.
+
+                            if the temperature precision is other than 100, 50,
+                                 25, 10, or -99.
+
+                            if the data relay system is other than 3.
+
+                            if the position QC is other than 0.
+
+                            if the flight phase is other than 3, 5, 6, or 9.
+                                (7 added to account for an ISIS2000 problem--1/26/00)
+
+                            if the wind instrument is other than 4.
+				(0, 8, or 12 are also valid, but I haven't seen any examples.)
+
+                            if the roll angle QC flag is other than 0, 1, or 9.
+                                 (3 added to account for an ISIS2000 problem--1/26/00)
+
+                            if the mixing ratio QC flag is other than 0, 1, 2, 3, 4, 
+                                 5, 6, 7, 8, 9, or -9.
+
+                            if the ACARS interpolation flag is other than 0, 2, 3,
+                                 or 9. (1 is also valid, but I haven't seen any examples.)
+
+     This flag indicates that the report should be rejected.  However, the decoder
+     problem that this flag addresses has been fixed; no decoder problems were 
+     found in the October 1998 dataset.  Even so, new problems can occur; a problem in
+     the data stream caused this problem to reappear in the April 1999 dataset.  Note 
+     that some of the variables are assigned a single character in the FGGE format; in 
+     this case, 9 implies a missing value.  It should also be noted that acceptable
+     values can also change.  The changes to the MDCRS data stream in November 2000
+     included the addition of FedEx reports, which have a temperature precision of
+     0.1K.  Both the data and the decoder should be examined if decoder errors show up!
+
+
+acftobs_qc.f
+------------
+
+1)   Duplicate check (dupchek_qc)
+
+     This subroutine checks for both near and exact duplicates.  An effort is 
+     made to retain the better of the two reports when a duplicate is found.
+
+     a)   c_qc(ii)(1:1) = 'N'     if the report cannot be checked for duplicates
+                                       (This happens only for the first report.)
+                                       (don't reject) (NAVDAS = 0)
+
+     b)   c_qc(ii)(1:1) = 'D'     if report is an exact duplicate (REJECT REPORT!)
+	                               (NAVDAS = 20)
+
+     c)   c_qc(ii)(1:1) = 'd'     if report is a near duplicate.  An effort is made to
+	                          keep the better of the two reports, e.g., MDCRS 
+				  is kept over AIREP, AMDAR is kept over AIREP, 
+				  AIREP is kept over manAIREP, full ids are kept
+				  over truncated ids, reports with temperature or
+			    	  winds missing are rejected if the duplicate has
+				  temperature/winds, MDCRS reports with the roll 
+			          angle QC flag marked bad are rejected, etc.
+			          (REJECT REPORT!) (NAVDAS = 22)
+
+     d)   c_qc(ii)(1:1) = 'e'     if report is a close duplicate with the same aircraft 
+	                          id in which the temperatures differ by a large
+			          amount and the winds are missing in the rejected
+			          report.  This seems to be some sort of systematic
+				  error associated with manual aireps.  The report
+				  with the missing winds is generally the one with 
+				  the bad temperature. (REJECT REPORT!) (NAVDAS = 24)
+
+     e)   c_qc(ii)(1:1) = 'E'     if an encode error is detected, that is the report is 
+	                          a close duplicate with the same aircraft id in
+	                          which either the temperatures differ by more than
+				  2.05K or the winds differ by more than 1.25 m/s
+				  or 10 deg.  (Close duplicates with the same 
+				  aircraft id and with temperature differences less
+			          than 2.05K are marked as near duplicates.)
+				  (REJECT REPORT!) (NAVDAS = 24)
+
+          c_qc(ii)(6:6) = 'E'     if a temperature encode error is detected, one report
+		                  is rejected (c_qc(ii)(1:1) = 'E') and the other
+				  report has the temperature marked bad with 'E'
+				  (reject temperature only!) (NAVDAS = 26)
+
+          c_qc(ii)(7:7) = 'E'     if a wind direction encode error is detected, one
+	                          report is rejected (c_qc(ii)(1:1) = 'E') and the
+				  other report has the wind direction marked bad
+				  with 'E' (reject wind only!) (NAVDAS = 26)
+
+          c_qc(ii)(8:8) = 'E'     if a wind speed encode error is detected, one report
+		                  is rejected (c_qc(ii)(1:1) = 'E') and the other
+				  report has the wind speed marked bad with 'E'
+				  (reject wind only!) (NAVDAS = 26)
+
+     f)   c_qc(ii)(1:1) = ' '     if report is good and is retained in duplicate check
+	                          (NAVDAS = 0)
+
+
+2)   Invalid report check (invalid_qc)
+
+     The invalid report check looks for obviously invalid reports and rejects them.
+
+     a)   c_qc(ii)(1:1) = 'B'     if the aircraft id equals 'XX999' (REJECT REPORT!)
+	                          (This normally occurs only for manual aireps
+				  and indicates the flight id was missing.)
+				  (NAVDAS = 28)
+
+     b)   c_qc(ii)(1:1) = 'B'     if the report was marked bad in the decoder
+				  (REJECT REPORT!) (details are shown above)
+				  (NAVDAS = 28)
+
+     c)   c_qc(ii)(3:4) = 'BB'    if the latitude and longitude are both zero 
+	                          (REJECT REPORT!) (NAVDAS = 62)
+
+     d)   c_qc(ii)(2:2) = 'M'     if time is missing (REJECT REPORT!) (NAVDAS = 50)
+
+     e)   c_qc(ii)(3:3) = 'M'     if latitude is missing (REJECT REPORT!) (NAVDAS = 52)
+
+     f)   c_qc(ii)(4:4) = 'M'     if longitude is missing (REJECT REPORT!) (NAVDAS = 52)
+
+     g)   c_qc(ii)(5:5) = 'M'     if both pressure and altitude are missing 
+	                          (REJECT REPORT!) (NAVDAS = 54)
+
+     h)   c_qc(ii)(5:5) = 'B'     if pressure is too small (< 116 mb) or altitude
+                                  is too high (> or = 50,000') (AFR and BAW
+				  manAIREPs above 50,000' are valid and allowed) 
+				  (REJECT REPORT!) (NAVDAS = 64)
+
+     i)   c_qc(ii)(5:5) = 'B'     if the pressure altitude is small (< 600 ft) and
+	                          the report is an airep or man_airep (The 
+				  AIREP format does not allow negatives, so
+				  AMDAR reports with negative altitudes are
+				  re-encoded as AIREPs with a positive altitude!)
+				  (REJECT REPORT!) (NAVDAS = 64)
+
+     j)   c_qc(ii)(6:8) = 'MMM'   if the report is "empty"-- temperature and winds 
+                                  are either missing or zero (REJECT REPORT!)
+				  (NAVDAS = 56)
+									   
+          c_qc(ii)(9:9) = 'N'     if report is "empty" and moisture is not missing
+		                  (NAVDAS = -1)
+
+	  c_qc(ii)(9:9) = 'M'     if report is "empty" and moisture is missing
+		                  (NAVDAS = 56)
+
+     k)   c_qc(ii)(6:6) = 'I'     if the temperature equals -9C and would be rejected
+	                          by the gross check or three consecutive reports
+				  from the same flight have a temperature of -9C
+				  (two in a row at the beginning or end of a flight)
+				  (reject temperature only) (NAVDAS = 47)
+
+
+3)   Stuck check (stk_val_qc)
+
+     This subroutine looks for flights (or portions of flights in some cases) where
+     the time, latitude, longitude, pressure, temperature, or winds are constant (or
+     nearly so).  The constant time check is performed on flights with three or more 
+     reports; the remaining checks are performed on flights with four or more reports.
+     There is also a requirement that the flight consist either of all manAIREPs or
+     more than three automated reports.
+
+     a)   c_qc(ii)(2:2) = 'K'     if time is constant within 1 second for the whole 
+                                  flight (or a portion of the flight with three 
+    	    	                  or more constant time reports) and either 
+				  1) time equals zero; 2) altitudes vary less 
+				  than 100 ft; or 3) altitudes vary more than 
+				  9000 ft (to permit constant time for the bottom 
+				  of a high-resolution sounding). (REJECT REPORT!)
+				  (NAVDAS = 40)
+
+     b)   c_qc(ii)(3:4) = 'KK'    if latitude and longitude are both constant within
+	                          0.015 deg for the whole flight (or for a portion 
+				  of the flight with three or more constant 
+				  position reports and either 1) lat is constant 
+				  at 0; 2) lon is constant at 0; 3) altitudes vary
+				  less than 100 ft; or 4) altitudes vary more than 
+				  9000 ft. (REJECT REPORT!) (NAVDAS = 42)
+
+     c)   c_qc(ii)(3:3) = 'K'     if latitude is constant within 0.005 deg for the 
+	                          whole flight (but the latitude is not rounded 
+	                          to the nearest whole degree), the flight
+				  lasts more than 30 min, and either 1) the 
+				  latitude equals zero; 2) altitudes vary less
+				  than 100 ft; or 3) altitudes vary more than
+				  9000 ft (REJECT REPORT!) (NAVDAS = 42)
+
+     d)   c_qc(ii)(4:4) = 'K'     if longitude is constant within 0.005 deg for the 
+	                          whole flight (but the longitude is not rounded
+				  to the nearest whole degree), the flight 
+				  lasts more than 30 min, and either 1) the
+				  longitude equals zero; 2) altitudes vary less
+				  than 100 ft; or 3) altitudes vary more than
+                                  9000 ft (REJECT REPORT!) (NAVDAS = 42)
+
+     e)   c_qc(ii)(5:5) = 'K'     if pressure is constant within 0.05 mb for the
+	                          whole flight, the pressure is greater than 
+			          750 mb, and the flight lasts more than 30 min
+                                  (REJECT REPORT!) (NAVDAS = 44)
+
+     f)   c_qc(ii)(5:5) = 'K'     if altitude is constant within 10 ft for the whole
+	                          flight, the altitude is less than 8000 ft,
+				  and the flight lasts more than 30 min
+                                  (REJECT REPORT!) (NAVDAS = 44)
+
+     g)   c_qc(ii)(6:6) = 'K'     if temperature is constant within 0.05K for the 
+	                          whole flight and either the altitude varies 
+				  by more than 1500 ft or the maximum altitude
+				  is greater than 25,000 ft
+                                  (REJECT REPORT only if winds are constant as well!
+				  Otherwise reject only temperature)  (NAVDAS = 46)
+									   
+     h)   c_qc(ii)(6:6) = 'R'     if temperature was recomputed to account for 
+                                  having been measured in whole degrees C and 
+                                  reported as if in tenths (MDCRS or ACARS)
+                                  (don't reject temperature--temperature precision 
+				  changed to 1.00) (NAVDAS = -10)
+
+     i)   c_qc(ii)(6:6) = 'b'     if temperature was marked bad to account for
+                                  having been measured in whole degrees C and 
+                                  reported as if in tenths (AIREP)
+                                  (reject temperature but not entire report)
+				  (NAVDAS = 67)
+
+     j)   c_qc(ii)(7:7) = 'K'     if wind direction constant within 0.5 deg for the 
+	                          whole flight (but the direction is not rounded
+				  to the nearest ten degrees) and either the
+				  altitudes vary less than 100 ft or more than 
+				  9000 ft (REJECT REPORT only if temperature is 
+				  constant as well!  Otherwise reject only winds)
+				  (NAVDAS = 46)
+ 
+     k)   c_qc(ii)(8:8) = 'K'     if wind speed constant within 0.05 m/s for the whole
+	                          flight (excluding flights with direction rounded
+				  to nearest 10 degrees) and either the altitudes
+				  vary less than 100 ft or more than 9000 ft
+                                  (REJECT REPORT only if temperature is constant 
+				  as well! Otherwise reject only winds) 
+				  (NAVDAS = 46)
+                                        
+     l)   c_qc(ii)(9:9) = 'K'     if mixing ratio constant within 0.005 for the whole
+	                          flight, the mixing ratio is greater than zero
+				  (zero is assumed to mean missing), and either
+				  the altitiudes vary less than 100 ft or more 
+				  than 9000 ft (reject only mixing ratio)
+				  (NAVDAS = 46)
+
+
+3)   Gross check (grchek_qc)
+
+     This subroutine compares values to climatological bounds looking for gross errors.
+
+     a)   c_qc(ii)(2:2) = 'S'     if the time is equal to 00Z 
+                                  (marked as suspect to be checked later)
+				  (NAVDAS = 10)
+	 
+     b)   c_qc(ii)(2:2) = ' '     if time passes the gross check
+                                  (NAVDAS = 0)
+	 
+     c)   c_qc(ii)(3:3) = 'B'     if the latitude is greater than 90 or less than -90 deg
+                                  (REJECT REPORT!) (NAVDAS = 62)
+								  
+     d)   c_qc(ii)(3:3) = 'S'     if the latitude is zero 
+	                          (marked as suspect to be checked later)
+				  (NAVDAS = 12)
+	 
+     e)   c_qc(ii)(3:3) = ' '     if latitude passes the gross check (NAVDAS = 0)
+	 
+     f)   c_qc(ii)(4:4) = 'B'     if the longitude is greater than 360 or less than 0 deg
+                                  (REJECT REPORT!) (NAVDAS = 62)
+	 
+     g)   c_qc(ii)(4:4) = 'S'     if the longitude is zero 
+                                  (marked as suspect to be checked later)
+				  (NAVDAS = 12)
+
+     h)   c_qc(ii)(4:4) = ' '     if longitude passes the gross check
+                                  (NAVDAS = 0)
+
+     i)   c_qc(ii)(5:5) = 'B'     if the pressure is greater than 1080 mb or less than 
+                                  50 mb (REJECT REPORT!) (NAVDAS = 64)
+
+     j)   c_qc(ii)(5:5) = 'I'     if the altitude computed from the pressure differs from
+	                          reported altitude by more than 25' (REJECT REPORT!)
+				  (NAVDAS = 74)
+
+     k)   c_qc(ii)(5:5) = ' '     if pressure/altitude pass the gross check (NAVDAS = 0)
+	 
+     l)   c_qc(ii)(1:1) = 'B'     if manAIREP is a near-surface UAL report (altitude 
+	                          less than 5000' and temperature is missing)
+				  (1/27/00--These are actually erroneous reports 
+				  from UAL Airbus A320/A319 aircraft that Tinker 
+				  has incorrectly re-encoded into AIREP format.  
+				  In these reports, the altitude is divided by 10, 
+				  temperature is missing, the values listed as 
+				  windspeed are actually wind direction, and it's 
+				  not clear what is listed as wind direction.)
+				  (NAVDAS = 28)
+
+
+     m)   c_qc(ii)(10:10) = 'T'   if temperature is black-listed (not used as present)
+                                  (NAVDAS = 80)
+	 
+     n)   c_qc(ii)(10:10) = ' '   if temperature passes the black list check
+	                          (NAVDAS = 0)
+	 
+     o)   c_qc(ii)(10:10) = 'C'   if temperature is on the list of aircraft that measure
+                                  temperature in whole degrees C 
+				  (for information only) (not set in NAVDAS)
+
+     p)   c_qc(ii)(6:6) = 'R'     if temperature was recomputed to account for 
+                                  having been measured in whole degrees C and 
+                                  reported as if in tenths (MDCRS or ACARS)
+                                  (don't reject temperature--temperature precision
+				  changed to 1.00) (NAVDAS = -10)
+
+     q)   c_qc(ii)(6:6) = 'b'     if temperature was marked bad to account for
+                                  having been measured in whole degrees C and 
+                                  reported as if in tenths (AIREP)
+                                  (reject temperature only) (NAVDAS = 67)
+
+     r)   c_qc(ii)(6:6) = 'M'     if temperature is missing (NAVDAS = 56)
+
+     s)   c_qc(ii)(6:6) = 'B'     if a cold temperature with missing winds is found
+				  This is a systematic error that is not always
+				  caught by the gross check.  The temperatures
+				  in this case are generally less than 200K; a
+				  threshold of 205K is used in the test.
+				  (REJECT REPORT!) (NAVDAS = 66)
+
+     t)   c_qc(ii)(6:6) = 'B'     if temperature fails the Moninger gross check 
+                                  (REJECT REPORT!--This often is a result of a bad 
+				  altitude rather than a bad temperature, so the
+				  entire report is rejected to play it safe.)
+				  (NAVDAS = 66)
+
+     u)   c_qc(ii)(6:6) = ' '     if temperature passes the gross check (NAVDAS = 0)
+
+     v)   c_qc(ii)(10:10) = 'W'   if the wind is black-listed (not used at present)
+                                  (NAVDAS = 80)
+
+     w)   c_qc(ii)(10:10) = 'O'   if both temperature and winds are black-listed
+	                          (not used at present) (NAVDAS = 80)
+
+     x)   c_qc(ii)(7:7) = 'M'     if the wind direction is missing (NAVDAS = 56)
+
+     y)   c_qc(ii)(7:7) = 'B'     if the wind direction is less than 0 or greater than 
+	                          360 (reject winds only) (NAVDAS = 68)
+
+     z)   c_qc(ii)(7:7) = ' '     if the wind direction passes the gross check
+	                          (NAVDAS = 0)
+
+     aa)  c_qc(ii)(8:8) = 'M'     if the wind speed is missing (NAVDAS = 56)
+
+     bb)  c_qc(ii)(7:7) = 'I'     if wind speed is missing but direction isn't
+                                  (reject winds only) (NAVDAS = 76)
+
+     cc)  c_qc(ii)(8:8) = 'I'     if wind direction is missing but speed isn't
+                                  (reject winds only) (NAVDAS = 76)
+
+     dd)  c_qc(ii)(8:8) = 'B'     if the wind speed is negative
+                                  (reject winds only) (NAVDAS = 68)
+
+     ee)  c_qc(ii)(8:8) = 'S'     if the wind speed is zero above 700 mb
+                                  (marked as suspect to be checked later)
+     			          (NAVDAS = 16)
+
+     ff)  c_qc(ii)(8:8) = 'B'     if the wind speed fails the Moninger gross check
+                                  (reject winds only) (NAVDAS = 68)
+
+     gg)  c_qc(ii)(8:8) = ' '     if the wind speed passes the gross check (NAVDAS = 0)
+
+     hh)  c_qc(ii)(9:9) = 'M'     if the mixing ratio is missing (NAVDAS = 56)
+
+     ii)  c_qc(ii)(9:9) = 'B'     if the mixing ratio qc flag indicates a bad value
+                                  (reject mixing ratio only) (NAVDAS = 68)
+
+     jj)  c_qc(ii)(9:9) = 'N'     if the mixing ratio supersaturation check can't be
+                                  performed (NAVDAS = -1)
+
+     kk)  c_qc(ii)(9:9) = 'S'     if the mixing ratio is supersaturated
+                                  (marked as suspect to be checked later)
+  			          (NAVDAS = 16)
+
+     ll)  c_qc(ii)(9:9) = ' '     if the mixing ratio passes the gross check (NAVDAS = 0)
+
+     mm)  if((c_qc(ii)(6:6).eq.'K'.or.     if both the temperature and winds
+     $        c_qc(ii)(10:10).eq.'T'.or.   are bad, stuck, or missing, reject
+     $        c_qc(ii)(10:10).eq.'O'.or.   the whole report  (REJECT REPORT!)
+     $        c_qc(ii)(6:6).eq.'M'.or.     (flags set individually for each quantity)
+     $        c_qc(ii)(6:6).eq.'E'.or.     
+     $        c_qc(ii)(6:6).eq.'I'.or.     
+     $        c_qc(ii)(6:6).eq.'B'.or.
+     $        c_qc(ii)(6:6).eq.'b').and.
+c
+     $       (c_qc(ii)(7:7).eq.'K'.or.
+     $        c_qc(ii)(8:8).eq.'K'.or.
+     $        c_qc(ii)(10:10).eq.'W'.or.
+     $        c_qc(ii)(10:10).eq.'O'.or.
+     $        c_qc(ii)(7:7).eq.'M'.or.
+     $        c_qc(ii)(8:8).eq.'M'.or.
+     $        c_qc(ii)(7:7).eq.'E'.or.
+     $        c_qc(ii)(8:8).eq.'E'.or.
+     $        c_qc(ii)(7:7).eq.'B'.or.
+     $        c_qc(ii)(8:8).eq.'B'.or.
+     $        c_qc(ii)(7:7).eq.'I'.or.
+     $        c_qc(ii)(8:8).eq.'I')
+
+
+4)   Position check (poschek_qc)
+
+     This subroutine checks duplicate reports with different positions, altitudes
+     or times and attempts to choose the best one.  Redundant data at the same
+     altitude (at altitudes below 20,000') are also rejected.
+
+     a)  c_qc(ii)(2:2) = 'K'      if the time is stuck for a shorter flight segment
+                                  than previously diagnosed (REJECT REPORT!)
+				  (NAVDAS = 40)
+
+     b)  c_qc(ii)(5:5) = 'B'	  if the pressure/altitude on the ground is invalid
+	                          These reports are from United Airlines, which
+				  uses 2000 ft as its lowest report.  They are 
+				  detected as being within 5 min of a report
+				  at 2000 ft, with a temperature greater than
+				  that in the 2000 ft report, and with an altitude
+				  difference greater than 6000 ft
+	                          (REJECT REPORT!) (NAVDAS = 64)
+
+     c)  c_qc(ii)(1:1) = 'r'      if the report is redundant, diagnosed as multiple
+	                          reports on the ground or multiple reports with
+				  the same altitude below 8,000', which occurs
+				  during descents (REJECT REPORT!) (NAVDAS = 30)
+
+     d)  A waypoint discrepancy is defined as duplicate manAIREPs with similar times
+         and altitudes but with latitudes or longitudes differing by 0.5 deg or more.
+	 If the two locations are within 115 km, the positions are averaged together 
+	 in the report that is retained.  If reports on either side of the pair are 
+	 available and are adequately close (i.e., within 2500 km), a position is 
+	 interpolated to the time of the duplicates.  The report closest to the 
+	 interpolated position is retained; the other report is rejected.  If only 
+	 one neighboring report is available and its time is within 90 minutes of 
+	 the duplicate pair, the distances between the neighboring report and each 
+	 duplicate is computed.  If one is less than 1500 km and the other is greater 
+	 than 1500 km, the nearer one is retained.  If none of these methods is 
+	 applicable, both duplicates are rejected.                          
+ 	 
+         c_qc(ii)(1:1) = 'W'      if the report is rejected as having a waypoint error
+         c_qc(ii)(3:4) = 'BB'          (REJECT REPORT!) (NAVDAS = 62)
+
+	 c_qc(ii)(3:4) = 'RR'     if an averaged position is used for the report
+	                               (do not reject report) (NAVDAS = -4)
+								
+								
+     e)  An altitude discrepancy is defined as duplicate manAIREPs with similar 
+	 times, latitudes, and longitudes, but altitudes that differ by more than 
+	 1000'.  If reports on either side of the pair are available and are 
+	 adequately close, an attempt is made to choose the duplicate that fits 
+	 best with those reports.  If neither report fits well enough to be chosen 
+	 or if neighboring report(s) are not available, both duplicate reports are 
+	 rejected.
+								
+         c_qc(ii)(1:1) = 'A'      if the report is rejected as having an
+         c_qc(ii)(5:5) = 'B'           altitude error (NAVDAS = 64)
+
+     f)  A time discrepancy is defined as duplicate manAIREPs with similar latitudes,
+	 longitudes, and altitudes, but times that differ by more than 60 sec.  If 
+	 the reports are within 30 min, the time is averaged in the report that is 
+	 retained.  If reports on either side of the pair are available and are 
+	 adequately close, an attempt is made to choose the duplicate that fits 
+	 best with those reports.  If neither report fits well enough to be chosen 
+	 or if neighboring report(s) are not available, both duplicate reports are 
+	 rejected.
+								
+         c_qc(ii)(1:1) = 't'      if the report is rejected as having an
+         c_qc(ii)(2:2) = 'B'           time error (REJECT REPORT!) (NAVDAS = 60)
+
+	 c_qc(ii)(2:2) = 'R'      if an averaged time is used for the report
+		                               (do not reject report) (NAVDAS = -2)
+
+								
+5)   Ordering check (ordchek_qc)
+
+     This subroutine first determines whether a particular report is ascending, 
+     descending, or in level flight.  If three points close in time are not available, 
+     the check is not performed and the report is marked not checked.  Some points are 
+     also not easily categorized and so are marked unknown. (Flight phase settings
+     affect the instrument type in NAVDAS, not the quality control flag ichk.)
+
+     a)   c_qc(ii)(11:11) = 'A'   if the plane is in high-resolution ascent with 
+                                  height, time, and position consistent 
+				  (do not reject report)
+
+     b)   c_qc(ii)(11:11) = 'a'   if the plane is in low-resolution ascent with 
+	                          height, time, and position consistent
+				  (small low-level manuevers allowed) 
+				  (do not reject report)
+
+     c)   c_qc(ii)(11:11) = 'L'   if the plane is in level flight with height, time,
+	                          and position consistent (do not reject report)
+
+     d)   c_qc(ii)(11:11) = 'D'   if the plane is in high-resolution descent with
+	                          height, time, and position consistent 
+				  (do not reject report)
+
+     e)   c_qc(ii)(11:11) = 'd'   if the plane is in low-resolution descent with
+	                          height, time, and position consistent 
+				  (small low-level manuevers allowed) 
+				  (do not reject report)
+
+     f)   c_qc(ii)(11:11) = 'I'   if a report (or pair of reports) is isolated in time   
+				  (do not reject report)
+
+     g)   c_qc(ii)(11:11) = 'U'   if the flight phase cannot be determined  
+				  (do not reject report)
+
+     h)   c_qc(ii)(11:11) = 'N'   if the time difference is too great to permit check
+				  (do not reject report)
+
+
+     The subroutine then looks for inconsistencies in the track of various kinds.
+
+     i)   c_qc(ii)(1:1) = 'd'     if the report is a manAIREP location duplicate 
+                                  (REJECT REPORT!) (NAVDAS = 22)
+
+     j)   c_qc(ii)(2:2) = 'K'     if the report has a previously missed stuck clock
+                                  (REJECT REPORT!) (NAVDAS = 40)
+
+     k)   c_qc(ii)(1:1) = 'p'     if the report is closer to the last rejected point
+	  c_qc(ii)(3:4) = 'II'    than to the last accepted point
+	                          (REJECT REPORT!) (NAVDAS = 72)
+
+     l)   c_qc(ii)(2:2) = 'I' 	  if the report is a UPS position report 
+	                          These reports are performed every 5 min even 
+	       		          during high-res ascents and descents.  The time 
+				  on the position report is often out-of-sync with 
+				  the time on the high-res reports, so these 
+				  reports are often out of order.
+	                          (REJECT REPORT!) (NAVDAS = 70)
+
+     m)   c_qc(ii)(1:1) = 'v'     if the report is fails the "bounce" test
+          c_qc(ii)(5:5) = 'I'     both vspds > 6000'/min and have opposite signs
+	                          (REJECT REPORT!) (NAVDAS = 74)
+	  if(c_qc(ii)(5:5).eq.'R')
+          c_qc(ii)(5:5) = 'i'	   (used if pressure computed from altitude)
+			                           (NAVDAS = 74)
+
+     n)   c_qc(ii)(1:1) = 'P'     if an unrealistic airspeed is found
+          c_qc(ii)(3:4) = 'II     aspd > 525 m/s
+		                  aspd > 350 m/s for manAIREPs or for a time 
+				  difference greater than 10 min
+				  aspd > 700 m/s for Concorde manAIREPs
+	                          (REJECT REPORT!) (NAVDAS = 72)
+
+     o)   c_qc(ii)(3:3) = 'B'     if an airspeed violation is associated with
+                                  a latitude of zero (REJECT REPORT!)
+				  (NAVDAS = 62)
+
+     p)   c_qc(ii)(4:4) = 'B'     if an airspeed violation is associated with
+                                  a longitude of zero (REJECT REPORT!)
+				  (NAVDAS = 62)
+
+     q)   c_qc(ii)(1:1) = 'V'     if an unrealistic vertical speed is found
+          c_qc(ii)(5:5) = 'I      vspd > 10,000'/min
+		                  vspd >  6,667'/min for a time 
+				  difference greater than 10 min
+	                          (REJECT REPORT!) (NAVDAS = 74)
+
+	                          These flags are also used if an ascent 
+				  discontinuity is found, where both 
+				  vspd > 5000'/min and a descending segment
+		                  are found in an ascent.
+	                          (REJECT REPORT!) (NAVDAS = 74)
+	  if(c_qc(ii)(5:5).eq.'R')
+          c_qc(ii)(5:5) = 'i'	   (used if pressure computed from altitude)
+			                           (NAVDAS = 74)
+
+
+     r)   c_qc(ii)(5:5) = 'I'     if an anomalous point is found at the beginning
+	                          of an ascent or the end of a descent.  (These
+		 	          points have a higher/lower altitude than the
+				  following point in the ascent/descent and occur
+				  primarily in AMDAR/AIREP reports.
+				  (REJECT REPORT!) (NAVDAS = 74)
+	  if(c_qc(ii)(5:5).eq.'R')
+          c_qc(ii)(5:5) = 'i'	   (used if pressure computed from altitude)
+			                           (NAVDAS = 74)
+			                           
+
+     s)   c_qc(ii)(1:1) = 'O'     if an isolated off-track point is found
+          c_qc(ii)(3:4) = 'II     (REJECT REPORT!) (NAVDAS = 72)
+
+     t)   c_qc(ii)(1:1) = '2'     if the rejected reports form a second flight
+                                  (do not reject report) (not set in NAVDAS)
+
+     u)   c_qc(ii)(1:1) = 'r'     if track doubles back on itself
+          c_qc(ii)(3:4) = 'II'    (REJECT REPORT!) (NAVDAS = 30)
+
+     v)   c_qc(ii)(1:1) = 'X'     if altitude is an isolated maximum/minimum
+          c_qc(ii)(5:5) = 'I'     (REJECT REPORT!) (NAVDAS = 74)
+
+     w)   c_qc(ii)(1:1) = 'X'     if track makes more than a 75 deg turn
+          c_qc(ii)(3:4) = 'II'    (REJECT REPORT!) (NAVDAS = 72)
+
+     x)   c_qc(ii)(8:8) = 'A'     if near-surface windspeed is too high
+                                  (seen at ends of UPS descents)
+	                          (reject winds only) (NAVDAS = 69)
+
+     y)   c_qc(ii)(2:2) = ' '     if a report with suspect time is accepted 
+                                  as part of a track
+	                          (do not reject report) (NAVDAS = 0)
+
+     z)   c_qc(ii)(3:3) = ' '     if a report with suspect latitude is accepted 
+                                  as part of a track
+	                          (do not reject report) (NAVDAS = 0)
+
+     aa)  c_qc(ii)(4:4) = ' '     if a report with suspect longitude is accepted 
+	                          as part of a track
+	                          (do not reject report) (NAVDAS = 0)
+
+     bb)  c_qc(ii)(5:5) = ' '     if a report with suspect altitude is accepted 
+	                          as part of a track
+	                          (do not reject report) (NAVDAS = 0)
+
+6)   Suspect data check (suspect_qc)
+
+     This subroutine re-examines suspect winds and determines whether they should be
+     accepted or rejected.  It also rejects reports from non-manAIREP flights with
+     only one or two reports.
+
+     a)   c_qc(ii)(1:1) = 's'     if only one or two reports are available from a 
+                                  flight, except for manAIREP flights
+	                          (REJECT REPORT!) (NAVDAS = 32)
+
+     b)   c_qc(ii)(8:8) = ' '     if suspect winds are accepted 
+	                          (do not reject report) (NAVDAS = 0)
+
+     c)   c_qc(ii)(8:8) = 'B'     if suspect winds are rejected 
+	                          (do not reject report) (NAVDAS = 68)
+
+     d)   c_qc(ii)(2:2) = 'B'     if suspect time is rejected 
+	                          (REJECT REPORT!) (NAVDAS = 60)
+
+     e)   c_qc(ii)(3:3) = 'B'     if suspect latitude is rejected 
+	                          (REJECT REPORT!) (NAVDAS = 62)
+
+     f)   c_qc(ii)(4:4) = 'B'     if suspect longitude is rejected 
+	                          (REJECT REPORT!) (NAVDAS = 62)
+
+     g)   c_qc(ii)(5:5) = 'B'     if suspect altitude is rejected 
+	                          (REJECT REPORT!) (NAVDAS = 64)
+
+     h)   c_qc(ii)(7:8) = 'ss'    if roll angle QC flag is set to bad
+	                          (set winds to suspect) (NAVDAS = 16)
+
+     i)   c_qc(ii)(1:1) = 'S'     if more than half of the available reports for a 
+                                  flight (or tail number for non-manAIREP flights)
+				  were previously rejected 
+	                          (REJECT REPORT!) (NAVDAS = 34)
+

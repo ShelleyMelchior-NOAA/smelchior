@@ -1,0 +1,109 @@
+
+       program DECODE_BUFR_EXAMPLE
+
+C-----------------------------------------------------------------------
+C  MAIN PROGRAM DECODE_BUFR_EXAMPLE
+C
+C  This skeleton code reads through an input NCEP-flavored BUFR file
+C   and decodes specific parameters from each report (subset) in the
+C   file.
+C
+C  The input file is assumed to be connected to FORTRAN unit 11.
+C
+C-----------------------------------------------------------------------
+
+      character*8  SUBSET
+
+          ! All arrays defining parameters decoded from a BUFR file
+          !  must be declared R*8 - arrays returned from multiple
+          !  (replicated) levels should be dimensioned with length 255
+          !  (the maximum number of levels that can be encoded into
+          !  most BUFR reports is 255)
+      real*8  OBS1_1, OBS1_2, OBSLV_1(255), OBSLV_2(255)
+
+      call DATELEN(10) ! we want to return a 10-digit idate from Sec. 1
+                       !  of each input BUFR message in the calls to
+                       !  IREADMG
+
+
+      call OPENBF(11,'IN',11) ! open BUFR file in unit 11 for input,
+                              !  use internal BUFR table in the top
+                              !  BUFR messages of this file to define
+                              !  structure of BUFR reports
+
+C  First, loop through input file reading in one BUFR message at a time
+C  --------------------------------------------------------------------
+
+      DO WHILE (IREADMG(11,SUBSET,IDATE).EQ.0)  ! SUBSET is C*8 message
+                                                !  type
+                                                ! IDATE is 10-digit
+                                                !  message date
+                                                !  (YYYYMMDDHH)
+
+C  Next, loop through this BUFR message reading in one report (subset)
+C   at a time
+C  -------------------------------------------------------------------
+
+         DO WHILE (IREADSB(11).EQ.0)
+
+C  Now, through a series of calls to UFBINT read in various parameters
+C   in this report (BUFR subset)
+C  -------------------------------------------------------------------
+
+    ! e.g., return coarse latitude in OBS1_1 and coarse longitude
+    !       in OBS1_2  -- these are known to appear only once in
+    !       a report, so iret will be returned as 1 assuming these
+    !       values are present in the report
+
+            call UFBINT(11,OBS1_1,1,1,iret,'CLAT')
+               print *, 'OBS1_1,iret: ',OBS1_1,iret
+            call UFBINT(11,OBS1_2,1,1,iret,'CLON')
+               print *, 'OBS1_2,iret: ',OBS1_2,iret
+
+    ! e.g., return temperature in OBSLV_1(x) and dewpoint in
+    !       OBSLV_2(x), where x is the level -- these are known to
+    !       be replicated in a report (i.e., in different levels), so
+    !       iret here will be returned with the actual number of
+    !       replications of these values (i.e., number of levels) in
+    !       the report
+
+            call UFBINT(11,OBSLV_1,1,255,iret,'TMDB')
+               print *, 'iret: ', iret
+               do i=1,iret
+                  print *, 'on lvl =',i,', OBSLV_1 = ',OBSLV_1(i)
+               enddo
+            call UFBINT(11,OBSLV_2,1,255,iret,'TMDP')
+               print *, 'iret: ', iret
+               do i=1,iret
+                  print *, 'on lvl =',i,', OBSLV_2 = ',OBSLV_2(i)
+               enddo
+
+    ! continue calling UFBINT to decode any other selected parameters
+    !  from this report (BUFR subset)
+
+ccc         call UFBINT(11,<R*8 variable>,1,<max. # of replications>,
+ccc $        iret,'<mnemonic>')
+ccc              ... etc ...
+
+
+C  Now go read in next report (BUFR subset) from input file
+C  --------------------------------------------------------
+
+         enddo
+
+C  All subsets read in from this BUFR message, go read in next BUFR
+C   message from input file
+C  ----------------------------------------------------------------
+
+      enddo
+
+C  All BUFR messages have been read, thus all reports have been
+C   processed - done
+C  ------------------------------------------------------------
+
+      call CLOSBF(11)  ! close input BUFR file
+
+      stop
+
+      end
+

@@ -1,0 +1,157 @@
+                                              September 4, 1996
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version -- UPDATE # 5)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the fifth time.  UPDATE #5 was
+implemented on 1200 UTC 02 October 1996 on the CRAY.  All changes
+now affect only OBUFR = TRUE switch.  Except where noted, the
+changes below affect both the GLOBAL and RGL/ETA models.
+
+*********************  U P D A T E   # 5  ***********************
+
+
+I.  GENERAL CHANGES
+
+      1) Added new namelist switch IEDSTP which will indicate the
+type of input file from which unpacked NMCEDS formatted TOVS
+retrievals are returned for RGL/ETA processing (TOVEDS=TRUE). 
+IEDSTP=1 indicates the actual NMCEDS formatted file; IEDSTP=2
+indicates the new BUFR dump file.  (Default is IEDSTP=1.  The
+NMCEDS file is still used operationally.)
+
+      2) Default values for namelist switch IUNIT changed to
+reflect the addition of the odd GOES-I retrieval satellite (see
+III.A.1).
+ 
+      3) If either an error or an end-of-file is detected when
+reading the fixed land-sea-U.S. mask file in IUNIT(3), the
+program now abnormally stops with a condition code of 49.  Prior
+to this, the program would run normally however it would ignore
+the land/sea or U.S. in/out checks for certain data types, even
+if such checks were set-up in the namelist switches.
+
+      4) Expanded the sizes of arrays for namelist switches
+SWINDO, SWNLND, JSWIND, JSMASS to include new (but not-yet-
+operational) high-density cloud-drift and water-vapor satellite-
+derived winds (and cloud temperatures) from NESDIS (see III.B.1).
+
+      5) Added new namelist switch TOVRAD which, when TRUE, will
+allow for the processing of TOVS radiances from the new BUFR dump
+file for GLOBAL processing (TOVBFR=TRUE).  (Default is
+TOVRAD=FALSE.  The logic to process TOVS radiances is not yet in
+place (see III.C.1).
+
+ 
+
+
+      6) Added new subroutines W3FIZX and FIZZ0X which are like
+existing subroutines W3FIZZ and FIZZ01 except they are set-up to
+process TOVS radiances in association with a change in the BUFR
+mnemonic table.  These are not actually called anywhere in the
+program.  The will eventually be renamed to the existing
+subroutine names (replacing them) once the logic to process the
+TOVS radiances and the new mnemonic table are in place (see
+III.C.1).
+
+      7) Added new namelist switch MSGPSF which, when TRUE, will
+process surface land reports within the LFM domain with missing
+station pressure and missing sea-level pressure.  In this case,
+the sea-level pressure is stored as missing and the station
+pressure is stored as the U.S. Standard Atmosphere value (based
+on the reported elevation and temperature values).  Before, such
+reports were always excluded from processing (and they still are
+if outside the LFM domain).  A $ is placed in the 6'th character
+of the station id in order to identify such reports.  In
+addition, the calculated specific humidity for such reports is
+given a quality marker of suspect since the pressure is used in
+the calculation.  (Default is MSGPSF=FALSE.  The default value is
+currently used in all operational systems.  Switch was set to
+TRUE for special high-resolution ETA model Olympic runs in August
+1996.) 
+
+      8) Logic added to check for wind speed in meters per second
+times 10 which is stored in Office Note 29, category 8, code
+figure 924.  Currently no operational data types store this,
+however special ACARS data sets, high-density satellite derived
+wind data sets (NESDIS), and surface mesonet data sets used in
+the special high-resolution ETA model Olympic runs (August 1996)
+did store this.
+     
+
+II.  SPECIFIC OPERATIONAL CHANGES
+
+  A. CHANGES TO TOVS SATELLITE RETRIEVAL PROCESSING
+
+      1) RGL/ETA: Although not yet switched on (see I.1 above),
+logic is now in place to return TOVS retrievals in NMCEDS format
+from the new BUFR dump file for TOVS data.  A new subroutine is
+called, W3TOVEDS, to decode the BUFR messages and return a
+retrieval in this format.  The BUFR file will use the same unit
+number as the old NMCEDS file did.  The unit numbers that
+currently hold the flag and directory files for the NMCEDS file
+will no longer be used once the switch is made.
+
+
+
+
+  B. CHANGES TO WIND PROFILER PROCESSING
+
+      1) Logic for processing wind profiler reports will no
+longer require that the BUFR messages have only edition 0 or 2. 
+This is a result of a future (planned December 1996) change in
+the edition number of wind profiler BUFR messages from 2 to 3. 
+Those quality markers that were previously identified only for
+edition 2 are now valid for all editions of 2 or greater.
+
+      2) For BUFR edition 2 or greater, levels with quality code
+indicator of 2 (shear check and/or median check not performed or
+inconclusive) now get a PREPBUFR table value (q.m.) of 11 (BAD) and 
+they will not be used by any analyses.  Before, such levels
+received a table value (q.m.) of 2 (neutral quality) and were
+subject to assimilation.
+
+
+III.  SPECIFIC NON-OPERATIONAL CHANGES
+
+   A. CHANGES TO GOES-I SATELLITE RETRIEVAL PROCESSING
+
+      1) Updated logic to process retrievals from both the even
+GOES satellite (currently GOES-08) and the odd GOES satellite
+(currently GOES-09).  Before only the even satellite was set-up
+for processing.  Each satellite read in via a unique unit number. 
+Also, unique unit number assigned for each satellite for re-
+written BUFR messages within the +/- 3-hour time window.
+
+      2) Improved the way the center time and time window are
+passed into an updated version of the retrieval unpacker, W3FI77.
+
+
+   B. CHANGES TO SATELLITE-DERIVED WIND PROCESSING
+
+      1) Updated logic to process new high-density cloud-drift
+and water-vapor winds (and cloud temperatures) produced by
+NESDIS.  New and changed OI/SSI report types are:
+   241/141 - High-density GOES-ODD  satellite visible cloud drift
+   245/145 - High-density GOES-ODD  satellite IR cloud drift
+   246/146 - High-density GOES-EVEN satellite IR cloud drift
+   247/147 - High-density GOES-ODD  satellite imager water vapor
+   248/148 - High-density GOES-EVEN satellite imager water vapor
+   249/149 - High-density GOES-EVEN satellite visible cloud drift
+   251     - Conventional Indian satellite cloud drift (no mass
+             part processed, high and low levels)
+   256     - Conventional GOES satellite gradient (no mass part
+             processed, high and low levels)
+   259     - Conventional GOES satellite water vapor (no mass
+             part processed, high and low levels)  
+   267/167 - High-density GOES-ODD  satellite sounder water vapor
+   268/168 - High-density GOES-EVEN satellite sounder water vapor
+
+     
+   C. CHANGES TO TOVS RADIANCE PROCESSING
+
+      1) Logic is partially in place to process the 27 TOVS
+radiances.

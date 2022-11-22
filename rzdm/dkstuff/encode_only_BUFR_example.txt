@@ -1,0 +1,92 @@
+       program ENCODE_BUFR_EXAMPLE
+
+C-----------------------------------------------------------------------
+C  MAIN PROGRAM ENCODE_BUFR_EXAMPLE
+C
+C  This skeleton code reads through some input file (in some undefined
+C   format), storing one report at a time into memory (array OBS_8,
+C   undefined format) and then encodes this report into a BUFR message
+C   in an output file.
+C
+C  The input  file is assumed to be connected to FORTRAN unit 21.
+C  The output file is assumed to be connected to FORTRAN unit 51.
+C
+C  The input BUFR mnemonic table is assumed to be connected to FORTRAN
+C    unit 31.
+C
+C-----------------------------------------------------------------------
+ 
+      character*8  SUBSET
+
+      real*8  OBS_8(<number of parameters read from each report>)
+     
+
+      call DATELEN(10) ! we want to store a 10-digit idate in Sec. 1 of
+                       !  each output BUFR message
+
+
+      call OPENBF(51,'OUT',31) ! open BUFR file in unit 51 for output,
+                               !  use external BUFR table in unit 31 to
+                               !  define structure of BUFR reports
+
+C  Now loop through the input file reading out one report at a time
+C  ----------------------------------------------------------------
+
+      do while (<there are input reports to be decoded>)
+
+         call <subroutine to decode a report into obs_8 array>
+
+         IDATE = ( ( <year of report> ) * 1000000 ) +
+     +           ( ( <month of report> ) * 10000 )  +
+     +           ( ( <day of report> ) * 100 ) +
+     +             ( <hour of report> )
+
+         SUBSET = 'NC<ttt><sss>'! where ttt=BUFR type (e.g., 012),
+                                !       sss=BUFR subtype (e.g., 021)
+
+         call OPENMB(51,SUBSET,IDATE)
+           ! OPENMB must be called before potentially writing any new
+           !  reports (subsets) to output messages; it will open a new
+           !  output message (i.e., ready to write subsets into) if
+           !  either the subset and/or the idate is different than for
+           !  the previous output message (note: new messages are
+           !  automatically opened by WRITSB with the same SUBSET and
+           !  IDATE as the current open message if the next subset
+           !  can't fit into the current open message - the current
+           !  open message is first closed automatically by WRITSB)
+
+C  Now, through a series of calls to UFBINT store the various
+C   parameters for this report into internal BUFBLIB memory
+C  ----------------------------------------------------------
+
+     ! e.g., assume OBS_8(1) is coarse latitude, OBS_8(2) is coarse
+     !       longitude
+
+         call UFBINT(51,OBS_8(1),1,1,iret,'CLAT')
+         call UFBINT(51,OBS_8(2),1,1,iret,'CLON')
+
+     ! continue calling UFBINT to encode all variables into BUFR report
+
+         call UFBINT(51.OBS_8(<index>),1,1,iret,'<mnemonic>')
+         call UFBINT(51.OBS_8(<index>),1,1,iret,'<mnemonic>')
+                 ... etc ...
+
+
+         call WRITSB(51) ! encode report (subset) into BUFR message
+
+C  Now go read in next report from input file
+C  ------------------------------------------
+
+      enddo
+
+C  All reports have been processed
+C  -------------------------------
+
+      call CLOSBF(51)  ! close output BUFR file (writes out any
+                       !  incomplete messages)
+
+      stop
+
+      end
+
+

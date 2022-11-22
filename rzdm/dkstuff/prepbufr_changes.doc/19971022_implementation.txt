@@ -1,0 +1,108 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 7)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a seventh time.  UPDATE #7 was
+implemented on 1200 UTC 22 October 1997.  Except where noted, the
+changes below affect both the GLOBAL and RGL/ETA models.
+
+*********************  U P D A T E   # 7  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Removed namelist switches LNDHRY and BUOHRY as asynoptic
+surface data processing is no longer performed (see III.B.1
+below).
+
+     2) Removed namelist switch FILLP, and all logic testing it's
+value, since it had always been set to TRUE anyway.
+
+     3) Removed namelist switches SEQNTL, OBUFR, LIMITA, LIMDAY
+and LIMON (ans all associated testing logic) since these are
+obsolete with the conversion of the data processing to the Cray
+and the prior removal of the old 36-day archive processing logic
+from this program.
+
+     4) Namelist switch arrays SWINDO, SWNLND, JSWIND and JSMASS
+all expanded from (6,5,7) to (6,5,10) and element 3 redefined in
+order to handle the processing of the new NESDIS high-density
+satellite cloud-vector data (see III.A.1 below).
+
+
+II. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF ACARS AND AMDAR/ASDAR AIRCRAFT    
+   DATA
+
+     1) RGL/ETA only: The namelist switches IACFTL(2) and
+IACFTL(4) have been changed to -200 from 2286 and 0,
+respectively.  This drops the floor on the processing of ACARS
+aircraft data from 0 to -200 meters and drops the floor on the
+processing of AMDAR/ASDAR aircraft data from 2286 to -200 meters.
+
+
+
+
+
+B. CHANGES IN THE PROCESSING OF SATELLITE CLOUD-VECTOR DATA
+
+     1) GLOBAL only: The namelist switch JSMASS has been set to
+REMOVE (rather than just flag) all satellite cloud-vector mass
+reports.  (RGL/ETA: Never was processed.)
+
+C. CHANGES IN THE PROCESSING OF GOES SATELLITE SOUNDING/RADIANCE  
+   DATA
+
+     1) RGL/ETA only: The field-of-view number is now encoded
+into the PREPBUFR file for all GOES sounding reports under the
+mnemonic descriptor "ACAV". (NOTE: For GLOBAL: non-operational
+GOES radiances reports also now include this.)  This necessitated
+a change in the bufrtable as well.
+
+D. CHANGES IN THE PROCESSING OF CLASS SOUNDING DATA
+
+     1) The definition of a CLASS sounding report was made more
+restrictive.  Instead of simply being defined as a report with
+ON29 report type 13, the additional constraint is that the report
+id must begin with "CLAS".  This is necessary because ON29 report
+type 13 is also used by mobile radiosondes.  The GLOBAL currently
+does not process CLASS mass and wind data (LSMASS and LSWIND are
+set to 9999), but it should process these mobile radiosondes, and
+this change allows for this.
+
+
+III. NON-OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF SATELLITE CLOUD-VECTOR DATA
+
+     1) Logic has been added to process the new NESDIS high-
+density satellite cloud-vector data. Specifically, high-density
+IR cloud drift (as report type 245/145), visible cloud drift (as
+report type 251/144), imager water vapor [both deep-layer (as
+report type 247/147) and cloud-top (as report type 246/146)],
+sounder water vapor [both deep-layer (as report type 249/149) and
+cloud-top (as report type 248/148)], and new processed (but not
+high-density) picture triplet (as report type 255).  This logic
+replaces old logic which handled high-density winds as they
+appeared a year and one-half ago.  The namelist switch JSWIND has
+been set-up to process the following types, but flag them for
+non-use by any analysis (the remaining new types are not yet
+available and are set to not process): High-density IR cloud
+drift winds, high density imager water vapor winds (both deep-
+layer and cloud-top), new-processed picture triplet cloud-drift
+winds.
+
+
+
+B. CHANGES IN THE PROCESSING OF ASYNOPTIC SURFACE DATA
+
+     1) All logic pertaining to the processing of asynoptic
+surface land and marine buoy data has been removed.  Such data
+were not processed operationally through this logic, since they
+are part of the BUFR data dumps under the conversion to the CRAY
+data processing.  This logic had been used by the old HDS 36-day
+archive processing which is no longer in PREPDATA of course.

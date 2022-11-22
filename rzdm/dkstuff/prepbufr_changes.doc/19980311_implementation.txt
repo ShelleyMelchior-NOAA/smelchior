@@ -1,0 +1,398 @@
+                                              February 18, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- UPDATE # 1)
+
+The February 17, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the first time.  UPDATE #1 was
+implemented on 1200 UTC 11 March 1998.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 1  ***********************
+
+I.  GENERAL CHANGES
+
+     1) The major change in this program was to remove old,
+obsolete logic, much of which had pertained to input in unpacked
+Office Note 29 format.  This, along with other intended changes,
+has allowed the program to become more computationally efficient.
+For example, the cpu time to run this program has been reduced by
+approximately 36% in both the 00Z FNL network (9.2 minutes to 5.9
+minutes) and the t-12 EDAS 3DVAR network (8.6 minutes to 5.5
+minutes).  In addition, the size of the source code has been
+greatly reduced in both line count (19.5%) and in byte count
+(18.3%) (including comments and docblocks).  Section II below
+will summarize changes that actually affect the output PREPBUFR
+file (and thus operations), while this Section and Section III.
+will summarize changes that were part of this code streamlining
+effort.
+
+     2) The following namelist switches are no longer needed and
+have been removed: SI2, UPABOG, IDELEV, IPRFTP, IVADTP, RBPWAT,
+ITVMST, PMONLY, MBOGUS, BWINDO, REANL, PGAFUS, IEDSTP, DMSP,
+PSFCL1, WNDADJ.
+
+     3) The following namelist switches have been changed:  KTOP,
+LEVPM, LEVST, LEVQQ.  This is because the inclusion of 925 mb as
+a mandatory level means values 3 and up now pertain to the level
+just beneath what they had pertained to.  As a result, the
+default values, as well as the values in the data cards, have all
+been increased by 1 to pertain to the same mandatory level as
+before.
+
+     4) The following in-line subroutine subprograms are no
+longer called and have been removed: HGTBOG, VRTPS, FIZZ02,
+BASLIN, MSTBOG, CFW, ISPMRK, W3FS22 (same as W3LIB version).  The
+following in-line function subprograms are no longer called and
+have been removed: PWCLC, MARK, MARKN, MARKP, I6MARK, ISFMRK.
+
+
+     5) The following W3LIB routines are no longer called:
+W3FI43, W3FI77, W3AI38, W3AI39, W3FI42, W3FI02, W3FI03, IW3DAT,
+W3FQ02, W3FS03 
+ 
+     6) The following W3LIB routines have been replaced with in-
+line routines that may eventually become W3LIB routines except
+where noted (these are linked into PREPDATA.f separately in the
+makefile script):
+
+          a. IW3GAD - replaced with IW3UNPBF (returns a report
+from one of the "traditional" ON29 file types, now of course in
+BUFR, in a revised and streamlined unpacked format. (NOTE: IW3GAD
+still called for SSM-I data types).  This change has resulted in
+changes to PREPDATA subroutines PREP, GETUPA, GETC06, SNDPRP in
+order to handle the new unpacked IW3UNPBF format.  Here are
+highlights of the changes between unpacked ON29 format and
+unpacked IW3UNPBF format:
+          - First call no longer returns a 32-byte character
+string that looks like ON85. Instead, data set name, center date,
+and dump time are returned as character words in the first 3
+words of the unpacked array, respectively (affects MAIN and
+subroutine UNPREPBF). [ PREPDATA date checking now simplified to
+a comparison of 8-digit yymmddhh integer date in production date
+vs. dump file center date (MANY).  There is no longer an option
+to obtain the production date from an ADPUPA file, thus IDATA(28)
+switch no longer used.] 
+          - Report time in word 4 (REAL) of the header is now
+stored in thousandths of an hour rather than in hundredths of an
+hour. [PREPDATA no longer reads ACARS report time to this
+precision from Category 8, code figure 921 (UNPREPBF).  Other
+types now have more precise report times - this has operational
+implications (see II. below).]
+          - The meaning of the reserve characters in words 5 and
+6 of the header has changed.
+          - Receipt time is stored in word 11 (REAL) of header.
+[PREPDATA stores it in previously unused word 3 of NOBS report
+array (RPTLBL, FIZZ01).] 
+          - Station ID is now stored in word 12 (CHAR*8) of
+header.
+          - All category quality markers and indicators,
+previously grouped together as characters in a single word, are
+now stored as real numbers in separate words for each variable on
+a level.  The quality marker numbers have identical meaning to
+those in the PREPBUFR file. [PREPDATA now reads them in directly
+without the need to convert them from ON29 to PREPBUFR values
+(MANY).]
+          - All category wind speed words are stored as
+meters/second times 10, rather than knots as before. [PREPDATA
+now reads this in directly rather than from Category 8, code
+figure 924 for Cat. 6 and surface types (GETC06, SFCDTA). 
+PREPDATA subroutine UV now always expects wind speed in
+meters/sec).  This increased wind speed precision has operational
+implications (see II. below). ]
+          - In Category 1, pressure in mb *10 (REAL) now stored
+in word 1 for each level, while pressure quality marker now
+stored in word 7 (REAL) for each level.  All other data moves
+down one word.  Category 1 now includes 925 mb mandatory level
+data. [PREPDATA reads pressure here rather than having an
+assumed, hardwired pressure value as before (GETUPA).  The
+inclusion of 925 mb as a mandatory level has operational
+implications (see II. below).]
+          - In Categories 2 and 3, an additional word (7 or 6,
+respectively) added for each level to hold special indicator
+(e.g., tropopause, maximum wind, estimated pressure, etc.).
+          - In Category 6, pressure in mb *10 (REAL) (if
+reported) now stored in word 1 (REAL) for each level, while
+pressure quality marker now stored in word 7 (REAL) for each
+level.  All other data moves down one word. [PREPDATA now reads
+this pressure directly if its available, rather than calculating
+it (ACARS) or obtaining it from Category 8, code figure 13
+(SATWND).  If pressure is missing (AIRCFT), then PREPDATA
+calculates it from pressure-altitude as before (GETC06).  This
+has operational implications for ACARS data (see II. below).]
+          - In Category 52, Past Weather-2 now always stored in
+word 17 for each level, rather than sharing location with the
+Dewpoint Depression quality marker byte. 
+          - AMDAR/ASDAR aircraft "Phase of Flight" indicator is
+stored in Category 8, code figure 914 [PREPDATA stores it in
+previously unused word 4 of NOBS report array (RPTLBL, FIZZ01).] 
+          - AMDAR/ASDAR aircraft "Temperature Precision"
+indicator is stored in Category 8, code figure 915.  Before this
+was stored in the header reserve character location. 
+          - AIREP/PIREP and AMDAR/ASDAR aircraft "Turbulence"
+indicator is stored in Category 8, code figure 916.  Before this
+was stored in the Category 6 Dewpoint Depression quality marker
+byte.
+
+     b. W3UNPK77 - replaced with W3UNPKB7 (returns a VAD wind,
+wind profiler, or GOES sounding report in a revised format
+closely linked to that in unpacked IW3UNPBF).  Here are
+highlights of the changes between unpacked reports from W3UNPK77
+and W3UNPKB7:
+          - Report time in word 4 (REAL) of the header is now
+stored in thousandths of an hour rather than in hundredths of an
+hour. [PREPDATA reports now have more precise report times - this
+has operational implications (see II. below).]
+          - Receipt time is stored in word 11 (REAL) of header.
+[PREPDATA stores it in previously unused word 3 of NOBS report
+array (FIZZ01).] 
+          - Station ID is now stored in word 12 (CHAR*8) of
+header.
+          - Timely BUFR messages can no longer be written to an
+output file.
+          - Category 12 (GOES), Category 4 (VAD wind) and
+Category 8 quality markers and indicators, previously grouped
+together as characters in a single word, are now stored as real
+numbers in separate words for each variable on a level.  The
+quality marker numbers have identical meaning to those in the
+PREPBUFR file. [PREPDATA now reads them in directly without the
+need to convert them from ON29 to PREPBUFR values (MANY).]
+
+     b. W3ERSUNP - replaced with W3ERSUNB (returns an ERS wind
+report in a revised format closely linked to that in unpacked
+IW3UNPBF).
+          - Report time in word 4 (REAL) of the header is now
+stored in thousandths of an hour rather than in hundredths of an
+hour.  [PREPDATA reports now have more precise report times -
+this has operational implications (see II. below).]
+          - Receipt time is stored in word 11 (REAL) of header.
+[PREPDATA stores it in previously unused word 3 of NOBS report
+array (FIZZ01).] 
+          - Station ID is now stored in word 12 (CHAR*8) of
+header.
+          
+     c. W3FA07 - replaced with in-line W3FA07 (redesigned to
+input unpacked NMCEDS format for a report as full integer words
+rather than as packed 16-bit words.  This change resulted in
+changes in subroutine SATEDS.
+
+     7) The following in-line subroutine subprograms have been
+added:
+          UNPREPBF - called for report types that read in a
+report in the new IW3UNPBF unpacked format (see 6 above).  Note:
+entry CHKREP was moved from subroutine UNPREP ro UNPREPBF.
+          W3CNVTOV - converts unpacked TOVS NMCEDS format, after
+W3FA07 calculates temp and height on mandatory levels, to
+unpacked IW3UNPBF format prior to SNDPRP/GETUPA processing.  This
+change resulted in changes to subroutines SATEDS and SNDPRP in
+order to handle the new unpacked IW3UNPBF (via W3CNVTOV) format.
+
+     8) The following W3LIB routines are now called:
+          - W3FA04 to generate pressure at reported height levels
+via U.S. Standard Atmosphere when no spanning level pressure data
+are available.
+
+     9) The "keys" explaining which report types are operational
+in which systems, etc. (printed at end of stdout) have been
+modified.
+
+     10) Stop with condition code 69 (overflow packing fullword
+array to 16-bit array) can no longer occur (SATEDS).
+
+     11) PREPBUFR table values are now the same as the quality
+markers found in the PREPBUFR file (0->0, hold; 1-4->1, good; 5-
+7->2, neutral; 8-9->3, suspect; 10-15 no change, bad) (MANY).
+
+     12) Removed tests for "old" processing (i.e., before a
+certain date logic was different).  Only runs for "current"
+processing logic (MANY).
+
+          
+
+II. OPERATIONAL CHANGES
+
+     A. CHANGES IN ALL DATA TYPE PROCESSING EXCEPT ACARS
+
+          1. The change to report time to nearest 1000'th of an
+hour in word 4 of the unpacked report format (rather than to the
+nearest 100'th of an hour as before) will give more precision to
+the report time encoded as DHR in the PREPBUFR file.  This is
+especially true for GOES soundings which report to the nearest
+second.  ACARS reports already had this precision since report
+times to the nearest 1000'th of an hour had been read from
+Category 8.  This may change the number of reports excluded due
+to being outside the selected time window, especially for GOES
+soundings.
+ 
+     B. CHANGES IN UPPER-AIR DATA PROCESSING:
+
+          1. Since the test for all mandatory levels flagged has
+been removed, such that significant level flagging is now based
+strictly on SDMEDIT values for those levels rather than on all
+mandatory levels being flagged, the quality markers placed on the
+925 mb level data are now correct (GETUPA).
+
+          2. Added logic to flag surface height (elevation) as
+bad if all mandatory level heights have been purged (both in cat
+2/3 processing and in cat. 4 processing) (GETUPA).
+
+          3. Since the 925 mb level can now be recognized as
+either a mandatory level or a significant level (or both),
+reports with a surface level of exactly 925 mb now properly
+record the first cat. 2/3 level as 925 mb. Before, the surface
+level was always missing in this case since 925 mb data could
+only be recognized as a mandatory level.
+
+          4. SSI/R3DVAR only: Namelist switch SPCIAL redefined
+such that when FALSE, PREPDATA will no longer generate special
+levels just to aid in the generation of Category 4 pressures
+(after which the special levels were excluded from output to the
+PREPBUFR file) (GETUPA, SMERGE).  As a result of this change ...
+               
+               a. When SPCIAL=F,...
+                    I.  reports with no valid height levels
+[e.g., only Category 4 levels (Profiler, VAD winds, PIBALS) or
+only Cat 3 and 4 levels (PIBALS)] generate pressures on all
+reported Category 4 winds-by-height levels, not just on Category
+4 levels with heights between spanning 1000 and 10 mb heights, as
+before when the special levels bounded between these levels were
+used.  This can increase the number of Category 4 levels
+processed for a report, especially at calculated pressure levels
+above 10 mb.  [WNDBYZ]
+                    ii. reports with valid height levels also can
+have an increased number of Category 4 levels processed since all
+Cat. 4 levels above the last valid height level (and even above
+10 mb) can still calculate pressure, but here via U.S. Standard
+Atmosphere from the reported height.  This may cause some
+differences in pressure from before for those Cat. 4 levels above
+last reported height level but below 10 mb.  (A sanity check in
+this case will prevent calculated pressures from being .GE.
+pressure on level immediately below.)  [WNDBYZ]
+               b. All Cat. 4 pressures calculated strictly via
+U.S. Standard Atmosphere from the reported height now get a
+reason code of 116 rather than 103 as before (such levels still
+get reason code of 103 if pressure is calculated via hydrostatic
+integration from spanning valid pressure/height levels).  [WNDBYZ]
+
+          5. The change in Category 1-5 wind speed to the nearest
+10'th of a meter/second (rather than knots as before) will give
+more precision to u- and v-component winds encoded as UOB and VOB
+in the PREPBUFR file.
+
+          6. All Category 5 (tropopause) levels that have a
+reported wind speed of ZERO are flagged as bad (15) so the
+analysis will not assimilate these erroneous (most certainly)
+reports (GETUPA).
+      
+     C. CHANGES IN ACARS AIRCRAFT DATA PROCESSING:
+
+          1. The change in Category 6 to store reported pressure
+in word 1 allows ACARS data (which report pressure) to use this
+value directly, rather than calculating it from the reported
+pressure-altitude, as before.  This can lead to a maximum 1 mb
+difference in the pressure encoded as POB in the PREPBUFR file
+(most reports show an unchanged POB value).
+
+     D. CHANGES IN SSM/I DATA PROCESSING:
+
+          1. RDAS/RGL only (not MESO-ETA OI): This version of
+PREPDATA will no longer process SSM/I TPW (never processed SSM/I
+wind speed) since the RDAS/RGL OI-analysis does not assimilate
+these data.  [DATACARDS]
+
+ 
+
+
+
+III. NON-OPERATIONAL CHANGES
+
+     A. CHANGES IN WIND PROFILER DATA PROCESSING:
+          
+          1. The printout to stdout of decoded reports has been
+removed (PREP).
+          2. Unused logic pertaining to the rewriting of timely
+BUFR messages has been removed (PREP).
+
+     B. CHANGES IN VAD WIND DATA PROCESSING:
+
+          1. The printout to stdout of decoded reports has been
+removed (PREP). 
+               2. Unused logic pertaining to the rewriting of timely
+BUFR messages has been removed (PREP).
+
+     C. CHANGES IN ERS DATA PROCESSING (SSI only):
+
+          1. The printout to stdout of decoded reports has been
+removed (GETERS).
+
+     D. CHANGES IN UPPER-AIR BOGUS DATA PROCESSING:
+
+          1. All logic for this obsolete data type has been
+removed (PREP).  Report type 110 is now empty.
+
+     E. CHANGES IN UPPER-AIR DATA PROCESSING:
+
+          1. Processing of special sigma levels removed (never
+invoked operationally) (GETUPA).
+          2. Extra logic pertaining to the processing of the 925
+mb mandatory level from unpacked ON29 format removed (GETUPA).
+          3. Logic pertaining to the baseline checking was
+removed (no longer invoked) (GETUPA).
+          4. Logic pertaining to RAOB precipitable water
+calculation and processing was removed (no longer invoked and
+wasn't even set-up to encode into PREPBUFR file) (GETUPA, SMERGE,
+PWATER).  Report type 151 is now empty.
+          5. Logic used to generate reports with special
+(auxiliary) levels only was removed (never invoked) (STOROB).
+          6. Radiosonde instrument type is no longer obtained
+from Cat. 8, code figure 106.  The value read in word 8 of the
+unpacked header is always correct (RPTLBL).
+          7. Logic that tested for all mandatory levels in a
+report having a purge or keep flag and applying that same flag
+then to significant levels in the same report was removed
+(GETUPA).  (SDMEDIT designed to place purge or keep flags on
+significant, as well as mandatory, levels).
+
+
+     F. CHANGES IN GOES SOUNDING PROCESSING:
+
+               1. Unused logic pertaining to the rewriting of timely
+BUFR messages has been removed (GOESDG).
+
+     G. CHANGES IN TOVS SOUNDING PROCESSING:
+
+          1. Logic pertaining to precipitable water calculation
+and processing was removed (no longer invoked and wasn't even
+set-up to encode into PREPBUFR file) (GETUPA, SATEDS, PWATER). 
+Report type 153 is now empty.
+          2. Unused logic pertaining to the processing of TOVS
+data in unpacked NMCEDS format, where the input file is NOT a
+BUFR data dump removed (this logic expected TOVS data to be in
+either an NMCEDS file or in an ON29 file) (SATEDS).
+
+     H. CHANGES IN SATELLITE MOISTURE BUGUS DATA PROCESSING:
+
+          1. All logic for this obsolete data type has been
+removed (PREP).  Report type 150 is now empty.
+
+     I. CHANGES IN AIRCRAFT DATA PROCESSING:
+
+          1. Logic pertaining to the tossing or flagging of
+conventional AIREP/PIREP reports over the CONUS region removed
+(no longer invoked, this function moved to program PREPACQC)
+(GETC06).
+
+     J. CHANGES IN PROCESSING OF DMSP SOUNDINGS:
+     
+          1. All logic for this obsolete data type (expected from
+file in NMCEDS format) removed (SATEDS).  Report types 169/179
+are now empty.
+
+     K. CHANGES IN PROCESSING OF SURFACE DATA:
+
+          1. Logic pertaining to the adjustment of moored buoy
+wind speed to an altitude of 10 meters removed (no longer
+invoked) (SFCDTA).
+

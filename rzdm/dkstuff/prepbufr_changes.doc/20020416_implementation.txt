@@ -1,0 +1,32 @@
+                                                     April 16, 2002
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 RUC)
+
+Implemented 12Z 16 April 2002:
+
+RUC only:  The program RUC_GETBUFR was modified to now process the
+following data which had already existed in the RUC version of the
+PREPBUFR files:
+
+     1)  GOES cloud-top pressure, temperature and cloud cover data
+         in report type 151 (before all reports of this type were
+         skipped).
+
+     2)  Buoys with missing sea-level pressure but valid wind data
+         in report type 282 (before all reports of this type were
+         skipped).
+
+     3)  Splash-level dropwinsonde mass data in report type 182
+         (before all reports of this type were skipped).
+
+     4)  The wind speed/quality marker for surface METAR reports in
+         report type 281 and 287 with with missing wind direction
+         and wind speed less than or equal to 3 meters/sec (encoded
+         in mnemonics "SOB"/"SQM").  These reports are considered
+         to have light winds and a variable wind direction.
+         (Before "SOB"/"SQM" was not read and these reports were
+         skipped.)

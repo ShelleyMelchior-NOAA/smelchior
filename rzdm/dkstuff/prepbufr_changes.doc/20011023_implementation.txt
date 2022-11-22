@@ -1,0 +1,24 @@
+                                              October 23, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 ETA DATACARD UPDATE)
+
+Implemented 12Z 23 October 2001:
+
+ETA only:  Expanded the time window for processing VAD winds
+from -1.0 to +0.99 hours about PREPBUFR center time to -2.0 to
++1.99 hours in order to pickup VAD wind reports between -1.5 and
+-1.01 hours and between +1.00 and +1.50 hours (the dump window is
++/- 1.50 hours about PREPBUFR center time).  [Namelist switch
+MWINDO changed from -1,0 to -2,1.]
+
+ETA only:  Expanded the time window for processing wind profilers
+from -1.0 to +1.99 hours about PREPBUFR center time to -2.0 to
++1.99 hours.  Although the dump window is +/- 1.50 hours about
+PREPBUFR center time, no additional reports will be processed right
+now because the wind profilers report right on the hour.  This
+could change in the future, however.  [Namelist switch NWINDO
+changed from -1,1 to -2,1.]

@@ -1,0 +1,116 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 2)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a second time.  UPDATE #2 was
+implemented on 1200 UTC 11 June 1997.  All changes now affect
+only OBUFR = TRUE switch.  Except where noted, the changes below
+affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 2  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Removed logic testing for SEQNTL=FALSE, OBUFR=FALSE and
+NLWRD=4 since these are never satisfied with output now only to
+PREPBUFR file.  This saves about 1% in CPU time but streamlines
+the source code.  There are more changes that can be made in this
+way. 
+
+     2) Removed the function MARARC since it pertained only to
+the obsolete 36-day HDS archive processing.
+
+     3) The report d-time stored in NOBS(7) is changed from
+hundredths of hours to thousandths of hours.  Related to this,
+the PREPBUFR mnemonic DHR was been redefined in the prep
+bufrtable read in by PREPDATA.  DHR is now scaled to 10**3 rather
+than 10**2, with the number of bits for storage increased from 13
+to 16 and the reference value changed from -2400 to -24000.  All
+this was done in preparation for the input of the new MDCARS
+ACARS data from ARINC (in a week or so) which defines report time
+out to seconds.
+
+    4) Added new Namelist switch IVADTP to select the format of
+input file for the still non-operational NEXRAD (VAD) wind
+reports.  When IVADTP = 1, the format is expected to be the WMO
+BUFR file that used to be present on the HDS but is no longer
+available.  This format uses the W3LIB routine W3FI77 to read the
+data. When IVADTP = 2 (DEFAULT), the format is expected to be the
+JBUFR file from either the /dcom BUFR tank or a time-windowed
+data dump file.  This is the new and expected format for these
+data.  This format uses the W3LIB routine W3UNPK77 to read the
+data.  This was made available through a corresponding change to
+the W3LIB routine W3UNPK77.
+
+     5) Added new Namelist switch FLDMGS to (when TRUE) flag the
+moisture (specific humidity) data on all levels for the new Gulf
+Stream dropwinsonde reports.  These moisture data will receive
+quality marks of 15 preventing them from being used by any NCEP
+analysis.  The DEFAULT is TRUE.
+
+
+II. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF AIRCRAFT DATA
+
+     1) For AMDAR/ASDAR aircraft reports, the entire (true)
+station id (flight id) is now encoded in the PREPBUFR file.  This
+ID can be up to 8-characters in length.  This true ID is read in
+through unpacked ON29 category 8 code figures 917-920 (2-
+characters each).  This was made available through a
+corresponding change to the W3LIB routine IW3GAD.  Also of note,
+the downstream program PREPACQC was modified to now expect this
+new form of ID from the AMDAR reports.  Prior to this, the old
+HDS/unpacked ON29 truncated version of the AMDAR ID was encoded
+into PREPBUFR.  In this version, still reported in words 11 and
+12 of unpacked ON29 (to keep with unpacked ON29 convention), the
+ID is always truncated to 6-characters with a "Z" in the 6'th
+position to identify the report as AMDAR/ASDAR.
+
+     2) For ACARS aircraft reports, the 7'th and 8'th characters
+of the station id (flight id) are now encoded in the PREPBUFR
+file.  These 2-characters are read in through unpacked ON29
+category 8 code figure 920.  This was made available through a
+corresponding change to the W3LIB routine IW3GAD.  If the ID is
+less than 8-characters in length, blank fills will appear here. 
+This is in preparation for the input of the new MDCARS ACARS data
+from ARINC (in a week or so) which creates "bogus" ID's usually
+8-characters in length.  The actual ACARS ID's, used up to now,
+were never more than 6-characters in length.  This was fine for
+the prior version of PREPDATA which encoded only the first 6
+characters of the ID into PREPBUFR.  In keeping with unpacked
+ON29 convention, unpacked words 11 and 12 will still contain only
+the first 6-characters of the ID.
+
+     3) For ACARS aircraft reports, the report time to the
+nearest 1000'th of an hour is now read from unpacked ON29
+category 8, code figure 921.  This will allow the increased
+precision available in the ARINC MDCARS ACARS report time
+(becoming operational in a week or so) to be used and
+subsequently encoded into the PREPBUFR file. 
+
+
+
+
+B. CHANGES IN THE PROCESSING OF UPPER-AIR DATA
+
+     1) The new (about to become operational) Gulf Stream
+dropwinsonde data will set the quality marker for moisture
+(specific humidity) on all levels to 15 so it will not be
+assimilated by any NCEP analysis (see I.5 above).  The moisture
+from these drops in considered to be of bad quality. 
+
+
+III. NON-OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF NEXRAD (VAD) DATA
+
+     1) NEXRAD (VAD) wind reports can now be read from the JBUFR
+data dump file and encoded into the PREPBUFR file (see I.4
+above).  These data will VERY SOON become operational in some or
+all NCEP systems.

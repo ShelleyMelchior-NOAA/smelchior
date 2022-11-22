@@ -1,0 +1,19 @@
+                                           September 26, 2000
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 ETA DATACARD UPDATE # 1.1)
+
+Implemented 12Z 26 Spetember 2000:
+
+ETA only:  GOES radiances are now processed over ocean (only),
+while GOES layer PW retrievals are now processed only over
+land.  [Namelist switch GOESRD switched from FALSE to TRUE, and
+switch ISATLS(21:30) changed from 0 to 2, and switch JSATLS(21:30)
+changed from 0 to 1.]
+
+ETA only:  RTOVS retrievals replaced by 1B radiances.  [Namelist
+switch TOVBFR(1) changed from TRUE to FALSE and TOVRTV changed
+from TRUE to FALSE.]

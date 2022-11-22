@@ -1,0 +1,140 @@
+                                                  March 8, 1996
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version -- UPDATE # 4)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the fourth time.  UPDATE #4 was
+implemented on 1200 UTC 27 March 1996 on the CRAY (GLOBAL, ETA
+versions).  All changes now affect only OBUFR = TRUE switch. 
+Except where noted, the changes below affect both the GLOBAL and
+ETA models.
+
+*********************  U P D A T E   # 4  ***********************
+
+
+I.  SPECIFIC OPERATIONAL CHANGES
+
+   A. CHANGES TO ALL DATA TYPE PROCESSING 
+
+     1) ETA: The level pressure is now stored in the NOBS array
+as ten times the nearest integer of the pressure.  This always
+results in a zero for the tenths value.  Prior to this, the
+nearest integer of the pressure multiplied by ten was stored in
+the NOBS array.  The value in the NOBS array is subsequently
+encoded in BUFR.  This temporary fix will allow the REGIONAL
+BUFR/PREPDA level pressure data to be identical to its value in
+the old REGIONAL PREPDA format when it is converted back to this
+format in the first step of the FERR program.  The old PREPDA
+format stores only whole pressure; the BUFR/PREPDA encodes
+pressure times ten.
+
+
+  B. CHANGES TO UPPER-AIR DATA PROCESSING 
+
+     1) ETA: Several temporary changes are made in the REGIONAL
+BUFR/PREPDA processing of upper-air data to allow the REGIONAL
+BUFR/PREPDA data to appear more like that in the old REGIONAL
+PREPDA output.  The latter format is what is expected by the ETA
+FERR and OI-analysis codes.  Specific changes are:
+          a) The deepened temperature is set to missing in the
+profile if the temperature has a bad quality marker.
+          b) The surface level height (elevation) quality marker
+is set to good (1) rather than 6 (neutral).
+          c) Interpolated or calculated data on levels where the
+data are missing or bad can now get a good (1) quality marker if
+the data on both spanning levels have a good quality marker. 
+Before, such data would receive a neutral (6) quality marker.
+
+
+          d) The check for duplicate pressure or height levels is
+now performed in the same way as for the old REGIONAL PREPDA
+processing.
+          e) The quality markers for wind and deepened data
+generated on levels where the data are missing or bad are now
+determined in the same way as for the old REGIONAL PREPDA
+processing.
+          f) The test for determining a PIAL report is now
+performed in the same way as for the old REGIONAL PREPDA
+processing.     
+          g) The test for the last (highest) "good" data level
+(mass and wind) is now performed in the same way as for the old
+REGIONAL PREPDA processing.      
+
+     2) The report sequence number is now stored in NOBS(12) of
+the header for all reports in the "ADPUPA" file.  It is
+subsequently encoded into BUFR.
+
+
+   C. CHANGES TO SURFACE DATA PROCESSING 
+
+     1) Marine reports only: If the reported station pressure is
+non-missing and originally has a neutral (6 or 7) quality marker,
+then the sea-level pressure quality marker is transferred to the
+station pressure if the sea-level pressure quality marker is 
+keep (0) or purge (14).  Prior to this, the station pressure
+quality marker remained neutral.
+
+     2) All surface mass reports (land and marine): The height
+(elevation) quality marker is now set to that of the station
+pressure prior to storing the report in the NOBS array and
+subsequently encoding the report into BUFR.  Prior to this, the
+surface height always received a neutral (6) quality marker since
+there is no reported quality marker for the elevation.
+
+** - Change 1) above is needed because O.P.C. places a keep flag
+'H' or a purge flag 'P' only on the sea-level pressure quality
+marker in the ON29 SFCSHP file when it quality controls marine
+pressure data.  The logic in PREPDATA is designed to look first
+for a station pressure for all surface reports.  If the station
+pressure is found, then it's value along with its quality marker
+are passed into the NOBS array and subsequently encoded into
+BUFR.  In this case, the sea-level pressure and its quality
+marker are never used by PREPDATA, and the O.P.C. `H' and 'P'
+quality markers are never honored.  In cases where the station
+pressure is missing, the sea-level pressure and its quality
+marker are transferred to the station pressure slot in the NOBS
+array, provided the elevation is less than 7.5 meters.  In this
+case the O.P.C. 'H' and 'P' quality marks are honored.  Change 1)
+is not in effect for the O.P.C. corrected 'C' quality marker on
+sea-level pressure.  The correction is applied only to the sea-
+level pressure observation and not to the station pressure
+observation.  In all such cases that I've examined, the station
+pressure has been missing, so the good (1) quality marker
+associated with the `C' is automatically transferred to the
+station pressure, along with the corrected sea-level pressure
+observation.
+
+** - Change 2) above is needed because even with change 1), the
+O.P.C. keep or purge flag on pressure is only written into the
+pressure quality marker location.  The logic within subsequent
+GLOBAL data processing programs (OICQBUFR, SSIANL), is designed
+to "key" on the height quality marker in the processing of
+surface mass reports (both land and marine).  The logic within
+the subsequent ETA data processing program FERR likewise was
+keying on the height quality marker to re-generate the mass-level
+quality marker in the old PREPDA format.  (This was actually an
+error in the FERR data transformation logic, which is being
+corrected soon to always use the pressure quality marker as the 
+level quality marker for all surface mass reports.)  The
+exception in both cases is when the pressure has purge or bad
+quality marker.  In this case the report is not used by either
+analysis regardless of the other quality markers.  As a result,
+only the O.P.C. purge quality marker would be honored by either
+analysis without change 2).  The O.P.C. keep flag would never be
+honored by the either analysis.  Actually, for all surface mass
+data (land and marine), a keep, good, or suspect quality marker
+on the pressure would not honored by either analysis without this
+change. 
+
+
+   D. CHANGES TO SATELLITE WIND DATA PROCESSING 
+
+     1) GLOBAL (AVN/FNL) only: NESDIS GOES-8 and GOES-9 cloud
+drift winds became operational at 18Z 21 March 1996 (with AVN run).
+
+     2) ETA (EDAS/MESO) only: NESDIS GOES-8 and GOES-9 cloud
+drift winds became operational at 12Z 27 March 1996 (with MESO
+run).

@@ -1,0 +1,98 @@
+                                              November 13, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 8)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the eighth time.  UPDATE #8 was implemented on the
+IBM-SP machine at 12Z on November 13, 2001.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 8  ***************
+
+
+I. GENERAL CHANGES
+
+     1) Reads in switch MP_PROCESS from a new namelist TASK. This
+is the process number for the MPI run (normally 0-11 when this
+program is multi-tasked on 12 nodes, defaults to 0 when multi-
+tasking not invoked, as currently in the RUC).  It is set in the
+ush script prepobs_makeprepbufr.sh where the namelist TASK is
+concatenated to the top of the standard input datacards.  The
+process number is then encoded in the PREPBUFR file under the new
+mnemonic PROCN.  This was added so the separate mass and wind
+pieces of the same original report could be easily identified
+since they must have the same PROCN and SQN (report sequence
+number).  SQN is generated sequentially in each multi-process
+run, thus it is not unique across processes.  [MAIN, W3FIZZ,
+FIZZ01, BUFRTABLE]
+
+     2) Modified to pass two different unit numbers representing
+Global sigma first guess files into W3LIB routine GBLEVENTS.  If
+the hour in the center date of the PREPBUFR file is not a
+multiple of three, it is expected that two spanning Global sigma
+first guess files, valid at times that are a multiple of three on
+either side of the center date, will be passed into GBLEVENTS. 
+GBLEVENTS has already been modified to linearly interpolate the
+spectral coefficients from the spanning guesses to the PREPBUFR
+center hour. [Note: The compilation of this program will bring in
+these changes.]  This change really affects only the RUC2A
+network, since all other runs are at PREPBUFR center hours which
+are multiples of three (in which case only the Global sigma guess
+valid at the center time is passed into GBLEVENTS, as before).
+[MAIN, W3FIZZ]
+
+
+
+     3) The number of bits for mnemonic SQN (report sequence
+number) is increased from 17 to 19 to handle larger numbers of
+data.  [BUFRTABLE]
+
+
+II. OERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO ATOVS RETRIEVAL DATA PROCESSING
+
+     1) CDAS only: Subroutine W3CNVXTOVS modified to return
+satellite id (BUFR code table 0-01-007) in word 6 of unpacked
+IW3UNPBF format (integer).  Prior to this work 6 was returned as
+missing. [W3CNVXTOVS]
+
+     2) CDAS only: Now encodes satellite id in PREPBUFR file
+(under mnemonic SAID) for either ATOVS or RTOVS retrievals
+(originating from EITHER 40-level format from unpacked NMCEDS
+format).  Prior to this, the satellite id was missing for this
+type of data. [MAIN, SATEDS, SATBFR]
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO QUIKSCAT DATA PROCESSING
+
+     1) Namelist switches IQKSLM and IQKSSP are no longer read
+and are removed.  This program no longer performs q.c. of
+quikSCAT data w.r.t. probability of rain and cell number on
+orbital swath edge.  This q.c. has been moved upstream to the
+program WAVE_DCODQUIKSCAT (optional, but currently it is being
+performed). [MAIN, GETSCATT, DATACARDS]
+
+     2) Modified to handle superobs (now generated in upstream
+program WAVE_DCODQUIKSCAT) by recognizing S in character 2 of the
+report id. [MAIN, GETSCATT]
+
+     3) No longer thins data by processing only every other
+report read in.  The upstream program WAVE_DCODQUIKSCAT now
+has the option to superob these data (and in fact it is
+superobing them). [MAIN, GETSCATT]
+
+     4) The interface to these data in the reprocessed BUFR data
+dump, W3UNPKB7, now returns the number of original reports used
+to generate a superob in word 10 of the header (the upstream code
+WAVE_DCODQUIKSCAT can now superob these data and it writes this
+information to the reprocessed dump file).  For non-superobed
+reports this defaults to 1.  This information is currently not
+transferred to the PREPBUFR file.  [W3UNPKB7]

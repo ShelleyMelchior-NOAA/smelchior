@@ -1,0 +1,44 @@
+                                                   May 21, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- UPDATE # 3)
+
+The February 17, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the third time as a CRISIS.  UPDATE #3
+was implemented on 1200 UTC 21 May 1998.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 3  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Added processing of RTOVS data based on a new namelist
+switch RTOVS (default is TRUE).  New external subroutines
+W3RTVUNP and W3RTVEDS interface with RTOVS BUFR data dump file
+and return either 40-level sounding/radiance reports or partial
+NMCEDS format reports, respectively.  Added counts for rejected
+TOVS/RTOVS in NMCEDS format processing, summarized in stdout
+print at end of program.  [MAIN, SATEDS, SATBFR]
+
+ 
+II.  OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A) CHANGES TO RADIOSONDE PROCESSING
+
+     1) Fixed an error which resulted in certain tropopause winds
+with speed of zero to NOT get flagged with q.m.=15 as they should
+be.  This was occurring when Cat. 5 was a duplicate wind level
+with a Cat. 3 level.  The flagging was moved from subroutine
+GETUPA to STOROB to correct this problem. [MAIN, GETUPA, SMERGE]
+
+
+   B) CHANGES TO RTOVS SOUNDING DATA PROCESSING
+
+     1) 3DVAR, OI, CDAS: RTOVS is now processed in place of TOVS
+(RTOVS=T).  For NMCEDS processing, RTOVS will sample 250km
+retrievals by processing only every 4'th retrieval is reads from
+the dump file (no filter flag information yet available in
+RTOVS).  [The SSI, using only ozone from TOVS, will continue to
+use TOVS instead of RTOVS (RTOVS=F)]. [DATACARDS]

@@ -1,0 +1,39 @@
+                                          December 16, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (May 1, 1997 Version --
+                 EDS, MSO, R3DV DATACARD UPDATE # 7.1)
+
+Implemented 12Z 16 December 1997:
+
+REGIONAL versions ONLY.
+
+********** EDS, MSO, R3DV DATACARD U P D A T E   # 7.1 **********
+(IMPLEMENTED 12Z 16 December 1997)
+
+REGIONAL versions ONLY.
+
+
+I. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF SATELLITE WIND DATA
+
+     1) The NESDIS low-density 6-hourly cloud-drift satwinds are
+replaced with the high-density 3-hourly IR cloud drift winds.
+Picture triplet winds are still processed.  For the R3DV version,
+water vapor imager cloud-top winds are also assimilated. 
+
+
+B. CHANGES IN THE PROCESSING OF SURFACE LAND DATA
+
+	1) MSO only: The time window is reduced from +/- 3-hours
+about cycle time to +/- 1.5-hours (it was already that way in the
+EDS). 
+
+
+C. GENERAL CHANGES
+
+	1) MSO only: Only data in the lat/lon box 5N to 71.5N and
+165W to 26.5W is processed (before the entire N.H. was processed).

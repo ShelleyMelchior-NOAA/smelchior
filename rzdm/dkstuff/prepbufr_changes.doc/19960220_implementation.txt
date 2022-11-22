@@ -1,0 +1,50 @@
+                                              February 20, 1996
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version -- UPDATE # 3)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the third time.  UPDATE #3 was
+implemented on 1200 UTC 20 February 1996 on the CRAY (GLOBAL, ETA
+versions).  All changes now affect only OBUFR = TRUE switch. 
+Except where noted, the changes below affect both the GLOBAL and
+ETA models.
+
+*********************  U P D A T E   # 3  ***********************
+
+ 
+I.  GENERAL CHANGES
+
+     1) Namelist switches JSMASS and JSWIND now have more
+possible values associated with them, other than only 0 or 9999
+as before.  This allows certain combinations of satellite wind
+producers/products and even certain GOES-EVEN and GOES-ODD
+satellite numbers to be processed but flagged for non-use by the
+analyses.
+
+     2)  Program now recognizes that the suffix character of the
+GOES satellite wind station id differs for every other odd ('A'
+or 'C') or even (`B' or `D') satellite number.
+
+
+
+II.  SPECIFIC OPERATIONAL CHANGES
+
+   A. CHANGES TO ACARS AIRCRAFT PROCESSING 
+
+     1) ETA: The namelist switch IACARL has been changed from
+2296 to 0 in order to allow ACARS reports below 7500 feet to now
+be passed on and used by the analyses.
+
+  B. CHANGES TO UPPER-AIR DATA PROCESSING 
+
+     1) ETA: The original tests used in the old REGIONAL PREPDA
+for the processing of ON29 category 4 levels and for the
+processing of ON29 category 3 winds on levels above the last non-
+missing height and temperature level are again used for the
+REGIONAL BUFR/PREPDA output.  This temporary fix will allow the
+REGIONAL BUFR/PREPDA data to appear more like that in the old
+REGIONAL PREPDA output.  The latter format is what is expected by
+the ETA FERR and OI-analysis codes.

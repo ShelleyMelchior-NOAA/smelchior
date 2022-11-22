@@ -1,0 +1,13 @@
+                                             April 15, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version --
+                 OI, 3DVAR DATACARD UPDATE # 1.1)
+
+Implemented 12Z 15 April 1998 in OI and 12Z 17 April 1998 in 3DVAR:
+
+TOVS satellite soundings will no longer be processed over land
+(not used by OI or 3DVAR anyway). [Namelist switch SATLND(1:10)
+changed from TRUE to FALSE.]

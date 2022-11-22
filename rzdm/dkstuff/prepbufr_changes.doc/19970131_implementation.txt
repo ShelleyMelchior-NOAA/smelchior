@@ -1,0 +1,92 @@
+                                              February 12, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version -- UPDATE # 7)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the seventh time.  UPDATE #7 was
+implemented on 1200 UTC 31 January 1997 on the CRAY.  All changes
+now affect only OBUFR = TRUE switch.  Except where noted, the
+changes below affect both the GLOBAL and RGL/ETA models.
+At implementation time, PREPDATA still used ON29 file input.  The
+conversion to JBUFR input was as follows:
+
+     AVN (530,532) 12Z 04 February
+     FNL (830,860) 12Z 05 February
+     MESO (667)    12Z 11 February
+     EDAS (881)    12Z 12 February
+     ERL  (240)    12Z 12 February
+     RGL  (340)    12Z 12 February
+
+
+*********************  U P D A T E   # 7  ***********************
+
+
+I.  GENERAL CHANGES
+
+      1) New NAMELIST switch IACFTL(4) replaces IACARL.  Can now
+specify FLOOR for all 4 aircraft types (default is IACFTL =
+100,3*2286).  If reports are below floor, they are flagged for
+non-use by analysis.  TEMPORARY: If AIREP/PIREP or ASDAR/AMDAR
+report below floor, it is tossed rather than flagged.  ACARS
+below floor are flagged.  NOTE: FOR NOW, THE NEW IW3GAD ACTUALLY
+FILTERS OUT AIREP/PIREP AND ASDAR/AMDAR REPORTS BELOW FLOOR
+BEFORE THEY EVER GET TO PREPDATA. (MAIN, GETC06)
+  - for ON29 input: GBL: = default
+                    RGL: = default for 1-3, IACFTL(4)=0
+                           (as before)
+  - for BUFR input: GBL: = default
+                    RGL: = default for 1-3, IACFTL(4)=0
+
+
+
+
+
+
+
+
+
+      2) New namelist switch AIFNOW, when set to FALSE for any of
+the 4 aircraft types, will flag that type's mass report for non-
+use by the analysis when the corresponding wind report is missing
+(default is AIFNOW = 4*FALSE).  TEMPORARY: If AIFNOW=F for
+AIREP/PIREP or ASDAR/AMDAR reports, it is tossed rather than
+flagged.  ACARS with AIFNOW=FALSE are flagged.  NOTE: FOR NOW,
+THE NEW IW3GAD ACTUALLY FILTERS OUT ALL TYPES OF REPORTS WITH
+MISSING WIND BEFORE THEY EVER GET TO PREPDATA. (MAIN, GETC06)
+  - for ON29 input: GBL: = default
+                    RGL: = default 
+   - for BUFR input: GBL: = default
+                     RGL: = default
+
+      3) New namelist switch IPRFTP added to specify type of
+input wind profiler data set (=1 - WMO BUFR; =2 - JBUFR). 
+Default is IPRFTP = 1. (MAIN, PREP).
+  - for ON29 input: GBL: = default
+                    RGL: = default
+  - for BUFR input: GBL: = IPRFTP=2
+                    RGL: = IPRFTP=2
+
+      4) Added call to new subroutine W3UNPK77, to decode reports
+from JBUFR wind profiler data set when NAMELIST switch IPRFTP=2.
+(MAIN, PREP).
+
+      5) GBL and RGL BUFR input: Namelist switches JSURFM(3),
+JSURFM(7) set to 9999 to exclude pmsl bogus from processing
+(these are not yet available in bufr dumps). (MAIN, SFCDTA).
+
+      6) GBL and RGL BUFR input: Namelist switch MBOGUS set to
+FALSE to exclude satellite moisture bogus from processing (this
+is not available in bufr dumps and in fact is not longer
+processed by NESDIS/SAB). (MAIN, PREP).
+
+      7) RGL BUFR input: Namelist switch IEDSTP set to 2 to input
+TOVS retrievals in unpacked NMCEDS format from JBUFR dump file.
+(MAIN, SATEDS).
+
+      8) GBL BUFR input: Namelist switch TOVBFR set to TRUE to
+input TOVS 40-level retrievals and radiances from JBUFR dump
+file.  (In version 6, no TOVS data was present in PREPBUFR file.)
+(MAIN, PREP).
