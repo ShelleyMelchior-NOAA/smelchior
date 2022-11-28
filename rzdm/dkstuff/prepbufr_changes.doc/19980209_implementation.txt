@@ -1,0 +1,87 @@
+                                          February 9, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (May 1, 1997 Version --
+                 R3DV DATACARD UPDATE # 7.3)
+
+Implemented 12Z 09 February 1998:
+
+CHANGES IN DATA PROCESSING WITH THE IMPLEMENTATION OF THE 3DVAR
+ANALYSIS AT 12Z ON 09 FEBRUARY 1998 (VS. PREVIOUS OI VERSION)
+
+
+All below are PREPDATA CARD CHANGES (except where noted) ---
+
+	1. The data selection region is now a subset of the
+           Northern Hemisphere (OI is entire Northern Hemisphere).
+
+	2. Upper-air data types no longer interpolate data to
+           special (auxiliary) 25/50 mb levels.
+
+	3. For upper-air data types, T,Z, wind, moisture are no
+           longer interpolated to levels where they are missing.
+
+	4. Block 42 and 43 RAOB mass reports are no longer
+           automatically purged.
+
+	5. The following data types are now assimilated:
+		a. VAD (NEXRAD) winds.
+		b. NESDIS high-density imager water vapor cloud top
+                   satellite winds.
+		c. ACARS aircraft temperature (mass) reports.
+		d. Conventional AIREP/PIREP and AMDAR/ASDAR
+                   aircraft temperature (mass) reports (PREPACQC
+                   data card change).
+		e. Flight-level, single-level Reconnaissance
+                   temperature (mass) reports. 
+		f. Surface wind reports over land.
+		g. Surface land mass and wind reports within the
+                   old LFM grid domain and with missing station
+                   pressure and mean sea-level pressure.  NOTE: If
+                   altimeter setting is available, it is used as an
+                   estimate of the sea-level pressure.  Otherwise,
+                   the standard atmosphere value of 1013 mb is
+                   used.  The station pressure is then generated
+                   from this, giving the report a type 183 (mass)
+                   or 284 (wind).
+		h. SSM/I superobed wind speed (operational
+                   Goodberlet algorithm). 
+
+	6. The following data types have time window changes:
+		a. GOES PW retrievals now +/-1.5 hours (was +/- 0.5
+                   hours).
+		b. Surface land reports now +/- 1.5 hours (was +/-
+                   0.5 hours).
+
+	7. The following profile data types are now processed to a
+           higher level:
+		a. TOVS soundings now processed at levels above
+                   10mb (before stopped at 10 mb).
+		b. RAOB, PIBAL, RECCO, PROFILER, VADWIND reports
+                   now processed up to 1 mb for mandatory level
+                   data (before stopped at 10 mb), and up to 1 mb
+                   for significant level data (before stopped at 50
+                   mb).
+		c. RAOB, RECCO moisture now processed up to 1 mb
+                   (before stopped at 250 mb).
+
+	8. TOVS soundings are now unpacked in the 40-level format
+           at the full 80 km resolution.  Before, they were
+           unpacked in the 15-layer NMCEDS format at 250 km
+           resolution.
+
+	9. The mass report level for an observation will now be
+           processed if the temperature is valid but the height is
+           either missing or bad.
+
+       10. CLASS soundings will NOT be processed.  These data are
+           no longer available anyway.
+
+       11. Conventional aircraft reports are no longer superobed
+           (PREPACQC data card change).
+
+       12. Conventional AIREP/PIREP reports over CONUS are
+           processed, but they are flagged for non-use by the
+           analysis. Before, they were not processed.

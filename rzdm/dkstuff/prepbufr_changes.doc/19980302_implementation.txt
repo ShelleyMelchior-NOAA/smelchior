@@ -1,0 +1,18 @@
+                                               March 2, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (May 1, 1997 Version --
+                 AVN, FNL, CDAS DATACARD UPDATE # 7.3)
+
+Implemented 12Z 02 March 1998:
+
+NESDIS high-density satellite winds of the types IR cloud-drift,
+water vapor imager cloud top and new-format low-density picture
+triplet winds all switched on for processing and assimilation by
+Global and CDAS SSI.
+
+NESDIS conventional low-density satellite winds of the type IR
+cloud-drift (including picture triplet from old-format processing)
+are no longer processed or assimilated.

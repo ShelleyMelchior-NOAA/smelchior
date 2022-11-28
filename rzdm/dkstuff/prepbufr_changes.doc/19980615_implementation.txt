@@ -1,0 +1,12 @@
+                                             June 15, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version --
+                 AVN, FNL DATACARD UPDATE # 3.2)
+
+Implemented 12Z 15 June 1998:
+
+GLOBAL (AVN/FNL) now processing GOES radiances.  (Namelist switch
+GOESRD set to TRUE).

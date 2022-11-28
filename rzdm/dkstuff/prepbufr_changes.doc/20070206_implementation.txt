@@ -1,0 +1,131 @@
+                                                February 6, 2007
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 5)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was
+updated for the fifth time.  UPDATE #5 was implemented on the
+IBM-CCS machines at 12Z on February 6, 2007.  Except where noted, the
+changes below affect all eight versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA
+and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 5 **************
+
+
+I. GENERAL CHANGES
+
+     1) Increased size of arrays SWINDO_e, SWINDO_l, SWNLND, JSWIND and JSMASS
+from (6,7,10) to (6,8,10) to allow EUMETSAT satellites to be split into
+separate processing for odd (*,5,*) and even (*,6,*) satellites rather than
+all EUMETSAT satellites in (*,5,*) as before [(*,7,*) and (*,8,*) now refer to
+AQUA and TERRA satellites, respectively instead of (*,6,*) and (*,7,*) as
+before] (defaults are same as previous EUMETSAT-all for both odd and even
+satellites) [MAIN, DATACARDS, BLOCK]
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO SATELLITE-DERIVED WIND DATA PROCESSING
+
+     1) Modified EUMETSAT processing to consider "odd" and "even" satellites
+separately for process/no-process/flag all/flag every-other, time window,
+land/no-land, all by lat band and product type. [MAIN, SWNTBL, GETC06,
+DATACARDS]
+
+     2) GFS, GDAS, CDAS, CDC, NAM, NDAS only: With the expansion of the
+“satwnd” dump to now include EUMETSAT visible and water vapor tanks, the
+METEOSAT-5 visible data are now processed and used by the assimilation.  The
+METEOSAT-5 WV data are now flagged for non-use by the assimilation. [UPSTREAM
+SATWND DUMP]
+
+     3) GFS, GDAS, CDAS, CDC, NAM, NDAS only: IR and visible winds from the
+odd EUMETSAT satellite (currently METEOSAT-8) are flagged so they will not be
+assimilated by analysis (both even and odd satellites continue to flag water
+vapor winds). The METEOSAT-8 will be introduced into the "satwnd" dump within
+the next two weeks.  [DATACARDS]
+
+     4) AFOSPLT only: IR and visible winds from the odd EUMETSAT satellite
+(currently METEOSAT-8) are tossed so they will not be plotted by AFOSPLT
+(since they are not yet assimilated by the GBL-SSI) (both even and odd
+satellites continue to toss water vapor winds).  The METEOSAT-8 will be
+introduced into the "satwnd" dump within the next two weeks.  [DATACARDS]
+
+     5) GFS, GDAS, AFOSPLT, CDAS, CDC only: EUMETSAT IR, water vapor and
+visible satellite winds are now processed with a time window of -0.75 to +0.25
+hours about cycle time (the time window had been +/- 0.75 hours about cycle
+time).  This change was made because the future METEOSAT-8 wind sets are
+available hourly (unlike the METEOSAT-5 wind sets which are available every
+90-minutes), and only one wind set time is ever assimilated (here the
+METEOSAT-8 wind set from 30-minutes prior to cycle time will be assimilated
+once these are ready to be used).  This change does not affect the METEOSAT-5
+data.  [DATACARDS]
+
+     6) NAM, NDAS only: EUMETSAT IR, water vapor and visible satellite winds
+are now processed with a time window of -0.75 to +0.25 hours about cycle time
+(the time window had been -1.25 to +0.25 hours about cycle time).  This change
+was made because the future METEOSAT-8 wind sets are available hourly (unlike
+the METEOSAT-5 wind sets which are available every 90-minutes), and only one
+wind set time is ever assimilated (here the METEOSAT-8 wind set from
+30-minutes prior to cycle time will be assimilated once these are ready to be
+used).  This change does not affect the METEOSAT-5 data.  [DATACARDS]
+
+     7) GFS, GDAS only: A bug which caused Aqua and Terra MODIS deep-layer
+water vapor winds to be treated as though they were cloud-top water vapor
+winds (and thus assimilated instead of tossed) was corrected.  As such they
+are no longer lumped together with the cloud-top water vapor winds.  The
+datacards had been set to toss these, however, since they did not harm the
+analysis it was decided that the deep-layer water vapor winds should continue
+to be assimilated.  The datacards were changed to process these instead of
+toss them.  [IW3UNPBF, DATACARDS]
+
+     8) GFS, GDAS only: Aqua and Terra MODIS IR winds and water vapor
+(deep-layer and cloud top) winds are now quality controlled according to the
+value of the NESDIS Recursive Filter Function (RFF) read in (like for GOES
+satellite-derived winds).  Here, winds with RFF < 50 are marked as bad (13),
+winds with RFF 50-55 are marked as suspect (3), winds with RFF 56-84 are
+marked as neutral (2), and winds with RFF > 84 are marked as good (1).  Prior
+to this, all winds received a neutral quality mark (2). [IW3UNPBF, GETC06]
+
+     9) Modified to handle future GTS GOES winds and future hi-density (BUFR)
+JMA winds.  [IW3UNPBF]
+
+    10) Stores percent confidence based on EUMETSAT Quality Index with
+forecast consistency test (BUFR code table 0-33-197) in category 8 code figure
+356.  [IW3UNPBF]
+
+    11) Stores percent confidence based on EUMETSAT Quality Index without
+forecast consistency test (BUFR code table 0-33-198) in category 8 code figure
+357.  [IW3UNPBF]
+
+    12) Accounts for EUMETSAT winds now possibly providing an additional
+quality indicator - NESDIS Recursive Filter Function (RFF).  [IW3UNPBF]
+
+
+   B. CHANGES TO GOES SATELLITE SOUNDING PROCESSING
+
+     1) RUC only: GOES-11 cloud-top data are now assimilated (like GOES-12),
+they are no longer flagged (switch IRTRV changed from 9999 to 0 for GOES ODD-2
+cloud-top data).  [DATACARDS]
+
+     2) RUC only: GOES-11 clear layer precipitable water data are now
+assimilated (like GOES-12), they are no longer flagged (switch IRTRV changed
+from 9999 to 544 for GOES ODD-2 precipitable water data).  Cloudy layer
+precipitable water data from both GOES-11 and GOES-12 continue to be flagged.
+[DATACARDS]
+
+     3) NAM, NDAS only: GOES-11 clear layer precipitable water data are no
+longer flagged (switch IRTRV changed from 9999 to 0 for GOES ODD-2 layer
+precipitable water data).  Like GOES-12 clear layer precipitable water data
+(which was already not flagged), they are monitored, but not used, by the
+NAM-GSI.  [DATACARDS]
+
+     4) NAM, NDAS only: GOES-11 and GOES-12 cloudy layer precipitable water
+data are no longer flagged (switch IRTRV changed from 9999 to 0 for GOES ODD-2
+layer precipitable water data and changed from 544 to 0 for GOES EVEN-1 layer
+precipitable water data).  They are monitored, but not used, by the NAM-GSI.
+[DATACARDS]
+

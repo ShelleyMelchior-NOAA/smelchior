@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Generator" content="WordPerfect 9">
+  <meta name="DATE" content="10/27/1995">
+  <meta name="GENERATOR"
+ content="Mozilla/4.7 [en] (Win98; U) [Netscape]">
+  <meta name="Author" content="Dennis Keyser">
+  <title>REASON CODES ASSOCIATED WITH STEP SYNDATA, PROGRAM CODE 002</title>
+</head>
+<body alink="#ff0000" bgcolor="#ffffff" link="#0000ff" text="#000000"
+ vlink="#551a8b">
+&nbsp;
+<br>
+Table 9.&nbsp;&nbsp; Reason codes associated with step "SYNDATA",
+program
+code 002 (last revised 6/1/2017).
+<br>
+&nbsp;
+<p><span style="font-size: 10pt;"></span></p>
+<p><span style="font-size: 10pt;"></span></p>
+<p><span style="font-size: 10pt;">KEY:</span>
+<br>
+<span style="font-size: 10pt;">&nbsp;&nbsp; IN "R.CODE" COLUMN:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B - OCCURS ONLY IN&nbsp;GFS/GDAS, AND PREVIOUSLY NAM, VERSIONS OF
+SYNDATA
+(THE
+SYNDATA STEP DOES NOT RUN IN ANY OTHER NETWORKS).</span>
+<br>
+<span style="font-size: 10pt;">&nbsp;&nbsp; IN &ldquo;MNEMONIC&rdquo;
+COLUMN:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+** - OBSERVATION OR QUALITY MARKER IS OBTAINED AS DEFINED IN EVENT
+MEANING.</span>
+<br>
+&nbsp;
+<br>
+&nbsp;
+<table style="width: 100%;" border="1">
+  <tbody>
+    <tr valign="top">
+      <td><span style="font-size: 10pt;">R.CODE&nbsp;</span><span
+ style="font-size: 10pt;"></span></td>
+      <td><span style="font-size: 10pt;">MEANING</span><span
+ style="font-size: 10pt;"></span></td>
+      <td><span style="font-size: 10pt;">MNEMONICS AFFECTED AND</span><span
+ style="font-size: 10pt;">
+NEW VALUE FOR OBS, Q.M.</span><span style="font-size: 10pt;"></span></td>
+    </tr>
+    <tr valign="top">
+      <td><span style="font-size: 10pt;">00 B&nbsp;</span><span
+ style="font-size: 10pt;"></span></td>
+      <td><span style="font-size: 10pt;">ORIGINAL BOGUS DATA CREATED BY
+THIS PROGRAM.</span><span style="font-size: 10pt;"></span></td>
+      <td><span style="font-size: 10pt;">PRC-&gt; POB= **, PQM= 1</span><span
+ style="font-size: 10pt;"></span> <br>
+      <span style="font-size: 10pt;">TRC-&gt; TOB= **, TQM= 0</span><span
+ style="font-size: 10pt;"></span> <br>
+      <span style="font-size: 10pt;">ZRC-&gt; ZOB= **, ZQM= 0</span><span
+ style="font-size: 10pt;"></span> <br>
+      <span style="font-size: 10pt;">WRC-&gt; UOB,VOB= **, WQM= 0</span><span
+ style="font-size: 10pt;"></span></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">01
+B&nbsp;</span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">BOGUS
+SPECIFIC HUMIDITY OBSERVATION AT STORM CENTER CREATED BY THIS PROGRAM
+(BASED ON AN ASSUMED RELATIVE HUMIDITY OF&nbsp; 99%)</span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">QRC-&gt;
+QOB= **, QQM= 0</span></td>
+    </tr>
+    <tr>
+      <td style="font-family: Times New Roman; vertical-align: top;"><span
+ style="font-size: 10pt;">02 B</span></td>
+      <td style="font-family: Times New Roman; vertical-align: top;"><span
+ style="font-size: 10pt;">REPORTED&nbsp;SURFACE PRESSURE OBSERVATION AT
+STORM CENTER (FROM TCVITALS)</span></td>
+      <td style="font-family: Times New Roman; vertical-align: top;"><span
+ style="font-size: 10pt;">PRC-&gt; POB= **, PQM= 0</span><span
+ style="font-size: 10pt;"></span></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">03
+B</span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">BOGUS&nbsp;SURFACE
+PRESSURE OBSERVATION AT STORM CENTER CREATED BY THIS PROGRAM
+&nbsp;(DERIVED&nbsp;FROM&nbsp;ADJUSTING&nbsp;FIRST GUESS SURFACE
+PRESSURE ACCORDING TO&nbsp;SAFFIR-SIMPSON STORM CATEGORY)</span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">PRC-&gt;
+POB= **, PQM= 0</span></td>
+    </tr>
+    <tr valign="top">
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">10
+B&nbsp;</span><span style="font-size: 10pt;"></span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">REPORT
+IN THE VICINITY OF A
+TROPICAL
+STORM. PRESSURE ON ALL LEVELS FLAGGED SO REPORT WILL NOT BE
+ASSIMILATED. <br>
+      </span></td>
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">PRC-&gt;
+PQM= 10</span><span style="font-size: 10pt;"></span></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><font size="-1">99 B<br>
+      </font></td>
+      <td style="vertical-align: top;"><font size="-1">DROPWINSONDE
+REPORT IN THE VICINITY OF A TROPICAL STORM (WITHIN A RADIUS OF THE
+LARGER OF 111 KM OR THREE TIMES THE RADIUS OF MAXIMUM SURFACE
+WIND).&nbsp; WIND ON ALL LEVELS FLAGGED SO WIND WILL NOT BE ASSIMILATED.<br>
+      </font></td>
+      <td style="vertical-align: top;"><font size="-1">WRC-&gt; WQM=10<br>
+      </font></td>
+    </tr>
+  </tbody>
+</table>
+</p>
+</body>
+</html>

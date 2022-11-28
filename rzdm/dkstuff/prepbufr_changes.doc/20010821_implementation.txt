@@ -1,0 +1,112 @@
+                                                August 21, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 6)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the sixth time.  UPDATE #6 was implemented on the
+IBM-SP machine at 12Z on August 21, 2001.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 6  ***************
+
+I.  GENERAL CHANGES
+
+     1) CDAS only: Namelist switch IRNMRK is now set to 7 for
+CDAS-Reanalysis/SSI runs (prior to this it had been lumped
+together with FNL-GDAS/SSI runs as 5). [MAIN, CDAS DATACARDS]
+
+     2) The standard output "Welcome" now prints the particular
+run type rather than the generic print of all run types, as
+before. [MAIN]
+
+     3) Namelist switch IWINDO was dissolved and two new switches
+(with the same array sizes) were created called IWINDO_e (holding
+the time window for the earliest satellite sounding/retrieval/
+radiance reports) and IWINDO_l (holding the time window for the
+latest reports).  In both cases, a "-" time means before cycle
+time and a "+" time means after cycle time.  This allows the time
+window to be asymmetric about the cycle time (see III.A.1 and
+III.A.2). [MAIN, SATEDS, SNDTBL, SATBFR, GOESDG, GOESCHK,
+DATACARDS]
+
+     4) The BUFR mnemonic table was modified to correct some
+errors in the description of some data types.  This change has no
+effect on the structure of the PREPBUFR file. [BUFRTABLE]
+
+     5) Subroutine W3ATOVSUNP modified as follows:
+          a) Checks value of argument IERR on input.  If it is
+not equal to 1 (meaning most likely 0), the assumption is made
+that the input BUFR file is from a data dump (as before).  If it
+is equal to 1, the assumption is made that the input BUFR file is
+from a tank on /dcom.  In the case of the latter, no attempt is
+made to obtain a center time or dump time in messages 1 and 2
+since they do not exist, and there is a 250 line limit on
+diagnostic warning prints about reports failing a surface
+pressure d-val check and reports with one or more missing
+temperatures in their profile (both of which are tossed).
+          b) Now closes the input BUFR file after all reports are
+processed (via call to BUFRLIB routine CLOSBF).
+          c) Upon each entry into subroutine, it checks to see if
+the input BUFR file is closed.  If this is the case, the
+subroutine processes this entry as if it were the first entry
+into the subroutine.  This allows a single program to read
+through and process the same input BUFR file more than once or to
+read through and process several different input BUFR files.
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO GOES SFOV CLOUD TOP DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 now tallies separately a count of all
+reports read from the "goesnd" dumnp file with a missing field-
+of-view value (e.g., the SFOV cloud top reports).  Prior to this,
+the count of reports with missing f-o-v was incorrectly included
+with the count of reports with f-o-v of 10 to 25. [W3UNPKB7]
+
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO GOES SFOV CLOUD TOP DATA PROCESSING
+
+     1) ETA only: The time window for processing GOES-08 and
+GOES-10 cloud top reports was changed from +/- 3 hours about
+cycle time (effectively -3 to -0.01 hours since the dump window
+for these data was set to this) to -3.25 to -0.25 hours about
+cycle time for GOES-08 and -3.00 to -0.01 hours about cycle time
+for GOES-10 [possible now with new switches IWINDO_e and IWINDO_l
+(see I.3)] (the dump window for both satellites is now -3.25 to -
+0.01 hours).  This was done so that all of the cloud top data
+from a particular satellite would be from the same retrieval time
+sets.  These data are written into the PREPBUFR files but are not
+yet used by the Eta model. [DATACARDS] 
+
+     2) ETA only: Restored the processing of GOES SFOV cloud top
+data into the PREPBUFR files (Namelist switch GOESCT(2) changed
+from FALSE to TRUE.) (The BUFRLIB has been modified to increase
+the array size for MAXMEM from 8 MB to 16 MB.) [DATACARDS]
+
+     3) RUC only: The time window for processing GOES-08 and
+GOES-10 cloud top reports was changed from +/- 1 hour about cycle
+time (effectively -1 to +0.43 hours since the dump cutoff time is
+T+0:26) to -1.25 to -0.25 hours about cycle time for GOES-08 and
+-1.00 to -0.01 hours about cycle time for GOES-10 [possible now
+with new switches IWINDO_e and IWINDO_l (see I.3)] (the dump
+window for both satellites is now -1.25 to -0.01 hours).  This
+was done so that all of the cloud top data from a particular
+satellite would be from the same retrieval time set.  These data
+are written into the PREPBUFR files but are not yet used by the
+RUC. [DATACARDS]
+
+  B. CHANGES TO ATOVS 40-LEVEL SOUNDING DATA PROCESSING
+
+     1) In response to change to subroutine W3ATOVSUNP (see
+I.5.a), now passes the value IER=0 into this subroutine upon
+first call. [MAIN, SATBFR]

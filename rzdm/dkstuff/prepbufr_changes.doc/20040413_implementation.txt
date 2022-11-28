@@ -1,0 +1,37 @@
+                                                April 13, 2004
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 DATACARD UPDATE # 11.1 - NETWORKS: AFOSPLT,
+                 AVN, CDAS, ETA, FNL, RUC)
+
+Implemented 12Z 13 April 2004:
+
+AFOSPLT, AVN, CDAS, ETA, FNL only: Exclude E-ADAS aircraft from processing
+now that they are included in the "AIRCFT" dump file (not included in the RUC
+network dump).  [Namelist switch SUBSKP(004,006) set to TRUE.]
+
+AVN, CDAS, FNL only: Exclude mobile SYNOPs from processing now that they are
+included in the "ADPSFC" dump file (not included in the ETA network dump;
+also "ADPSFC" not dumped in the AFOSPLT or RUC networks).  [Namelist switch
+SUBSKP(000,002) set to TRUE.]
+
+AVN, ETA, FNL, RUC only: Exclude CAP profiler winds from processing now that
+they are included in the "PROFLR" dump file (CDAS network does not process
+any reports from this dump and "PROFLR" not dumped in the AFOSPLT network).
+[Namelist switch SUBSKP(002,011) set to TRUE.]
+
+AVN, FNL only: Exclude Japanese profiler winds from processing now that they
+are included in the "PROFLR" dump file (not included in the ETA and RUC
+network dumps; also CDAS network does not process any reports from this dump
+and "PROFLR" not dumped in the AFOSPLT network) .  [Namelist switch SUBSKP
+(002,013) set to TRUE.]
+
+ETA only: Since GOES 1x1 cloud-top retrievals are no longer included in the
+GOESND dump file they are switched off from processing (they are still
+included in the dump file in the RUC network, they have never been included
+in the dump file in the AVN and FNL networks; also CDAS network does not
+process any reports from this dump and "GOESND" not dumped in the AFOSPLT
+network).  [Namelist switch GOESCT(2) changed from TRUE to FALSE.]

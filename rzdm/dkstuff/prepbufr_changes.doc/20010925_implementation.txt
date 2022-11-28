@@ -1,0 +1,64 @@
+                                             September 21, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 7)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the seventh time.  UPDATE #7 was implemented on the
+IBM-SP machine at 12Z on September 25, 2001.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 7  ***************
+
+I. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO RADIOSONDE DATA PROCESSING
+
+     1) Corrected an error in calculating radiosonde balloon
+drift d-time (balloon drift time minus PREPBUFR center time) for
+wind report pressure levels that are also found in the
+corresponding mass report.  This time has always been calculated
+correctly for the mass report levels.  This is encoded into the
+PREPBUFR file under mnemonic HRDR but is currently assimilated
+only by the GBL-SSI. [MAIN, FIZZ01]
+
+  B. CHANGES TO SURFACE LAND AND MARINE PROCESSING
+
+     1) The report sequence number (encoded in the PRPEBUFR file
+header under mnemonic SQN) is now processed separately for
+surface land and marine reports.  Prior to this, it was missing. 
+This is not used by any analysis, but is useful for combining
+mass and wind reports for the same observation (since they have
+the same unique sequence number). [MAIN, SFCDTA]
+
+  C. CHANGES TO SATELLITE-DERIVED WIND REPORT PROCESSING
+
+     1) The report sequence number (encoded in the PRPEBUFR file
+header under mnemonic SQN) is now processed for all satellite
+wind reports.  Prior to this, it was missing.  This is not used
+by any analysis, but is useful for combining mass and wind
+reports for the same observation (since they have the same unique
+sequence number).  Currently this is not an issue since only wind
+data is processed for these data.  [MAIN, GETC06]
+
+
+
+
+  D. CHANGES TO RECONNAISSANCE DATA PROCESSING
+
+     1) The report sequence number (encoded in the PRPEBUFR file
+header under mnemonic SQN) is now processed separately for these
+data.  Since they are included at the end of the ADPUPA message
+type in the PREPBUFR file, the sequence number of the LAST
+RAOB/PIBAL/DROPWINSONDE report processed earlier is stored in
+COMMON and the sequence numbers for the reconnaissance reports
+pick up from that point.  This ensures that all reports in the
+ADPUPA message type have a unique sequence number.  Prior to
+this, sequence number was missing for these data.  This is not
+used by any analysis, but is useful for combining mass and wind
+reports for the same observation (since they have the same unique
+sequence number). [MAIN, STOROB, GETC06]

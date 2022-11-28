@@ -1,0 +1,240 @@
+                                               February 3, 1995
+ 
+MEMORANDUM TO:  Record    
+FROM:           Dennis A. Keyser -- W/NMC22
+SUBJECT:        Changes to OI/SSI-Data Preprocessor 
+                (August 30, 1994 Version)
+
+A new operational version of the data preprocessor program
+(PREPDATA) was implemented 1200 UTC 21 September 1994 on the HDS
+(REGIONAL version) and 1200 UTC 10 January 1995 on the CRAY
+(GLOBAL version).  Except where noted, the changes below affect
+both versions of the data preprocessor.
+
+
+I.  GENERAL CHANGES
+
+     1)  Namelist switches NHWRD, NLWRD and KMAX are no longer
+used.  Their values are hardwired within the source based on the
+namelist switches SEQNTL and OBUFR.
+
+     2)  Namelist switch TVIRT is no longer used.
+
+     3)  Added namelist switch IREANL to indicate if this is a
+reanalysis version of  the program [=0 not reanalysis (default),
+=1 reanalysis].
+
+     4)  Namelist switch MARLND now applies to upper-air ocean
+stations (Radiosonde, Pibal) as well as to surface marine
+stations.  If FALSE and these reports are over land they will
+either be flagged for non-use by the analysis (q.m.=15) for
+GLOBAL or removed from processing for REGIONAL.
+
+     5)  Added namelist switch IACARL to indicate the lowest
+level (in meters) for processing ACARS aircraft reports (default
+is 2286, corresponding to 7500 feet).
+
+     6)  Namelist switch IAFTFI can now be set to 2, which
+indicates that the input ON29 AIRCFT file contains aircraft
+reports that have been modified by the program PREPACQC.  These
+reports contain the new set of standard ON29 quality markers.
+
+     7)  In order to increase the program's flexibility, the
+following parameter names are now in the source: MXLVL (maximum
+number of levels that can be processed), MXWRDL (maximum number
+of variables in the output NOBS array for a report level), MXWRDH
+(maximum number of variables in the output NOBS array for a
+report header), MXNOBS [size of the NOBS array: (MXLVL x MXWRDL)
++ MXWRDH], NUMVAR (number of upper-air observation variables in
+the DAT and TMP arrays), NUMQMS (number of upper-air quality mark
+values in the IQ and JQ arrays), and NUMDAT (size of the upper-
+air DAT and TMP arrays: NUMVAR + NUMQMS).
+
+     8)  Subroutine TOVSID rewritten to improve efficiency.
+
+     9)  Added a new subroutine INTERP (see III.A.2 below).
+
+    10)  Condition code 18 is no longer needed and has been
+removed.
+
+    11)  Added condition code 22 for case where characters on
+machine are neither ASCII nor EBCDIC.
+
+    12)  If the ADPUPA file is empty or null, then the date is
+read from the NMC production date file regardless of the
+IUNIT(28) date switch.  Also in this case, the dump time is set
+to missing.  Prior to this, the program stopped with a condition
+code of 19.  (Allows reanalysis jobs to run even if no ADPUPA
+data is present.) 
+
+    13)  GLOBAL: If, upon the last call to subroutine W3FIZZ
+(BUFR storage initiator for each report), no data at all have
+been processed, then an empty ADPUPA Table A entry message is
+opened so that the date is available in the empty BUFR data set. 
+This is for the reanalysis effort.
+
+    14)  GLOBAL: The elevation is now stored in word 11 of the
+output NOBS array for a report header, and is encoded in BUFR.
+
+    15)  GLOBAL: The report sequence number is now stored in word
+12 of the output NOBS array for a report header, and is encoded
+in BUFR.  (Currently applies only to ACARS and conventional
+AIREP/PIREP and ASDAR aircraft reports.)
+
+    16)  GLOBAL: The reported wind direction and speed (knots)
+are now stored in word 6 and 7 of the output NOBS array for a
+wind report level, respectively, and are encoded in BUFR.  Added
+entry CMDDFF to subroutine UV to convert the u- and v- components
+back to direction and speed prior to writing them to the NOBS
+array.
+
+    17)  GLOBAL: The calculated virtual temperature and reported
+dewpoint temperature are now stored in word 6 and 7 of the output
+NOBS array for a mass report level, respectively, and are encoded
+in BUFR.
+
+
+    18)  GLOBAL: The true "reported" temperature is now stored in
+word 3 of the output NOBS array for a mass report level and is
+encoded in BUFR.  (For all data types except TOVS retrievals,
+this is sensible temperature.  For TOVS retrievals this is
+virtual temperature.)
+
+    19)  Virtual temperature is now calculated in subroutines
+STOROB and STORXX just prior to the writing out to the NOBS
+array.
+
+    20)  Program now determines the machine character type
+directly rather than assuming that machine with word length 8 is
+always ASCII and machine with word length 4 is always EBCDIC.
+
+    21)  The test for missing latitude or longitude expanded to
+include unreasonable values (outside possible range).  Such
+reports are tossed.
+
+    22)  Increased length of stored report station identification
+from CHARACTER*6 to CHARACTER*8 (variable STNID).
+
+    23)  GLOBAL: Updated BUFR user table to be more like that in
+reanalysis version.  Makes use of new mnenomics in user table.
+
+    24)  GLOBAL: Compiles with updated bufrk version of bufr.o
+library.
+
+
+II.  SPECIFIC OPERATIONAL CHANGES
+
+   A.   CHANGES TO UPPER-AIR DATA PROCESSING
+
+     1)  GLOBAL: Category 4 levels are now processed regardless
+of the number of category 1, 3 and 5 levels in the report.  Prior
+to this, category 4 levels were not processed if their number was
+less than the sum of category 1, 3 and 5 levels (and they still
+are not processed for REGIONAL).
+
+     2)  GLOBAL: Any category 2 or 3 level that reports below the
+surface pressure level is no longer skipped in the processing of
+a report.  All variables in the level, however, are flagged for
+non-use by the analysis (q.m.=15).
+
+     3)  GLOBAL: If the calculated virtual temperature on a level
+is > 375 K (or > 325 K above 100 mb), the dewpoint temperature is
+no longer set to missing. (It is still set to missing for
+REGIONAL.)
+
+     4)  GLOBAL: For radiosonde reports failing the baseline
+check, all variables on category 4 levels below the top spanning
+pressure level are now flagged for non-use by the analysis
+(q.m.=15).  Prior to this, such category 4 levels were removed
+from processing (and they still are not processed for REGIONAL).
+
+     5)  GLOBAL: All duplicate pressure level checks now check
+for duplicate pressure to the nearest tenth of a millibar.  Prior
+to this the check was to the
+nearest whole millibar (and it still is for REGIONAL).
+
+     6)  GLOBAL: Category 4 calculated pressure is now stored to
+the nearest
+tenth of a millibar.  Prior to this is was rounded to the nearest
+whole millibar (and it still is for REGIONAL).
+
+     7)  GLOBAL: All levels above the highest level with non-
+missing height and temperature are now processed in both mass and
+wind pieces.  Prior to this, all such levels were excluded from
+processing (and they still are for REGIONAL).
+
+   B.   CHANGES TO AIRCRAFT DATA PROCESSING
+
+     1)  GLOBAL: The seventh character of the station
+identification to now stored in the variable STNID for each
+AIREP/PIREP report where applicable.  It is obtained from ON29
+reserve character 26 after 17 April 1991.  Also, a complete eight
+character STNID may be generated for those reports where the
+known carrier ID is incorrect.
+
+     2)  GLOBAL: The receipt time and report subtype [indicating
+whether this is (=1) or is not (=0) a Carwsell/Tinker AFB
+processed report] are now encoded into the report header in BUFR
+for conventional AIREP/PIREP and ASDAR reports.  This information
+is needed in the PREPACQC program that runs later.
+
+     3)  GLOBAL: The namelist switch AWINDO has been changed from
+300. to 325. for conventional AIREP/PIREP and ASDAR reports. 
+This allows the program PREPACQC (which runs later) to obtain
+more data for the track check.  PREPACQC will then only allow
+reports within a +/- 3-hour window to be processed. (AWINDO is
+still 300. for these reports for REGIONAL.)
+
+     4)  GLOBAL: The namelist switch PGAFUS has been changed from
+TRUE to FALSE for conventional AIREP/PIREP and ASDAR reports. 
+This allows the program PREPACQC (which runs later) to make use
+of all these data.  PREPACQC will then exclude such reports
+outside the continental U.S. (if ACARS available) in its final
+output.  (PGAFUS is still TRUE for these reports for REGIONAL.)
+
+   C.   CHANGES TO SURFACE DATA PROCESSING
+
+     1)  If EITHER the direction or the speed for a report is
+missing, then the wind piece for the report is not processed. 
+Prior to this, only the speed was checked.  In this prior case,
+if only the direction was missing the wind was processed into u-
+and v-components with 99999 used for the direction!
+
+   D.   CHANGES TO SSM/I DATA PROCESSING
+
+     1)  GLOBAL:  The SSM/I retrievals of total column
+precipitable water will now be used operationally by the AVIATION
+and FINAL analyses.  The namelist switch JPSSMI(2) is set to 0. 
+The time window is +/- 3-hours.
+
+   E.   CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1)  The ON29 SATWND file now contains new quality markers
+for some of the NESDIS cloud-drift wind reports.  The quality
+markers are based on a recursive filter flag that NESDIS assigns
+to the winds.  Winds can be marked as good, neutral, suspect or
+bad.  Bad winds have never been written into the SATWND file, and
+they still are not.  PREPDATA can now recognize these new quality
+markers and reformat them into the proper BUFR/PREPDA table
+values.  Prior to this, all satellite winds had neutral quality
+markers. (NOTE:  This change was implemented in the REGIONAL/HDS
+version of PREPDATA  on 1200 UTC 02 November 1994.)
+
+
+
+III. SPECIFIC NON-OPERATIONAL CHANGES
+
+   A.   CHANGES TO TOVS DATA PROCESSING
+     
+     1)  If the TOVS NMCEDS directory (houskeeping) file is empty
+or null, the TOVS data is assumed to be packed in Office Note 29
+format rather than in NMCEDS format.  This is for the reanalysis
+effort. (Only if namelist switch TOVEDS is true.)
+
+     2)  In the 36-day disk archive processing of TOVS data, a
+new subroutine INTERP has been added to interpolate the TOVS
+interactive temperature and specific humidity retrievals (in the
+Northern Hemisphere) onto mandatory levels up to 10 mb.  This
+allows increment archive programs to calculate statistics for
+these data on mandatory levels (effective 0000 UTC 31 August
+1994).

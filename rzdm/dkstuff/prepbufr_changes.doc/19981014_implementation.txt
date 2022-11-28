@@ -1,0 +1,26 @@
+                                               October 14, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version -- UPDATE # 2)
+
+The September 21, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the second time.  UPDATE #2 was
+implemented on 1200 UTC 14 October 1998.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 2  ***********************
+
+I.  OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO GOES SOUNDING DATA PROCESSING
+
+     1) External subroutine W3UNPKB7 modified to correct error in
+Cat. 8 GOES data processing when fewer than nine "levels" are
+present.
+
+   B. CHANGES TO ERS SCATTEROMETER DATA PROCESSING     
+
+     1) Added seconds to decoded report data in external
+subroutine W3ERSUNP (only used in prints of report data).

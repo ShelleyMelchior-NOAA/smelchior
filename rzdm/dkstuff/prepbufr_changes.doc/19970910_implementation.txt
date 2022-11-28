@@ -1,0 +1,37 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 5)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a fifth time.  UPDATE #5 was
+implemented on 1200 UTC 10 September 1997.  All changes now
+affect only OBUFR = TRUE switch.  Except where noted, the changes
+below affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 5  ***********************
+
+I.  GENERAL CHANGES
+
+     1) This program was compiled to link in the updated BUFRLIB
+library.  The BUFRLIB was recompiled without the degugging option
+(-ez) turned on.  This should speed up computation time.
+
+
+II. NON-OPERATIONAL (BUT SOON-TO-BE) CHANGES
+
+A. CHANGES IN THE PROCESSING OF GOES SOUNDING DATA
+
+     1) Corrects for situation when calculated top layer
+precipitable water (TOTAL minus sum of bottom 3 layers) is
+negative.  This occurs in two ways:
+        - lots of retreivals with small negative (magnitude 0.1
+mm) top layer precipitable water occur due to round-off error in
+the JBUFR file storage - these are set to zero (actually any
+where magnitude is less than 1.0 mm)
+        - occasionally a top layer with a large negative
+(magnitude greater than 1.0 mm) precipitable water is observed
+(reasons unknown) - these retrievals are tossed

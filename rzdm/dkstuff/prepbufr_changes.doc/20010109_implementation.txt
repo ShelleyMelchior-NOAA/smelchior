@@ -1,0 +1,400 @@
+                                               January 10, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 3)
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the third time.  UPDATE#3 was implemented on the IBM-
+SP machine at 12Z on January 9, 2001.  Except where noted, the
+changes below affect all five versions: ETA, AVN, FNL, RUC and
+CDAS.
+
+**************** I B M - S P   U P D A T E   # 3  ***************
+
+I.  GENERAL CHANGES
+
+     1) Removed namelist switch MSGPSF and all logic associated
+with it.  For reports in the LFM region if thinning is turned on,
+otherwise for all reports, if MSGPSF is TRUE surface land reports
+with missing station pressure and missing sea-level pressure are
+processed in one of two methods (see a. and b. below).  [MAIN,
+SFCDTA, PARM CARDS]
+          a. If the reported altimeter setting was non-missing, stored sea-
+level pressure as altimeter setting and calculated station pressure as with
+reports that only reported sea-level pressure (report types 183, 284 - placed
+a "$A" in characters 6 and 7 of station id to identify them).  The altimeter
+setting was encoded into the PREPBUFR file.
+          b. If the reported altimeter setting was also missing, stored sea-
+level pressure as missing and calculated station pressure based on a sea-level
+pressure of 1013.3 mb as with reports that only reported a sea-level pressure
+(report types 183, 284 - placed a "$S" in characters 6 and 7 of station id to
+identify them).
+          c. The only versions that set MSGPSF to TRUE were ETA and RUC. 
+The ETA did not use these reports (the R3DVAR program skipped over those
+reports with the special characters in the station id).  The RUC used the
+reported altimeter setting directly, not the calculated station pressure.
+          d. The SSI program had not been using any METAR data except where
+the PMSL was reported and where the elev was < 7.5 meters (only ~3% of all
+METAR reports; these were assigned report type 181 with only pressure and
+specific humidity assimilated).  This is because the SSI does not assimilate
+data with report type 183 (just as it does not assimilate data with report
+types 281 or 284).  The R3DVAR had not been using any METAR data except where
+PMSL was reported (~35% of all METAR reports; these were assigned as follows:
+report type 181 with pressure, temperature and specific humidity assimilated;
+report type 183 with temperature and specific humidity assimilated; and report
+types 281 or 284 with wind assimilated).  As noted above, the RUC had been
+using the METAR data with reported altimeter setting (and itself generating a
+PSTN from it; assigned report types 181, 183, 281 or 284).
+
+
+
+
+
+     2) Added the new namelist switch PFRALT (default is FALSE).
+When PFRALT is TRUE METAR reports with missing station pressure
+and non-missing altimeter setting are processed by calculating
+PSTN directly from the altimeter setting.  These reports are
+assigned a new report type 187(mass)/287(wind) to uniquely
+identify them.  About ~93% of METAR reports contain an altimeter
+setting. [MAIN, SFCDTA, W3FIZZ]
+          a. In the case of PFRALT=FALSE or missing altimeter setting, if
+the surface land report has a missing PSTN then it is calculated from PMSL if
+it is non-missing and the reports are assigned a report type 183(mass)/
+284(wind) [unless the elevation is < 7.5 meters in which case PSTN is set to
+PMSL and a report type 181(mass)/281(wind) is assigned].  If PMSL is also
+missing, the report is skipped.  This is unchanged from before.
+          b. In the case of PFRALT=TRUE, the altimeter setting is encoded
+into the PREPBUFR file (assuming it is non-missing).  The RUC reads the
+altimeter setting, not the PSTN, for the METAR reports.
+          c. See I.1.d for more on why this change was made.
+
+     3) All generated category 6 reports now store moisture as
+specific humidity in g/kg rather than as dewpoint depression in x
+10 degrees C.  The only category 6 types that currently contain
+moisture are some ACARS aircraft and some flight-level RECCOS.
+[MAIN, GETC06, IW3UNPBF]
+
+     4) Added namelist switch FLACMS which, when TRUE (default),
+flags all ACARS moisture data with a quality mark of 15 so they
+are not assimilated.  Prior to this switch, the ACARS moisture
+data were always flagged.  All versions currently use the default
+FLACMS=TRUE, thus ACARS moisture is still not assimilated. [MAIN,
+FIZZ01, PARM CARDS]
+
+     5) The BUFR mnemonic table was updated to include new
+mnemonics PFC_MOD, ZFC_MOD, UFC_MOD, VFC_MOD, TFC_MOD, QFC_MOD,
+PWF_MOD, PW1F_MOD, PW2F_MOD, PW3F_MOD and PW4F_MOD.  These are
+not filled at the current time but are designed to temporarily
+hold the native model forecast (first guess) data interpolated to
+the observation locations.  The ETA R3DVAR program will soon
+contain a postprocessing step that will store the Eta model guess
+here. As always, the mnemonics PFC, ZFC, UFC, VFC, TFC, QFC, PWF,
+PW1F, PW2F, PW3F and PW4F hold the global model first guess in
+all networks.  Eventually these will hold the native model guess
+in all networks and the *_MOD mnemonics will be removed.
+[BUFRTABLE]  
+
+
+
+
+
+
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO ACARS DATA PROCESSING
+
+     1) Moisture data is now processed as follows: The moisture
+quality must be good (dump file mnemonic MSTQ = 0 only).  If this
+is the case, the routine looks for non-missing mixing ratio (dump
+file mnemonic MIXR).  If mixing ratio is found, the routine
+converts it to specific humidity (g/kg) and stores it in the
+category 6 output (see I.3).  If mixing ratio is not found, the
+routine looks for non-missing relative humidity (dump file
+mnemonic REHU).  If relative humidity is found, the routine
+converts it to specific humidity (g/kg) and stores it in the
+category 6 output (see I.3).  Prior to this, MSTQ was not
+examined and only MIXR was read for moisture.  The changes here
+result in many more ACARS reports available to PREPDATA with
+specific humidity, and all with hopefully better quality than
+before. (The new namelist switch FLACMS is set to TRUE, so
+moisture is flagged with quality mark 15 and not assimilated by
+any analyses.  See I.4) [IW3UNPBF]
+
+     2) W3LIB routine GBLEVENTS was modified to bypass virtual
+temperature processing for message type "AIRCAR".  The virtual
+temperature had been generated for those ACARS reports with
+moisture, but because the moisture quality mark was flagged, the
+resultant virtual temperature was flagged and thus was not
+assimilated.  This was an oversight, but since there had been so
+few ACARS reports with moisture it had gone unnoticed.  Now,
+there are many more ACARS reports with moisture (see II.A.1). 
+The ACARS temperature will remain sensible. [GBLEVENTS}
+
+
+  B. CHANGES TO SURFACE MARINE DATA PROCESSING
+
+     1) Subroutine IW3UNPBF was modified to change the ON29
+report type (T29) from 533 to 532 for surface marine automated
+tide gauge reports (BUFR type 001, subtype 005) in the "sfcshp"
+data dump group.  This report type now agrees with that in the
+quips processing.  [MAIN, IW3UNPBF, SFCDTA, ISSEL]
+
+     2) RUC only: All buoys (moored or drifters) with missing
+pressure but valid wind are now stored with report type 282 and
+pressure set to 1013.3 mb (like the Atlas Buoys).  Prior to this,
+these were not processed (and they still aren't for the other
+versions).  The program GETBUFR isn't currently setup to accept
+report type 282, so these reports will not be used by the RUC
+analysis at the current time.  [MAIN, SFCDTA]
+
+
+
+  C. CHANGES TO SURFACE LAND DATA PROCESSING
+
+     1) AVN, FNL only: Since namelist switch PFRALT is set to
+TRUE for these versions (see I.2), surface METAR reports with
+report type 187(mass)/287(wind) are now encoded into the PREPBUFR
+file. However, the SSI does not assimilate these reports because
+their observation errors are now set to missing.  There will be
+fewer report types 181(mass)/281(wind) in the PREPBUFR file now
+because METAR reports with elevation < 7.5 meters and with valid
+PMSL and altimeter are reassigned to report types 187/287. Report
+type 181 is assimilated by the SSI but not report type 281. 
+Eventually the type 187 reports will be assimilated, more than
+making up for the current reduction in type 181 reports. [MAIN,
+SFCDTA, W3FIZZ, PARM CARDS, OBS_ERR TABLE]
+
+     2) ETA only: Since namelist switch PFRALT is set to TRUE for
+this version (see I.2), surface METAR reports with report type
+187(mass)/287(wind) are now encoded into the PREPBUFR file. 
+These are assimilated by the R3DVAR (with the same observation
+errors as report types 181/281. [MAIN, SFCDTA, W3FIZZ, PARM
+CARDS, OBS_ERR TABLE]
+
+     3) RUC only: Since namelist switch PFRALT is set to TRUE for
+this version (see I.2), surface METAR reports with report type
+187(mass)/287(wind) are now encoded into the PREPBUFR file. The
+RUC analysis assimilates these reports just as it had done before
+when they received report types of either 181/281 or 183/284. 
+This is a result of a change to program GETBUFR which adds 187
+and 287 to the list of reports types treated as surface land
+data.  As before, the altimeter setting rather than the pressure,
+is actually read by GETBUFR. [MAIN, SFCDTA, W3FIZZ, PARM CARDS,
+OBS_ERR TABLE]
+
+     4) CDAS only: Since namelist switch PFRALT is set to FALSE
+for this version (see I.2), there is no change.  The CDAS does
+not process METAR data.  [MAIN, SFCDTA, W3FIZZ, PARM CARDS]
+
+     5) For METAR reports with missing wind direction and wind
+speed less than or equal to 3 meters/sec, new mnemonics SOB (wind
+speed observation) and SQM (wind speed q.m.) are encoded into the
+PREPBUFR file while the mnemonics UOB and VOB are now missing. 
+Prior to this, wind reports were skipped when the direction was
+missing (and this is still the case for types other than METAR
+and for any types with speed > 3 meters/sec).  The RUC (and maybe
+eventually other versions) will eventually assimilate the wind
+speed for these "light" METAR winds which report a variable
+direction.  Note: The METAR decoder was changed at 15Z on 12
+December 2000 to generate a missing wind speed when the wind
+direction was reported as variable; before it set the direction
+to 360 degrees. [MAIN, SFCDTA, W3FIZZ, FIZZ01, BUFRTABLE]
+
+     6) The mnemonics DDO and FFO are no longer encoded into the
+PREPBUFR file for any surface land data.  The assumption was that
+no analysis used these data.  However, that was proved wrong when
+it was later discovered that the RUC GETBUFR routine was reading
+DDO and FFO rather than UOB and VOB for surface land reports (and
+this was the case for some other data types as well).  A crisis
+change to GETBUFR at 19Z on 11 January 2001 corrected the problem
+by switching the read to UOB and VOB (hopefully this will occur
+soon for other RUC report types as well). [MAIN, W3FIZZ, FIZZ01]
+
+
+  D. CHANGES TO GOES SATELLITE SOUNDING/RADIANCE DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are .LE. -3 AND .GE. +2 hours, respectively.  Prior to
+this the limits were .LE. -6 AND .GE. +6 hours, respectively. 
+The AVN, FNL and CDAS versions now benefit from increased
+computational efficiency.  (No operational data dumps are ever
+outside the -3 hour to +2 hour time span.) [W3UNPKB7]
+
+     2) Modified to not generate a station id if an 8-character
+station id was already stored in the input goesnd dump file.
+[This would indicate that the dump program DUPSAT had generated
+the id, allowing for all reports to have a unique station id even
+if the PREPDATA processing is multi-tasked (as it is in
+operations).]  If an 8-character station id is not found, as
+might be the case for historical reruns (or as is currently the
+case since the change to DUPSAT is not scheduled to be
+implemented until at least 17 January 2001), then it is generated
+here as before except an 8-character id is now created.
+[W3UNPKB7]
+
+     3) Modified to recognize decoded reports with an 8-character
+station id.  The satellite indicator is moved from position 6 of
+the id to position 8 (necessitating a coincidental change in both
+R3DVAR and SSI). [MAIN, GOESDG]
+
+
+
+
+
+
+
+
+
+
+
+
+
+  E. CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1) Modifed to read and properly process the OLD low-density
+NESDIS satwinds, for historical reruns.  Changes in the logic
+since these data became obsolete had made this impossible until
+now.  [IW3UNPBF]
+
+     2) Modified to not generate a station id for all types if an
+8-character station id was already stored in the input satwnd
+dump file. [This would indicate that the dump program DUPSAT had
+generated the id, allowing for all reports to have a unique
+station id even if the PREPDATA processing is multi-tasked (as it
+is in operations).]  If an 8-character station id is not found,
+as might be the case for historical reruns (or as is currently
+the case since the change to DUPSAT is not scheduled to be
+implemented until at least 17 January 2001), then it is generated
+here as before except an 8-character id is now created.
+[IW3UNPBF]
+
+     3) Modified to recognize decoded reports with an 8-character
+station id. [MAIN, GETC06]
+     
+
+  F. CHANGES TO WIND PROFILER DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to store the rainfall
+rate (W3UNPKB7 Category 10) in units of mm/hour.  Prior to this
+it was stored in units of 10**7 mm/sec (where it had been
+incorrectly documented to be in units of 10**7 m/sec).  Since
+rainfall rate for wind profiler reports is not encoded into the
+PREPBUFR file, this change has no effect on production. 
+[W3UNPKB7]
+
+     2) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are .LE. -3 AND .GE. +2 hours, respectively.  Prior to
+this the limits were .LE. -6 AND .GE. +6 hours, respectively. 
+The AVN, FNL and CDAS versions now benefit from increased
+computational efficiency.  (No operational data dumps are ever
+outside the -3 hour to +2 hour time span.) [W3UNPKB7]
+
+
+
+
+
+
+
+
+
+
+     3) Tropical wind profilers with the report ids 91492, PSMAN,
+PSNAU, 91609, PSGAL or PSPIU arrive as PIBAL bulletins on the GTS
+and are decoded as PIBALS in our /dcom database.  The report
+types for these are now set to 223 (wind profiler) rather than
+221 (PIBAL) as before.  They are now written into "PROFLR" BUFR
+messages and are subject to wind profiler quality control by the
+PROFCQC program.  They also now receive wind profiler observation
+errors.  The resulting intermingled "ADPUPA" and "PROFLR" message
+types necessitated a change to program LISTHEADERS to read
+through the entire PREPBUFR file in the reordering of message
+types. [MAIN, STOROB]  
+
+  G. CHANGES TO VAD WIND DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are .LE. -3 AND .GE. +2 hours, respectively.  Prior to
+this the limits were .LE. -6 AND .GE. +6 hours, respectively. 
+The AVN, FNL and CDAS versions now benefit from increased
+computational efficiency.  (No operational data dumps are ever
+outside the -3 hour to +2 hour time span.) [W3UNPKB7]
+
+
+  F. CHANGES TO ERS SCATTEROMETER WIND DATA PROCESSING  
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are .LE. -3 AND .GE. +2 hours, respectively.  Prior to
+this the limits were .LE. -6 AND .GE. +6 hours, respectively. 
+The AVN, FNL and CDAS versions now benefit from increased
+computational efficiency.  (No operational data dumps are ever 
+outside the -3 hour to +2 hour time span.) [W3UNPKB7]
+
+     2) Modified to not generate a station id if an 8-character
+station id was already stored in the input erscat dump file.
+[This would indicate that the reprocessing program DATASORT had
+generated the id, allowing for all reports to have a unique
+station id even if the PREPDATA processing is multi-tasked (as it
+is in operations).]  If an 8-character station id is not found,
+as might be the case for historical reruns (or as is currently
+the case since the change to DATASORT is not scheduled to be
+implemented until at least 17 January 2001), then it is generated
+here as before except an 8-character id is now created.
+[W3UNPKB7]
+
+     3) Modified to recognize decoded ERS scatterometer reports
+with an 8-character station id.  [MAIN, GETSCATT]
+
+
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO QUIKSCAT SCATTEROMETER WIND DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 was modified to bypass time window
+checking on BUFR messages if the input time window values (IHE)
+and (IHL) are .LE. -3 AND .GE. +2 hours, respectively.  Prior to
+this the limits were .LE. -6 AND .GE. +6 hours, respectively. 
+The AVN, FNL and CDAS versions now benefit from increased
+computational efficiency.  (No operational data dumps are ever
+outside the -3 hour to +2 hour time span.) [W3UNPKB7]
+
+     2) Modified to not generate a station id if an 8-character
+station id was already stored in the input qkswnd dump file.
+[This would indicate that the reprocessing program DCODQUIKSCAT
+had generated the id, allowing for all reports to have a unique
+station id even if the PREPDATA processing is multi-tasked (as it
+is in operations).]  If an 8-character station id is not found,
+as might be the case for historical reruns (or as is currently
+the case since the change to DCODQUIKSCAT is not scheduled to be
+implemented until at least 17 January 2001), then it is generated
+here as before except an 8-character id is now created.
+[W3UNPKB7]
+
+     3) Modified to recognize decoded QUIKSCAT scatterometer
+reports with an 8-character station id.  [MAIN, GETSCATT]
+
+
+  B. CHANGES TO ATOVS SATELLITE RETRIEVAL PROCESSING
+
+     1) A modification was made to subroutines W3ATOVSUNP and
+W3XTOVSEDS to account for a current NESDIS error in the scaling
+of the bottom pressure value (PBOT).  If the scaling is
+corrected, these routines will still work without being changed. 
+A sanity check is now performed on PBOT, and the retrieval is
+skipped if it fails.  If the filter flag (mnemonic TOFF)is
+missing, these routines set it to -99 instead of 0 as before. 
+This value of -99 alerts PREPDATA to the fact that the filter
+flag is missing, so if the PREPDATA switch TR80KM is FALSE, every
+eleventh retrieval is processed to simulate the 250 km sampling. 
+[W3ATOVSUNP, W3XTOVSEDS]

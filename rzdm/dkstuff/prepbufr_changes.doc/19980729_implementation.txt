@@ -1,0 +1,14 @@
+                                                July 29, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- 
+                 ALL NETWORK DATACARD UPDATE # 4.1)
+
+Implemented 10Z 29 July 1998:
+
+All normally operational satellite wind types from GOES 10 are now
+being assimilated by the analyses.  They are no longer flagged.
+[GOES-10 layer PW retrievals, if present, continue to be flagged
+with q.m.=15 and are not assimilated by any operational analyses.]

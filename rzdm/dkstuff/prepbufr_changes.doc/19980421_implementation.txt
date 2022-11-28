@@ -1,0 +1,12 @@
+                                             April 21, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (February 17, 1998 Version -- 
+                 CDAS DATACARD UPDATE # 1.1)
+
+Implemented 12Z 21 April 1998:
+
+Turned off standard output print.  [Namelist switch IRPRINT set to
+0 and switch MODPRT set to -10.]

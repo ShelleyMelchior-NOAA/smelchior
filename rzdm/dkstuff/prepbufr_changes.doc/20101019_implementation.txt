@@ -1,0 +1,59 @@
+                                                October 19, 2010
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 10)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was updated for the
+tenth time.  UPDATE #10 was implemented on the IBM-CCS machines at 12Z on
+October 19, 2010.  Except where noted, the changes below affect all eight
+versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 10 *************
+
+
+I. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO SURFACE LAND METAR DATA PROCESSING
+
+     1) Stores the quality mark for reported altimeter setting in code figure 20
+of category 8, but only if the METAR pressure quality mark was given a purge or
+reject flag in the SDMEDIT file.  In this case, the altimeter quality mark is
+set to the same value as the pressure quality mark from SDMEDIT  (either 12 or
+14).  This will allow SDMEDIT rejected or purged pressure quality marks to be
+honored when station pressure is calculated from altimeter setting (before it
+was not honored resulting in purged or rejected surface pressure obs possibly
+being assimilated).  If station pressure or sea-level pressure are missing, will
+still store quality mark read in from SDMEDIT file from them.  [IW3UNPBF, MAIN,
+SFCDTA]
+
+
+  B. CHANGES TO SURFACE MESONET DATA PROCESSING
+
+     1) Corrected bug which was not properly interpreting altimeter quality mark
+in code figure 20 of category 8.  Many mesonet pressure quality marks were being
+set to 2 or 15 when they should have been set to 3 or 13, respectively.
+Mesonets do not report pressure, so the altimeter setting is used to calculate
+pressure and the altimeter quality mark is transferred to pressure. [MAIN,
+SFCDTA]
+
+
+  C. CHANGES TO SURFACE MARINE DATA PROCESSING
+
+     1)  Recognizes new, or soon-to-be new, unrestricted ship tank NC001013.
+[IW3UNPBF]
+
+
+  D. CHANGES TO SATELLITE-DERIVED WIND DATA PROCESSING
+
+     1) Changes the first character of the report id from "?" (if so found) to
+"R" for MTSAT-2 (satellite id  172) reports from JMA.  This is necessary so that
+they will be properly recognized for historical reruns, etc. because from ~ 11
+August to 30 September 2010, the dump processing code BUFR_DUPSAT incorrectly
+placed "?" in the first character of these ids. [IW3UNPBF]
+
+     2) Recognozes new AVHRR POES satellite-derived wind tank NC005080.
+[IW3UNPBF]
+

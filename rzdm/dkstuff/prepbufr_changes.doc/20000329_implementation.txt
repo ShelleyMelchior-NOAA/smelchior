@@ -1,0 +1,418 @@
+                                                 March 29, 2000
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 1)
+
+The data preprocessor program (PREPDATA) was implemented on the
+new IBM-SP machine at 12Z on March 29, 2000.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 1  ***************
+
+I.  GENERAL CHANGES
+
+     
+     1) Numerous small source code changes necessary to make the
+program more machine portable (ports to the SGI107 machine).
+[MAIN, IW3UNPBF, W3RTVEDS, W3RTVUNP, W3UNPKB7]
+
+     2) When the existing data card switches are set-up to
+exclude a particular BUFR type and subtype, the program now looks
+for BUFR messages in the input dump files that have Table A
+entries defining the BUFR type and subtype.  Such messages are
+now skipped over without decoding any reports. This makes the
+program more efficient than before, when reports that were not
+processed into the PREPBUFR file were still decoded from the
+input dump files.  (This currently applies only to upper-air and
+surface data types read in via subroutine IW3UNPBF. [Historical
+(CDAS) and future GOES satellite wind BUFR subtypes are accounted
+for here.] [MAIN, PREP, SFCDTA, IW3UNPBF]
+
+     3) Changes to the arrangement of sequence mnemonics in the
+bufrtable have resulted in both better organization and a
+reduction in the size of the PREPBUFR file (this via the removal
+of the encoding of mnemonics which are always missing, especially
+true in 3DVAR and RUC versions). [BUFRTABLE]
+
+     4) The mnemonic TFC is now encoded into the PREPBUFR file
+for VAD wind reports (via an earlier change to W3LIB routine
+GBLEVENTS implemented 19Z 2 November 1999 which will be picked up
+with this compilation).  The forecast temperature is now
+interpolated to all VAD wind observation locations even though
+these data do not contain temperature observations.  A future
+version of the subsequent CQCVAD program will use this
+information. [MAIN, BUFRTABLE]
+
+
+
+
+
+
+     5) Specific humidity and virtual temperature are now
+calculated as "VIRTMP" events in W3LIB routine GBLEVENTS when
+specific humidity has a flagged quality mark (subject to a sanity
+check) however the virtual temperature gets quality mark 8
+(flagged). (This change is introduced via an earlier change to
+W3LIB routine GBLEVENTS which had been implemented prior to
+this.) [GBLEVENTS]
+ 
+     6) The following subroutines which process RTOVS retrievals
+have been renamed: W3RTVUNP to W3RTOVSUNP. [MAIN, SATBFR]
+
+     7) The following subroutines which used to process only
+RTOVS retrievals, but now process both RTOVS and ATOVS retrievals
+have been renamed: W3CNVTOV to W3CNVXTOVS, W3RTVEDS to
+W3XTOVSEDS, and W3TOVMND to W3XTOVSMND (see II.C.2 below). [MAIN,
+SATEDS]
+
+     8) A new subroutine, W3ATOVSUNP, has been added to process
+ATOVS retrievals (see II.C.2 below). [MAIN, SATBFR]
+
+     9) Namelist switches TOVEDS and TOVBFR are now 1-dimensional
+arrays of length 2 to differentiate between RTOVS (=1) and new
+ATOVS (=2) satellite retrievals. Currently TOVEDS(2)=.FALSE. and
+TOVBFR(2)=.FALSE. - ATOVS data are not yet processed
+operationally. [MAIN, SATEDS, SATBFR, CARDS]
+
+     10) ETA ONLY: Data card switches POLEJ and XMESHL changed
+from 210.00 and 2.90 to 220.00 and 3.03, respectively.  This
+expands the western boundary of the data selection grid from 210
+West Longitude to 220 West Longitude (the next upgrade to the Eta
+model will expand the domain westward). [CARDS]
+
+     11) Added encoding of new data into PREPBUFR file.  Mnemonic
+RPT is the reported observation time in UTC (to nearest 1000'th
+of an hour). Mnemonic TCOR is an indicator whether or not the
+obs. time in DHR was corrected from the original value in RPT {=0
+- not corrected (default); =1 - corrected based on reported
+launch time (ADPUPA types only); =2 - corrected even though
+launch time is missing (ADPUPA types only)}.  This is necessary
+because if DHR is corrected (ADPUPA types only), RPT and TCOR
+will provide information about the correction.  (See II.B.3
+below.) [MAIN, RPTLBL, W3FIZZ, FIZZ01, BUFRTABLE] 
+
+
+
+
+
+
+
+
+
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO SURFACE DATA PROCESSING
+
+     1) Namelist switches FWINDO, SFMASS, and SFWIND can now
+differentiate between surface land synoptic and surface land
+METAR reports. [MAIN, SFCDTA, CARDS]
+
+
+  B.  CHANGES TO UPPER-AIR (RAOB, PIBAL, RECCO, DROPS, PROFILER,
+      VADWND) DATA PROCESSING
+     
+     1) In the processing of category 4 (winds-by-height) levels,
+a manual (SDM) keep flag on a wind observation is now honored. 
+Prior to this, all wind quality marks on category 4 levels were
+set to at best (lowest) 2 (default).  This is still the case for
+winds originally containing a good (1) quality marker. [MAIN,
+WNDBYZ]
+
+     2) For RAOB, PIBAL, RECCO, and DROPS data only, the reported
+balloon launch time is now read from Category 8, code figure 104. 
+This is used to both quality control the reported observation
+time for these data (see II.B.3) and to provide a base (surface
+level) time for the new RAOB/PIBAL balloon drift time calculation
+(see II.B.4). [MAIN, RPTLBL]
+
+     3) For RAOB, PIBAL, RECCO, and DROPS data only, the reported
+observation time can now be "corrected" prior to its use in the
+existing mnemonic DHR.  This correction is made based on either
+the launch time (if reported) or the value of the observation
+time itself.  See attachment for more details on the logic here.
+[MAIN, RPTLBL]
+
+     4) For RAOB and PIBAL data only, an updated balloon drift
+time is now encoded on each level in the PREPBUFR file under the
+mnemonic HRDR.  This is defined as balloon drift time (UTC) minus
+cycle time and it is precise to the nearest 1000'th of an hour.
+(The previous implementation of this program encoded balloon
+drift latitude and longitude on each RAOB level under mnemonics
+XDR and YDR.). See attachment for more details on this.  This is
+not yet assimilated by any operational analysis. [MAIN, STOROB,
+W3FIZZ, FIZZ01. BUFRTABLE]
+
+     5) For RAOB and PIBAL data only, a number of changes have
+been made to the balloon drift latitude/longitude calculation. 
+First, it now includes PIBALS as well as RAOBS.  Second, there
+are additional q.c. checks made in the calculation (see
+attachment for more details).  Third, winds are now interpolated
+to levels where previously missing (via a call to subroutine
+FILWND when namelist switch FILLW is false) in order to provide
+more levels on which the balloon lat/lon can be calculated (see
+attachment for more details). This is not yet assimilated by any
+operational analysis.  [MAIN, SMERGE, STOROB, FILWND]
+
+     6) CDAS ONLY: For RAOB data only, the namelist switch PG4243
+was changed from FALSE to TRUE.  Indian RAOB mass reports will
+not be processed. [CARDS]
+
+
+  C. CHANGES TO RTOVS SATELLITE DATA PROCESSING
+
+     1) ETA, CDAS ONLY: The satellite id in ISATOB(1) returned
+from subroutine W3RTOVSUNP is now the BUFR code table value (0-
+01-007). [W3RTVUNP]
+
+     2) ETA, CDAS ONLY: The seventh character of the report id
+identifies report as either RTOVS (='R') or ATOVS (='A'). [NOTE:
+For retrievals output in NMCEDS format (CDAS), this is a change
+for RTOVS processing since this character was previously blank.]  
+[MAIN, SATEDS, SATBFR, FIZZ01]
+
+     3) CDAS ONLY: If the date of the RTOVS data dump file is
+prior to 7/1/1998, then subroutines W3XTOVSEDS and W3RTOVSUNP do
+not read the RTOVS Filter Flag value from the dump (mnemonic
+TOFF) because it was not valid prior to this time.  Instead,
+these subroutines set the filter flag value to -99.  This alerts
+PREPDATA that it must simulate a 250 km sub-sampling of RTOVS
+data (given namelist switch TR80KM is TRUE) by processing ONLY
+every fourth retrieval it unpacks. [MAIN, W3XTOVSEDS, W3RTOVSUNP,
+SATEDS, SATBFR]
+
+
+  D. CHANGES TO SATELLITE WIND DATA PROCESSING
+
+     1) Added the encoding of the NESDIS "Recursive Filter Flag"
+(mnemonic RFFL) into PREPBUFR file for GOES types. [MAIN, GETC06,
+W3FIZZ, FIZZ01, BUFRTABLE]
+
+     2) Moved satellite wind quality mark assignment on all
+variables (based on either "NESDIS Recursive Filter Flag" value
+or on SDM manual quality control settings on one or more
+variables) from subroutine IW3UNPBF to inline subroutine GETC06.
+It is better for IW3UNPBF to decode quality marks just as they
+are found in the BUFR data dump file. [MAIN, GETC06, IW3UNPBF]
+
+     3) For all GOES types, subroutine IW3UNPBF now assigns the
+values to the first character of the unpacked station id
+(designates satellite) and to the sixth character of the id
+(designates product type).  Prior to this, these values where
+copied from the first and sixth characters of the station id in
+the input satwnd data dump file (mnemonic RPID) which meant that
+the satwnd ingest program had complete control over the values
+here (and errors were possible in future updates). [IW3UNPBF]
+
+
+
+
+
+     4) Subroutine IW3UNPBF was modified to handle a new,
+expanded format for GOES satellite winds when it becomes
+operational in the near-future (these data will have new BUFR
+subtypes and additional information will be decoded from each
+report). [IW3UNPBF].
+ 
+
+  E. CHANGES TO WIND PROFILER DATA PROCESSING  
+
+     1) CDAS ONLY: The namelist switch PROFIL was changed from
+TRUE to FALSE.  These data will not be processed. [CARDS]
+ 
+
+  F. CHANGES TO VAD WIND DATA PROCESSING  
+
+     1) ALL BUT CDAS: The VAD winds with low RMSVE are no longer
+ unilaterally flagged as bad.  The namelist switches IVADFL and
+IVADSP were changed from 1,1 to 5,2 , respectively.  The
+subsequent program CQCVAD was upgraded to better q.c. these data. 
+They are now assimilated by the RUC, Global, and ETA analyses.
+[CARDS]
+
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO ATOVS SATELLITE DATA PROCESSING
+
+     1) ATOVS satellite retrievals or radiances can now be
+processed, either as 40-level/35 radiance reports (via new
+subroutine W3ATOVSUNP) or as nmceds formatted reports (via
+subroutine W3XTOVSEDS). The seventh character of the report id
+identifies report as either RTOVS (='R') or ATOVS (='A'). [MAIN,
+SATEDS, SATBFR, FIZZ01]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ATTACHMENT:
+
+
+          Details of ADPUPA Data Report Time Correction
+
+Applies to reports in ADPUPA file (RAOBS, PIBALS, RECCOS, DROPS):
+
+- Mnemonic DHR (obs. time minus cycle time) can now be
+"corrected" based on launch time (this is why I added RPT and
+TCOR - to store the original "reported" obs. time and an
+indicator as to whether or not it was changed).
+
+- Here is the logic for correcting the obs. time (to better
+define the obs. time for the assimilation, at least until balloon
+drift time is used by all systems) and for obtaining a launch
+time (for the later balloon time drift calculation):
+
+If reported obs. time is on the hour then:
+     If the reported launch time is not missing then:
+          If the launch hour is the same as the obs. hour then:
+               -If the launch time minute is between 16 and 59, then the obs.
+               time in DHR is corrected by adding one hour to the original
+               reported value and TCOR is set to 1.  This corrects the many
+               DHR=-1.0 values to DHR=0.0 for sites outside blocks 70-74.
+               -If the launch time minute is between 00 and 15, then the obs.
+               time in DHR is corrected by adding 30 minutes to the original
+               reported value and TCOR is set to 1.  I thought about adding
+               one hour here too but decided to play it conservative.
+          If the launch hour is either more than 1-hour later than obs. time
+          hour or more than 2-hours earlier than obs. time hour then:
+               Consider launch hour invalid and set it to missing.  I'm taking
+               the side of the obs. time here - I trust it more than the
+               launch time, especially because the receipt times in these      
+          cases seem to indicate that the obs. time is more accurate.
+          End if
+     End if
+     If the reported launch time is missing then:
+          If reported obs. time is either 1100 or 2300 UTC, and if the report
+          is not in block 70-74, and if the report is a fixed land RAOB/PIBAL
+          then:
+               -The obs. time in DHR is corrected by adding 30 minutes to
+               reported obs. time and TCOR is set to 2.  This corrects the
+               many DHR=-1.0 values to DHR=-0.5 for sites outside blocks 70-74
+               when no launch time is reported.  Since many mobile land RAOBS
+               as well as RECCOS and DROPS report on off hours, they are not
+               included in this test.  Also, since the NWS and Canadian sites
+               usually set the obs. time to the hour after the launch time     
+               they are not included in this test.
+               -The launch time is set to 15 minutes prior to the just
+               corrected obs. time.  This gives a best estimate for the launch
+               time which will be used later in the balloon drift              
+  calculations.
+          End if
+     End if
+End if
+
+After all of this, if the reported launch is still missing then:
+     Set it to 15 minutes prior to the reported obs. time.  This ensures all
+     reports will have a launch time for later use in the balloon drift
+     calculations.
+End if
+
+
+- It should be noted that the time window check is done after any
+possible corrections to "DHR".  This may change the number of
+reports tossed by this check.
+
+
+
+RAOB/PIBAL Balloon Drift Latitude, Longitude, & Time Calculation
+                                
+- The following applies to the balloon drift time calculation:
+     - For RAOBS only: It is done on all levels with a
+non-missing or non-bad height. This includes levels where height
+was not originally reported.  Here, heights are integrated from
+reported height and temperatures.  (These integrated heights are
+NOT passed into the PREPBUFR file.)  This corrects a previous
+error where "missing" height levels (stored with standard
+atmosphere value) and bad height levels were included.  Now,
+these levels are skipped and the drift time and drift lat/lon
+from the level below are used.
+     - For PIBALS only: It is done on all levels regardless of
+the height quality mark.  Most PIBALS contain only wind-by-height
+data where the height is the vertical coordinate.  Only the wind
+quality mark is important here in the subsequent drift lat/lon
+calculation.  For those PIBALS with both wind-by-height and
+mandatory level wind (only) data, the mandatory levels are
+inserted into the profile based on their standard atmosphere
+height.  These standard atmosphere heights are considered valid
+here.
+     - On each level, it now checks for a negative drift time
+difference from the time of the level below.  It also checks for
+a greater than one hour drift time difference from the time of
+the level below.  If either are found the level is skipped and
+the drift time and drift lat/lon from the level below is used.
+
+
+- The following applies to the balloon drift lat/lon calculation:
+     - It is done on all levels with a non-missing or non-bad
+wind.  In addition, for RAOBS, the level must also have a
+non-missing or non-bad height. The height levels are as described
+in the balloon time drift section above.  The wind levels include
+those with interpolated wind data where no reported wind was
+available.  This is a change from before when only reported wind
+levels were used. This allows for a smoother vertical profile of
+balloon drift lat/lon.  (These interpolated winds are NOT passed
+into the PREPBUFR file.)
+     - Two items regarding the wind interpolation:
+          - The bracketing level winds used in the interpolation
+can have bad quality marks.  The resulting interpolated wind will
+also be assigned a bad quality mark and thus will not be used in
+the lat/lon calculation.
+          - If the pressure difference between the bracketing
+wind levels exceeds 150 mb, then no interpolation is done.  The
+winds remain missing and these levels will not be used in the
+lat/lon calculation.
+     - Several new quality control checks are applied to the
+drift lat/lon calculations:
+          - If, in the drift time calculation, either a negative
+drift time difference or a greater than one hour drift time
+difference is found on the current level as compared to the drift
+time on the level below then the current level is skipped and the
+drift time and drift lat/lon from the level below are used.
+          - If the pressure difference between the valid wind
+level below and the current level exceeds 150 mb, then the drift
+lat/lon from the valid wind level below are used on all levels
+above it, to the top of the profile.  (The drift time is still
+calculated on all levels.)
+          - At the South Pole station, the balloon drift lat/lon
+cannot be calculated.  The reported lat/lon is used on all
+levels.  (The drift time is still calculated on all levels.) 
+Prior to this, incorrect calculations could be made here.
+     - The following quality control checks in the drift lat/lon
+calculations were in before, but are still worth noting:
+          - On each level, a check is made for a greater than one
+degree drift lat or lon difference from the lat/lon on the level
+below.  If either are found the level is skipped and the drift
+time and drift lat/lon from the level below are used.  (Note that
+drift time is also affected by this check.)
+          - On each level, a gross check is performed on the
+calculated latitude.  If it is either less than -90 degrees or
+greater than 90 degrees the level is skipped and the drift time
+and drift lat/lon from the level below are used.  (Note that
+drift time is also affected by this check.)
+
+- One final point:  The balloon drift calculations are done in
+the PREPDATA program and do not have the benefit of CQC on
+heights or OIQC on heights and winds.

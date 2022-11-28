@@ -1,0 +1,80 @@
+                                                 March 19, 2002
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 11)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the eleventh time.  UPDATE #11 was implemented on the
+IBM-SP machine at 12Z on March 19, 2002.  Except where noted, the
+changes below affect all five versions: ETA, AVN, FNL, RUC and
+CDAS.
+
+**************** I B M - S P   U P D A T E   # 11 ***************
+
+
+I. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO UPPER-AIR (RADIOSONDE, PIBAL, RECONNAISSANCE,     
+ DROPWINSONDE), SURFACE LAND, AND AIRCRAFT (AMDAR/ASDAR,      
+ACARS) DATA PROCESSING
+
+     1) Interface routine IW3UNPBF is modified to account for
+upcoming (May 2002) changes in the ADPUPA, ADPSFC, AIRCFT and
+AIRCAR BUFR dump files.  In particular:
+          - Future mnemonic HBLCS will be used by Category 7 (cloud
+cover data) and Category 51 (surface data) to obtain "height of
+lowest cloud seen" if current mnemonic HOCB (height of cloud base)
+is not available (and it will not be after the change for all
+Category 7 and some Category 51 reports).
+          - Future mnemonic TIWM will be used to obtain the
+"indicator for source and units for wind speed" by Category 51
+(surface data) rather than current mnemonic SUWS.  If TIWM is
+missing, then it will try SUWS (allows interface to work properly
+prior to the change and for historical reruns).
+          - Future mnemonic BORG will be used to obtain "bulletin
+being monitored" by Category 8 aircraft data rather than current
+mnemonic ICLI (ICAO location identifier).
+[IW3UNPBF]
+
+
+  B. CHANGES TO WIND PROFILER DATA PROCESSING
+
+     1) Interface routine W3UNPKB7 is modified to account for
+upcoming (May 2002) changes in the PROFLR BUFR dump files.  In
+particular:
+          - Category 10 (surface data) will no longer be available
+(current mnemonics PMSL, WDIR1, WSPD1, TMDB, REHU and REQV will all
+be missing).  The routine will still look for surface data since it
+will be available prior to the change and for historical reruns.
+          - Current category 11 (upper-air data) mnemonics ACAVH
+(horizontal consensus number), ACAVV (vertical consensus number),
+SP00 (spectral peak power) and NPHL (mode) will no longer be
+available.  The routine will still look for them since they will be
+available prior to the change and for historical reruns.
+          - Current header mnemonic NPSM (submode) will no longer
+be available.  The routine will still look for it since it will be
+available prior to the change and for historical reruns.
+          - Future mnemonic TPSE will be used to obtain the
+averaging time in seconds rather than current mnemonic TPMI
+(averaging time in minutes).  If TPSE is missing, then it will try
+TPMI (allows interface to work properly prior to the change and for
+historical reruns).  In either case, the averaging time in minutes
+will be be output by this routine.
+          - The number of upper-air levels can be as high as 64
+(which it will be after the change).  The current limit is 43 levels.
+[W3UNPKB7]
+
+
+  C. CHANGES TO ATOVS DATA PROCESSING (CDAS ONLY)
+
+     1) Interface routine W3ATOVSUNP is modified to account for
+upcoming (May 2002) changes in the ATOVS (soundinga) BUFR dump
+files.  In particular:
+          - Future mnemonic SAZA will be used to obtain the
+satellite zenith angle rather than current mnemonic SZNT.  If SAZA
+is missing, then it will try SZNT (allows interface to work
+properly prior to the change and for historical reruns).
+[W3ATOVSUNP]

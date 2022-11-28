@@ -1,0 +1,92 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 3)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a third time.  UPDATE #3 was
+implemented on 1200 UTC 16 July 1997.  All changes now affect
+only OBUFR = TRUE switch.  Except where noted, the changes below
+affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 3  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Removed more logic testing for SEQNTL=FALSE, OBUFR=FALSE,
+NLWRD=4, and now also KMAX=12 since these are never satisfied
+with output now only to PREPBUFR file.
+
+     2) Streamlined do loop processing in a few places to speed
+up the program a bit.  This change also allowed subroutine TAB to
+be removed.
+
+     3) Added new Namelist switch GOESRD which, when =TRUE, will
+turn on the processing of GOES-I radiances.  The default (=FALSE)
+is still used operationally (see III.A below).
+
+     4) Removed the Namelist switch IAFTFI since it is obsolete
+and no longer needed.
+
+
+II. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF AIRCRAFT DATA
+
+     1) A change in W3LIB routine IW3GAD (picked up by this new
+version of PREPDATA) now removes the filter on Air France AMDAR
+reports.  These are now being processed operationally.
+
+
+
+
+
+
+B. CHANGES IN THE PROCESSING OF SATWND DATA
+
+     1) For U.S. satellite-derived winds, the 7'th and 8'th
+characters of the station id (generated now by a corresponding
+change in W3LIB routine IW3GAD, picked up by this new version of
+PREPDATA) are now encoded in the PREPBUFR file.  These 2-
+characters are read in through unpacked ON29 category 8 code
+figure 920.  The actual ID is only 7-characters long, so the 8'th
+character is a blank here. [The change in IW3GAD actually
+reprocesses the JBUFR stn id to make it appear more like it did
+in the old ON29 processing.  Characters 3-5 are a serial index,
+which allows the report ids to now be unique through 9999 reports
+of a particular satellite/product combination (the new 7'th
+character allows for 9999 rather than just 999 combinations)].
+
+
+III. NON-OPERATIONAL (BUT-SOON-TO-BE) CHANGES
+
+A. CHANGES IN THE PROCESSING OF GOES-I SOUNDING DATA
+
+     1) Modified processing to read from a single JBUFR file
+using W3LIB routine W3UNPK77 rather than the old read from two
+WMO BUFR files which used W3FI77.  Also reads in and processes
+18-channels of brightness temperature (based on new namelist
+switch GOESRD,see I.2 above).
+
+
+B. CHANGES IN THE PROCESSING OF NEXRAD (VAD) WIND DATA
+
+     1) The quality marker for VAD wind levels with an input RMS
+vector error tag of "B" (approx. 3.9 knots) has been downgraded
+from neutral to suspect (at the request of NOAA/FSL).
+
+     2) GLOBAL ONLY: Data are now processed only at the reported
+levels.  Before, data were also interpolated to the special
+25/50mb auxiliary levels used by the REGIONAL versions.  These
+levels were also processed.
+
+
+C. CHANGES IN THE PROCESSING OF WIND PROFILER DATA
+
+     1) GLOBAL ONLY: Data are now processed only at the reported
+levels.  Before, data were also interpolated to the special
+25/50mb auxiliary levels used by the REGIONAL versions.  These
+levels were also processed.

@@ -1,0 +1,107 @@
+                                               January 31, 2002
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 10)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the tenth time.  UPDATE #10 was implemented on the
+IBM-SP machine at 12Z on January 29, 2002.  Except where noted,
+the changes below affect all five versions: ETA, AVN, FNL, RUC
+and CDAS.
+
+**************** I B M - S P   U P D A T E   # 10 ***************
+
+
+I. GENERAL CHANGES
+
+     1) Added new PREPBUFR processing step (Table D entry)
+ACARSQC into the PREPBUFR mnemonic table.  This will handle
+events in the future ACARS quality control program
+PREPOBS_ACARSQC.  This step is assigned program code 14.
+[BUFRTABLE}
+
+     2) The units for NESDIS recursive filter flag (mnemonic
+RFFL) in the PREPBUFR mnemonic table are changed from Code table 
+to Numeric since this value is a number ranging from 1-100 as
+assigned by NESDIS. [BUFRTABLE]
+
+
+II. OERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO AIRCRAFT (AMDAR/ASDAR and ACARS) DATA PROCESSING
+
+     1) The precision of temperature observation variable is now
+returned in IW3UNPBF in units of degrees K * 100 (category 8,
+code figure 915) since it is stored with 10**2 precision in
+dumps.  Prior to this, it was stored as degrees K * 1,  with the
+incorrect comment that it was a BUFR code table 0-08-005.  The
+actual descriptor is 0-02-005. [IW3UNPBF]
+
+     2) Reads precision of temperature observation from "AIRCAR"
+and "AIRCFT" BUFR dump files and encodes this into PREPBUFR file
+under mnemonic PCAT (BUFR descriptor 0-02-005).  This is needed
+by the future ACARS quality control program (PREPOBS_ACARSQC).
+[MAIN, GETC06, W3FIZZ, FIZZ01, BUFRTABLE]
+
+     3) Added print for precision of temperature observation.
+[MAIN, FILLX]
+
+  B. CHANGES TO MARINE DRIFTING AND MOORED BUOY DATA PROCESSING
+
+     1) RUC only: Corrected an error introduced with an
+implementation on 1/9/2001 which resulted in no mass reports
+being encoded into the RUC version of the PREPBUFR file for these
+data types (affected only the RUC and only these data types). 
+This implementation was meant to process moored and drifting
+buoys with missing pressure data but valid wind data as PREPBUFR
+report type 282 with pressure set to 1013.3 mb (exactly as is
+done for ATLAS buoys in the Global system).  While this was
+working properly, an error in the logic skipped over the
+processing of reports with valid pressure and mass data. [MAIN,
+SFCDTA]
+
+
+  C. CHANGES TO VAD WIND DATA PROCESSING
+
+     1) Effective 00Z 01/31/2002: Subroutine W3UNPKB7 now reads
+in the value for ON29 wind quality mark (mnemonic QMWN) on each
+level and sets the returned category 4 level wind quality mark to
+this value if it is 12 (meaning on reject list) or 14 (meaning
+the SDM has purged it).  If it is not 12 or 14 (then most likely
+missing), then, as before, the category 4 wind quality mark is
+based on a numerical representation of the RMS vector error in
+the wind which is also decoded for each level (mnemonic RMSW). 
+This change allows the SDMEDIT flags for rejecting or purging VAD
+wind level data to be honored. [W3UNPKB7]
+
+     2) Effective 00Z 01/31/2002: Recognizes that subroutine
+W3UNPKB7 can return a category 4 level wind quality mark of 12 or
+14 (see II.C.1 above) and encodes this value in the PREPBUFR file
+for the level wind quality marker (mnemonic WQC).  This change
+allows the SDMEDIT flags for rejecting or purging VAD wind level
+data to be honored. [MAIN, GETUPA]
+
+
+  D. CHANGES TO WIND PROFILER DATA PROCESSING
+
+     1) Effective 00Z 01/31/2002: Subroutine W3UNPKB7 now reads
+in the value for ON29 wind quality mark (mnemonic QMWN) on each
+level and sets the returned category 11 level quality code to 14
+if this value is either 12 (meaning on reject list) or 14
+(meaning the SDM has purged it).  If it is not 12 or 14 (then
+most likely missing), then, as before, the category 11 quality
+code is based on the quality code indicator provided from FSL
+which is also decoded for each level (mnemonic NPQC) .  This
+change allows the SDMEDIT flags for rejecting or purging wind
+profiler level data to be honored. [W3UNPKB7]
+
+
+     2) Effective 00Z 01/31/2002: Recognizes that subroutine
+W3UNPKB7 can return a category 11 level quality code of 14 (see
+II.D.1 above) and encodes this value in the PREPBUFR file for the
+level wind quality marker (mnemonic WQC).  This change allows the
+SDMEDIT flags for rejecting or purging wind profiler level data
+to be honored. [MAIN, GETUPA]

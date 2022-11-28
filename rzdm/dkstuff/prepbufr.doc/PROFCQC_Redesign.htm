@@ -1,0 +1,432 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta name="generator" content="Corel WordPerfect 10">
+  <meta http-equiv="content-Type" content="text/html; charset=utf-8">
+  <style>
+p
+{
+	margin-top: 0px;
+	margin-bottom: 1px
+}
+
+body
+{
+	font-family: "Times New Roman", serif;
+	font-size: 12pt;
+	font-weight: normal;
+	font-style: normal
+}
+  </style>
+</head>
+<body>
+<p style="text-align: center;"><span style="text-decoration: underline;">Redesign
+of the NOAA/NCEP Wind Profiler Quality Control Module</span></p>
+<br>
+<p style="text-align: center;">Dennis Keyser</p>
+<p style="text-align: center;">&nbsp;NOAA/NWS/NCEP/EMC</p>
+<p style="text-align: center;">03 January 2003</p>
+<br>
+<p>The NOAA/NCEP wind profiler quality control program, <span
+ style="text-decoration: underline;">PREPOBS_PROFCQC</span>, was
+designed
+in the early 1990's to run in the RUC network and read in and process
+data from the 36 original
+NOAA Profiler Network (NPN) sites. The NPN profilers all reported on
+the hour and all
+reported winds, or missing data, on the same 43 height levels above
+ground. The first 36 levels
+were separated by 250 meters and the last seven levels were separated
+by 1000 meters.</p>
+<br>
+<p>In 1997 the entire observational data processing suite was moved to
+the CRAY-YMP machine
+and <span style="text-decoration: underline;">PREPOBS_PROFCQC</span>
+was modified to run in all networks as part of the observational
+PREPBUFR processing. It now read in reports from a PREPBUFR file,
+performed quality
+control, and wrote the updated reports (with &ldquo;events&rdquo;) to
+an output PREPBUFR file. This
+change introduced two major errors in the code which have just now been
+discovered. First, the
+program did not account for the fact that the upstream <span
+ style="text-decoration: underline;">PREPOBS_PREPDATA</span> program,
+which
+generates the PREPBUFR file, does not encode levels with missing wind
+data. This has resulted
+in <span style="text-decoration: underline;">PREPOBS_PROFCQC</span>
+performing incorrect temporal checks since the level index in data
+arrays for a particular site does not necessarily refer to the same
+height level across different time
+periods. Secondly, the wind profiler heights in the PREPBUFR file are
+height above sea level
+rather than above ground. Since the increment, temporal and vertical
+check error limits are based
+on the fixed 43 level heights above ground, these are being assigned
+incorrectly because of both
+the level index problem and the conversion to height above sea-level.</p>
+<br>
+<p><span style="text-decoration: underline;">PREPOBS_PROFCQC</span> was
+modified in 2001 to account for the increase in NPN report levels
+from 43 to 64. All levels were then separated by 250 meters. This
+change did not correct the
+problems noted in the previous paragraph. </p>
+<br>
+<p>In May 2002, NOAA/NCEP began operational decoding and dumping of
+wind profiler data from
+both Cooperative Agency Profilers (CAP) and from the Japanese
+Meteorological Agency (JMA). The CAP reports include the NOAA Boundary
+Layer Profilers (BLP) as well as acoustic sounders (SODARs). Sites from
+these platforms
+report at levels different from the NPN sites, and the CAP sites can
+report as often as every fifteen
+minutes. The vertical profiles of heights above ground are not
+necessarily the same from one
+CAP profiler site to another and the vertical spacing of height levels
+can vary at each particular
+site. </p>
+<br>
+<p>These new types of profiler data, now being testing in the PREPBUFR
+processing suite, have
+necessitated a major revision in the current <span
+ style="text-decoration: underline;">PREPOBS_PROFCQC</span> program.
+This revision has
+not only uncovered the longstanding errors noted previously, but has
+also offered the opportunity
+to improve the quality control of wind profiler data from all
+platforms. A summary of all changes
+is provided next.</p>
+<br>
+<br>
+<br>
+<p><i>Changes to correct errors in the existing code:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1.
+The level index in all arrays is now site specific. This will allow
+temporal checking to
+be performed properly at each individual site. Each site is examined
+over all report times in order
+to generate a height profile containing all possible levels. Those
+times with new levels inserted are
+given missing wind coordinates. This change is even more important now
+with the addition of
+CAP and JMA reports where height levels can vary greatly from one time
+to the next at a
+particular site.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2.
+The increment, temporal, vertical and median check error limits are now
+directly
+associated with a reported height above ground level rather than with
+the level index in the arrays. This ensures that the proper error limit
+is used at all levels and it eliminates the height above
+ground versus height above sea level discrepancy. As is the case in one
+above, this correction is
+even more important with the inclusion of CAP and JMA sites which
+report wind data on height
+levels which vary greatly from the standard levels found in the NPN
+reports. The error limits
+values themselves remain unchanged.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3.
+The subroutine which calculates and prints out statistics was not
+computing kurtosis
+(fourth moment) correctly.</p>
+<br>
+<p><i>Other changes to account for the addition of CAP and JMA profiler
+reports:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1.
+The maximum number of sites the code can process is increased from 40
+to 120.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2.
+The number of time periods input to the code is now site specific
+rather than being
+hardwired to be the same for all reports.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3.
+The temporal check error limits are based on statistics from NPN
+profilers which have
+a minimum two-hour spanning time difference. Since most CAP sites
+report every half- or
+quarter-hour, these error limits are most likely too loose. The
+temporal check logic is modified to
+always attempt to use a two-hour spanning time difference for the CAP
+sites if possible by
+skipping intervening report times on each side of the central time if
+they differ from the central
+time by less than one hour. In cases where this is not possible, a time
+difference of at least one
+half-hour on one side is used. If this is not possible, then the
+temporal check is not performed. The maximum time difference on one
+side is two hours. </p>
+<br>
+<p><i>Other changes which improve the overall quality control
+algorithms:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1.
+In the current wind profiler processing suites, the dump and PREPBUFR
+codes all use
+the same time window radius as the assimilation. For the Global
+Forecast System (GFS) this is
+3.0 hours, for the Eta Data Assimilation System (Eta/EDAS) this is 1.5
+hours, and for the Rapid
+Update Cycle (RUC) this is 0.5 hours. This means that reports at the
+assimilation time boundaries
+are forced to use one-sided differencing in the temporal check. A
+change is being made in the
+upstream dump and <span style="text-decoration: underline;">PREPOBS_PREPDATA</span>
+codes to increase the time window radius by one
+hour for all three networks. This will allow the temporal check to use
+two-sided differences for
+the assimilation time boundaries as well as for all in-between times.
+New network-specific
+namelist switches in <span style="text-decoration: underline;">PREPOBS_PROFCQC</span>
+will specify the assimilation time window and the
+program will output only reports within this boundary. The code will
+continue to run properly
+with one-sided temporal differencing at the assimilating time
+boundaries if no reports are available
+beyond these times. In fact, in the RUC and Eta, the early cutoff times
+will result in one-sided
+differencing for the temporal check at the latest report time since it
+will still be inside the
+assimilation time window.</p>
+<br>
+<p><i>Other &ldquo;cosmetic&rdquo; changes:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1.
+DOCBLOCKS and comments in the code are much more descriptive than
+before.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2.
+DO-LOOP logic is more concise than before (especially in temporal and
+vertical check
+modules).</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3.
+Standard output is easier to read and more complete than before.
+Excessive print of
+differencing results is removed from operational runs with a new
+namelist switch which controls
+the degree of printout.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>4.
+The quality marker change event &ldquo;reason code&rdquo; is expanded
+(more about this later).</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>5.
+Report level information in various output listings is expanded and
+sorted into bins
+containing both all data levels and only those levels containing either
+suspect or bad quality
+markers (either originally placed on the data by NOAA/FSL or placed on
+the data in this code as a
+quality control event). This output is written to text files but not
+included in the standard output. (One listing of bad data levels is
+concatenated to the standard output in operational runs.)</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>6.
+Statistical output is clarified and is written to two text files
+separate from the standard
+output. The computation and printout of statistics can be bypassed (as
+it will be in operations)
+through a new namelist switch. The combination of statistic types
+printed out (first through
+fourth moment) is controlled by new namelist switches. Statistics are
+generated separately for
+reports from the NPN, CAP and JMA platforms and are stratified
+according to height above
+ground. For NPN and JMA reports, the levels correspond to their
+standard height level spacing
+(250 and 300 meters, respectively). Vertical levels for the CAP sites,
+which report at different
+spacings depending upon the site, are assigned to the nearest 50 meters
+above ground level. These statistics may be useful to NCO in future
+upgrades of their wind profiler quality monitoring. The statistics may
+also be used to update the error check limits, in particular making
+them
+platform-specific and providing more resolution at high levels where
+these values are currently
+constant.</p>
+<br>
+<p><i>Changes that might be considered for the future:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1.
+Since the vertical check error limits are based on the 250 and 1000
+meter vertical level
+spacings in the pre-2002 NPN reports, these should probably be modified
+to be weighted by the
+&ldquo;actual&rdquo; spanning level difference. The statistical output
+could be helpful here.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2.
+This code was written at a time when the Regional OI-analysis was
+operational. This
+analysis benefited from having observed data at standard pressure
+levels. The NPN wind profiler
+data, like all other vertical profile upper-air reports, contained
+auxiliary pressure levels at every 25
+or 50 mb with interpolated winds. These were mixed in with the reported
+height levels. The
+changes made to update this program may not allow these auxiliary
+levels to be handled properly. Of course, this is not a problem in the
+current operational environment since these interpolated
+levels are no longer included in any reports. Although highly unlikely,
+there could be a case
+where a historical rerun could encounter NPN reports with additional
+pressure levels. Usually,
+historical reruns run with current operational codes and scripts (e.g.,
+the Regional Reanalysis). In
+any event, it might be wise to test the updated <span
+ style="text-decoration: underline;">PREPOBS_PROFCQC</span> on an old
+PREPBUFR file
+containing wind profiler reports with auxiliary levels.</p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3.
+The RASS profile reports may be able to be quality controlled using a
+form of the
+program.</p>
+<br>
+<p><i>Expanded Reason Codes:</i></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>The
+program and reason codes are included in the PREPBUFR file in order to
+define all
+quality control &ldquo;events&rdquo; performed on observations. The
+program code defines which quality
+control step performed the action while the reason code defines the
+reason for the action. The
+<span style="text-decoration: underline;">PREPOBS_PROFCQC</span>
+program (known as the <i>CQCPROF</i> quality control step) is assigned
+program code &ldquo;9". To date it provides only two reason codes:</p>
+<p style="margin-left: 1in;">&nbsp;</p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 3 - Wind
+observation is found to be of questionable quality (wind quality marker
+set to &ldquo;3" for suspect)</span></p>
+<p>or</p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">13 - Wind
+observation failed quality control checks (wind quality marker set to
+&ldquo;13" for bad)</span> . </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>The reason code is now expanded to provide more information about
+the nature of the quality
+marker change. The reason code is defined as a three-digit number <span
+ style="font-weight: bold;">XYZ</span>, where the value of each
+digit has the following meaning:</p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+ style="text-decoration: underline;">Hundredth&rsquo;s digit (<span
+ style="font-weight: bold;">X</span>):</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1
+- Median check and vertical check both passed or not possible</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2
+- Median check suspect, vertical check passed or not possible</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3
+- Median check passed or not possible, vertical check suspect</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>4
+- Median check and vertical check both suspect</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">5 - Median
+check failed, vertical check did not fail (may have passed, may be
+suspect, or may not be possible)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">6 - Median
+check did not fail (may have passed, may be suspect, or may not be
+possible)</span><span style="font-size: 11pt;">, vertical check failed</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>7
+- Median check and vertical check both failed</span></p>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+ style="text-decoration: underline;">Tenth&rsquo;s digit (<span
+ style="font-weight: bold;">Y</span>):</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1
+- Temporal check and increment check both passed or not possible</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2
+- Temporal check suspect, increment check passed or not possible</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3
+- Temporal check passed or not possible, increment check suspect</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>4
+- Temporal check and increment check both suspect</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">5 -
+Temporal check failed , increment check did not fail (may have passed,
+may be suspect, or may not be possible</span><span
+ style="font-size: 11pt;">)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">6 -
+Temporal check did not fail (may have passed, may be suspect, or may
+not be possible)</span><span style="font-size: 11pt;">, increment check
+failed</span></p>
+<p><span style="font-size: 11pt;">&nbsp;<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>7
+- Temporal check and increment check both failed</span></p>
+<br>
+<br>
+<br>
+<br>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+ style="text-decoration: underline;">Unit&rsquo;s digit (<span
+ style="font-weight: bold;">Z</span>):</span></p>
+<p style="text-indent: -0.5in; margin-left: 1.5in;"><span
+ style="font-size: 11pt;">0 - Either: none of the checks failed (but
+one or more are suspect, see hundredth&rsquo;s and</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tenth&rsquo;s
+digits), or one or more checks failed (see hundredth&rsquo;s and
+tenth&rsquo;s digits) but no</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector
+differences could be calculated</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 1 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only one vector</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> difference
+(increment-temporal, increment-vertical, temporal-vertical, temporal-
+median, vertical-median) could be calculated</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 2 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only increment- temporal vector difference is small (all others
+are either large or could not be calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 3 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only increment- vertical vector difference is small (all others
+are either large or could not be calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 4 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only increment- median vector difference is small (all others are
+either large or could not be calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 5 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only temporal- vertical vector difference is small (all others
+are either large or could not be calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 6 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only temporal- median vector difference is small (all others are
+either large or could not be calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;"> 7 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where only the vertical-</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;median
+vector difference is small (all others are either large or could not be
+calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">8 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where any two or three of the vector differences (increment-temporal,
+increment-vertical, temporal-vertical, temporal-median,
+vertical-median) are small (all others are either large or could not be</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;calculated)</span></p>
+<p style="margin-left: 1in;"><span style="font-size: 11pt;">9 - One or
+more checks failed (see hundredth&rsquo;s and tenth&rsquo;s digits),
+where any four, five or six of the vector differences
+(increment-temporal, increment-vertical, temporal-vertical,
+temporal-median, vertical-median) are small (all others are either
+large or could not be</span></p>
+<p><span style="font-size: 11pt;"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;calculated)</span></p>
+<br>
+<p>The wind quality marker is set to suspect (&ldquo;3") for any reason
+code <span style="font-weight: bold;">XYZ</span>, where <span
+ style="font-weight: bold;">X</span> is <span
+ style="font-weight: bold;">1-4</span>, <i>and </i><span
+ style="font-weight: bold;">Y</span>
+is <span style="font-weight: bold;">1-4</span>, <i>and</i> <span
+ style="font-weight: bold;">Z</span> is <span
+ style="font-weight: bold;">0</span>. Any other reason code (<span
+ style="font-weight: bold;">X</span> is <span
+ style="font-weight: bold;">5-7</span>, <i>or</i> <span
+ style="font-weight: bold;">Y</span> is <span
+ style="font-weight: bold;">5-7</span>, <i>or</i> <span
+ style="font-weight: bold;">Z </span>is <span
+ style="font-weight: bold;">1-9</span>) results in a wind
+quality marker set to bad (&ldquo;13"). </p>
+<br>
+<br>
+<p>This updated version of the <span
+ style="text-decoration: underline;">PREPOBS_PROFCQC</span> program
+will be JIF&rsquo;d for implementation
+after the NCO moratorium (no sooner than mid-February 2003).</p>
+</body>
+</html>

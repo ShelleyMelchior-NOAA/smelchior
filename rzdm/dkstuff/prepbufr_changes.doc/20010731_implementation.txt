@@ -1,0 +1,16 @@
+                                                 July 31, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- 
+                 CDAS DATACARD UPDATE # 5.1)
+
+Implemented 00Z 31 July 2001:
+
+CDAS only:  Turned on the processing of NESDIS ATOVS temperature
+retrievals from NOAA-15 and NOAA-16 and turned off the
+processing of NESDIS RTOVS temperature retrievals from NOAA-14.
+These are assimilated by the CDAS analysis.  [Namelist switch
+TOVEDS changed from TRUE,FALSE to FALSE,TRUE; and switch
+IRTRV(1:5,1,1) changed from 5*9999 to 0,0,544,0,0 . ]

@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta name="Generator" content="WordPerfect 9">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta name="DATE" content="5/4/1995">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; U) [Netscape]">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta name="Author" content="Dennis Keyser">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <meta name="Description" content="Last revised 5/25/2001">
+
+
+
+
+
+   
+  
+  
+  
+  
+  <title>REASON CODES ASSOCIATED WITH STEP OIQC, PROGRAM CODE 010</title>
+</head>
+
+
+<body alink="#ff0000" bgcolor="#ffffff" link="#0000ff" text="#000000" vlink="#551a8b">
+
+
+
+
+
+&nbsp;
+<br>
+
+
+
+
+Table 22.&nbsp;&nbsp; Reason codes associated with step "GLERL", program
+code 017 (last revised 2/12/2018).<span style="font-size: 10pt;"></span>
+<br>
+
+
+
+
+&nbsp;
+<p><span style="font-size: 10pt;">KEY:
+<br>
+</span><span style="font-size: 10pt;"></span><span style="font-weight: bold; font-style: italic;"></span><span style="font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp; IN &ldquo;MNEMONIC&rdquo; COLUMN:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#&nbsp; - NEW VALUE CALCULATED.</span>&nbsp;<br>
+<span style="font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;
+$&nbsp; - ORIGINAL VALUE USED.</span>
+
+
+
+&nbsp;
+<br>
+
+
+
+
+&nbsp;
+<table style="width: 100%;" border="1">
+
+
+
+
+
+  <tbody>
+
+
+
+
+    <tr valign="top">
+
+
+
+
+
+      <td valign="top"><span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;">R.CODE</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td><span style="font-size: 10pt;">MEANING</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td><span style="font-size: 10pt;">MNEMONICS AFFECTED AND NEW VALUE FOR
+OBS, Q.M.</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">01&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">NEW,
+GLERL-ADJUSTED (PSEUDO-) OBSERVATION GENERATED BASED ON
+EXISTING&nbsp;OBSERVATION AND WATER TEMERATURE (IF EXISTING OBSERVATION
+IS OVER WATER, NEW OBSERVATION IS OVER LAND AND VICE-VERSA; IN GREAT
+LAKES REGION). &nbsp;ORIGINAL&nbsp;OBSERVATION&nbsp;IS RETAINED AT ITS
+ORIGINAL LOCATION.&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">TRC-&gt;TOB=#, TQM=$<br>
+QRC-&gt;QOB=#, QQM=$</span><br>
+      <span style="font-size: 10pt;">WRC-&gt; UOB,VOB=#, WQM=$<br>
+      </span><span style="font-size: 10pt;">DFR-&gt; SOB, DDO=#, DFQ=$</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr valign="top">
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">02&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">OBSERVATION
+IS MOVED FROM LAND TO WATER (OR VICE VERSA) TO ALIGN PROPERLY
+WITH&nbsp;RTMA LAND/SEA MASK IN&nbsp; GREAT LAKES REGION.&nbsp;</span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;">ONLY LAT/LON IS CHANGED</span><span style="font-size: 10pt;">. &nbsp;ORIGINAL OBSERVATION IS NOT RETAINED. </span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+
+      <td style="vertical-align: top;"><span style="font-size: 10pt;">TRC-&gt;TOB=$, TQM=$<br>
+QRC-&gt;QOB=$, QQM=$<br>
+      </span><span style="font-size: 10pt;">WRC-&gt; UOB,VOB=$, WQM=$<br>
+      </span><span style="font-size: 10pt;">DFR-&gt; SOB, DDO=$, DFQ=$</span><br>
+      <span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+</p>
+
+
+
+
+</body>
+</html>

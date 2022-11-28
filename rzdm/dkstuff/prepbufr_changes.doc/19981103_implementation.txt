@@ -1,0 +1,12 @@
+                                           November 3, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version -- 
+                 RUC DATACARD UPDATE # 2.2)
+
+Implemented 14Z 03 November 1998:
+
+GOES layer PW retrieval time window changed from +/- 0.5 hours
+about cycle time to +/- 1.0 hours.

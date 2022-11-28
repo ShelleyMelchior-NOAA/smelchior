@@ -1,0 +1,355 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+
+
+
+
+   
+  
+  
+  
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+
+
+
+   
+  
+  
+  
+  <meta name="Generator" content="WordPerfect 9">
+
+
+
+
+   
+  
+  
+  
+  <meta name="DATE" content="5/4/1995">
+
+
+
+
+   
+  
+  
+  
+  <meta name="GENERATOR" content="Mozilla/4.7 [en] (Win98; U) [Netscape]">
+
+
+
+
+   
+  
+  
+  
+  <meta name="Author" content="Dennis Keyser">
+
+
+
+
+   
+  
+  
+  
+  <meta name="Description" content="Last revised 5/25/2001">
+
+
+
+
+   
+  
+  
+  
+  <title>REASON CODES ASSOCIATED WITH STEP OIQC, PROGRAM CODE 010</title>
+</head>
+
+
+<body alink="#ff0000" bgcolor="#ffffff" link="#0000ff" text="#000000" vlink="#551a8b">
+
+
+
+
+&nbsp;
+<br>
+
+
+
+Table 16.&nbsp;&nbsp; Reason codes associated with step "OIQC", program
+code 010 (last revised 2/27/2009).<span style="font-size: 10pt;"></span>
+<br>
+
+
+
+&nbsp;
+<p><span style="font-size: 10pt;">KEY:
+<br>
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp; IN "R.CODE" COLUMN:</span>
+<br>
+
+
+
+<span style="font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B - OCCURS ONLY IN THE&nbsp;GFS/GDAS AND CDAS VERSIONS OF OIQC (THE
+OIQC
+STEP DOES NOT RUN IN ANY OTHER NETWORKS).
+&nbsp; </span><span style="font-weight: bold; font-style: italic;">As of 02/24/2009
+1200 UTC, the GFS and GDAS GSI analyses no longer honor the decisions
+made in this step. &nbsp;Instead, the GFS/GDAS GSI now runs its own
+internal&nbsp;variational quality control on the observations.</span><br>
+
+<span style="font-size: 10pt;">
+
+&nbsp;&nbsp;&nbsp;&nbsp; IN &ldquo;MNEMONIC&rdquo; COLUMN:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#&nbsp; - NEW VALUE CALCULATED.</span>
+<br>
+
+
+
+&nbsp;
+<br>
+
+
+
+&nbsp;
+<table border="1" width="100%">
+
+
+
+
+  <tbody>
+
+
+
+    <tr valign="top">
+
+
+
+
+      <td valign="top"><span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;"></span><span style="font-size: 10pt;">R.CODE</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">MEANING</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">MNEMONICS AFFECTED AND NEW VALUE FOR
+OBS, Q.M.</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td valign="top"><span style="font-size: 10pt;">02 B&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">SSM/I OCEANIC WIND SPEED REPORT.&nbsp;
+PERFORMS A MULTIVARIATE SURFACE WIND ANALYSIS AND ASSIGNS THE ANALYZED
+DIRECTION TO THE WIND SPEED OBSERVATION.&nbsp; THEN GENERATES NEW U- AND
+V-COMPONENTS FOR THE WIND VECTOR.</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td valign="top"><span style="font-size: 10pt;">WRC-&gt; UOB,VOB= #, WQM= 2</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr valign="top">
+
+
+
+
+      <td><span style="font-size: 10pt;">04 B&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">OBSERVATION ORIGINALLY WITH A KEEP FLAG
+(=0)</span><span style="font-size: 10pt;">IS REJECTED BECAUSE IT IS MORE
+THAN 20 TIMES</span><span style="font-size: 10pt;"> THE EXPECTED DIFFERENCE
+FROM THE INTERPOLATED</span><span style="font-size: 10pt;"> NEARBY INDEPENDENT
+INFORMATION.</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">PRC-&gt; PQM=4&nbsp;</span><span style="font-size: 10pt;">TRC-&gt;
+TQM=4&nbsp;</span><span style="font-size: 10pt;">WRC-&gt; WQM=4</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr valign="top">
+
+
+
+
+      <td><span style="font-size: 10pt;">05 B</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">OBSERVATION ORIGINALLY WITH A GOOD QUALITY
+MARK (=1) IS REJECTED BY THE OIQC CHECKING ALGORITHM.&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">PRC-&gt; PQM=5</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">TRC-&gt; TQM=5</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">WRC-&gt; WQM=5</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr valign="top">
+
+
+
+
+      <td><span style="font-size: 10pt;">06 B</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">OBSERVATION ORIGINALLY WITH A NEUTRAL
+QUALITY MARK (=2) IS REJECTED BY THE OIQC CHECKING ALGORITHM.&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">PRC-&gt; PQM=6</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">TRC-&gt; TQM=6</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">WRC-&gt; WQM=6</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr valign="top">
+
+
+
+
+      <td><span style="font-size: 10pt;">07 B</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">OBSERVATION ORIGINALLY WITH A SUSPECT
+QUALITY MARK (=3) IS REJECTED BY THE OIQC CHECKING ALGORITHM.&nbsp;</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+
+      <td><span style="font-size: 10pt;">PRC-&gt; PQM=7</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">TRC-&gt; TQM=7</span><span style="font-size: 10pt;"></span>
+      <br>
+
+
+
+      <span style="font-size: 10pt;">WRC-&gt; WQM=7</span><span style="font-size: 10pt;"></span></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</p>
+
+
+
+</body>
+</html>

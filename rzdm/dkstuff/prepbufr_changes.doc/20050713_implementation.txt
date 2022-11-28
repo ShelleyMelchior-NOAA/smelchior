@@ -1,0 +1,33 @@
+                                                   July 13, 2005
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 2)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was
+updated for a second time.  UPDATE #2 was implemented on the
+IBM-CCS-II machine at 12Z on July 13, 2005.  The changes below affect only
+the NAM, GFS and GDAS.
+
+*************** I B M - C C S   U P D A T E   # 2 **************
+
+
+I.  OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A. CHANGES TO DROPWINSONDE DATA PROCESSING
+      
+     1) Will now encode a value of 2 into the report subtype (stored in
+PREPBUFR under mnemonic TSB).  This allows dropwinsondes to be differentiated
+from reconnaissance aircraft in the PREPBUFR file because both have the same
+PREPBUFR report type (mnemonic TYP set to 132 for mass and 232 from wind) and
+both have the same DUMP/input report type (mnemonic T29 set to 31).
+
+   B.  CHANGES TO RECONAISSANCE DATA PROCESSING
+
+     1) Will now encode a value of 1 into the report subtype (stored in
+PREPBUFR under mnemonic TSB).  This allows reconnaissance aircraft to be
+differentiated from dropwinsondes in the PREPBUFR file because both have the
+same PREPBUFR report type (mnemonic TYP set to 132 for mass and 232 from
+wind) and both have the same DUMP/input report type (mnemonic T29 set to 31).

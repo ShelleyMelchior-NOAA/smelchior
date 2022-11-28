@@ -1,0 +1,15 @@
+                                                  May 16, 2006
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- 
+                 DATACARD UPDATE # 1.1 - NETWORKS: AFOSPLT,
+                 CDAS, CDC, GDAS, GFS, NAM)
+
+Implemented 12Z 16 May 2006:
+
+ALL: Exclude TAMDAR and Canadian AMDAR aircraft from processing
+now that they are included in the "AIRCFT" dump file.  They are not yet ready
+to be handled in the PREPBUFR processing.  [Namelist switches SUBSKP(004,008)
+and SUBSKP(004,009) set to TRUE.]

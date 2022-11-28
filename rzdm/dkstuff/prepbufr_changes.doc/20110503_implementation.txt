@@ -1,0 +1,17 @@
+                                                  May 24, 2011
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #10 -- 
+                 DATACARD UPDATE # 10.0 - NETWORK: NAM)
+
+Implemented 12Z 03 May 2011:
+
+NAM:
+     - ASCAT scatterometer winds are now processed in dump-defined subset
+       of all 6 latitude bands.  [Namelist switch JPASCD changed from
+       6*9999 (default) to 6*0.]
+     - WindSat scatterometer winds are now processed in dump-defined subset
+       of all 6 latitude bands.  [Namelist switch JPWDSD changed from
+       6*9999 to 6*0.]

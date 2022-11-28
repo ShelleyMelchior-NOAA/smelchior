@@ -1,0 +1,411 @@
+                                                 April 27, 2001
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (February 17, 2000 Version -- UPDATE # 4)
+
+
+The February 17, 2000 data preprocessor program (PREPDATA) was
+updated for the fourth time.  UPDATE #4 was implemented on the
+IBM-SP machine at 12Z on April 24, 2001.  Except where noted, the
+changes below affect all five versions: ETA, AVN, FNL, RUC and
+CDAS.
+
+**************** I B M - S P   U P D A T E   # 4  ***************
+
+I.  GENERAL CHANGES
+
+     1) Namelist switch IQKSLM expanded from length 1 to length 2
+array.  Word 1 refers to probability of rain threshold for which
+quikSCAT reports will be tossed (same as before).  Word 2 refers
+to probability of rain threshold for which quikSCAT reports will
+receive a suspect quality marker (3). (Default is 2*101.) [MAIN,
+GETSCATT, PARM CARDS]
+
+     2) Now prints a diagnostic if the dewpoint observation is
+less than the limit (namelist switch TDLIM) for ACARS, GOES
+soundings and surface reports. [MAIN, GETC06, GOESDG, SFCDTA]
+
+     3) Subroutine IW3UNPBF was modified to return the BUFR
+message type as an output argument (SUBSET_r).  It can also be
+passed in as an input argument, but it is read only if input
+argument IER is -1 (see I.5). This was needed so this subroutine
+could read and process tropical/U.K. wind profilers in the last
+part of the "proflr" data dump file.  [IW3UNPBF]
+
+     4)  Subroutine IW3UNPBF was modified to accept the existing
+output arguments DSNAME, IDSDAT and IDSDMP_8 as input arguments
+but they are read only if input argument IER is -1 (see I.5). 
+This was needed so this subroutine could read and process
+tropical/U.K. wind profilers in the last part of the "proflr"
+data dump file.  [IW3UNPBF]
+
+
+
+
+
+
+
+
+     5)  Subroutine IW3UNPBF was modified to read the existing
+output argument IER as an input argument the first time it is
+called with an new input file unit number (argument NUNIT).  In
+this case if IER is -1, this indicates that the file associated
+with NUNIT has already been opened by the subroutine W3UNPKB7 and
+reports have been processed by W3UNPKB7.  In this case, IW3UNPBF
+will continue reading and processing reports from NUNIT.  This
+was needed so this subroutine could read and process
+tropical/U.K. wind profilers in the last part of the "proflr"
+data dump file. [IW3UNPBF]
+     Note: Jeff Ator will fix decoder to stamp out VSIG=2/64 for
+           tropical/UK profiler levels instead of missing (right
+           now IW3UNPBF forces VSIG to be 2 unless it is a
+           surface level, then VSIG set to 64.
+
+     6)  Subroutine IW3UNPBF was modified to correct a bug which
+might have prevented a diagnostic print from occurring for cases
+when input argument SUBSKP is passed in as TRUE for a particular
+BUFR type/subtype.  [IW3UNPBF]
+
+     7) Subroutine W3UNPKB7 was modified to return with IER = 8
+if the next BUFR message read in has SUBSET (message type) =
+NC002009.  These are tropical/U.K. wind profilers (type 002/009)
+which cannot be processed by this subroutine.  They can, however,
+be processed by subroutine IW3UNPBF when the initial call to it
+passes IER = -1, along with the message type, data set name,
+center data dump time, and data cutoff time (IW3UNPBF input
+arguments SUBSET_r, DSNAME, IDSDAT and IDSDMP_8 respectively)
+(see I.3-I.5).  [W3UNPKB7]
+
+     8) Subroutine W3UNPKB7 was modified to return the BUFR
+message type as an output argument (SUBSET).  This was needed so
+the message type for tropical/U.K. wind profilers (NC002009)
+could be passed into subroutine IW3UNPBF which needs it upon the
+first call with IER = -1 (see I.3).  [W3UNPKB7]
+
+     9) Renamed subroutine PWATER to GETPWATER.  Subroutine
+GETPWATER now returns argument IERF=1 if report was not endcoded
+into PREPBUFR file (like subroutine FILLX) (before returned
+argument MST=0 in this case). [MAIN, GETPWATER, GOESDG, GETSMI]
+
+     10) Namelist switches JPSSMI and XWINDO augmented from (6,3)
+to (6,4) where word 3 is new SSM/I rain rate and word 4 is now
+SSM/I brightness temperatures (was word 3).  JPSSMI(:,3) defaults
+to 9999 (do not process) and XWINDO(:,3) defaults to 300. (see
+II.C.4). [MAIN, DATACARDS] 
+
+
+
+     11) Subroutine GETSMI streamlined. [MAIN, GETSMI]
+
+     12) Subroutine W3UNPKB7 was modified to return in word 5 of
+the header, the full date in the form YYYYMMDDHH for wind
+profiler, VAD wind, GOES radiance/sounding/retrieval, ERS
+scatterometer and quikSCAT scatterometer reports (before, word 5 
+returned YYYYMM).  [W3UNPKB7]
+
+     13) Subroutine W3UNPKB7 was modified to return in word 6 of
+the header the satellite id (BUFR code table 0-01-007) for GOES
+radiance/sounding/retrieval, ERS scatterometer and quikSCAT
+scatterometer reports, or missing for wind profiler and VAD wind
+reports (before, word 6 returned DDHH for all reports). 
+[W3UNPKB7]
+
+     14) Subroutine IW3UNPBF was modified to return in word 6 of
+the header the satellite id (BUFR code table 0-01-007) for all
+satellite wind types and for non-superobed SSM/I reports (before,
+word 6 was missing as it still is for all other types).
+[IW3UNPBF]
+
+     15) For all satellite types (except SSM/I superobed
+products), now reads satellite ID from word 6 of header returned
+from both W3UNPKB7 (see I.13) and IW3UNPBF (see I.14) and encodes
+it into the PREPBUFR file under the mnemonic SAID (BUFR code
+table 0-01-007). [MAIN, RPTLBL, W3FIZZ, FIZZ01, BUFRTABLE]
+
+     16) Namelist switch SWINDO was dissolved and two new
+switches (with the same array sizes) were created called SWINDO_e
+(holding the time window for the earliest satwind reports) and
+SWINDO_l (holding the time window for the latest satwind
+reports).  In both cases, a "-" time means before cycle time and
+a "+" time means after cycle time.  This allows the time window
+to be asymmetric about the cycle time (see II.B.2). [MAIN, PREP,
+SWNTBL, GETC06, DATACARDS]
+
+     17) Subroutine RPTLBL now has input arguments TIMWIN_e
+(earliest time window for accepting reports) and TIMWIN_l (latest
+time window for accepting reports) instead of the single input
+argument TIMWIN.  In both cases, a "-" time means before cycle
+time and a "+" time means after cycle time.  All data types
+continue to have symmetric time windows about cycle time except
+for satwind types (see I.16). [MAIN, RPTLBL, PREP, GETC06,
+SATEDS, SATBFR, GOESDG, SFCDTA, GETSMI, GETSCATT]   
+
+
+
+
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+  A. CHANGES TO WIND PROFILER DATA PROCESSING
+
+     1) Can now process wind profiler reports in a dump file
+containing both NOAA/FSL reports (as before, type 002/007) and
+tropical/U.K. reports [new, type 002/009, gets ON29 report type
+(T29) 73].  Here's how it is done:
+          - W3UNPKB7 reads the NOAA/FSL wind profiler reports as before from
+the beginning of the "proflr" data dump file.
+          - When W3UNPKB7 reads the first message containing tropical/U.K.
+wind profilers (message type NC002009) it immediately returns to PREPDATA with
+return code (IER) = 8.
+          - The message type (SUBSET_r), data set name (DSNAME), dump center
+time (IDSDAT) and dump cutoff time (IDSDMP_8) are also returned to PREPDATA
+from W3UNPKB7.
+          - SUBSET_r, DSNAME, IDSDAT and IDSDMP_8 are then input to IW3UNPBF
+also with input argument IER = -1.  This signals IW3UNPBF to continue reading
+and processing the tropical/U.K. profilers from "proflr" until the end of the
+file is reached. 
+
+Currently the tropical/U.K. wind profilers (which are received in
+PIBAL bulletins) are decoded into the PIBAL tank (002/005), but
+the decoder will be changed to tank them to 002/009 soon after
+this implementation. [The last implementation of PREPDATA (update
+# 3) included a change to recognize the tropical profilers coming
+in as PIBALS and give them a report type (TYP) 223 (wind
+profiler).  Since then a U.K. profiler site also coming in as a
+PIBAL has been identified and this will also be given TYP = 223
+(see II.A.2).  This logic will remain even after the decoder
+switch so that historical reruns will use these data as wind
+profilers.] [MAIN, PREP, UNPREPBF, ISEL, IW3UNPBF, W3UNPKB7]
+
+     2) Added report id 03501 to list of "PIBALs" that are really
+wind profilers (in this case U.K.).  It now receives TYP = 223
+(wind profiler).  Although the decoder will soon be changed to
+tank this and all others as wind profilers under type 002/009
+(see II.A.1), this change will remain in place so that historical
+reruns work properly. [MAIN, STOROB]
+
+     3) Corrected an oversight in the last implementation of
+PREPDATA which had subjected tropical/U.K. wind profilers coming
+in disguised as PIBALS (determined by station id) in the ADPUPA
+dump file to possible report-time alteration and launch time
+caluclation (because the logic was such that the program thought
+they were really PIBALS).  This point will soon be mute since in
+production these will be in the PROFLR dump file, but the change
+is still needed until then and for historical reruns. [MAIN,
+RPTLBL]
+
+
+  B. CHANGES TO SATELLITE DERIVED WIND PROCESSING
+
+     1) All networks except RUC: Subroutine IW3UNPBF was modified
+to handle the new "ELW" EUMETSAT reports in the "satwnd" dump. 
+These originate from BUFR bulletins on the GTS, and contain IR,
+visible, and water vapor winds just as the old "SATOB" winds did. 
+The main difference is that they are available every 90-minutes
+rather than every 6-hours (the time window for the dump of all
+EUMETSAT wind types is now expanded to +/- 3-hours in the GBL
+networks in order to ensure all data for a day are in the dump
+files; see 2 and 3 below for information about the time window in
+PREPDATA).  Other differences: 1) the ELW winds have no lower
+pressure limit, the SATOB winds have a limit of 995.0 mb; 2) the
+ELW can produce WV winds below 400 mb, the SATOB does not; 3) the
+ELW produces winds down to a percent confidence of 30% while the
+SATOB only produces winds down to 80% (IW3UNPBF flags all ELW
+winds between 30% and 80% with quality mark = 13); 4) the ELW
+winds can have any auto/manual quality marker while SATOB winds
+are produced only when the auto/manual quality marker is "good"
+(0-2) (IW3UNPBF flags all ELW winds with auto/manual q.m. > 2
+with quality mark = 13).  Even with the filtering, there are
+still several hundred more IR winds in the ELW dump for the same
+time due to differences in processing.  The routine is designed
+such that the SATOB winds can still be processed (a must for
+historical reruns).  [IW3UNPBF]
+
+     2) AVN, FNL, CDAS only: The time window for processing
+EUMETSAT IR, WV and VIS satwind reports was reduced from +/- 1.5
+(AVN, FNL ) or +/- 3.0 (CDAS) hours about cycle time to -1.75 to
+to -0.25 hours about cycle time [possible now with new switches
+SWINDO_e and SWINDO_l (see I.16)].  This was done so that only
+one time set of EUMETSAT winds would be assimilated as before
+when the SATOB winds were used (the new ELW winds have a 90-
+minute time frequency while the old SATOB winds had a 6-hour time
+frequency).  This change also ensures that this time will be the
+same time as before, namely 2300, 0500, 1100 or 1700 UTC for 00,
+06, 12 and 18Z cycles, respectively.  The SSI is not ready to
+handle more than one time set of winds, and using the same time
+as before will allow historical reruns picking up the SATOB winds
+to still find data. [DATACARDS]   
+
+
+
+
+
+
+
+
+
+
+     3) ETA only: The time window for processing EUMETSAT IR, WV
+and VIS satwind reports was reduced from +/- 2.0 hours about
+cycle time to - 1.25 to + 0.25 hours about cycle time.  This was
+done so that only one time set of EUMETSAT winds would be
+assimilated as before when the SATOB winds were used (the new ELW
+winds have a 90-minute time frequency while the old SATOB winds
+had a 6-hour time frequency).  This change also ensures that this
+time will be the same time as before, namely 2300, 0500, 1100 or
+1700 UTC for 00, 06, 12 and 18Z center times, respectively in the
+Eta and EDAS.  The 90-minute time frequency for the ELW winds now
+allows the 03, 09, 15 and 21Z center times in the EDAS to
+assimilate winds at 0200, 0800, 1400 and 2000, respectively. 
+Prior to this, no SATOB EUMETSAT winds were available at these
+times.  (EUMETSAT winds from the west Meteosat are on the eastern
+edge of the EDAS domain.)  [DATACARDS]
+
+
+  C. CHANGES TO SSM/I DATA PROCESSING
+
+     1) AVN, FNL only: Subroutine IW3UNPBF now looks for rain
+rate in mnemonic REQ6 (10**6 mm/sec) in the "spssmi" dump file
+rather than mnemonic REQV (10**4 mm/sec).  The "spssmi" dump file
+has stored REQ6 since 24 January 2001.  (REQV remains a second
+choice so historical reruns will work properly.)  IW3UNPBF also
+outputs rain rate (category 8, code figure 198) in units of
+mm/sec precise to 10**6 rather than in whole mm/hr. [IW3UNPBF]
+
+     2) All networks except CDAS: IW3UNPBF outputs total
+precipitable water (category 8, code figure 197) in units of mm
+precise to 10**1 rather than mm *10. [IW3UNPBF, MAIN, FILLX,
+GETSMI, GETPWATER, FIZZ01]
+
+     3) IW3UNPBF outputs wind speed (category 8, code figure 196)
+in units of m/sec precise to 10**1 rather than m/sec *10. 
+[IW3UNPBF, MAIN, GETSMI]
+
+     4) AVN, FNL only: Now processes rain rate [read from
+"spssmi" file; JPSSMI(:,3)=0 (see I.10)], encoding REQ6 (10**6
+mm/sec) in the PREPBUFR file under report type (TYP) 150
+(T29=66).  This is not yet assimilated by the SSI, which still
+points to the "spssmi" file.  This will change shortly.  Also,
+mnemonics REQ6_QM (hardwired to 2), REQ6_FC (missing), REQ6_AN
+(missing), REQ6_OE (missing), REQ6_PC ('PREPRO') and REQ6_RC
+(missing) added.  [MAIN, PREP, FILLX, GETSMI, W3FIZZ, FIZZ01,
+BUFRTABLE, DATACARDS
+
+
+
+
+
+  D. CHANGES TO GOES DATA PROCESSING
+
+     1) ETA, AVN, FNL only: Subroutine W3UNPKB7 outputs radiances 
+(category 13) in units of K precise to 10**2 rather than K * 100.
+[W3UNPKB7, MAIN, GOESDG]
+
+     2) ETA, RUC only: Subroutine W3UNPKB7 outputs total and
+layered precipitable water (category 8, code figures 251-254) in
+units of mm precise to 10**2 rather than mm * 100. [W3UNPKB7,
+MAIN, FILLX, GOESDG, GETPWATER, FIZZ01] 
+
+     3) AVN, FNL only: Subroutine W3UNPKB7 outputs skin
+temperature (category 8, code figures 255) in units of K precise
+to 10**2 rather than K * 100.  Subroutine W3UNPKB7 outputs solar
+zenith angle (category 8, code figures 260) in units of degrees
+precise to 10**2 rather than degrees * 100.  Subroutine W3UNPKB7
+outputs satellite zenith angle (category 8, code figures 261) in
+units of degrees precise to 10**2 rather than degrees * 100. 
+[W3UNPKB7, MAIN, GOESDG]
+
+     4) ETA, RUC only: Subroutine W3UNPKB7 now returns surface
+pressure in units of mb precise to 10**1 in category 8, code
+figure 262.  This is now encoded in the PREPBUFR file for
+precipitable water reports (TYP=156-159) under the mnemonic PRSS
+in units of Pascals.  This was requested by FSL for the RUC
+network. [W3UNPKB7, MAIN, FILLX, GOESDG, W3FIZZ, FIZZ01,
+BUFRTABLE]
+
+
+  E. CHANGES TO ACARS DATA PROCESSING
+
+     1) Subroutine IW3UNPBF now returns turbulence index for time
+T-1 to T-2 minutes, T-2 to T-1 minutes, T-3 to T-2 minutes and T-
+4 to T-3 minutes in category 8, code figures 926-929,
+respectively (BUFR code tables 0-11-236, 0-11-237, 0-11-238, 0-
+11-239, respecitvely).  These data are now encoded in the
+PREPBUFR file under the mnemonics TRBX10, TRBX21, TRBX32 and
+TRBX43, respectively. [IW3UNPBF, MAIN, FILLX, GETC06, W3FIZZ,
+FIZZ01, BUFRTABLE] 
+
+
+
+
+
+
+
+
+
+
+
+III. NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+
+  A. CHANGES TO SSM/I DATA PROCESSING
+
+     1) Subroutine IW3UNPBF was modified to unpack sea-surface
+temperature from the "spssmi" file (report type 577) and output
+it as category 8, code figure 203 in units of K precise to 10**2. 
+Currently, the SST product is not present in the "spssmi" file,
+but a future change in PREPOBS_PREPSSMI program will process it
+from the NCEP product dump file if requested. [IW3UNPBF]
+
+     2) Subroutine IW3UNPBF was modified to unpack surface
+temperature from the "spssmi" file (report type 576) and output
+it (category 8, code figure 199) in units of K precise to 10**2
+rather than in units of whole K, as before.  [IW3UNPBF]
+
+     3) Subroutine IW3UNPBF was modified to output brightness
+temperatures (category 8, code figures 189-195) in units of K
+precise to 10**2 rather than in units of K * 100. [IW3UNPBF,
+GETSMI]
+
+
+  B. CHANGES TO GOES DATA PROCESSING
+
+     1) Subroutine W3UNPKB7 outputs lifted index (category 8,
+code figures 250) in units of K precise to 10**2 rather than K *
+100.   Subroutine W3UNPKB7 outputs cloud top temperature
+(category 8, code figures 256) in units of K precise to 10**2
+rather than K * 100.  Subroutine W3UNPKB7 outputs cloud top
+pressure (category 8, code figures 257) in units of mb precise to
+10**1 rather than mb * 10.  [W3UNPKB7]
+
+     2) Subroutine W3UNPKB7 now skips all category 12 sounding
+levels if the retrieved geopotential height is less than or equal
+to the elevation (defined as the first retrieved level height).
+[W3UNPKB7]
+
+     3) Subroutine W3UNPKB7 modified to correct the scaling for
+cloud top pressure (was being returned in Pascals, now being
+returned in mb precise to 10**1; the comment in the code had
+always indicated that it was returned in mb precise to 10**1).
+[W3UNPKB7]
+
+
+
+
+
+
+
+
+  C. CHANGES TO ERS SCATTEROMETER DATA PROCESSING
+
+     1) AVN, FNL only: The data card switch JPERSD has been
+changed from 6*0 to 6*9999, turning off the attempt to process
+these data.  This data type was turned off in the SSI in early
+November 2000 (via setting the observation errors to missing). 
+On January 17, 2001, these data were discontinued by ESA.  On
+March 7, 2001, these operational ingest and dymp codes were
+modified to stop looking for these data. [DATACARDS]

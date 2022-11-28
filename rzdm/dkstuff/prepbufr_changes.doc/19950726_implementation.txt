@@ -1,0 +1,281 @@
+                                                August 25, 1995
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (July 12, 1995 Version)
+
+The July 12, 1995 version of the data preprocessor program
+(PREPDATA) was updated for the first time.  UPDATE #1 was
+implemented on 1200 UTC 26 July 1995 on the HDS (REGIONAL
+version) and on 1200 UTC 14 August 1995 on the CRAY (GLOBAL
+version).
+
+
+********************  U P D A T E   # 1  ***********************
+ 
+I.  GENERAL CHANGES
+
+     1)  GLOBAL: Added call to bufr.o library routine UFBQCD (in
+subroutine W3FIZZ).  Returns program code associated with
+PREPDATA program (set to 01).  The program code for all
+observational variables is now encoded in the BUFR/PREPDA file. 
+New mnemonics added for each observational data type.
+
+     2)  Program can now process a REGIONAL-type BUFR/PREPDA
+file.  Temporarily, there must be a distinction between REGIONAL
+and GLOBAL when switch OBUFR = TRUE.  This is because the RFERR
+program will, for now, reformat the REGIONAL BUFR/PREPDA back to
+the old Office Note PREPDA format.  This distinction is made
+through checking namelist switch IRNMRK (< 3 - REGIONAL, else -
+GLOBAL).  The REGIONAL BUFR/PREPDA file is temporarily different
+from the GLOBAL BUFR/PREPDA file as follows: 
+        a) The duplicate level pressure checks in the REGIONAL
+compare pressures to the nearest whole mb, not to the nearest
+tenth of a mb as in the GLOBAL.
+        b) The duplicate height check in the REGIONAL compares
+heights to the nearest whole meter, not to the nearest 100'th of
+a meter as in GLOBAL.
+        c) Will encode levels with all data missing except
+pressure in the REGIONAL.  The GLOBAL tosses any such levels.
+This ensures that the number of levels in the mass and wind
+pieces will always be the same for the same report.  
+        d) In the REGIONAL: ADPUPA, SATEMP, and PROFLR types
+encode the first "level" which contains only surface pressure. 
+Everything else on the level is missing. 
+
+     
+     3) All logic regarding the processing of the old VAS
+retrievals has been removed.  Namelist switches VASDTA and IDVAS
+are removed.  Variable ISATOB = 3 now refers to GOES-I retrievals
+rather than VAS retrievals.
+
+     4) In namelist switches IWINDO, SATMST, SATLND, KTOP, and
+IRTRV, element 2 values 5 and 6 now refer to GOES-I even and odd
+satellites, respectively (used to refer to VAS even and odd
+satellites).
+
+     5) For precipitable water reports, the NOBS array can now
+have more that one level.  Before, the value in the pressure-slot
+of the single level report was always hardwired to 1000 "mb". 
+Now, this value tags the "type" of precipitable water:
+              1 "mb" -- total column (SSM/I)
+              2 "mb" -- sfc to 300 mb layer (RAOBS)
+              3 "mb" -- 1000 to 300 mb layer (TOVS)
+              4 "mb" -- 1.0 to 0.9 sigma layer (GOES-I)
+              5 "mb" -- 0.9 to 0.7 sigma layer (GOES-I)
+              6 "mb" -- 0.7 to 0.3 sigma layer (GOES-I)
+              7 "mb" -- 0.3 to 0.0 sigma layer (GOES-I)
+Here, GOES-I precipitable water reports can have up to four
+"levels".
+
+     6) GLOBAL: Added new mnemonics PWxO, PWxQ, PWxP , where x (=
+1-4) refers to four GOES-I sigma layer precipitable water types
+in 5) above.  The last character O refers to the observation, Q
+refers to the quality mark, and P refers to the program code. 
+This allows precipitable water to be encoded into the BUFR/PREPDA
+file.  Also, the pressure observation (POB) is now set to missing
+for all precipitable water reports.  Prior to this, a bogus
+pressure of 1000 mb was stored with each report.
+
+     7)  GLOBAL: Added new mnemonics BTx , {where x (= 1-7)
+refers to the seven channels of SSM/I brightness temperature},
+BTQ (quality mark on all channels of SSM/I brightness
+temperature), and BTP (program code on all channels of SSM/I
+brightness temperature).  This allows SSM/I brightness
+temperatures to be encoded into the BUFR/PREPDA file. 
+
+     8) Report types 151-159 are now used exclusively for
+precipitable water reports.  Report types 151-153 are as before,
+report types 154-155 are currently not used, report type 156 is
+for GOES-I land/clear, report type 157 is for GOES-I land/cloudy,
+report type 158 is for GOES-I ocean/clear, and report type 159 is
+for GOES-I ocean/cloudy.
+
+     
+
+
+     9) GLOBAL:  Added output argument IERF to subroutine FILLX
+as a return code.  If upon return it has a value of 1, this
+indicates that the report was not encoded to the BUFR/PREPDA file
+due to a problem in subrouitne W3FIZZ.  This allows data count
+summaries to be corrected for any such non-decoded reports.
+
+    10) GLOBAL: Added output argument IER to subroutine W3FIZZ as
+a return code.  If upon return it has a value of 1, this
+indicates that the report was not encoded to the BUFR/PREPDA file
+due to a problem in this subroutine.  This allows data count
+summaries to be corrected for any such non-decoded reports.
+
+    11) Corrected the standard output print of the NOBS array
+contents for GOES-I soundings and for precipitable water from all
+types.
+
+    12) Subroutine SNDTBL modified to summarize GOES-I retrieval
+counts.  The old VAS retrieval count logic was removed.
+
+    13) New input unit {namelist switch IUNIT(8), set to 35}
+points to file containing GOES-I BUFR messages.  All "timely"
+messages can be rewritten to file in new output unit {namelist
+switch IUNIT(14), set to unit 55}.
+
+    14) New input unit (set to 21) points to file containing VAD
+wind BUFR messages.  All "timely" messages can be rewritten to
+file in new output unit {namelist switch IUNIT(15), set to unit
+56}.
+
+    15) Climatology reports (obsolete) are now tossed if 
+encountered.  They used to receive report type 140, but that
+report type has now been redefined (see III.C.1 below).
+
+    16) Added namelist switch PHIACF to define latitude bands for
+selecting aircraft reports.
+
+    17) Expanded namelist switches JAWIND, JAMASS and AIRLND from
+one-dimensional 4-word arrays to two-dimensional (6,4) - word
+arrays.  The new latitude band index {see 16) above} is added in
+the first element of the array.  This allows aircraft reports to
+be selected for processing according to the latitude band they
+reside in. A table has been added to summarize aircraft report
+counts by latitude bands.
+
+    18) The data search grid no longer applies to aircraft
+reports (all types).  The namelist switches JAMASS and JAWIND now
+control aircraft selection by latitude bands {see 17) above}.
+
+
+
+    19) GLOBAL: Existing mnemonic TSB (report subtype) now holds
+a '2' to indicate an ASDAR/AMDAR aircraft report has a missing
+phase of flight indicator.  Normally, when this is missing it
+indicates the aircraft is banking, and the data should be
+considered suspect.  In fact, the program PREPACQC will later set
+such reports as suspect.  Prior to this, TSB was only used by
+conventional AIREP/PIREP aircraft reports. 
+
+
+
+II.  SPECIFIC OPERATIONAL CHANGES
+
+   A. CHANGES TO TOVS SATELLITE RETRIEVAL PROCESSING 
+
+     1) GLOBAL: TOVS(BUFR) retrievals now encode the moisture
+quality mark directly from the NOBS quality mark value for
+moisture (for output to BUFR/PREPDA file).  Prior to this, the
+temperature quality mark was used to as the moisture quality mark
+(as it currently is for all other data types).  NOTE:  This also
+applies to the non-operational GOES-I soundings.
+
+  B. CHANGES TO RADIOSONDE, PIBAL and RECCO DATA PROCESSING 
+
+     1) GLOBAL: Surface pressures that are outside the DVAL
+limit, or pressures on any level that are greater than 1075 mb
+but less that 3275 mb are now processed but the pressure quality
+marker is flagged as bad (15).  This will allow the pressures to
+later be corrected in the Complex Quality Control program.  Prior
+to this, such pressure levels were never processed.  Related to
+this: a) any data except moisture that are interpolated/
+integrated from a spanning level with a bad pressure quality
+marker will receive a bad quality marker (15), moisture will be
+set to missing; b) any data except moisture that are
+interpolated/integrated onto a level which has a pressure with a
+bad quality marker will receive a bad quality marker (15),
+moisture will be set to missing; c) all data on a category 4
+level whose pressure is determined from a spanning level with a
+bad pressure quality marker will receive a bad quality marker
+(15); c) virtual temperatures are not calculated on levels that
+have a bad pressure quality marker; d) specific humidity is not
+calculated on levels that have a bad pressure quality marker. 
+
+     2) For recco data only: On 1200 UTC 14 August of 1995, NMC
+Automation Division made several corrections to the ON29 recco
+decoder in order to fix several long-standing errors.  The most
+significant error is the assignment of the temperature, moisture,
+and wind data to the nearest geopotential level rather than to
+the true pressure altitude in the ON29 category 1 single-level
+recco reports.  Several years ago this error, and indeed all of
+the other errors now being corrected by the updated decoder, was
+discovered and accounted for by adding special logic to PREPDATA. 
+In order to minimize changes to PREPDATA to now account for the
+fixes in the decoder, the "corrected" recco reports are
+reformatted back to their old "uncorrected" format.  The earlier
+logic built into PREPDATA will then continue to output the
+correct information to the PREPDA file.  
+
+
+
+III.  SPECIFIC NON-OPERATIONAL CHANGES
+
+   A. NEW GOES-I SATELLITE RETRIEVAL PROCESSING 
+
+     1) Added new subroutine GOESDG to processes GOES-I retrieval
+data (both profiles and precipitable water in 4 layers: 1.0 to
+.9, .9-.7, .7-.3, and .3-0. sigma).  Namelist switches GOESND and
+GOESPW added.  For profiles, the report types 164(174) are now
+assigned to land(ocean) clear retrievals and the report types
+165(175) are now assigned to land(ocean) cloudy retrievals. 
+(These report types used to be reserved for VAS clear and partly-
+cloudy soundings.)  See I.8 above for report types for
+precipitable water.
+
+     2) GOES-I counts are accumulated according to the number
+decoded, the number of precipitable water retrievals processed,
+the number of soundings processed, and the number of decoded
+retrievals skipped for various reasons.
+
+   B. CHANGES TO SSM/I RETRIEVAL PROCESSING 
+
+     1) GLOBAL: Now processes SSM/I seven-channel brightness
+temperatures from DMSP satellites.  These get report type 102. 
+Namelist switches JPSSMI and XWINDO expanded from (6,2) to (6,3)
+arrays, where element 2 value 3 refers to seven-channel
+brightness temperatures.
+
+   C. CHANGES TO SATELLITE "WIND" DATA PROCESSING
+
+     1) The report types for high-level satellite single-level
+mass (temperature) reports have been changed.  Previously they
+were in the 154-159 range.  They are now combined with low-level
+reports of the same type in the 140-149 range.  (This opens up
+the 151-159 types for precipitable water, see I.8 above.)  There
+is no longer a need to distinguish low and high level types here. 
+Also, the specific mass types in 140-149 now correspond directly
+to the wind report types in 240-249 and 250-259.  The wind types
+are still split according to low and high level but have been
+redefined slightly {see 2) below}. 
+
+
+     2)  Report types for satellite single level wind and
+temperature reports have been redefined as follows:
+              240/250/140 - NESDIS produced GOES-ODD satellite
+cloud-drift (used to be GOES-ALL satellite) (GOES-ODD are
+operational so no change operationally)
+              241/251/141 - no change: INSAT cloud-drift (non-
+operational)
+              242/252/142 - no change: JAPAN cloud-drift
+(operational)
+              243/253/143 - no change: METEOSAT cloud-drift
+(operational)
+              244/254/144 - NESDIS produced GOES-EVEN satellite
+cloud-drift (used to be NESDIS produced METEOSAT cloud-drift)
+(non-operational)
+              245/255/145 - NESDIS produced METEOSAT cloud-drift
+(used to empty) (non-operational)
+              246/256/146 - no change: GOES-ALL gradient
+(operational)
+              247/257/147 - no change: empty
+              248/258/148 - NESDIS produced METEOSAT water-vapor
+(used to be NESDIS produced GOES-ALL water-vapor) (non-
+operational)
+              249/259/149 - NESDIS produced GOES-ALL water-vapor
+(used to be NESDIS produced METEOSAT water-vapor) (non-
+operational).
+
+This was done primarily to give the GOES-EVEN and GOES-ODD
+satellite cloud-drift reports unique report types.
+
+   D.  NEW VAD (NEXRAD) WIND PROCESSING 
+
+     1) Can now process VAD (NEXRAD) winds-by-height data.
+Namelist switches VADWND and MWINDO added.  These data receive
+report type 224.

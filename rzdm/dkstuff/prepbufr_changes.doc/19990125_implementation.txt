@@ -1,0 +1,64 @@
+                                               January 25, 1999
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version -- UPDATE # 4)
+
+The September 21, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the fourth time.  UPDATE #4 was
+implemented on 1200 UTC 25 January 1999.  Except where noted, the
+changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 4  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Incorporated all of Bob Kistler's changes needed to port
+the code to the IBM-SP. [MAIN]
+
+     2) Added new namelist switches IVADFL and IVADSP to select
+tolerance limits for VAD wind RMS vector error (defaults to
+IVADFL=5 and IVADSP=2). [MAIN, GETUPA]
+
+     3) Replaced namelist switch SATLND with two new switches
+ISATLS and JSATLS (both defaults to 30*2, 20*9999, 10*2).  These
+switches allow for the selection of satellite
+sounding/retrieval/radiance data over both land and ocean, over
+just land, or over just ocean (the previous switch SATLND was a
+logical that, when set to FALSE, would only allow for data just
+over ocean, or when set to TRUE, would allow for data over land
+and ocean).  The two switches separate GOES layer PW retrievals
+(JSATLS) from all other sounding/retrieval/radiance types
+(ISATLS).  This allows GOES radiances to be used differently
+(e.g., over just ocean) than GOES layer PW retrievals (e.g., over
+just land). [MAIN, SATEDS, SNDTBL, SATBFR, GOESND]
+
+     4) Namelist switches RECCON and RWINDO now apply EXCLUSIVELY
+to reconnaissance aircraft reports.  Dropwinsonde data are now
+covered with the corresponding new namelist switches DROPSN and
+DWINDO (defaults are DROPSN=TRUE and DWINDO=300.). [MAIN, PREP]
+
+     5) Added new namelist switch FLDMAF (default is TRUE) which
+will flag moisture on all levels of USAF dropwinsonde reports
+just as existing switch FLDMGS does for NOAA Gulf Stream
+dropwinsondes. [MAIN, FIZZ01]  
+
+
+
+
+
+II.  OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO UPPER-AIR DROPWINSONDE DATA PROCESSING
+
+     1) Switch FLDMAF is set to TRUE in all networks.  USAF drops
+will now have moisture flagged on all levels. [DATACARDS]
+
+   B.  CHANGES TO VAD WIND DATA PROCESSING
+
+     1) Switch VADWND set back to TRUE with IVADFL=1 and
+IVADSP=1.  VAD winds will again be processed into the PREPBUFR
+files, however winds are flagged with q.m.=13 on all levels
+meaning these data will NOT be assimilated by any analyses (they
+are still considered BAD). [DATACARDS]

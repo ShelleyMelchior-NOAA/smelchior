@@ -1,0 +1,77 @@
+                                           November 5, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (May 1, 1997 Version --
+                 AVN, FNL DATACARD UPDATE # 7.1)
+
+Implemented 12Z 05 November 1997:
+
+GLOBAL versions ONLY.
+
+
+I. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF AIRCRAFT DATA
+
+        1) The time window for processing ACARS reports over the
+CONUS region was expanded from +/- 1.5-hours to +/- 3.0-hours.
+
+	2) The floor for processing BOTH ACARS and ASDAR/AMDAR
+reports was dropped from 2286 meters to -200 meters.
+
+	3) Conventional AIREP/PIREP reports are now used over the
+CONUS region (this is a PREPACQC data card change).
+
+
+B. CHANGES IN THE PROCESSING OF SATELLITE CLOUD-VECTOR DATA
+
+	1) Wind reports from ALL sources are now used over land at
+ALL latitudes.
+
+
+C. CHANGES IN THE PROCESSING OF ERS SATELLITE WIND DATA
+
+	1) ERS satellite wind reports are now processed into
+PREPBUFR and are assimilated by the SSI analysis.
+
+
+D. CHANGES IN THE PROCESSING OF NEXRAD (VAD) WIND DATA
+
+	1) NEXRAD (VAD) wind reports are now processed into
+PREPBUFR and are assimilated by the SSI analysis. 
+
+
+
+E. CHANGES IN THE PROCESSING OF WIND PROFILER DATA
+
+	1) Wind profiler reports at - 3-hours to + 2-hours are now
+assimilated by the SSI analysis (this is a change to the
+observational error table read in by PREVENTS.  These data had
+previously been processed into the PREPBUFR file.)
+
+	2) Data are now q.c.'d by the program PROFCQC (script
+change).  (NOTE: PROFCQC still not operational in RGL/ETA or RUC
+versions.)
+
+
+F. CHANGES IN THE PROCESSING OF SURFACE LAND DATA
+
+	1) Hourly METAR data are now processed into PREPBUFR and
+are assimilated by the SSI analysis.  (This is a script change.)
+
+
+G. CHANGES IN THE PROCESSING OF TOVS DATA
+
+	1) TOVS 40-level retrievals are no longer processed into
+PREPBUFR.
+
+
+II. NON-OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF SATELLITE CLOUD-VECTOR DATA
+
+     1) Indian satellite cloud-drift wind reports are now processed
+into PREPBUFR but are flagged with q.m.'s of 15 so they are not
+assimilated by the SSI analysis.

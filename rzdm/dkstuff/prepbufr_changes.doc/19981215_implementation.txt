@@ -1,0 +1,32 @@
+                                              December 15, 1998
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to 3DVAR/OI/SSI-Data Preprocessor
+                (September 21, 1998 Version -- UPDATE # 3)
+
+The September 21, 1998 version of the data preprocessor program
+(PREPDATA) was updated for the third time.  UPDATE #3 was
+implemented on 1200 UTC 15 December 1998.  Except where noted,
+the changes below affect all three versions, 3DVAR, OI, and SSI.
+
+*********************  U P D A T E   # 3  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Changed all calls to BUFRLIB routine ABORT to BUFRLIB
+routine BORT (BORT replaced ABORT in BUFRLIB to avoid conflict
+with FORTRAN intrinsic subroutine ABORT. [MAIN, FIZZ01]
+
+
+II.  NON-OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO ERS SCATTEROMETER DATA PROCESSING
+
+     1) GLOBAL: No longer encodes ERS scatterometer incident
+angle (mnemonics A1, A2, A3), azimuth angle (mnemonics B1, B2,
+B3), backscatter (mnemonics S1, S2, S3) and error estimate
+(mnemonics E1, E2, E3) into PREPBUFR file.  These had all been
+set to ZERO and were never used by any subsequent programs.  This
+change saves 4-8% space in the Global (AVN/FNL) PREPBUFR files.  
+[MAIN, W3FIZZ, BUFRTABLE]

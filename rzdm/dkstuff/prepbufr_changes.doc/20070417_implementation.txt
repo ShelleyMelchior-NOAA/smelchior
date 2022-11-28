@@ -1,0 +1,20 @@
+                                                April 17, 2007
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NMC22
+Subject:        Changes to IBM-SP Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version, Update #5 -- 
+                 DATACARD UPDATE # 5.1 - NETWORKS: AFOSPLT,
+                 CDAS, CDC, NAM; DATACARD UPDATE # 5.2 - NETWORKS:
+                 GDAS, GFS)
+
+Implemented 12Z 17 April 2007:
+
+ALL: METEOSAT-9 (satellite id 56) satellite derived IR and visible winds are
+flagged.  These winds have now replaced METEOSAT-8 (satellite id 55) in the
+upstream "satwnd" dumps and in the PREPBUFR file.  (Like METEOSAT-8, whose
+winds had also been flagged here, METEOSAT-9 is a second generation METEOSAT
+satellite.)  [Namelist switch JSWIND(:,6,1) and JSWIND(:,6,3) (even EUMETSAT
+conventional IR and VIS winds at all latitude bands) changed from 0 to 199.
+This allows METEOSAT-7 (satellite id 54, thus also an even EUMETSAT), IR and
+visible winds to continue to be processed w/o flagging.]

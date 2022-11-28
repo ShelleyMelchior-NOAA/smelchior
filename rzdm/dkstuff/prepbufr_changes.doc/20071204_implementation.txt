@@ -1,0 +1,684 @@
+                                                December 4, 2007
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 6)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was
+updated for the sixth time.  UPDATE #6 was implemented on the
+IBM-CCS machines at 12Z on December 4, 2007.  Except where noted, the
+changes below affect all eight versions: NAM, NDAS, GFS, GDAS, RUC, CDAS, RTMA
+and AFOSPLT.
+
+*************** I B M - C C S   U P D A T E   # 6 **************
+
+
+I. GENERAL CHANGES
+
+     1) Bumped up array size for unpacked report from IW3UNPBF from 3000 to
+3500.  [MAIN, UNPREPBF, IW3UNPBF]
+
+     2) Increased size of array AWINDO from (2,4) to (2,6) to account for new
+TAMDAR and Canadian AMDAR aircraft data in words 5 and 6, respectively, of the
+second dimension (default AWINDO=300.). [MAIN, DATACARDS, BLOCK]
+
+     3) Increased size of arrays AIRLND, JAWIND and JAMASS from (6,4) to (6,6)
+to account for new TAMDAR and Canadian AMDAR aircraft data in words 5 and 6,
+respectively, of the second dimension (default AIRLND=TRUE, JAWIND=0,
+JAMASS=9999). [MAIN, DATACARDS, BLOCK]
+
+     4) Increased size of arrays IACFTL, IACFTH and AIFNOW from (4) to (6) to
+account for new TAMDAR and Canadian AMDAR aircraft data in words 5 and 6,
+respectively, (default IACFTL=2286, IACFTH=18000 AIFNOW=FALSE). [MAIN,
+DATACARDS, BLOCK]
+
+     5) Increased size of arrays FLACMS (1) to (6) to account for all aircraft
+types, including new TAMDAR and Canadian AMDAR aircraft data in words 5 and 6,
+respectively, (default FLACMS=TRUE) since TAMDAR can have moisture, like MDCRS
+ACARS. [MAIN, DATACARDS, BLOCK]
+
+     6) Replaced call to BUFRLIB routine OVRBS1 with call to BUFRLIB routine
+PKBS1 (OVRBS1 is obsolete with 1/31/2006 version of BUFRLIB) (this is
+currently never called in PREPDATA). [MAIN, W3FIZZ]
+
+     7) Increased size of common block /BITBUF/ arrays IBAY and MBAY from
+(5000) and (5000,32) to (12500) and (12500,32), respectively, to match sizes
+in this common block in 1/31/2006 version of BUFRLIB. [MAIN, W3FIZZ]
+
+     8) Added new NAMELIST switch JPWDSD(6) to process/not process WINDSAT
+scatterometer data (default JPWDSD=6*9999, don’t process). [MAIN, DATACARDS,
+BLOCK]
+
+     9) Added new NAMELIST switch IWWNDO(2) to set earliest and latest times
+for accepting WINDSAT scatterometer data (default IWWNDO=-3,+3). [MAIN,
+DATACARDS, BLOCK]
+
+    10) Modified to handle return of new argument RDATA2 from calls to
+W3UNPKB7 [21-word 1-dimensional array which holds additional values decoded
+directly from BUFR (and not in "RDATA" array), for some parameters replacing
+what had been returned in RDATA array (in the header)]. [MAIN, PREP, FILLX,
+GOESDG, GETSCATT, GETGPSIPW, W3FIZZ, FIZZ01, W3UNPKB7]
+
+    11) Cases where obs are set to have QM 15 (in order to flag a report for
+non-use by analysis even though obs may not necessarily be bad) are now first
+checked to make sure obs QM isn't already "bad" (> 3 and < 15).  This prevents
+NAM- and GBL-GSI from monitoring truly bad obs which just happen to be in
+report groups flagged for non-use by analysis). [MAIN, STOROB, GETC06,
+GETPWATER, SFCDTA, FIZZ01]
+
+    12) Added new NAMELIST switch FLDMFR to flag dropwinsonde moisture data on
+all levels for non-US/unknown (i.e., non-NOAA and non-USAF) aircraft (default
+is TRUE, flag).  (Note: non-US aircraft had been included with USAF aircraft
+in NAMELIST switch FLDMAF which now refers exclusively to USAF aircraft).
+[MAIN, FIZZ01, DATACARDS, BLOCK]
+
+    13) Expanded array OBS3 (contains multiple-level sensible weather
+elements) from (5,255,5) to (5,255,7) and array NOBS3 (contains number of
+replications in OBS3 group) from (5) to (7) (these are returned out of call to
+IW3UNPBF) to account for processing of additional multiple-level sensible
+weather elements containing airframe icing (RECCOs, PIREPs, E-ADAS, Canadian
+AMDAR, TAMDAR) and degree of turbulence (RECCOs and all aircraft).  The
+expanded turbulence information replaces the single degree of turbulence value
+which had been returned from IW3UNPBF in cat. 8, code figure 916. [MAIN,
+GETC06, IW3UNPBF]
+
+    14) Added new NAMELIST switch WRMISS (default WRMISS =TRUE).  If TRUE,
+then reports with no valid obs (wind/temperature) levels and no valid
+brightness temperature channels, but with other ancillary information (e.g.,
+sensible weather elements) are now encoded into PREPBUFR file.  This currently
+applies only to aircraft reports (mainly PIREPS with turbulence, icing, cloud
+info but no temperature or wind information).  Before, such reports without
+any data used by the assimilation were always skipped. [MAIN, W3FIZZ,
+DATACARDS]
+
+    15) Added namelist switch SKGP45, which, when true (default), skips all
+GPS-IPW reports with report time minutes greater than 30 (xx:45 reports
+considered to be of poorer quality than xx:15 reports). [MAIN, GETGPSIPW,
+DATACARDS]
+
+    16) Accounts for increase in precision for mnemonics DHR and RPT from
+10**3 to 10**5 (hours). [MAIN, BUFRTABLE]
+
+    17) W3LIB routine GBLEVENTS (called by PREPDATA) modified as follows:
+          a) Reads generalized sigma/hybrid guess files from the GFS using an
+updated version of the sigio" utility. 
+          b) The generation of observation error encoded in the PREPBUFR file
+is now identical to what is done in the GSI (where the NAM version still reads
+observation error from an external file).  This will allow the NAM GSI to
+eventually be changed to read observation error directly out of the PREPBUFR
+file (as is done in GBL) rather than out of an external file.
+          c) QM 9 is now assigned to a variable only if its observation error
+is missing, or,in the case of moisture, if the level is above pressure level
+"QTOP_REJ" or if its temperature observation error is missing.  All other
+events (e.g., gross check errors) now assign QM 8 (even if observation error
+is missing).  Prior to this, only the rejection of pressure on a level
+resulted in QM 8. All other rejections received QM 9.  This change means that
+truly "bad" obs will now always get QM 8 and only obs flagged for non-use by
+assimilation (but still "good") will now get QM 9.  This is important because
+the NAM- and GBL-GSI monitors, but does not use, obs with QM 9.  Meanwhile, it
+does not even consider monitoring obs with QM 8.
+          d) Corrected an error which mistakenly assigned reason code 9
+instead of 3 to moisture with missing observation error.
+          e) QM 9 will not be assigned to a variable if that variable already
+has a "bad" QM (i.e., > 3 but < 15).  In fact, the "PREVENT" event which would
+assign QM 9 is skipped entirely since we do not want the NAM- or GBL-GSI to
+monitor any obs which really are "bad".
+          f) For non-“ADPUPA” types, QM 9 is now assigned to calculated
+virtual temperature obs if the moisture QM is 9 or 15 and the original
+sensible temperature is not truly "bad" (i.e. < 4 or 9 or 15).  These "VIRTMP"
+events receive new reason code 4.  Prior to this, such obs had received QM 8
+with reason code 2, like virtual temperatures calculated from truly "bad"
+moisture (i.e. > 3 but not 9 or 15).  This change means that only truly "bad"
+virtual temperature obs (i.e. > 3 but not 9 or 15) will now get QM 8, while
+virtual temperature obs flagged for non-use by the assimilation (but still
+"good") will now get QM 9.  This is important because the NAM- and GBL-GSI
+monitors, but does not use, obs with QM 9.  Meanwhile, it does not even
+consider monitoring obs with QM 8.
+          g) For "ADPUPA" types, QM 3 is now assigned to calculated virtual
+temperature obs only if the moisture QM is truly "bad" (i.e. > 3 but not 9 or
+15) and, as before, the original sensible temperature QM is 1 or 2 and the
+pressure on the level is below 700 mb.  Prior to this, the virtual temperature
+obs QM was set to 3 if the moisture QM was 9 or 15 and all other conditions
+were met.
+          h) For "SATEMP" types, the routine now encodes a simple copy of the
+reported (virtual) temperature as a “VIRTMP" event (if DOVTMP is TRUE).  This
+vent gets assigned reason code 3 (similar to what is already done for "RASSDA"
+types).
+
+    18) The highest FSL quality flags for mesonet and TAMDAR data now result
+in a PREPBUFR QM of 2 (neutral) rather than 1 (good).  [IW3UNPBF]
+
+    19) Redefines many BUFR descriptors in PREPBUFR file for Table A/D entries
+in order to avoid Table A/D conflicts with other NCEP BUFR tables.
+[BUFRTABLE]
+
+    20) Adds the following new Table D descriptors in the PREPBUFR file:
+3-48-037 (mnemonic ACID_SEQ) to hold aircraft flight number sequence in AIRCFT
+message type; 3-48-038 (mnemonic AFIC_SEQ) to hold aircraft icing sequence in
+ADPUPA and AIRCFT message types; 3-48-039 (mnemonic TURB3SEQ) to hold
+turbulence sequence #3 in ADPUPA and AIRCFT message types.  [BUFRTABLE] 
+
+    21) Adds the following new Table B descriptors in the PREPBUFR file:
+0-33-197 (mnemonic QIFY) to hold percent confidence based on EUMETSAT quality
+index with forecast consistency test in SATWND message type; 0-33-198
+(mnemonic QIFN) to hold percent confidence based on EUMETSAT quality index
+without forecast consistency test in SATWND message type; 0-33-203 (mnemonic
+EEQF) to hold percent confidence based on NESDIS expected error in SATWND
+message type; 0-20-041 (mnemonic AFIC) to hold airframe icing inside new
+sequence AFIC_SEQ in ADPUPA and AIRCFT message types; 0-20-194 (mnemonic HBOI)
+to hold height of bottom of icing layer inside new sequence AFIC_SEQ in ADPUPA 
+and AIRCFT message types; 0-20-195 (mnemonic HTOI) to hold height of top of
+icing layer inside new sequence AFIC_SEQ in ADPUPA and AIRCFT message types;
+0-11-032 (mnemonic HBOT) to hold height of bottom of turbulence layer inside
+new sequence TURB3SEQ in ADPUPA and AIRCFT message types; 0-11-033 (mnemonic
+HTOT) to hold height of top of turbulence layer inside new sequence TURB3SEQ
+in ADPUPA and AIRCFT message types.  [BUFRTABLE]
+
+    22) Changes attributes in the following existing Table B descriptors in
+the PREPBUFR file: 0-55-009 (mnemonic TSB, holds PREPBUFR report subtype in
+header in all message types) has bit width increased from 3 to 10 since this
+will eventually hold up to 3-digit numbers; 0-07-250 [mnemonic POE, holds
+pressure observation error (mb) in pressure level sequence in all message
+types except GPSIPW] has scale and bit width increased from 1 and 10, to 2 and
+14, respectively, to provide more precision for the GSI; 0-04-215 [mnemonic
+DHR, holds observation time minus cycle time (hr) in header in all message
+types] has scale and bit width increased from 3 and 16, to 5 and 23,
+respectively, to provide more precision for subsequent quality control modules
+and for the GSI; 0-04-214 [mnemonic RPT, holds reported observation time (hr)
+in header in all message types] has scale and bit width increased from 3 and
+16, to 5 and 22, respectively, to provide more precision for subsequent
+quality control modules and for the GSI.  [BUFRTABLE]
+
+    23) Existing Table D descriptor 3-48-009 defined from mnemonic RFFL_SEQ
+(NESDIS Recursive Filter Function Sequence) to PCCF_SEQ (Satellite Wind
+Percent Confidence Sequence).  This is done because it is now expanded to
+include new Table B mnemonics QIFY, QIFN and EEQF (in addition to existing
+Table B mnemonic RFFL) (see I.21 above).  [BUFRTABLE]
+
+
+
+II. OPERATIONAL CHANGES SPECIFIC TO A DATA TYPE
+
+   A.  CHANGES TO SATELLITE-DERIVED WIND DATA PROCESSING
+
+     1) Handles high-density JMA satellite winds derived from BUFR bulletins
+in input dump message types NC005044-NC005046 which are now in the input
+"satwnd" dump file.  These replace low-density JMA winds derived from SATOB
+bulletins in input dump message types NC005041-NC005043 which are no longer in
+the input "satwnd" dump file.  (This code can now handle either BUFR or SATOB
+JMA winds.)  [MAIN, PREP]
+
+     2) Accounts for JMA (new high-density, derived from BUFR bulletins in
+input dump message types NC005044-NC005046) and EUMETSAT [Meteosat Second
+Generation (MSG) (METEOSAT-8 and up)] satellite-derived winds now containing
+the NESDIS Recursive Filter Function (RFF) quality indicator.  The QC tests
+for RFF remain limited only to the NESDIS GOES and NASA/POES satellite-derived
+winds at this time. [MAIN, GETC06]
+
+     3) Handles new Indian satellites KALPANA-1 (BUFR satellite id 440, has
+prefix character “K” in station id) and INSAT-3A (BUFR satellite id 470, has
+prefix character "V" in station id). [MAIN, GETC06, IW3UNPBF]
+          a) GFS, GDAS only: These data (IR at least, visible and water
+vapor not yet available from India) are once again recognized and can be
+processed if present.  (The GFS/GDAS GSI is set to monitor these based on
+settings in the GBL convinfo file.  These data are never in the NAM, NDAS or
+RUC "satwnd" dump files (they are outside these domains anyway).  [MAIN,
+GETC06, IW3UNPBF]
+
+     4) Added the reading in, listing, and encoding into PREPBUFR the percent
+confidence based on: EUMETSAT Quality Index with forecast consistency test
+(read from cat. 8 code figure 356, encoded using mnemonic "QIFY"); EUMETSAT
+Quality Index without forecast consistency test (read from cat. 8 code figure
+357, encoded using mnemonic "QIFN"); and NESDIS Expected Error (read from cat.
+8 code figure 358, encoded using mnemonic "EEQF"). (Note: EEQF is not yet
+available operational input "satwnd" dump.)  [MAIN, FILLX, GETC06, W3FIZZ,
+FIZZ01, BUFRTABLE]
+          a) Stores percent confidence based on NESDIS Expected Error (BUFR
+code table 0-33-203) in cat. 8 code figure 358.  This is not yet available in
+operational input "satwnd" dump.  [IW3UNPBF] 
+
+     5) GFS, GDAS only: EUMETSAT MET-8 satellite IR and visible winds are no
+longer flagged (switch JSWIND changed from 99 to 0). (MET-8 is not
+operational, but even if it were GFS/GDAS GSI is set to monitor these based on
+the settings in the GBL convinfo file.  NAM and NDAS continue to flag MET-8 IR
+and vis winds because otherwise they would be used in the NAM/NDAS GSI based
+on the settings in the NAM convinfo file.)  [DATACARDS]
+
+     6) GFS, GDAS only: EUMETSAT MET-9 satellite IR and visible winds are no
+longer flagged (switch JSWIND changed from 199 to 0).  (MET-9 is operational
+and GFS/GDAS GSI is set monitor these based on the settings in the GBL
+convinfo file.  NAM and NDAS continue to flag MET-9 IR and vis winds because
+otherwise they would be used in the NAM./GSI based on the settings in the NAM
+convinfo file.)  [DATACARDS]
+
+     7) GFS, GDAS, NAM, NDAS only: All EUMETSAT satellite water vapor winds
+are no longer flagged (switch JSWIND changed from 99 to 0).  (Both the
+GFS/GDAS and NAM/NDAS GSI are set monitor these based on the settings in the
+GBL and NAM convinfo files.)  [DATACARDS]
+
+     8) GFS, GDAS only: Indian satellite IR, visible and water vapor winds are
+no longer flagged (switch JSWIND changed from 99 to 0).  (GFS/GDAS GSI is set
+to monitor these based on settings in the GBL convinfo file.  NAM and NDAS do
+not use these as they are not in their "satwnd" dump file.)  [DATACARDS]
+
+     9) GFS, GDAS, NAM, NDAS only: JMA satellite water vapor winds are no
+longer flagged (switch JSWIND changed from 99 to 0).  (Both the GFS/GDAS and
+NAM/NDAS GSI are set monitor these based on the settings in the GBL and NAM
+convinfo files.)  [DATACARDS]
+
+    10) GFS, GDAS, NAM, NDAS only: All GOES satellite visible winds are no
+longer flagged (switch JSWIND changed from 99 to 0).  (Both the GFS/GDAS and
+NAM/NDAS GSI are set monitor these based on the settings in the GBL and NAM
+convinfo files.)  [DATACARDS]
+
+    11) NAM, NDAS only: MODIS (Aqua and Terra) satellite IR and water vapor
+(cloud-top and deep-layer) are now processed over land and water at all
+latitudes (switch JSWIND changed from 9999 to 0, switch SWNLND changed from
+6*F to 6*T).  (NAM/NDAS GSI is set to monitor IR and cloud-top water-vapor
+winds and not yet even monitor deep-layer water vapor winds based on settings
+in the NAM convinfo file.  GFS/GDAS GSI continues to use these as before.) 
+[DATACARDS]
+
+    12) Changes in response to NESDIS' 3/10/2005 correction of an error which
+had stored "satellite instrument used in data processing" (mnemonic SIDP) as a
+code table value rather than correctly as a flag table value.  The change by
+NESDIS had resulted in the instrument type being stored as missing and the
+report id not being indexed in PREPBUFR files.  This change in PREPDATA is
+such that it will still work properly for historical runs prior to the 2005
+NESDIS fix.  (Note: The logic changed here is actually never used any more
+since the upstream dump program BUFR_DUPSAT has, since 12/2000, created the
+report id, and the instrument type is now obtained from the station id.)
+[IW3UNPBF]
+
+    13) Changes to handle JMA's 7/15/2005 satellite switch from GOES-9 (BUFR
+satellite id 253) to MTSAT-1R (BUFR satellite id 171, has prefix character "Q"
+in station id).  [IW3UNPBF]
+
+
+   B. CHANGES TO GOES SATELLITE SOUNDING PROCESSING
+
+     1) Can now handle GOES 1x1 field-of-view soundings/PW/radiances in input
+dump message type NC003003.  GOES soundings/PW/radiances will be processed
+only if input dump message type is NC003001 (5x5 field-of-view) or NC003003
+(1x1 field-of-view).  GOES cloud-top retrievals will be processed only if
+input BUFR message type is NC003002.  (This distinction is necessary for cases
+when GOES 1x1 field-of-view soundings/PW/radiances are intermingled with GOES
+1x1 field-of-view cloud-top retrievals in the input "goesnd" dump file since
+the GOES 1x1 field-of-view  soundings/PW/radiances can/may also contain
+cloud-top retrieval data which we do NOT want to process.)  (Note: The input
+"goesnd" dump file is expected to never contain GOES 1x1 field-of-view
+soundings/PW/radiances.  These are being dumped into the new "goesfv" file
+which will be read directly by the GSI rather than first by PREPDATA.)
+[MAIN. GOESDG]
+
+     2) GFS, GDAS only: Turned off the processing of obsolete GOES 5x5
+field-of-view radiances.  The input “goesnd” dump file is no longer read. The
+GFS/GDAS GSI has, for some time now, read GOES 1x1 field-of-view radiances
+directly out of the “goesfv” dump files.  (NAM and NDAS continue to read GOES
+5x5 field-of-view radiances out of the "goesnd" dump files.) [DATACARDS]
+
+     3) NAM, NDAS only: Encoded GOES 5x5 field-of-view overland, clear
+(PREPBUFR report type 156) PW observation error is set to same value as in
+external observation error file read by NAM/NDAS GSI (8 mm) (it had been set
+to another non-missing value).  (NAM/NDAS GSI is set to monitor this based on
+settings in the NAM convinfo file.)   (Eventually NAM/NDAS GSI will, like
+current GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than
+out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+     4) NAM, NDAS only: Encoded GOES 5x5 field-of-view overland, cloudy
+(PREPBUFR report type 157) PW observation error is set to 8 mm (it had been
+missing here and remains missing in the external observation error file read
+by the NAM/NDAS GSI).  (NAM/NDAS GSI is set to monitor this based on settings
+in the NAM convinfo file, so there is no need to set observation error to
+missing.)   (Eventually NAM/NDAS GSI will, like current GFS/GDAS GSI, read
+observation errors out of PREPBUFR file rather than out of external file.)
+[GBLEVENTS, prepobs_errtable.nam]
+
+
+  C. CHANGES TO AIRCRAFT PROCESSING
+
+     1) Handles new TAMDAR aircraft if switched on (PREPBUFR report type
+134/234). Encodes new parameters TRBX [turbulence index, BUFR code table
+0-11-235, stored by IW3UNPBF into cat. 8 code figure 930 with indicator 2
+containing its QM (0-15)] and ROLF (roll angle flag, BUFR code table 0-02-199,
+stored by IW3UNPBF into cat. 8 code figure 931) into PREPBUFR file.  [MAIN,
+FILLX, GETC06, W3FIZZ, FIZZ01, BUFRTABLE, IW3UNPBF]
+          a) GFS, GDAS, NAM, NDAS only: Mass and wind data processed over +/-
+3.25 hour time window, moisture is NOT flagged [switches JAMASS(*,5) and
+JAWIND(*,5) set to 0].  (The GFS/GDAS GSI is set to monitor temperature,
+moisture and wind based on settings in the GBL convinfo file.  The NAM/NDAS
+GSI does not yet even monitor any of these based on settings in the NAM
+convinfo file.)  [DATACARDS]
+
+     2) Handles new Canadian AMDAR aircraft if switched on (PREPBUFR report
+type 135/235).  [MAIN, FILLX, GETC06, IW3UNPBF]
+          a) GFS, GDAS, NAM, NDAS only: Mass and wind data processed over +/-
+3.25 hour time window, no moisture [switches JAMASS(*,6) and JAWIND(*,6) set
+to 0].  [The GFS/GDAS GSI is set to monitor temperature, moisture (not
+available) and wind these based on settings in the GBL convinfo file.  The
+NAM/NDAS GSI does not yet even monitor any of these based on settingsin the
+NAM convinfo file.]  [DATACARDS]
+
+     3) CDAS, CDS only: Now flags all aircraft reports as bad if the wind is
+missing but the temperature is present when switch AIFNOW is FALSE (before
+only did so for MDCRS ACARS, and tossed all other types due to concern about
+PREPACQC code).  (Note: AIFNOW is now set to TRUE for all other networks
+meaning such reports are now processed; see II.C.6 below.)  [MAIN. GETC06]
+
+     4) GFS, GDAS, AFOSPLT only: MDCRS ACARS moisture is no longer flagged.
+(GFS/GDAS GSI is set to monitor this based on settings in the GBL convinfo
+file.  This is now the same as in the NAM and NDAS which had already removed
+the flag on this since it is also set to monitor in the NAM/NDAS GSI based on
+settings in the NAM convinfo file.)  [DATACARDS]
+
+     5) Now flags all aircraft reports as bad if below the “floor” level
+(before only did so for MDCRS ACARS, and tossed all other types due to concern
+about PREPACQC code)  [MAIN. GETC06]
+
+     6) All types except CDAS, CDS: All aircraft type temperature reports will
+now be processed when the wind data are missing (switches AIFNOW changed from
+6*FALSE to 6*TRUE).  [Prior to this, such reports had been tossed (except for
+MDCRS ACARS which had been flagged).  All such reports would now be flagged if
+AIFNOW is FALSE, per change II.C.3 above.]  [MAIN, GETC06, DATACARDS]
+
+     7) All types except CDAS, CDS, HOURLY, AFOSPLT: Aircraft reports with
+missing wind and temperature are now encoded into PREPBUFR file as a mass
+report if other ancillary information (e.g., sensible weather elements such as
+turbulence, icing, cloud) is present (new switch WRMISS is set to TRUE).
+(Note: this is mainly true only for PIREPs.)  (Prior to this, all reports with
+missing wind and temperature were skipped.)  [MAIN, GETC06, DATACARDS]
+
+     8) New multiple-level sensible weather elements containing airframe icing
+(RECCOs, PIREPs, E-ADAS, Canadian AMDAR, TAMDAR), encoded into PREPBUFR file
+using new mnemonics AFIC, HBOI and HTOI (type of icing, height of bottom and
+top of icing layer) and degree of turbulence (RECCOS and all aircraft),
+encoded into PREPBUFR file using existing mnemonic DGOT (degree of turbulence)
+and new mnemonics HBOT and HTOT (height of bottom and top of turbulence
+layer).  [MAIN, GETC06, W3FIZZ]
+
+     9) AFOSPLT only: MDCRS ACARS mass data (PREPBUFR report type 133) will
+now be processed globally [switch JAMASS(:,4) changed from 9999 to 0].
+[DATACARDS]
+
+    10) AFOSPLT only: MDCRS ACARS wind data (PREPBUFR type 233) will now be
+processed in the Southern Hemisphere [switch JAWIND(1:3,4) changed from 9999
+to 0]. (Had only been processed in Northern Hempishere.)  [DATACARDS]
+
+    11) Accounts for ARINC scaling mixing ratio incorrectly in MDCRS ACARS
+reports (10 times too large) between 11/1/2006 and 10/1/2007.  Compensates for
+this by dividing the mixing ratio read from the input "aircar" dump file
+during this time period by 10. All MDCRS ACARS mixing ratios read on
+10/2/2007, the day ARINC made their fix, or read from 10/1/2006 through
+10/31/2006, the month when the error was introduced by ARINC, are set to
+missing since there is uncertainty during these times as to whether the mixing
+ratio was scaled correctly or incorrectly by ARINC.  (Note: This change
+benefits only historical reruns and reanalysis runs.)  [IW3UNPBF]
+
+    12) NAM, NDAS only: Encoded moisture observation error for MCCRS ACARS
+reports (PREPBUFR report type 133) is set to 20% (RH) on all levels (it had
+been missing here and remains missing in the external observation error file
+read by the NAM/NDAS GSI).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+    13) NAM, NDAS only: Encoded AIREP/PIREP (PREPBUFR report type 130/230),
+E-ADAS, ASDAR/AMDAR (PREPBUFR report type 131/231) and MDCRS ACARS (PREPBUFR
+report type 133/233) temperature and wind observation errors on all levels are
+set to same values as in external observation error file read by NAM/NDAS GSI
+(they had been set to other non-missing values).  (Eventually NAM/NDAS GSI
+will, like current GFS/GDAS GSI, read observation errors out of PREPBUFR file
+rather than out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+  D. CHANGES TO DROPWINDSONDE PROCESSING
+
+     1) Fixed a bug which stored balloon drift coordinates from the previous
+RAOB/PIBAL report into a dropwinsonde report.  The DROPs should always have
+missing balloon drift coordinates.  [MAIN, FIZZ01]
+
+     2) Existing NAMELIST switch FLDMGS [providing the option to flag NOAA
+(P-3 and Gulf Stream) aircraft dropwinsonde moisture on all levels] has been
+more precisely defined to ensure only NOAA aircraft are affected by this
+switch.  [MAIN, FIZZ01]
+
+     3) Existing NAMELIST switch FLDMAF (providing the option to flag USAF
+aircraft dropwinsonde moisture on all levels) is now defined such that only
+USAF aircraft are affected by this switch.  (Prior to this, it had affected
+all non-NOAA aircraft, including foreign and unknown.)  [MAIN. FIZZ01]
+
+     4) NAM, NDAS, AFOSPLT only: NOAA (P-3 and Gulf Stream) dropwinsonde
+moisture is no longer automatically flagged on every level (switch FLDMGS
+changed from TRUE to FALSE). It will now be used by the NAM/NDAS GSI (as has
+already been the case in the GFS/GDAS GSI.)  [DATACARDS]
+
+     5) GFS, GDAS, NAM, NDAS, AFOSPLT only: USAF dropwinsonde moisture is no
+longer automatically flagged on every level (switch FLDMAF changed from TRUE
+to FALSE).  It will now be used by both the GFS/GDAS and NAM/NDAS GSI.
+[DATACARDS]
+
+     6) NAM, NDAS only: Encoded DROP and RECCO temperature and wind
+observation errors on all levels are set to same values as in external
+observation error file read by NAM/NDAS GSI (they had been set to other
+non-missing values).  (Eventually NAM/NDAS GSI will, like current GFS/GDAS
+GSI, read observation errors out of PREPBUFR file rather than out of external
+file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ E. CHANGES TO GPS-IPW PROCESSING
+
+     1) GFS, GDAS only: These data are now processed (switch JPGPSD changed
+from 6*9999 to 6*0).  (GFS/GDAS GSI is set to monitor these based on settings
+in the GBL convinfo file.  NAM/NDAS GSI and RUC 3DVAR continue to use these as
+before.)  [DATACARDS]
+
+     2) All GPS-IPW reports with report time minutes greater than 30 are now
+skipped (switch "SKGP45" set to TRUE).  (Report times are always at 15 and 45
+minutes past each hour.  The reports at 45 minutes past each hour are
+considered to be of poorer quality than the reports at 15 minutes past each
+hour.)  [MAIN, GETGPSIPW, DATACARDS]
+
+
+ F. CHANGES TO RASS PROCESSING
+
+     1) GFS, GDAS only: These data are now processed (switch RASS changed
+from FALSE to TRUE).  (GFS/GDAS GSI is set to monitor these based on settings
+in the GBL convinfo file.  NAM, NDAS and RUC process these as before.  The
+NAM/NDAS GSI still does not yet even monitor these based on settings in the
+NAM convinfo file.  RUC 3DVAR continues to use these.)  [DATACARDS]
+
+     2) NAM, NDAS only: Encoded temperature observation error on all levels is
+set to same value as in external observation error file read by NAM/NDAS GSI
+(it had been missing).  (Eventually NAM/NDAS GSI will, like current GFS/GDAS
+GSI, read observation errors out of PREPBUFR file rather than out of external
+file.)  [GBLEVENTS, prepobs_errtable.nam]  
+
+
+ G. CHANGES TO QUIKSCAT SCATTEROMETER WIND PROCESSING
+
+     1) NAM, NDAS only: These data are now processed (switch JPQKSD changed
+from 6*9999 to 6*0).  (NAM/NDAS GSI is set to monitor these based on settings
+in the NAM convinfo file.  GFS/GDAS GSI continues to use these as before.)
+[DATACARDS]
+
+
+ H. CHANGES TO WINDSAT SCATTEROMETER WIND PROCESSING
+
+     1) Handles Navy pr NESDIS WindSAT data if switched on (PREPBUFR report
+type 289, read from new "wdsatr" dump file in either message type NC012138
+(Navy) or NC012139 (NESDIS), gets dump report type 583]. Encodes new
+parameters MRWVC, MRLWC, WSST, MWD10, MWS10, WSEQC1, CHSQ, PHER, SPDE, SSTE,
+CLDE and VPRE into PREPBUFR file, under new message type WDSATR.  [MAIN, PREP,
+FILLX, GETSCATT, W3FIZZ, FIZZ01, BUFRTABLE, W3UNPKB7]
+          a) GFS, GDAS only: Navy WindSAT data processed over +/- 3.00 hour
+time window (new switch JPWDSD set to 6*0).  (GFS/GDAS GSI is set to monitor
+these based on settings in the GBL convinfo file.  They are currently not
+processed in any other network.)  [DATACARDS]
+
+
+ I. CHANGES TO UPPER-AIR RADIOSONDE AND PIBAL PROCESSING
+
+     1) Fixed bug which prevented “part” receipt times from being stored
+properly for ADPUPA types.  [IW3UNPBF]
+
+     2) Bumped up the maximum number of levels that can be processed for a
+"category" (i.e., mandatory levels, significant temperature levels,
+winds-by-pressure levels, winds-by-height levels) from 200 to 300.  [IW3UNPBF]
+
+     3) NAM, NDAS only: Encoded radiosonde temperature, moisture, surface
+pressure and wind observation errors on all levels are set to same values as
+in external observation error file read by NAM/NDAS GSI (they had been set to
+other non-missing values).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+     4) NAM, NDAS only: Encoded PIBAL wind observation error on all levels is
+set to same value as in external observation error file read by NAM/NDAS GSI
+(it had been set to another non-missing value).  (Eventually NAM/NDAS GSI
+will, like current GFS/GDAS GSI, read observation errors out of PREPBUFR file
+rather than out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ J. CHANGES TO MESONET PROCESSING
+
+     1) NAM, NDAS only: Encoded temperature and surface pressure observation
+errors are set to same values as in external observation error file read by
+NAM/NDAS GSI (they had been missing).  (Eventually NAM/NDAS GSI will, like
+current GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than
+out of external file.  The NAM/NDAS GSI still does not yet even monitor these
+based on settings in the NAM convinfo file.)  [GBLEVENTS,
+prepobs_errtable.nam]
+
+     2) NAM, NDAS only: Encoded moisture observation error is set to 7% (RH)
+(it had been missing here and remains set to 5.912% in the current external
+observation error file read by the NAM/NDAS GSI but will be changed to 7% in
+the next NAM GSI bundle).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+     3) NAM, NDAS only: Encoded wind observation error is set to 3 m/sec (it
+had been missing here and remains set to 2.628 m/sec in the current external
+observation error file read by the NAM/NDAS GSI but will be changed to 3 m/sec
+in the next NAM GSI bumdle).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ K. CHANGES TO SURFACE LAND PROCESSING
+
+     1) NAM, NDAS only: Encoded surface land with estimated station pressure
+(PREPBUFR report type 183) station pressure observation error is set to 0.5389
+mb (it had been missing here and remains missing in the external observation
+error file read by the NAM/NDAS GSI).  (NAM/NDAS GSI is set to monitor this
+based on settings in the NAM convinfo file, so there is no need to set
+observation error to missing.)   (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  
+          a) NAM, NDAS only:  As a result of this change, surface land with
+estimated station pressure (PREPBUFR report type 183) temperature and moisture
+are now being assimilated by the NAM/NDAS GSI.  Prior to this, temperature was
+not used and not even monitored (even though it had a non-missing observation
+error) because it had QM 8, and moisture was only being monitored (even though
+it too had a non-missing observation error) because it had QM 9.  (The NAM
+convinfo file has always been set to use temperature and moisture.)  Moisture,
+and initially temperature, had received QM 9 because of a rule stating that
+all mass observations receive QM 9 when the surface pressure has a missing
+observation error regardless of whether or not they themselves have a missing
+observation error.  Temperature then received a QM 8 in the course of its
+being converted from sensible to virtual because moisture had a QM > 3.
+[GBLEVENTS, prepobs_errtable.nam]
+
+     2) GFS, GDAS only: As a result of change I.17.f above, surface land with
+estimated station pressure (PREPBUFR report type 183) temperature now has QM 9
+and thus is now being monitored by the GFS/GDAS GSI.  Prior to this, it had QM
+8 and was not monitored (and obviously not used) by the GFS/GDAS GSI.  (The
+GBL convinfo file has always been set to monitor this temperature.)  It had
+initially received, and continues to initially receive, QM 9 because of a rule
+stating that all mass observations receive QM 9 when the surface pressure has
+a missing observation error regardless of whether or not they themselves have
+a missing observation error.  It then received an updated QM 8 in the course
+of its being converted from sensible to virtual because moisture had a QM > 3.
+The update to GBLEVENTS now sets this QM to 9 because the moisture QM is 9.
+[GBLEVENTS]
+
+     3) NAM, NDAS only: Encoded surface land SYNOP with report station
+pressure (PREPBUFR report type 181/281) and surface land METAR (PREPBUFR
+report type 187/287) temperature, moisture, surface pressure and wind
+observation errors are set to same values as in external observation error
+file read by NAM/NDAS GSI (they had been set to other non-missing values).
+(Eventually NAM/NDAS GSI will, like current GFS/GDAS GSI, read observation
+errors out of PREPBUFR file rather than out of external file.)  [GBLEVENTS,
+prepobs_errtable.nam]
+
+     4) NAM, NDAS only: Encoded surface land with estimated station pressure
+(PREPBUFR report type 183/284) temperature, moisture and wind observation
+errors are set to same values as in external observation error file read by
+NAM/NDAS GSI (they had been set to other non-missing values).  (Eventually
+NAM/NDAS GSI will, like current GFS/GDAS GSI, read observation errors out of
+PREPBUFR file rather than out of external file.)  [GBLEVENTS,
+prepobs_errtable.nam]
+
+
+ L. CHANGES TO SURFACE MARINE PROCESSING
+
+     1) NAM, NDAS only: Encoded ship, buoy, C-MAN, tide gauge (PREPBUFR report
+type 180/280) temperature, moisture, surface pressure and wind observation
+errors are set to same values as in external observation error file read by
+NAM/NDAS GSI (they had been set to other non-missing values).  (Eventually
+NAM/NDAS GSI will, like current GFS/GDAS GSI, read observation errors out of
+PREPBUFR file rather than out of external file.)  [GBLEVENTS,
+prepobs_errtable.nam]
+
+     2) NAM, NDAS only: Encoded splash-level dropwinsonde (PREPBUFR report
+type 182) temperature, moisture and surface pressure observation errors are
+set to same values as in external observation error file read by NAM/NDAS GSI
+(they had been set to other non-missing values).  (Eventually NAM/NDAS GSI
+will, like current GFS/GDAS GSI, read observation errors out of PREPBUFR file
+rather than out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+     3) NAM, NDAS only: Encoded ATLAS buoy (PREPBUFR report type 282) wind
+observation error is set to same value as in external observation error file
+read by NAM/NDAS GSI (it had been set to another non-missing value).
+(Eventually NAM/NDAS GSI will, like current GFS/GDAS GSI, read observation
+errors out of PREPBUFR file rather than out of external file.)  [GBLEVENTS,
+prepobs_errtable.nam]
+
+
+ M. CHANGES TO SSM/I WIND SPEED PROCESSING
+
+     1) NAM, NDAS only: Encoded wind observation error is set to same value as
+in external observation error file read by NAM/NDAS GSI (it had been set to
+another non-missing value).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ N. CHANGES TO WIND PROFILER PROCESSING
+
+     1) NAM, NDAS only: Encoded PROFILER decoded from PIBAL bulletin (PREPBUFR
+report type 229) wind observation error on all levels is set to same value as
+in external observation error file read by NAM/NDAS GSI (it had been set to
+another non-missing value).  (Eventually NAM/NDAS GSI will, like current
+GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than out of
+external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ O. CHANGES TO VAD WIND PROCESSING
+
+     1) NAM, NDAS only: Encoded wind observation error on all levels is set to
+same value as in external observation error file read by NAM/NDAS GSI (it had
+been set to another non-missing value).  (Eventually NAM/NDAS GSI will, like
+current GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than
+out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+
+ P. CHANGES TO TROPICAL CYCLONE BOGUS WIND PROCESSING
+
+     1) NAM, NDAS only: Encoded wind observation error on all levels is set to
+same value as in external observation error file read by NAM/NDAS GSI (it had
+been set to another non-missing value).  (Eventually NAM/NDAS GSI will, like
+current GFS/GDAS GSI, read observation errors out of PREPBUFR file rather than
+out of external file.)  [GBLEVENTS, prepobs_errtable.nam]
+
+

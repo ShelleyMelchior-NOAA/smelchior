@@ -1,0 +1,1031 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+  <title>Realtime Hourly Data Table </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta content="NCO Web Team" name="GENERATOR">
+  <link href="index.tsg_files/main.css" type="text/css" rel="STYLESHEET">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><meta name="GENERATOR" content="Mozilla/4.79 [en]C-CCK-MCD   (Windows NT 5.0; U) [Netscape]"><title>Data Deficiency Troubleshooting Guide</title></head><body leftmargin="0" topmargin="0" rightmargin="0" alink="#ff0000" background="index.tsg_files/background.gif" bgcolor="#ffffff" text="#000000" vlink="#551a8b" link="#000080" marginheight="0" marginwidth="0">
+<table background="index.tsg_files/topbanner.jpg" border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody>
+  <tr>
+    <td align="right" height="19">
+      <a href="#contents"><img alt="Skip Navigation Links" src="index.tsg_files/skipgraphic.gif" border="0" width="1" height="1"></a>
+      <a href="http://www.nws.noaa.gov/"><span class="nwslink">www.nws.noaa.gov</span></a>&nbsp;</td>
+  </tr>
+  </tbody>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody>
+  <tr>
+    <td rowspan="2"><a href="http://www.noaa.gov/">
+      <img alt="NOAA logo - Click to go to the NOAA homepage" src="index.tsg_files/noaaleft.jpg" border="0" width="85" height="78"></a></td>
+    <td align="left"><img alt="National Weather Service" src="index.tsg_files/nws_title.jpg" border="0" width="500" height="20"></td>
+    <td rowspan="2" background="index.tsg_files/ncep_bkgrnd.jpg" width="100%">&nbsp;</td>
+    <td rowspan="2" align="right"><a href="http://www.nws.noaa.gov/">
+      <img alt="NWS logo - Click to go to the NWS homepage" src="index.tsg_files/nwsright.jpg" border="0" width="85" height="78"></a></td>
+  </tr>
+  <tr>
+    <td><img alt="NCEP Central Operations" src="index.tsg_files/nco.jpg" border="0" width="500" height="58"></td>    <!-- Put your center header image here. -->
+  </tr>
+  </tbody>
+</table>
+<table background="index.tsg_files/navbkgrnd.gif" border="0" cellpadding="0" cellspacing="0" width="100%">
+  <tbody>
+  <tr>
+    <td align="left" valign="top" width="94"><img alt="" src="index.tsg_files/navbarleft.jpg" border="0" width="94" height="23"></td>
+    <td class="nav" id="menuitem" align="center" width="10%">
+      <a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/sitemap.html">Site Map</a></td> <!-- Build a text only sitemap, and link to it via this
+                                                    sitemap button just below the banner.
+                                                    The sitemap should include a heirarchy of links
+                                                    from NOAA, to the NWS, to NCEP, and then through your site. -->
+    <td class="nav" id="menuitem" align="right" width="10%">
+      <a href="http://205.156.54.206/pa/">News</a></td>
+    <td class="nav" id="menuitem" align="right" width="19%">
+      <a href="http://weather.gov/organization.php">Organization</a></td>
+    <td class="yellow" align="right" width="13%">Search&nbsp;</td>
+    <td class="searchinput" align="left" width="1%">
+      <form name="query" action="http://www.firstgov.gov/fgsearch/index.jsp">
+        <div id="Layer1" style="z-index: 1; visibility: hidden; width: 200px; position: absolute; height: 115px;">
+          Search field for weather information. Press Enter or select the go button to submit request</div>
+        <input value="all" name="mt0" type="hidden">
+        <input value="should" name="ms0" type="hidden">
+        <input value="20" name="nr" type="hidden"> 
+        <input value="detailed" name="de" type="hidden">
+        <input value="0" name="fr" type="hidden">
+        <input value="0010" name="adv" type="hidden">
+        <input value="domain" name="pl" type="hidden">
+        <input value="nws.noaa.gov weather.gov wrh.noaa.gov srh.noaa.gov crh.noaa.gov alaska.net/~nwsar ncep.noaa.gov weather.noaa.gov ncep.noaa.gov nhc.noaa.gov sec.noaa.gov spc.noaa.gov aviationweather.noaa.gov" name="domain" type="hidden">
+        <input value="www-fed-all" name="db" type="hidden">
+        <input id="label_for_mw0" maxlength="256" value="All NWS search" name="mw0"></form></td>
+    <td class="searchinput" align="left">&nbsp;<input value="Go" name="Go2" type="submit"></td>
+    <td width="2%">&nbsp;</td>
+    <td align="right" valign="bottom"><img alt="" src="index.tsg_files/navbarendcap.jpg" border="0" width="24" height="23"></td>
+  </tr>
+  </tbody>
+</table>
+     <!-- Use virtual include, because this should be in a common place within your DocumentRoot. -->
+<table border="0" cellpadding="3" cellspacing="0" width="670">
+  <tbody>
+  <tr valign="top">
+    <td width="130"><br>
+            <table border="0" cellpadding="2" cellspacing="0" width="130">
+        <tbody>
+        <!-- Do not remove this section. You will need this when the City,St/zip search is implemented nationwide.-->
+  <tr valign="top">
+    <td class="searchinput" align="left">
+      <form method="post" action="http://www.srh.noaa.gov/zipcity.php">
+        <div id="Layer2" style="position: absolute; width: 200px; height: 115px; z-index: 2; visibility: hidden;">
+          Search by city or zip code. Press enter or select the go button to submit request</div>
+        <span class="yellow">Local forecast by<br>"City, St"</span><br>
+        <input name="inputstring" size="10" value="City, St" type="text">
+        <input name="Go2" value="Go" type="submit">
+      </form>
+    </td>
+  </tr>
+        <tr>
+          <td class="searchinput" colspan="2" align="left"> <!-- width="1%">-->
+            <form name="query" action="http://www.firstgov.gov/fgsearch/index.jsp">
+              <div id="Layer1" style="z-index: 1; visibility: hidden; width: 200px; position: absolute; height: 115px;">
+                Search field for local site information. Press Enter or select the go button to submit request</div>
+              <input value="all" name="mt0" type="hidden">
+              <input value="should" name="ms0" type="hidden">
+              <input value="20" name="nr" type="hidden"> 
+              <input value="detailed" name="de" type="hidden">
+              <input value="0" name="fr" type="hidden">
+              <input value="0010" name="adv" type="hidden">
+              <input value="domain" name="pl" type="hidden">
+              <input value="ncep.noaa.gov/NCO nco.ncep.noaa.gov" name="domain" type="hidden">
+              <input value="www-fed-all" name="db" type="hidden">
+              <span class="yellow">Search NCO</span><br>
+              <input id="label_for_mw0" size="10" maxlength="256" value="NCO search" name="mw0">
+              <input value="Go" name="Go2" type="submit">
+          </form></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Current Hazards</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.spc.noaa.gov/products/wwa/">Watches/Warnings</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.spc.noaa.gov/products/">Outlooks</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://iwin.nws.noaa.gov/iwin/graphicsversion/bigmain.html">National</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Current Conditions</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://205.156.54.206/om/osd/portal">Observations</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.goes.noaa.gov/">Satellite Images</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://weather.noaa.gov/radar/national.html">Radar Imagery</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://205.156.54.206/om/hydro/index.shtml">Lakes &amp; Rivers</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.sec.noaa.gov/SWN/">Space Weather</a></td><td>
+        </td></tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Environmental Models</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/pmb/products/">Product Info</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/prodstat/">Current Status</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/analysis/">Model Analyses<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp; Forecasts</a>
+        </td></tr>        
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Forecasts</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.hpc.ncep.noaa.gov/noaa/">Current</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.cpc.ncep.noaa.gov/products/predictions/610day/">6 to 10 Day</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://aviationweather.noaa.gov/awc/aviation_weather_center.html">Aviation</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nhc.noaa.gov/">Hurricane</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.opc.ncep.noaa.gov/">Ocean</a><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.nhc.noaa.gov/forecast.html">Tropical Marine</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.spc.noaa.gov/products/fire_wx/">Fire Weather</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Climate</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.cpc.ncep.noaa.gov/">Climate Prediction</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.ncdc.noaa.gov/">Climate Archives</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Weather Safety</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://205.156.54.206/stormready/">Storm Ready</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">NOAA</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.lib.noaa.gov/">Central Library</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.photolib.noaa.gov/">Photo Library</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.publicaffairs.noaa.gov/">Public Affairs</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.noaa.gov/jobs.html">Employment</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.education.noaa.gov/">Education<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.noaa.gov/question.html">Question of<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the Month</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.osei.noaa.gov/OSEIiod.html">Image of the Day</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">About Us</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/mission.shtml">Our Mission</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/about.shtml">The Centers</a></td>
+        </tr>
+        <tr>
+          <td class="white" id="menuitem" colspan="2">
+            <span class="yellow">Contact Us</span><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://wwwt.ncep.noaa.gov/mail_liaison/">Science Liaison</a><br>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.nco.ncep.noaa.gov/mail_admin.shtml">Webmaster</a></td>
+        </tr>
+        </tbody>
+      </table>
+   <!-- Use virtual include, because this should be in a common place within your DocumentRoot. -->
+    </td>
+    <td valign="top" width="540"><a name="contents"></a>
+      <a href="http://www.ncep.noaa.gov/">NCEP Home</a> &gt; <a href="http://www.nco.ncep.noaa.gov/">NCEP Central Operations</a> &gt; <a href="http://www.nco.ncep.noaa.gov/sib/">Systems Integration Branch</a> &gt; Realtime Monitor<br><br>
+      
+
+
+  
+  
+  
+
+<a name="GUIDE"></a>
+<h3>DATA DEFICIENCY TROUBLESHOOTING GUIDE</h3>
+<h4><a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/">Return to Realtime Monitor Mainpage</a></h4>
+<h4>Data Type Categorical Index:</h4>
+<h5> <a href="#ACFT">Aircraft Data Types</a><br>
+<a href="#MESONET">Mesonet Data Types</a><br>
+<a href="#RADAR">Radar and Profiler Data Types</a><br>
+<a href="#SATELLITE">Satellite Data Types</a><br>
+<a href="#SFC">Surface Data Types</a><br>
+<a href="#MARINE">Surface Marine Data Types</a><br>
+<a href="#UPA">Upper Air Data Types</a><br>
+<a href="#NOMODEL">Data Types Not Used In Model Ingest</a> </h5>
+<h4>Data Type Mnemonic Index:</h4>
+<h5>Pre-A<br>
+<a href="#1BAMUA">1BAMUA</a> <a href="#1BAMUB">1BAMUB</a> <a href="#1BHRS2">1BHRS2</a> <a href="#1BHRS3">1BHRS3</a> <a href="#1BHRS4">1BHRS4</a> <a href="#1BMHS">1BMHS</a> <a href="#1BMSU">1BMSU</a>
+<a href="#3P9US">3P9US</a> <br>
+A<br>
+<a href="#A1BN15">A1BN15</a> <a href="#A1BN16">A1BN16</a> <a href="#ACARS">ACARS</a> <a href="#ACARSA">ACARSA</a> <a href="#AIREP">AIREP</a>
+<a href="#AIRS">AIRS</a> <a href="#AIRSEV">AIRSEV</a> <a href="#AIRSWM">AIRSWM</a> <a href="#ASDAR">AMDAR</a> <a href="#AMSRE">AMSRE</a>
+<a href="#AMSREP">AMSREP</a> <a href="#AMUATA">AMUATA</a> <a href="#ANOWB1">ANOWB1</a> <a href="#ANOWB8">ANOWB8</a> <a href="#ANOWFA">ANOWFA</a> <a href="#ANOWPM">ANOWPM</a> <a href="#ANOWRT">ANOWRT</a> <a href="#AODMOD">AODMOD</a> <a href="#ASCAT">ASCAT</a> <a href="#ASDAR">ASDAR</a> <a href="#ATOVS">ATOVS</a>
+<a href="#AVCL17">AVCL17</a> <a href="#AVCL18">AVCL18</a> <a href="#AVCS17">AVCS17</a> <a href="#AVCS18">AVCS18</a> <a href="#AXBT">AXBT</a> <br>
+B<br>
+<a href="#B1BN15">B1BN15</a> <a href="#B1BN16">B1BN16</a> <a href="#BATHY">BATHY</a> <a href="#BUOYSH">BUOYSH</a> <br>
+C<br>
+<a href="#CAJSWW">CAJSWW</a> <a href="#CAMDAR">CAMDAR</a> <a href="#GPSRO">CHAMP</a> <a href="#CMANSH">CMANSH</a> <a href="#CNJSAL">CNJSAL</a> <a href="#COOPAL">COOPAL</a> <a href="#COOPMD">COOPMD</a> <a href="#GPSRO">COSMIC</a> <a href="#CSTCG">CSTGD</a> <br>
+D<br>
+<a href="#DBUOY">DBUOY</a> <a href="#DROPW">DROPW</a> <br>
+E,F<br>
+<a href="#EADAS">EADAS</a> <a href="#ENVSAL">ENVSAL</a> <a href="#ENVSWW">ENVSWW</a> <a href="#ERSAL">ERSAL</a> <a href="#ERSAR">ERSAR</a>
+<a href="#ERSHAL">ERSHAL</a> <a href="#ERSWN">ERSWN</a> <a href="#ESAMUA">ESAMUA</a> <a href="#ESAMUB">ESAMUB</a> <a href="#ESHRS3">ESHRS3</a> <br>
+G<br>
+<a href="#GEOIMR">GEOIMR</a> <a href="#GEOST">GEOST</a> <a href="#GEOST1">GEOST1</a> <a href="#GEOSTH">GEOSTH</a> <a href="#GFOFWW">GFOFWW</a> <a href="#GFOHAL">GFOHAL</a> <a href="#GOME">GOME</a> <a href="#GPSPW">GPSPW</a> <a href="#GPSRO">GPSRO</a>
+<br>
+H<br>
+<a href="#H1BN14">H1BN14</a> <a href="#H2IJAN">H2IJAN</a> <a href="#H2IUS">H2IUS</a> <a href="#H2OEU">H2OEU</a> <a href="#H2OIN">H2OIN</a>
+<a href="#H2OJA">H2OJA</a> <a href="#H2OMO">H2OMO</a> <a href="#H2SUS">H2SUS</a>
+<a href="#HYDDEN">HYDDEN</a> <a href="#HYDOTH">HYDOTH</a> <br>
+I,J<br>
+<a href="#INFEU">INFEU</a> <a href="#INFIN">INFIN</a> <a href="#INFJA">INFJA</a>
+<a href="#INFJAN">INFJAN</a> <a href="#INFMO">INFMO</a> <a href="#INFUS">INFUS</a> <br>
+K<br>
+<a href="#KAMDAR">KAMDAR</a> <br>
+L<br>
+<a href="#LCMAN">LCMAN</a> <a href="#LTNGLR">LTNGLR</a> <a href="#LTNGSR">LTNGSR</a> <br>
+M<br>
+<a href="#M1BN14">M1BN14</a> <a href="#PRFLRB">MAP</a> <a href="#MBUOY">MBUOY</a> <a href="#METAR">METAR</a> <a href="#MSO470">MSO470</a>
+<a href="#MSOALK">MSOALK</a> <a href="#MSOAPG">MSOAPG</a> <a href="#MSOAPR">MSOAPR</a> <a href="#MSOAWS">MSOAWS</a> <a href="#MSOAWX">MSOAWX</a> <a href="#MSOCOB">MSOCOB</a> <a href="#MSOCOL">MSOCOL</a> <a href="#MSODCN">MSODCN</a> <a href="#MSODEN">MSODEN</a> <a href="#MSOFLA">MSOFLA</a> <a href="#MSOFLT">MSOFLT</a> <a href="#MSOGEO">MSOGEO</a> <a href="#MSOHAD">MSOHAD</a> <a href="#MSOIEN">MSOIEN</a> <a href="#MSOIND">MSOIND</a> <a href="#MSOIOW">MSOIOW</a> <a href="#MSOKAN">MSOKAN</a> <a href="#MSOKLA">MSOKLA</a> <a href="#MSOLJU">MSOLJU</a> <a href="#MSOMCA">MSOMCA</a> <a href="#MSOMIN">MSOMIN</a> <a href="#MSONOS">MSONOS</a> <a href="#MSORAW">MSORAW</a> <a href="#MSOTHR">MSOTHR</a> <a href="#MSOVIR">MSOVIR</a> <a href="#MSOWFY">MSOWFY</a> <a href="#MSOWIS">MSOWIS</a> <a href="#MSOWST">MSOWST</a> <a href="#MSOWTX">MSOWTX</a> <a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/MTIASI">MTIASI</a> <br>
+N<br>
+<a href="#NERSAL">NERSAL</a> <a href="#NGFNAL">NGFNAL</a> <a href="#NGFOAL">NGFOAL</a> <a href="#NJSN2I">NJSN2I</a> <a href="#NJSN2O">NJSN2O</a> <a href="#NJSNAL">NJSNAL</a> <a href="#NJS2WW">NJS2WW</a> <a href="#NJSNWW">NJSNWW</a> <a href="#NTPXAL">NTPXAL</a> <a href="#NXRDW">NXRDW</a> <br>
+O<br>
+<a href="#OMI">OMI</a> <a href="#OSBUV">OSBUV</a> <a href="#OSBUV8">OSBUV8</a>
+<a href="#OZONHI">OZONHI</a> <a href="#OZONLO">OZONLO</a> <br>
+P<br>
+<a href="#SLPBG">PAOB</a> <a href="#PIBAL">PIBAL</a> <a href="#PIREP">PIREP</a>
+<a href="#PRFLR">PRFLR</a> <a href="#PRFLRB">PRFLRB</a> <a href="#PRFLRE">PRFLRE</a> <a href="#PRFLRH">PRFLRH</a> <a href="#PRFLRJ">PRFLRJ</a> <a href="#PRFLRM">PRFLRM</a> <a href="#PRFLRP">PRFLRP</a> <a href="#PRFLRS">PRFLRS</a> <a href="#PTRUS">PTRUS</a> <br>
+Q<br>
+<a href="#QSCAT">QSCAT</a> <br>
+R<br>
+<a href="#RADW25">RADW25</a> <a href="#RADW30">RADW30</a> <a href="#RAOBF">RAOBF</a> <a href="#RAOBM">RAOBM</a> <a href="#RAOBS">RAOBS</a>
+<a href="#RASS">RASS</a> <a href="#RD2Rhh">RD2R(00-23)</a> <a href="#RD2Whh">RD2W(00-23)</a> <a href="#RECCO">RECCO</a> <a href="#RIVER">RIVER</a> <a href="#RTOVS">RTOVS</a> <br>
+S<br>
+<a href="#SCD">SCD</a> <a href="#SEVASR">SEVASR</a> <a href="#SEVCSR">SEVCSR</a>
+<a href="#SHEFCM">SHEFCM</a> <a href="#SHEFF">SHEFF</a> <a href="#SHIPS">SHIPS</a> <a href="#SLPBG">SLPBG</a> <a href="#SNOW">SNOW</a>
+<a href="#SSMIP">SSMIP</a> <a href="#SSMIPN">SSMIPN</a> <a href="#SSMISU">SSMISU</a> <a href="#SSMIT">SSMIT</a> <a href="#SSTNS">SSTNS</a>
+<a href="#SSTNSG">SSTNSG</a> <a href="#SSTNSO">SSTNSO</a> <a href="#SSTNSP">SSTNSP</a> <a href="#SSTNV">SSTNV</a> <a href="#SSTNVH">SSTNVH</a> <a href="#SSTNVP">SSTNVP</a> <a href="#SSTNVO">SSTNVO</a> <a href="#SYNOP">SYNOP</a> <a href="#SYNOPM">SYNOPM</a> <a href="#SYNOPR">SYNOPR</a> <br>
+T,U<br>
+<a href="#TAMDAR">TAMDAR</a> <a href="#TESAC">TESAC</a> <a href="#TIDEG">TIDEG</a> <a href="#TIDGCM">TIDGCM</a> <a href="#TIDGSH">TIDGSH</a> <a href="#TMDARA">TMDARA</a> <a href="#TMDARC">TMDARC</a> <a href="#TMDARP">TMDARP</a> <a href="#TOPHAL">TOPHAL</a> <a href="#TOPLAL">TOPLAL</a> <a href="#TOVS">TOVS</a> <a href="#TRKOB">TRKOB</a> <a href="#TRMM">TRMM</a>
+<a href="#TRPSTM">TRPSTM</a> <br>
+V<br>
+<a href="#VISEU">VISEU</a> <a href="#VISIN">VISIN</a> <a href="#VISJA">VISJA</a>
+<a href="#VISUS">VISUS</a> <a href="#VISUW">VISUW</a> <br>
+W,X,Y,Z<br>
+<a href="#WDSAT">WDSAT</a> <a href="#WDSATS">WDSATS</a> </h5>
+<p><a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/Decoders.html">Advanced troubleshooting techniques</a> for
+<a href="http://www2.nco.ncep.noaa.gov/sib/decoders/"> decoders</a>
+data <small><i>(for NCEP only)</i></small><br>
+<a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/SatlUtil.html">Advanced utilities</a> to monitor ingest of
+satellite
+data <small><i>(for NCEP only)</i></small></p>
+<br>
+<h4><a name="SFC"></a>Surface Data Types</h4>
+<p><a name="SYNOP"></a><b>SYNOP</b> (Manual and automatic synoptic
+reports):<br>
+<a name="SYNOPM"></a><b>SYNOPM</b> (Manual and automatic mobile
+synoptic reports):<br>
+<a name="SYNOPR"></a><b>SYNOPR</b> (Restricted synoptic reports (WMO
+Res 40) manual and automatic):<br>
+<font color="green">Flow path: GTS data from many sites worldwide =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+Many of these data are constructed automatically at TOC using 6-hourly
+metar data from "first order" stations as input. If flagged for
+deficiency,
+check with TOC Tech Control for possible decoder or comms line
+problems.
+If 6-hourly (00Z, 06Z, 12Z, 18Z) metar data are deficient at the
+Gateway,
+then synop data can be expected to be deficient. Many synopm data come
+from CMC, who provides Mon-Fri support.
+If deficient, check SNCN19 CWAO.</p>
+<p><a name="METAR"></a><b>METAR</b> (Aviation surface based
+observations):<br>
+<font color="green">Flow path: GTS data from many sites worldwide =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+These data are collected regionally and disseminated by ASOS data
+acquisition
+systems (ADAS). If flagged for deficiency, check NAWIPS, AWIPS, and the
+TOC "metar" program in order to determine the extent of the deficiency
+such as 'only Canada missing'. Check with AMOC who should be aware of
+any
+ADAS problem, then report your findings to TOC Tech Control.</p>
+<p><a name="SLPBG"></a><b>SLPBG</b> (Sea level pressure bogus, aka <b>PAOB)</b>:<br>
+<font color="green">Flow path: GTS data from Australia =&gt; NWSTG --
+TNC =&gt; CCS</font><br>
+These non-critical data originate from Australia under WMO headers
+UXXS(01-05) AMMC.
+Check these bulletins in FADD for evidence and report to TOC. These
+bulletins
+normally post twice a day around 06Z and 18Z. Request TOC to contact
+Australia only if deficiencies persist for more than two model cycles.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="UPA"></a>Upper Air Data Types</h4>
+<p><a name="DROPW"></a><b>DROPW</b> (Dropwinsonde data):<br>
+<font color="green">Flow path: GTS data usually from TPC or USAF
+(CARCAH) or occasionally from non U.S.
+sources =&gt; NWSTG -- TNC =&gt; CCS</font><br>
+If expecting some, and they do not show, check with CARCAH or TPC and
+find out what WMO
+bulletin header was used. Check with TOC Tech Control for any comms
+break.</p>
+<p><a name="RAOBF"></a><b>RAOBF</b> (Fixed land rawinsonde data):<br>
+<font color="green">Flow path: GTS data from many sites worldwide =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+If flagged for deficiency, check NAWIPS (Family of Services (FOS)),
+bulletin header USUS50 in FADD, OSOTG DATA program, and AWIPS in effort
+to isolate break in data flow. Reports from U.S. stations are normally
+disseminated through AWIPS before reaching the Gateway and other users.
+Report findings to TOC Tech Control. Also, call PMB data flow
+specialists
+if you suspect a data flow problem or DbNet alert problem. Or contact
+Jeff
+Ator if you suspect a decoder problem.</p>
+<p><a name="RAOBM"></a><b>RAOBM</b> (Mobile land rawinsonde data):<br>
+<a name="RAOBS"></a><b>RAOBS</b> (Ship based rawinsonde data):<br>
+<a name="PIBAL"></a><b>PIBAL</b> (Free balloon observations):<br>
+<font color="green">Flow path: GTS data from many sites worldwide =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+In the unlikely event these data types are flagged for deficiency,
+check
+with TOC Tech Control for any line problems.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="ACFT"></a>Aircraft Data Types</h4>
+<p><a name="ACARS"></a><b>ACARS</b> (Automated MDCRS ACARS aircraft
+data):<br>
+<font color="green">Flow path: GTS data from ARINC =&gt; NWSTG -- TNC
+=&gt; CCS</font><br>
+These data are distributed from ARINC, many of which are distributed
+through the Leesburg link.
+ACARS could be flagged for deficiency during times of normally light
+air
+traffic such as early Sunday and Monday mornings and holidays.
+If it is flagged when normal or greater air traffic would be expected,
+check
+bulletin header IUAX02 KARP in FADD to see if any recent bulletins were
+made. Then query TOC Tech Control for an explanation. They may contact
+ARINC or Leesburg for assistance in troubleshooting.</p>
+<p><a name="ACARSA"></a><b>ACARSA</b> (Auto MDCRS ACARS aircraft data
+(ARINC) via AFWA):<br>
+<font color="green">Flow path: GTS data from ARINC =&gt; AFWA =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+These data are similar to ACARS except they are channeled through AFWA
+on their
+way from ARINC to NWSTG. Therefore, if ACARSA is flagged for deficiency
+when ACARS is not deficient, AFWA should be the first agency to query
+for any
+problem. Check WMO header YRXX85 KAWN in FADD for any recent bulletins.</p>
+<p><a name="AIREP"></a><b>AIREP</b> (Manual AIREP format aircraft data):<br>
+<a name="PIREP"></a><b>PIREP</b> (Manual PIREP format aircraft data):<br>
+<font color="green">Flow path: GTS data from many worldwide reporting
+sites =&gt; NWSTG -- TNC =&gt; CCS</font><br>
+Reporting sites include <a href="http://adds.aviationweather.gov/airmets/">AWC,</a>
+FAA CWSUs, and international centers. If flagged for deficiency, check
+a sampling
+of AWIPS pils nnnPIR000 where nnn is the node identifier, or a sampling
+of UBUS
+bulletins in FADD. Then query TOC Tech Control for any line troubles
+from FAA,
+WMSCR, Leesburg, etc.</p>
+<p><a name="ASDAR"></a><b>ASDAR</b> (Automated <b>AMDAR</b> format
+ASDAR/ACARS aircraft data):<br>
+<a name="EADAS"></a><b>EADAS</b> (E-ADAS - European ASDAR/ACARS acft
+data from BUFR):<br>
+<font color="green">Flow path: GTS data from Exeter (Bracknell) =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+These data are received from Exeter and are the European counterparts
+of the ACARS data described above. If flagged for deficiency, check
+bulletin
+headers UD(EU,AS,NT,NA,AF)02 EGGR and IUAD01 EGGR in FADD. NCEP
+normally receives
+30 to 40 such bulletins per hour. If indeed no or few recent bulletins,
+contact
+TOC Tech Control, and TOC will probably contact Exeter to discuss and
+resolve the problem.
+The E-AMDAR system (EADAS1 and backup EADAS2) at Exeter processes these
+bulletins.
+Data loss may result when migrating flow from primary to backup or vise
+versa.
+Stewart Taylor and Bruce Truscott are the E-ADAS specialists at Exeter.
+</p>
+<p><a name="CAMDAR"></a><b>CAMDAR</b> (Automated Canadian ASDAR/ACARS
+data from BUFR):<br>
+<font color="green">Flow path: GTS data from Canada =&gt; NWSTG -- TNC
+=&gt; CCS</font><br>
+These data are received from Canada and are the Canadian counterparts
+of the ACARS data
+described above.</p>
+<p><a name="TAMDAR"></a><b>TAMDAR</b> (TAMDAR-Mesaba aircraft data from
+GSD, netCDF):<br>
+<a name="TMDARA"></a><b>TMDARA</b> (TAMDAR aircraft data - all types -
+from AirDAT, BUFR):<br>
+<a name="TMDARC"></a><b>TMDARC</b> (TAMDAR Chautauqua aircraft data
+from GSD, netCDF):<br>
+<a name="TMDARP"></a><b>TMDARP</b> (TAMDAR PenAir aircraft data from
+GSD, netCDF):<br>
+<font color="green">Flow path: GTS data from <a href="http://www.airdat.com/tamdar/index.php">AirDAT</a> =&gt; NOAA/<a href="http://www.esrl.noaa.gov/">ESRL/GSD</a> =&gt; NWSTG -- TNC =&gt;
+CCS</font><br>
+However, TMDARA data flows into the CCS directly from AirDAT.<br>
+If flagged for deficiency, check with TOC. They can check if any
+problem at either GSD or AirDAT.</p>
+<p><a name="RECCO"></a><b>RECCO</b> (Flight level reconnaissance data):<br>
+<font color="green">Flow path: GTS data usually from TPC or USAF
+(CARCAH) or occasionally from non U.S.
+sources =&gt; NWSTG -- TNC =&gt; CCS</font><br>
+If expecting some, and they do not show, check with CARCAH or TPC and
+find out what WMO
+bulletin header was used. Check with TOC Tech Control for any comms
+break.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="RADAR"></a>Radar and Profiler Data Types</h4>
+<p><a name="NXRDW"></a><b>NXRDW</b> (NEXRAD Vertical Azimuth Display
+(VAD) winds):<br>
+<a name="RADW25"></a><b>RADW25</b> (NEXRAD radial winds superobs, level
+2.5 - ORPG):<br>
+<a name="RADW30"></a><b>RADW30</b> (NEXRAD radial winds superobs, level
+3 - NIDS):<br>
+<a name="RD2Rhh"></a><b>RD2R(00-23)</b> (NEXRAD reflectivity UTC hours
+00-23, level 2 - GTS):<br>
+<a name="RD2Whh"></a><b>RD2W(00-23)</b> (NEXRAD radial wind UTC hours
+00-23, level 2 - GTS):<br>
+<font color="green">Flow path: GTS data from U.S. NEXRAD sites =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+</p>
+<p><a name="GPSPW"></a><b>GPSPW</b> (GPS integrated precipitable water):<br>
+<font color="green">Flow path: <a href="http://gpsmet.noaa.gov/">GPSPW
+data</a> from NOAA/<a href="http://www.esrl.noaa.gov/">ESRL/GSD</a>
+=&gt; NWSTG -- TNC =&gt; CCS</font><br>
+If flagged for deficiency, check bulletin ISXT40 KBOU in FADD.
+Deficiencies may flag Big Brother. Check BB for additional clues.
+Tech Control may call <a href="http://gpsmet.noaa.gov/jsp/contacts.jsp">gpsmet
+support</a> or the
+<a href="http://laps.fsl.noaa.gov/">ESRL/GSD Forecast Application
+Branch (FAB)</a>.</p>
+<p><a name="PRFLR"></a><b>PRFLR</b> (Wind profiler data from
+NOAA/NWS/OPS12):<br>
+<font color="green">Flow path: GTS data from NOAA/NWS/OPS12 =&gt; NWSTG
+-- TNC =&gt; CCS</font><br>
+If flagged for deficiency, check bulletin IUPT43 KBOU in FADD.
+Deficiencies may flag Big Brother. Check BB for additional clues.
+Then have Tech Control check with NWS/OPS12.</p>
+<p><a name="PRFLRB"></a><b>PRFLRB</b> (Multi-Agency Profiler <b>(MAP)</b>
+winds):<br>
+<a name="PRFLRP"></a><b>PRFLRP</b> (MAP winds decoded from PILOT
+(PIBAL) format):<br>
+<font color="green">Flow path: GTS data from NOAA/<a href="http://www.esrl.noaa.gov/">ESRL/GSD</a>
+=&gt; NWSTG -- TNC =&gt; CCS</font><br>
+As of May 2006, these data have been assimilated into the <a href="http://madis.noaa.gov/">MADIS</a>.
+One could also examine <a href="http://www-frd.fsl.noaa.gov/mesonet/">MADIS
+Surface Data</a>.
+If either prflrb or prflrp is flagged for deficiency, check bulletin
+IUPT41 KBOU in FADD.
+These data are non-critical. Check with <a href="http://www.esrl.noaa.gov/">ESRL/GSD</a> in
+Boulder only if deficiencies persist for more than one model cycle.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="MARINE"></a>Surface Marine Data Types</h4>
+<p><a name="CSTGD"></a><b>CSTGD</b> (Coast Guard data):<br>
+<font color="green">Flow path: GTS data from many U.S. sites =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+If flagged for deficiency, check bulletins in FADD SXUS8(0-9) Kxxx
+and SXUS40 Knnn, and also AWIPS pils CGR000. Then check with TOC Tech
+Control.</p>
+<p><a name="DBUOY"></a><b>DBUOY</b> (Drifting buoy data):<br>
+<font color="green">Flow path: GTS data from ARGOS =&gt; NWSTG -- TNC
+=&gt; CCS</font><br>
+NWSTG transfers data to <a href="http://www.ndbc.noaa.gov/datfl.shtml">NDBC</a>
+for data processing and quality control before passing them to users.
+Drifting buoy reports come to and are distributed by ARGOS. If flagged
+for deficiency, check bulletins in FADD SSVX(02-08) KARS and SSVX02
+LFPW
+(from France). Then check with TOC Tech Control.</p>
+<p><a name="MBUOY"></a><b>MBUOY</b> (Moored buoy data):<br>
+<a name="LCMAN"></a><b>LCMAN</b> (Land-based C-MAN stations):<br>
+<font color="green">Flow path: GTS data from many sites worldwide such
+as WAL =&gt; NWSTG -- TNC
+=&gt; CCS</font><br>
+NWSTG transfers data to <a href="http://www.ndbc.noaa.gov/datfl.shtml">NDBC</a>
+for data processing and quality control before passing them to users.
+If flagged for deficiency, check bulletins in FADD SXUS(20-24) KWBC
+and SNVD(15,17) KWBC, and also AWIPS pils BOYCM(1-7). Then check with
+TOC
+Tech Control.</p>
+<p><a name="SHIPS"></a><b>SHIPS</b> (Manual and automatic ship reports):<br>
+<font color="green">Flow path: GTS data from many sites worldwide =&gt;
+NWSTG -- TNC =&gt; CCS</font><br>
+Ship reports come to and are distributed from WAL (Wallops) through NOS
+CORMS.
+If flagged for deficiency, check FADD to see if bulletins are being
+made; eg,
+BMDA90 KWBC and SMVX90 KWBC. Then call TOC Tech Control who will check
+for any
+line problem and contact WAL as needed.</p>
+<p><a name="TIDEG"></a><b>TIDEG</b> (Tide gauge reports):<br>
+<font color="green">Flow path: GTS data from NOS/CORMS =&gt; NWSTG --
+TNC =&gt; CCS</font><br>
+If flagged for deficiency, check bulletins in FADD SOUS5(2,3) KWBC and
+SOPA56 KWBC, and also AWIPS pil TIDATL. Then contact NOS CORMS if not
+updating
+properly.</p>
+<p><a name="TIDGCM"></a><b>TIDGCM</b> (Tide gauge reports in C-MAN
+format):<br>
+<font color="green">Flow path: GTS data from many sites worldwide such
+as WAL =&gt; NWSTG -- TNC
+=&gt; CCS</font><br>
+These data arrive at the decoders commingled with LCMAN data.
+See <a href="#LCMAN">LCMAN</a> for troubleshooting guidance.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="SATELLITE"></a>Satellite Data Types</h4>
+<p>Reference <a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/ingest/">this
+table</a> for
+useful information pertaining to NESDIS satellite data ingest in the
+CCS.</p>
+<p><a name="AIRS"></a><b>AIRS</b> (AQUA-AIRS AIRS/AMSU-A/HSB 1B
+processed radiances-center FOV):<br>
+<a name="AIRSEV"></a><b>AIRSEV</b> (AQUA-AIRS AIRS/AMSU-A/HSB 1B
+processed radiances-every FOV):<br>
+<a name="AIRSWM"></a><b>AIRSWM</b> (AQUA-AIRS AIRS/AMSU-A/HSB 1B
+processed radiances-warmest FOV):<br>
+<font color="green">Flow path: Svalbard (Norway) downlink =&gt; NASA
+Goddard (Greenbelt) =&gt; NESDIS DDS server -- ftp =&gt; CCS</font><br>
+Svalbard is located north of the Norway mainland near 80 deg N. A
+high-latitude site is necessary for reception.<br>
+If flagged for deficiency, first query ESPC Operations, and specify
+Aqua-AIRS. ESPC also manage Polar AIRS and
+Model AIRS which are separate entities. If data shortage is limited to
+AIRS, then check
+with NASA Goddard. Key contact person is Paul Haggarty (301-316-5003).
+One may browse the
+<a href="http://www-airs.jpl.nasa.gov/">NASA JPL AIRS web pages</a> for
+detailed information.</p>
+<p>Aqua-AIRS is an actual instrument (atmospheric infrared sounder) on
+board Aqua while Polar Airs and Model AIRS
+refer to a system (automatic information retrieval system) of which
+NESDIS is trying to fix.
+Aqua (and Terra) are part of the NASA Earth Observing System (EOS) that
+is considered a non_NOAA dataset and is
+not expected to become operational until Spring 2009 when EOS
+processing will be moved to ESPC.</p>
+<p><a name="GEOST"></a><b>GOEST</b> (GOES/NESDIS 5x5 FOV
+soundings/radiances):<br>
+<a name="GEOST1"></a><b>GOEST1</b> (GOES/NESDIS hi-resol. 1x1 FOV
+soundings/radiances):<br>
+<a name="GEOSTH"></a><b>GOESTH</b> (GOES/NESDIS hi-resol. 1x1 FOV
+soundings/radiances):<br>
+<font color="green">Flow path: NESDIS satepsdist servers =&gt; CCS</font><br>
+These data come from the satepsdist servers which are monitored by ESPC
+Operations.
+If flagged for deficiency, query the ESPC Helpdesk.</p>
+<p><a name="QSCAT"></a><b>QSCAT</b> (QuikSCAT products):<br>
+<font color="green">Flow path: U. of CO Mission Control Center =&gt; <a href="http://www.esrl.noaa.gov/">ESRL/GSD</a> =&gt; NESDIS DDS server
+-- ftp =&gt; CCS</font><br>
+If flagged for deficiency, query ESPC Operations.<br>
+Note: OPC acquires data from SSD/SATEPS for use in NAWIPS. Check with
+ESPC Helpdesk and/or SAB for further inquiry.</p>
+<p><a name="H2IUS"></a><b>H2IUS</b> (GOES/NESDIS water vapor imager
+derived cloud motion):<br>
+<a name="INFUS"></a><b>INFUS</b> (GOES/NESDIS infrared imager derived
+cloud motion):<br>
+<a name="VISUS"></a><b>VISUS</b> (GOES/NESDIS visible imager derived
+cloud motion):<br>
+<font color="green">Flow path: NESDIS satepsdist servers -- ftp =&gt;
+CCS</font><br>
+If flagged for deficiency, check with NESDIS/SAB on any satellite
+issues.
+Or check with the ESPC Helpdesk for production and dissemination
+status. Also browse the
+<a href="http://www.ssd.noaa.gov/PS/WIND/hdwinds.html">Satellite
+Services Division</a>
+for the latest of these high-density satellite derived winds, and
+browse the
+<a href="http://www.goes.noaa.gov/WINDS/statistics.html">Product
+Implementation Branch</a>
+wind statistics for the number of vectors produced compared to the
+30-day running mean.
+Also, consider that any current/recent RSO, maneuver, or
+keep-out-zone/eclipse events will likely result in
+reduced GOES/NESDIS derived cloud motion counts.</p>
+<p><a name="H2OMO"></a><b>H2OMO</b> (MODIS (AQUA/TERRA) wvpr imager
+derived cloud motion):<br>
+<a name="INFMO"></a><b>INFMO</b> (MODIS (AQUA/TERRA) infrared derived
+cloud motion):<br>
+<font color="green">Flow path: NASA Goddard Nanuk machine =&gt; NESDIS
+satepsdist servers -- ftp =&gt; CCS</font><br>
+<a name="AMSRE"></a><b>AMSRE</b> (AQUA-AMSR-E processed radiances):<br>
+<font color="green">Flow path: NASA Goddard Nanuk machine =&gt; NESDIS
+DDS server -- ftp =&gt; CCS</font><br>
+If flagged for deficiency, check with the ESPC Helpdesk for production
+and dissemination status.
+Or check NESDIS SAB for any satellite issues. Also browse the <a href="http://eosweb.ssec.wisc.edu/">
+MODIS Direct Broadcast at SSEC</a> to check if the satellite is
+actually producing data.
+Also, one may reference <a href="http://modis.gsfc.nasa.gov/">NASA's
+MODIS web pages</a>
+for general and detailed information about the MODIS program.</p>
+<p><a name="INFEU"></a><b>INFEU</b> (METEOSAT/EUMETSAT infrared derived
+cloud motion):<br>
+<a name="VISEU"></a><b>VISEU</b> (METEOSAT/EUMETSAT visible derived
+cloud motion):<br>
+<a name="H2OEU"></a><b>H2OEU</b> (METEOSAT/EUMETSAT wvpr imager derived
+cloud motion):<br>
+<font color="green">Flow path: GTS data from EUMETSAT =&gt; NWSTG --
+TNC =&gt; CCS</font><br>
+These are received from NWSTG/TOC within bulletins matching any of the
+following headers:<br>
+I[UX]C[NS][01-19] EUMS or I[UW]V[ADEHIL][01-19] EUMG (example: IXCN05
+EUMS) <br>
+then are processed by our decod_dcelrw decoder and stored in our
+database tanks:<br>
+/dcom/us007003/YYYYMMDD/b005/xx(064,065,066) where YYYYMMDD is the
+conventionally coded current date.<br>
+If flagged for deficiency, check the appropriate bulletin (FADD) or
+tank (CCS) then call TOC Tech Control. Tech Control will probably check
+with Exeter if no problem at TOC.
+For Meteosat (MSG) issues, check with the NESDIS/SAB shift supervisor.</p>
+<p><a name="VISJA"></a><b>VISJA</b> (GMS/JMA visible derived cloud
+motion)<i>[discontinued 6/03/07]</i>:<br>
+<a name="INFJA"></a><b>INFJA</b> (GMS/JMA infrared derived cloud motion)<i>[discontinued
+6/03/07]</i>:<br>
+<font color="green">Flow path: GTS data from MTSAT-1R/JMA =&gt; NWSTG
+-- TNC =&gt; CCS</font><br>
+Check WMO bulletins TN[NS]AO[1-6] RJTD.<br>
+If any deficiency persists for more than one model cycle, check with
+RSIS,
+ESPC Operations, and Honolulu. NESDIS will soon or has set up MTSAT-1R
+wind processing (POC: John Paquette).<br>
+Notes: The GMS satellite was replaced with GOES-9 during spring of
+2003. RSIS will
+only have information on the satellite status of GOES-9, as will SAB,
+but neither
+will have information on the actual winds production. ESPC Operations
+and Honolulu will have
+even less information or none at all.</p>
+<p><a name="SSMIP"></a><b>SSMIP</b> (SSM/I - FNMOC derived products):<br>
+<a name="SSMIPN"></a><b>SSMIPN</b> (SSM/I - NCEP Neural Net-3 derived
+products):<br>
+<font color="green">Flow path: FNMOC =&gt; shared processing (SPP)
+=&gt; NESDIS DDS (btemps) server -- ftp
+=&gt; CCS (ssmipn passed through NeuralNet-3 Algorithm to generate
+products from btemps)</font><br>
+If flagged for deficiency, check with ESPC for any network problem.
+Then check if TOC
+is receiving these data. Then query FNMOC about any problems at their
+end.</p>
+<p><a name="TRMM"></a><b>TRMM</b> (NASA/tropical rainfall measuring
+mission):<br>
+<font color="green">Flow path: NASA Goddard (Greenbelt)
+trmmrt.gsfc.noaa.gov =&gt; CCS</font><br>
+Yes, CCS receives TRMM data directly from NASA with no NESDIS
+intervention.
+If flagged for deficiency, check with NASA Goddard at Greenbelt.
+</p>
+<p><a name="1BAMUA"></a><b>1BAMUA</b> (POES/NESDIS AMSU-A 1b radiances):<br>
+<a name="1BAMUB"></a><b>1BAMUB</b> (POES/NESDIS AMSU-B 1b radiances):<br>
+<a name="1BHRS2"></a><b>1BHRS2</b> (POES/NESDIS HIRS-2 1b radiances):<br>
+<a name="1BHRS3"></a><b>1BHRS3</b> (POES/NESDIS HIRS-3 1b radiances):<br>
+<a name="1BHRS4"></a><b>1BHRS4</b> (NOAA 18 &amp; METOPS-2 HIRS-4 1b
+processed radiances):<br>
+<a name="1BMHS"></a><b>1BMHS</b> (NOAA 18 MHS NCEP-processed radiances):<br>
+<a name="1BMSU"></a><b>1BMSU</b> (POES/NESDIS MSU 1b radiances):<br>
+<a name="OSBUV"></a><b>OSBUV</b> (POES/NESDIS solar backscatter UV
+radiances):<br>
+<a name="OSBUV8"></a><b>OSBUV8</b> (POES/NESDIS solar backscatter UV
+radiances, version 8):<br>
+<a name="H1BN14"></a><b>H1BN14</b> (NOAA 14 high resolution infrared 1b
+radiances):<br>
+<a name="M1BN14"></a><b>M1BN14</b> (NOAA 14 microwave sounding unit 1b
+radiances):<br>
+<a name="A1BN15"></a><b>A1BN15</b> (NOAA 15 adv. micro sounding unit-A
+1b radiances):<br>
+<a name="B1BN15"></a><b>B1BN15</b> (NOAA 15 adv. micro sounding unit-B
+1b radiances):<br>
+<a name="A1BN16"></a><b>A1BN16</b> (NOAA 16 adv. micro sounding unit-A
+1b radiances):<br>
+<a name="B1BN16"></a><b>B1BN16</b> (NOAA 16 adv. micro sounding unit-B
+1b radiances):<br>
+<font color="green">Flow path: NESDIS DDS server -- ftp =&gt; CCS</font><br>
+Most deficiencies with these data are short-lived and the result of
+timing issues;
+however, if any deficiency persists for more than one model cycle, then
+check with
+ESPC about the NESDIS DDS server.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="MESONET"></a>Mesonet/MADIS Data Types</h4>
+<p><a name="MSO470"></a><b>MSO470</b> (Colorado E-470 (Interstate 470)):<br>
+<a name="MSOALK"></a><b>MSOALK</b> (Alaska Department of
+Transportation):<br>
+<a name="MSOAPG"></a><b>MSOAPG</b> (U.S. Army Aberdeen Proving Grounds):<br>
+<a name="MSOAPR"></a><b>MSOAPR</b> (Citizen Weather Observers Program):<br>
+<a name="MSOAWS"></a><b>MSOAWS</b> (AWS Convergence Technologies, Inc.):<br>
+<a name="MSOAWX"></a><b>MSOAWX</b> ("Anything Weather"):<br>
+<a name="MSOCOB"></a><b>MSOCOB</b> (NWS COoperative Observer Program):<br>
+<a name="MSOCOL"></a><b>MSOCOL</b> (Colorado Department of
+Transportation):<br>
+<a name="MSODCN"></a><b>MSODCN</b> (DC Net):<br>
+<a name="MSODEN"></a><b>MSODEN</b> (Denver Urban Drainage and Flood
+Control):<br>
+<a name="MSOFLA"></a><b>MSOFLA</b> (Florida (FAWN and USF)):<br>
+<a name="MSOFLT"></a><b>MSOFLT</b> (Florida Department of
+Transportation):<br>
+<a name="MSOGEO"></a><b>MSOGEO</b> (Georgia Department of
+Transportation):<br>
+<a name="MSOHAD"></a><b>MSOHAD</b> (NWS Hydrometeo. Automated Data
+System (HADS)):<br>
+<a name="MSOIEN"></a><b>MSOIEN</b> (Iowa Environmental):<br>
+<a name="MSOIND"></a><b>MSOIND</b> (Indiana Department of
+Transportation):<br>
+<a name="MSOIOW"></a><b>MSOIOW</b> (Iowa Department of Transportation):<br>
+<a name="MSOKAN"></a><b>MSOKAN</b> (Kansas Department of
+Transportation):<br>
+<a name="MSOKLA"></a><b>MSOKLA</b> (Oklahoma Mesonet):<br>
+<a name="MSOLJU"></a><b>MSOLJU</b> (Louisiana State &amp; Jackson State
+Univ.):<br>
+<a name="MSOMCA"></a><b>MSOMCA</b> (Missouri Commercial Agriculture Wx
+Net):<br>
+<a name="MSOMIN"></a><b>MSOMIN</b> (Minnesota Department of
+Transportation):<br>
+<a name="MSONOS"></a><b>MSONOS</b> (NOS-Physical Oceanographic
+Real-Time System):<br>
+<a name="MSORAW"></a><b>MSORAW</b> (NFIC Remote Automated Weather
+Stations (RAWS)):<br>
+<a name="MSOTHR"></a><b>MSOTHR</b> (Miscellaneous):<br>
+<a name="MSOVIR"></a><b>MSOVIR</b> (Virginia Department of
+Transportation):<br>
+<a name="MSOWFY"></a><b>MSOWFY</b> ("Weather for You"):<br>
+<a name="MSOWIS"></a><b>MSOWIS</b> (Wisconsin Department of
+Transportation):<br>
+<a name="MSOWST"></a><b>MSOWST</b> (MesoWest):<br>
+<a name="MSOWTX"></a><b>MSOWTX</b> (West Texas):<br>
+<!-- <FONT COLOR="green">Flow path: <A href="http://www.gfdl.noaa.gov/">GFDL</A> -- dbnet => CCS</FONT><BR> -->
+<font color="green">Flow path: NOAA/<a href="http://www.esrl.noaa.gov/">ESRL/GSD</a>
+-- ldm =&gt; CCS</font><br>
+First contact a data flow specialist for any dbnet problem. If none,
+then contact <a href="http://www.gfdl.noaa.gov/">GFDL</a> where the
+primary POC is Mike Barth.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a name="NOMODEL"></a>The following are listed on model data dump
+reports and are either partially used or not used in model analyses.</h4>
+See the link below for details on what is or is not ingested:<br>
+<a href="http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_18.htm">http://www.emc.ncep.noaa.gov/mmb/data_processing/prepbufr.doc/table_18.htm</a><br>
+<p><a name="GPSRO"></a><b>GPSRO</b> (GRAS/CHAMP/COSMIC GPS radio
+occultation data):<br>
+This dataset is actually comprised of a combination of three unique and
+independent data subsets.&nbsp; The data are in BUFR format and filed
+into <i class="moz-txt-slash"><span class="moz-txt-tag">/</span>dcom/us007003/ldmdata/obs/upperair/radio_occultation<span class="moz-txt-tag">/</span></i> on the CCS by LDM. The data is also
+sent to the /nwprod/exec/decod_dcrocc decoder. The output from the
+decoder is then written into the /dcom/us007003/YYYYMMDD/b003/xx010
+tank by tranjb.
+<br>
+&nbsp;&nbsp; <br>
+The <span style="font-weight: bold;">CHAMP</span>
+(CHAndra Multiwavelength Project) subset is German satellite data which
+is used for
+GPS-based atmospheric soundings.&nbsp; CHAMP data flow through the
+NWSTG to NCEP.&nbsp; <br>
+<span style="font-weight: bold;">CHAMP WMO IDS:&nbsp;</span> IUT[A-L]14
+EDZW CHAMP, GRACE-A GFZ (via GTS node DWD, Offenbach)<br>
+The following links provide more information:<br>
+<a href="http://www-app2.gfz-potsdam.de/pb1/op/champ/">http://www-app2.gfz-potsdam.de/pb1/op/champ/
+</a><br>
+</p>
+<p>The <span style="font-weight: bold;">COSMIC</span> (Constellation
+Observing System for Meteorology Ionosphere and Climate) data is used
+for GPS-based atmospheric soundings and comes from UCAR.&nbsp; COSMIC
+data flow through the NWSTG to NCEP.<br>
+<span style="font-weight: bold;">COSMIC WMO IDS:</span> IUT[A-L]14 KWBC
+COSMIC UCAR (via GTS node NESDIS, Washington)<br>
+The following links provide more information:<br>
+<a href="http://www.cosmic.ucar.edu/index.html">http://www.cosmic.ucar.edu/index.html&nbsp;</a><br>
+</p>
+<p>The <span style="font-weight: bold;">GRAS</span> (Global Navigation
+Satellite System Receiver for Atmospheric
+Sounding) is a new European GNSS (Global Navigation Satellite System)
+receiver that operates as an atmospheric sounder. It will provide
+unprecedented observations of atmospheric temperature and humidity to
+improve weather forecasting and climate change monitoring.&nbsp; GRAS
+data is received via the GTS from NWSTG.<br>
+<span style="font-weight: bold;">GRAS WMO IDS:</span> IUT[A-L]14 EKMI
+MetOp / GRAS DMI Copenhagen (GRAS SAF) </p>
+<p>The following links provide more information:<br>
+<a href="http://www.esa.int/esaLP/SEMTSEG23IE_LPmetop_0.html">http://www.esa.int/esaLP/SEMTSEG23IE_LPmetop_0.html</a><br>
+<a href="http://www.grassaf.org/GRAS_instrument.php">http://www.grassaf.org/GRAS_instrument.php</a><br>
+<a href="http://grassaf.dmi.dk/">http://grassaf.dmi.dk/</a><br>
+</p>
+<p><a name="AODMOD"></a><b>AODMOD</b> (MODIS Aerosol Optical Depth
+(AOD) data):<br>
+<a name="ASCAT"></a><b>ASCAT</b> (METOP ASCAT products):<br>
+<a name="ATOVS"></a><b>ATOVS</b> (POES/NESDIS - processed ATOVS
+soundings/radiances [discontinued March 2008]):<br>
+<a name="AVCS17"></a><b>AVCS17</b> (NOAA17,METOP2 AVHRR GAC NCEP-proc'd
+clr &amp; sea radiances):<br>
+<a name="AVCS18"></a><b>AVCS18</b> (NOAA18,NOAA19 AVHRR GAC NCEP-proc'd
+clr &amp; sea radiances):<br>
+<a name="GEOIMR"></a><b>GEOIMR</b> (GOES/NESDIS [11x17 FOV] imager
+clear radiances):<br>
+<a name="GOME"></a><b>GOME</b> (POES/METOP Global Ozone Monitoring
+Experiment):<br>
+<a name="H2OIN"></a><b>H2OIN</b> (INSAT/India water vapor derived cloud
+motion):<br>
+<a name="H2OJA"></a><b>H2OJA</b> (GMS/JMA water vapor imager derived
+cloud motion):<br>
+<a name="INFIN"></a><b>INFIN</b> (INSAT/India infrared derived cloud
+motion):<br>
+<a name="LTNGLR"></a><b>LTNGLR</b> (LLDN long-range lightning data from
+Vaisala via NOAAPORT):<br>
+<a name="LTNGSR"></a><b>LTNGSR</b> (NLDN short-range lightning data
+from Vaisala via NOAAPORT):<br>
+<a name="MTIASI"></a><b>MTIASI</b> (METOP IASI 1C radiance data,
+variable channels):<br>
+<a name="OMI"></a><b>OMI</b> (Aura Ozone Monitoring Instrument [OMI]
+data):<br>
+<a name="PRFLRJ"></a><b>PRFLRJ</b> (Japanese Meteo Agency profiler
+winds):<br>
+<a name="RASS"></a><b>RASS</b> (RASS temperatures, NOAA and
+Multi-Agency):<br>
+<a name="SSMIT"></a><b>SSMIT</b> (SSM/I - brightness temperatures):<br>
+<a name="VISIN"></a><b>VISIN</b> (INSAT/India visible derived cloud
+motion):<br>
+<a name="WDSAT"></a><b>WDSAT</b> (WindSAT scatterometer winds from
+FNMOC):<br>
+These data types are not used presently in model analyses. They are
+data of opportunity. Therefore, troubleshooting
+efforts are not required, and solid troubleshooting guidance may not be
+available.
+Nevertheless, any troubleshooting efforts could wait until any
+deficiency persists for
+at least two model cycles.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4>The following are available sporadically and not used presently in
+model analyses.</h4>
+<p><a name="3P9US"></a><b>3P9US</b> (GOES/NESDIS 3.9 micron channel
+derived cloud motion):<br>
+<a name="AMSREP"></a><b>AMSREP</b> (AQUA-AMSR-E ocean surface products
+/Level 2/):<br>
+<a name="AMUATA"></a><b>AMUATA</b> (POES NOAA AMSU-A NESDIS antenna
+temperatures):<br>
+<a name="ANOWB1"></a><b>ANOWB1</b> (AIRNOW ozone data - 1-hour backward
+average):<br>
+<a name="ANOWB8"></a><b>ANOWB8</b> (AIRNOW ozone data - 8-hour backward
+average):<br>
+<a name="ANOWFA"></a><b>ANOWFA</b> (AIRNOW ozone data - 1- and 8-hour
+forward average):<br>
+<a name="ANOWPM"></a><b>ANOWPM</b> (AIRNOW particulate data - delayed
+1-hour backward average):<br>
+<a name="ANOWRT"></a><b>ANOWRT</b> (AIRNOW ozone data - real time
+1-hour backward average):<br>
+<a name="AXBT"></a><b>AXBT</b> (Airborne eXpendable BathyThermograph
+[AXBT] data):<br>
+<a name="AVCL17"></a><b>AVCL17</b> (NOAA17,METOP2 AVHRR GAC NCEP-proc'd
+cld or land radiances):<br>
+<a name="AVCL18"></a><b>AVCL18</b> (NOAA18,NOAA19 AVHRR GAC NCEP-proc'd
+cld or land radiances):<br>
+<a name="BATHY"></a><b>BATHY</b> (Bathythermal data):<br>
+<a name="BUOYSH"></a><b>BUOYSH</b> (Buoys (moored or drifting) decoded
+from SHEF format):<br>
+<a name="CAJSWW"></a><b>CAJSWW</b> (CNES/AVISO JASON-1 IGDR wind/wave
+altimeter):<br>
+<a name="CMANSH"></a><b>CMANSH</b> (CMAN stations decoded from SHEF
+format):<br>
+<a name="CNJSAL"></a><b>CNJSAL</b> (CNES/NESDIS JASON-2 OGDR high-resol
+global altimeter):<br>
+<a name="COOPAL"></a><b>COOPAL</b> (Coop All NWS COOPerative Obs
+decoded from SHEF):<br>
+<a name="COOPMD"></a><b>COOPMD</b> (Coop/MADIS Modernized NWS
+COOPerative Observers):<br>
+<a name="ENVSAL"></a><b>ENVSAL</b> (NAVOCEANO ALPS ENVISAT SSHA hi-res
+global altimeter):<br>
+<a name="ENVSWW"></a><b>ENVSWW</b> (NAVOCEANO ENVISAT wind/wave fast
+delivery altimeter):<br>
+<a name="ERSAL"></a><b>ERSAL</b> (ERS/radar altimeter data):<br>
+<a name="ERSHAL"></a><b>ERSHAL</b> (NLSA ERS-2 high-resolution regional
+altimeter):<br>
+<a name="ERSAR"></a><b>ERSAR</b> (ERS/SAR):<br>
+<a name="ERSWN"></a><b>ERSWN</b> (ERS/scatterometer winds):<br>
+<a name="ESAMUA"></a><b>ESAMUA</b> (POES NOAA 15-18 AMSU-A processed
+radiances from EARS):<br>
+<a name="ESAMUB"></a><b>ESAMUB</b> (POES NOAA AMSU-B processed
+radiances from EARS):<br>
+<a name="ESHRS3"></a><b>ESHRS3</b> (POES NOAA 15-18 HIRS-3/-4 processed
+radiances from EARS):<br>
+<a name="GFOFWW"></a><b>GFOFWW</b> (NAVOCEANO GEOSAT FO wind/wave fast
+delivery altimeter):<br>
+<a name="GFOHAL"></a><b>GFOHAL</b> (NLSA GEOSAT Follow-On SSHA hi-resol
+regional altimeter):<br>
+<a name="H2IJAN"></a><b>H2IJAN</b> (GMS/NESDIS water vapor imager
+derived cloud motion):<br>
+<a name="H2SUS"></a><b>H2SUS</b> (GOES/NESDIS water vapor sounder
+derived cloud motion):<br>
+<a name="HYDDEN"></a><b>HYDDEN</b> (Hydro/MADIS Denver Urban Drainage
+&amp; Flood Control):<br>
+<a name="HYDOTH"></a><b>HYDOTH</b> (Hydro/MADIS many providers, not
+separated out):<br>
+<a name="INFJAN"></a><b>INFJAN</b> (GMS/NESDIS infrared derived cloud
+motion):<br>
+<a name="NERSAL"></a><b>NERSAL</b> (NAVOCEANO ALPS ERS-2 SSHA
+high-resol global altimeter):<br>
+<a name="NGFNAL"></a><b>NGFNAL</b> (NAVOCEANO GEOSAT FO Navy-IGDR IGDR
+wind/wave altim):<br>
+<a name="NGFOAL"></a><b>NGFOAL</b> (NAVOCEANO ALPS GEOSTAT FO SSHA
+hi-resol global altim):<br>
+<a name="NJSN2I"></a><b>NJSN2I</b> (NAVOCEANO ALPS JASON-2 IGDR SSHA
+high-resol global altimeter):<br>
+<a name="NJSN2O"></a><b>NJSN2O</b> (NAVOCEANO ALPS JASON-2 OGDR SSHA
+high-resol global altimeter):<br>
+<a name="NJSNAL"></a><b>NJSNAL</b> (NAVOCEANO ALPS JASON-1 SSHA
+high-resol global altimeter):<br>
+<a name="NJS2WW"></a><b>NJS2WW</b> (NAVOCEANO JASON-2 wind/wave fast
+delivery altimeter):<br>
+<a name="NJSNWW"></a><b>NJSNWW</b> (NAVOCEANO JASON-1 wind/wave fast
+delivery altimeter):<br>
+<a name="NTPXAL"></a><b>NTPXAL</b> (NAVOCEANO ALPS TOPEX SSHA
+high-resol global altimeter):<br>
+<a name="OZONHI"></a><b>OZONHI</b> (Ozone soundings, high-resolution
+orig. in ASCII):<br>
+<a name="OZONLO"></a><b>OZONLO</b> (Ozone soundings, low-resolution
+from Met. Office):<br>
+<a name="PRFLRE"></a><b>PRFLRE</b> (European profiler winds):<br>
+<a name="PRFLRH"></a><b>PRFLRH</b> (Hong Kong profiler winds):<br>
+<a name="PRFLRM"></a><b>PRFLRM</b> (Profiler spectral moments, NOAA and
+Multi-Agency):<br>
+<a name="PRFLRS"></a><b>PRFLRS</b> (Surface profiler Data, NOAA and
+Multi-Agency):<br>
+<a name="PTRUS"></a><b>PTRUS</b> (GOES/NESDIS picture triplet derived
+cloud motion): discontinued<br>
+<a name="RTOVS"></a><b>RTOVS</b> (POES/NESDIS - processed RTOVS
+soundings/radiances):<br>
+<a name="RIVER"></a><b>RIVER</b> (USGS river/stream data):<br>
+<a name="SCD"></a><b>SCD</b> (Aviation - supplementary climatological
+data):<br>
+<a name="SEVASR"></a><b>SEVASR</b> (METEOSAT Sec Gen SEVIRI proc'd all
+sky radiances):<br>
+<a name="SEVCSR"></a><b>SEVCSR</b> (METEOSAT Sec Gen SEVIRI proc'd clr
+sky radiances):<br>
+<a name="SHEFCM"></a><b>SHEFCM</b> (Products decoded from SHEF not in
+any other tank):<br>
+<a name="SHEFF"></a><b>SHEFF</b> (AFOS products (precip) decoded from
+SHEF format):<br>
+<a name="SNOW"></a><b>SNOW</b> (Snow/MADIS many providers, not
+separated out):<br>
+<a name="SSMISU"></a><b>SSMISU</b> (DMSP/SSM/IS 1C radiance data from
+Met Office):<br>
+<a name="SSTNS"></a><b>SSTNS</b> (POES/NESDIS sea surface temperatures):<br>
+<a name="SSTNSG"></a><b>SSTNSG</b> (GOES/NESDIS sea surface
+temperatures):<br>
+<a name="SSTNSO"></a><b>SSTNSO</b> (POES/NESDIS AVHRR obs and sea
+surface temperatures):<br>
+<a name="SSTNSP"></a><b>SSTNSP</b> (POES/NESDIS physical sea surface
+temperature retrievals):<br>
+<a name="SSTNVP"></a><b>SSTNVP</b> (POES/NESDIS AVHRR physical
+retrieval sea sfc temps):<br>
+<a name="SSTNV"></a><b>SSTNV</b> (POES/Navy low-resolution sea surface
+temperatures):<br>
+<a name="SSTNVO"></a><b>SSTNVO</b> (POES/Navy AVHRR obs and sea surface
+temperatures):<br>
+<a name="SSTNVP"></a><b>SSTNVP</b> (POES/Navy AVHRR physical retrieval
+sea sfc temps):<br>
+<a name="SSTNVH"></a><b>SSTNVH</b> (POES/Navy high-resol sea surface
+temperatures):<br>
+<a name="TESAC"></a><b>TESAC</b> (TESAC data):<br>
+<a name="TIDGSH"></a><b>TIDGSH</b> (Tide gauge reports decoded from
+SHEF format):<br>
+<a name="TOPHAL"></a><b>TOPHAL</b> (NLSA TOPEX SSHA high-resolution
+regional altimeter):<br>
+<a name="TOPLAL"></a><b>TOPLAL</b> (NLSA TOPEX SSHA low-resolution
+global altimeter):<br>
+<a name="TOVS"></a><b>TOVS</b> (POES/NESDIS - processed TOVS
+soundings/radiances):<br>
+<a name="TRKOB"></a><b>TRKOB</b> (TRACKOB data):<br>
+<a name="TRPSTM"></a><b>TRPSTM</b> (Tropical storms):<br>
+<a name="VISUW"></a><b>VISUW</b> (GOES/UW-CIMSS visible derived cloud
+motion):<br>
+<a name="WDSATS"></a><b>WDSATS</b> (WindSAT scatterometer winds from
+NESDIS):<br>
+These data types are not used presently in model analyses and not
+listed on any data
+dump reports. Therefore, troubleshooting efforts are not required. Due
+to sporadic
+availability and the lack of count reports for these types, any
+deficiencies would
+be undefinable or difficult to determine. Any deficiency one might
+detect may
+persist for two model cycles before any troubleshooting efforts.</p>
+<h4><a href="#GUIDE">Back to Top</a></h4>
+<h4><a href="http://www.nco.ncep.noaa.gov/pmb/nwprod/realtime/">Return to Realtime Monitor Mainpage</a></h4>
+<!-- This is the body content file of the current sub-directory. -->
+      <table border="0" cellpadding="0" cellspacing="0" width="96%">
+        <tbody>
+                <tr>
+          <td colspan="3"><hr></td>
+        </tr>
+        <tr valign="top">
+          <td class="gray">
+            <a href="http://www.noaa.gov/"><span class="gray">NOAA/</span></a>
+            <a href="http://www.nws.noaa.gov/"><span class="gray">National Weather Service</span></a><br>
+                           <a href="http://www.ncep.noaa.gov/"><span class="gray">National Centers for Environmental Prediction</span></a><br>
+                         NCEP Central Operations<br>
+                         5200 Auth Road<br>
+                         Camp Springs, Maryland 20746<br>
+                         <a href="http://www.nco.ncep.noaa.gov/mail_admin.shtml"><span class="gray">NCO Web Team</span></a><br></td>
+          <td><a href="http://www.nws.noaa.gov/disclaimer.html">
+            <span class="gray">Disclaimer</span></a></td>
+          <td align="right"><a href="http://www.noaa.gov/privacy.html">
+            <span class="gray">Privacy Policy</span></a></td>
+        </tr>
+  <!-- Use virtual include, because this should be in a common place within your DocumentRoot. --> 
+        <tr valign="top">
+          <td class="gray" colspan="3">
+            Page last modified: Friday, 30-Oct-2009 18:41:48 GMT  <!-- This should be the same name of the body content file specified above. -->
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body><script type="text/javascript"><!--
+function __RP_Callback_Helper(str, strCallbackEvent, splitSize, func){var event = null;if (strCallbackEvent){event = document.createEvent('Events');event.initEvent(strCallbackEvent, true, true);}if (str && str.length > 0){var splitList = str.split('|');var strCompare = str;if (splitList.length == splitSize)strCompare = splitList[splitSize-1];var pluginList = document.plugins;for (var count = 0; count < pluginList.length; count++){var sSrc = '';if (pluginList[count] && pluginList[count].src)sSrc = pluginList[count].src;if (strCompare.length >= sSrc.length){if (strCompare.indexOf(sSrc) != -1){func(str, count, pluginList, splitList);break;}}}}if (strCallbackEvent)document.body.dispatchEvent(event);}function __RP_Coord_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Coord_Callback = str;pluginList[index].__RP_Coord_Callback_Left = splitList[0];pluginList[index].__RP_Coord_Callback_Top = splitList[1];pluginList[index].__RP_Coord_Callback_Right = splitList[2];pluginList[index].__RP_Coord_Callback_Bottom = splitList[3];};__RP_Callback_Helper(str, 'rp-js-coord-callback', 5, func);}function __RP_Url_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Url_Callback = str;pluginList[index].__RP_Url_Callback_Vid = splitList[0];pluginList[index].__RP_Url_Callback_Parent = splitList[1];};__RP_Callback_Helper(str, 'rp-js-url-callback', 3, func);}function __RP_TotalBytes_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_TotalBytes_Callback = str;pluginList[index].__RP_TotalBytes_Callback_Bytes = splitList[0];};__RP_Callback_Helper(str, null, 2, func);}function __RP_Connection_Callback(str){var func = function(str, index, pluginList, splitList){pluginList[index].__RP_Connection_Callback = str;pluginList[index].__RP_Connection_Callback_Url = splitList[0];};__RP_Callback_Helper(str, null, 2, func);}
+//--></script></html>

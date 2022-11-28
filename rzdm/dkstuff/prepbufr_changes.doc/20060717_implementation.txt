@@ -1,0 +1,29 @@
+                                                   July 17, 2006
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- NP22
+Subject:        Changes to IBM-CCS Data Preprocessor (PREPDATA)
+                (September 9, 2004 Version -- UPDATE # 3)
+
+
+The September 9, 2004 data preprocessor program (PREPDATA) was
+updated for a third time as a CRISIS.  UPDATE #3 was implemented on the
+IBM-CCS-II machine at 12Z on July 17, 2006  The changes below affect all
+networks
+
+*************** I B M - C C S   U P D A T E   # 3 **************
+
+
+I.  GENERAL CHANGES
+
+   1) Program no longer stops abnormally if the limit of 255 output levels in
+a PREPBUFR report is hit.  It now processes bottom 255 levels and sends a
+diagnostic to the production joblog file.
+
+   2) The maximum number of upper-air report levels that can be processed from
+a dump file "category" (e.g., winds-by-pressure) is being increased from 160
+to 200. 
+
+   2) Bump up array size for unpacked report from IW3UNPBF from 2500 to 3000.
+
+   3) Added IRNMRK=9 for Real Time Mesoscale Analysis (RTMA) network.

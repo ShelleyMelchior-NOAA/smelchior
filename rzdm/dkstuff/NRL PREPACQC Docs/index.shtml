@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <TITLE>EMC Documentation Bucket for the new PREPACQC QC Module</TITLE>
+  <META http-equiv=Content-Type content="text/html; charset=windows-1252">
+  <META content="NCEP Web Team" name="GENERATOR">
+  <LINK href="/nwscwi/main.css" type="text/css" rel="STYLESHEET">
+</HEAD>
+<BODY leftMargin="0" background="../../nwscwi/background.gif" 
+      topMargin="0" rightMargin="0" marginheight="0" marginwidth="0">
+<!--#include virtual="../../nwscwi/cwi_header.html" -->     <!-- Use virtual include, because this should be in a common place within your DocumentRoot. -->
+<TABLE cellSpacing="0" cellPadding="1" width="670" border="0">
+  <TBODY>
+  <TR vAlign="top">
+    <TD width="130"><BR>
+      <!--#include virtual="../../nwscwi/cwi_menu.html" -->   <!-- Use virtual include, because this should be in a common place within your DocumentRoot. -->
+    </TD>
+    <TD vAlign="top" align="center" width="540"><A name="contents"></A><BR>
+      <!--#include file="index.html" -->                           <!-- This is the body content file of the current sub-directory. -->
+      <TABLE cellSpacing="0" cellPadding="0" width="96%" border="0">
+        <TBODY>
+        <!--#include virtual="../../nwscwi/cwi_footer.html" -->  <!-- Use virtual include, because this should be in a common place within your DocumentRoot. --> 
+        <TR vAlign="top">
+          <TD class="gray" colSpan="3">
+            Page last modified: <!--#flastmod file="index.html" -->  <!-- This should be the same name of the body content file specified above. -->
+          </TD>
+        </TR>
+        </TBODY>
+      </TABLE>
+    </TD>
+  </TR>
+  </TBODY>
+</TABLE>
+</BODY>
+</HTML>

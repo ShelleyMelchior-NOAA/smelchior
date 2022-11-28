@@ -1,0 +1,93 @@
+                                               November 6, 1997
+
+MEMORANDUM TO:  Record
+FROM:           Dennis A. Keyser -- W/NP22
+Subject:        Changes to OI/SSI-Data Preprocessor
+                (May 1, 1997 Version -- UPDATE # 6)
+
+The May 1, 1997 version of the data preprocessor program
+(PREPDATA) was updated for a sixth time.  UPDATE #6 was
+implemented on 1200 UTC 24 September 1997.  All changes now
+affect only OBUFR = TRUE switch.  Except where noted, the changes
+below affect both the GLOBAL and RGL/ETA models. PREPDATA now
+exclusively uses JBUFR file input.
+
+*********************  U P D A T E   # 6  ***********************
+
+I.  GENERAL CHANGES
+
+     1) Removed call to subroutine ERRSET, as this is no longer
+needed on the Cray.
+
+     2) Copied W3LIB routine W3FS22 in-line into source code (as
+is).  This is in an attempt to correct the occasional problem of
+data clobbering that always occurs in this subroutine.
+
+     3) Namelist switch MSGPSF has been redefined (see III.B.1
+and III.B.2 below).
+
+
+II. OPERATIONAL CHANGES
+
+A. CHANGES IN THE PROCESSING OF GOES RETRIEVAL DATA
+
+     1) The namelist switch GOESPW has been set to TRUE in the
+EDAS/RDAS, ERL-ETA, and RGL versions of PREPDATA (these all share
+a common data card).  With this change, the EDAS/RDAS and ERL-ETA
+network PREPBUFR files will now contain GOES precipitable water
+retrievals.  Only the EDAS-OI and ERL ETA-OI will actually
+assimilate these data, since the RDASFERR program will filter
+them out in the RDAS-OI runs.  Also, although the RGL network
+PREPDATA cards also set GOESPW=TRUE, the RGL data dumps do not
+include GOES sounding data, so no GOES sounding data will appear
+in the RGL PREPBUFR files.
+
+
+
+
+
+
+
+III. NON-OPERATIONAL (BUT-SOON-TO-BE) CHANGES
+
+A. CHANGES IN THE PROCESSING OF GOES RADIANCE DATA
+
+     1) Ancillary data are now processed along with the GOES
+radiances.  These additional data are necessary for proper
+assimilation of the radiance information in the GBL-SSI.  W3LIB
+subroutine W3UNPK77 was modified to return skin temperature,
+cloud amount, solar zenith angle and satellite zenith angle. 
+They are stored into unpacked Category 8 code figures 255, 258,
+260 and 261, respectively.  These are in turn are now processsed
+by PREPDATA and stored in COMMON until they are eventually
+encoded into the PREPBUFR file along with the GOES radiances, if
+the radiances have been selected for processing.  The
+prep.bufrtable has been updated to add the following mnemonics:
+'ELEV' (satellite elevation angle) and 'CLAM' (cloud amount). 
+The other types, while new to GOES radiance processing, had
+already existed for TOVS radiance processing. 
+
+
+B. CHANGES IN THE PROCESSING OF SURFACE LAND DATA
+
+     1. When the namelist switch MSGPSF=TRUE, and the report is a
+land surface report within the old LFM domain (if thinning turned
+on, otherwise no retriction to location), then the reported
+altimeter setting is now read from unpacked ON124 Category 8,
+code figure 20 and stored in COMMON.  Eventually it is encoded
+into the PREPBUFR file via the new prep.bufrtable mnemonic
+'ALSE'.
+
+     2. When the namelist switch MSGPSF=TRUE, and the report is a
+land surface report within the old LFM domain (if thinning turned
+on, otherwise no retriction to location), then if BOTH station
+pressure and mean sea-level pressure are missing AND if the
+altimeter setting is non-missing, the sea-level pressure (PMO) is
+encoded in PREPBUFR with the value for the altimeter setting, and
+the station pressure (POB) encoded in PREPBUFR is calculated via
+the standard T,Z function based on the altimeter setting and the
+sea-level pressure.  In this case, the report type is set to
+183/284, the pressure quality marker is set to suspect, and
+characters 6-7 of the station id are set to '$A'.  If the
+altimeter is missing, then processing is as before except
+characters 6-7 of the station id are set to '$S'.
