@@ -160,6 +160,11 @@ sed 's/day/night/' <file1 >file2
      This will search for and replace all occurrences of "day" in file1 to 
      "night" and save the result in file2.
 
+sed -i 's/day/night/g' *
+
+     This will search for and replace all occurrences of "day" in all files in pwd to
+     "night" and rewrite each file.
+
 sed "/write(.*,'[1-9a-z]/ s/')/)')/" file1.sh | sed "/write(.*,'[1-9a-z]/ s/,'/,'(/" > file2.sh
 
      This will reformat occurrences resembling line1 in file1.sh to line2:
