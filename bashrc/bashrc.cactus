@@ -33,11 +33,11 @@ alias sysconfig='cat /lfs/h1/ops/prod/config/prodmachinefile'
 alias catdevprod='cat /lfs/h1/ops/prod/config/prodmachinefile'
 
 # modules
-module load PrgEnv-intel/8.1.0
-module load craype/2.7.10
+module load PrgEnv-intel/8.3.3
+module load craype/2.7.17
 module load envvar/1.0
 module load intel/19.1.3.304
-module load cray-mpich/8.1.9
+module load cray-mpich/8.1.19
 #module load intel craype cray-mpich
 module load prod_envir/2.0.5
 module load prod_util/2.0.8
@@ -75,7 +75,8 @@ module load grib2io/1.0.2
 #export PYTHONPATH="${PYTHONPATH}:/lfs/h2/emc/vpppg/noscrub/${USER}/python"
 # MET / METplus
 export HPC_OPT=/apps/ops/para/libs
-module use /apps/ops/para/libs/modulefiles/compiler/intel/19.1.3.304
+#module use /apps/ops/para/libs/modulefiles/compiler/intel/19.1.3.304
+module use /apps/ops/prod/libs/modulefiles/compiler/intel/19.1.3.304
 module load intel
 module load gsl
 module load python/3.8.6
