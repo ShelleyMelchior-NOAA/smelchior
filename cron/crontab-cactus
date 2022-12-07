@@ -124,6 +124,8 @@
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
 ### https://ftp.emc.ncep.noaa.gov/users/smelchior/wcoss2/GDAS_NON_RESTRICTED_48HRS/
+# started on: 20220524
+# turned off:
 # ---------------
 53 7,13,19 * * * jtyp=gfs cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
 52 7,13,19 * * * jtyp=gdas cyc=`date --date="-7 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33 bash -l /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump_post.wc2.pbs.nr-33
