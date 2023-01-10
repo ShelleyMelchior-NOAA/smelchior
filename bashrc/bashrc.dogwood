@@ -31,6 +31,7 @@ alias qq='qstat -u $USER'
 alias qqw='qstat -tu $USER -w'
 alias sysconfig='cat /lfs/h1/ops/prod/config/prodmachinefile'
 alias catdevprod='cat /lfs/h1/ops/prod/config/prodmachinefile'
+alias gda='cd /lfs/h2/emc/global/noscrub/emc.global/dump'
 
 # modules
 module load PrgEnv-intel/8.1.0
