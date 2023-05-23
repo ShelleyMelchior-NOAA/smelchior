@@ -14,6 +14,27 @@ SHELL=/bin/bash -l
 # ---------------
 14 18 * * * find /lfs/h2/emc/*tmp/shelley.melchior/ -mtime +10 -type d | xargs rm -f -r 
 ###
+### RTOFS PR #115
+# started on: 20230519
+# turned off: 
+00 07 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/prep/jevs_rtofs_prep.ecf
+14 01 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_ndbc_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_ndbc_stats.ecf 2>&1
+00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_argo_stats.ecf
+00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_ghrsst_stats.ecf
+00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_osisaf_stats.ecf
+00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smap_stats.ecf
+00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smos_stats.ecf
+00 03 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_plots.ecf
+00 03 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_headline_plots.ecf
+###
+### NAM/RAP precip + snow PR 116
+# started on: 20230519
+# turned off:
+10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_precip_stats.out 2>&1
+10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_precip_stats.out 2>&1
+10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_snowfall_stats.out 2>&1
+10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_snowfall_stats.out 2>&1
+###
 ### JSFCSHIP prod para for O&M support (VPPPGB)
 # started on: 20220927 
 # turned off:
@@ -147,6 +168,46 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+### EVS PR #100 test (cam_radar_vx)
+# started on: 20230501
+# turned off: 20230510
+#30 07 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_cam_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_cam_severe_prep.out 2>&1
+#20 * * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_cam_radar_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_cam_radar_prep.out 2>&1
+#06 00,06,12,18 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_hrrr_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_hrrr_severe_prep.out 2>&1
+#08 00,06,12,18 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_namnest_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_namnest_severe_prep.out 2>&1
+#10 00,12 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_hireswfv3_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_hireswfv3_severe_prep.out 2>&1
+#12 00,12 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_hireswarw_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_hireswarw_severe_prep.out 2>&1
+#14 00,12 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_hireswarwmem2_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_hireswarwmem2_severe_prep.out 2>&1
+#16 00,06,12,18 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_rrfs_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rrfs_severe_prep.out 2>&1
+#18 00,12 * * * /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/LD/EVS_crons/drive_jevs_href_severe_prep.sh 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_href_severe_prep.out 2>&1
+###
+### EVS PR #102 test (feature/CAM_cycle)
+# started on: 20230420
+# turned off: 20230501
+# ---- precip PREP ----
+#30 0,6,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarw_precip_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswarw_precip_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarw_precip_prep.out 2>&1
+#30 0,6,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarwmem2_precip_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswarwmem2_precip_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarwmem2_precip_prep.out 2>&1
+#30 0,6,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswfv3_precip_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswfv3_precip_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswfv3_precip_prep.out 2>&1
+#30 0,6,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hrrr_precip_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hrrr_precip_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hrrr_precip_prep.out 2>&1
+#30 0,6,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_namnest_precip_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_namnest_precip_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_namnest_precip_prep.out 2>&1
+# ---- precip STATS ----
+#0 19-22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarw_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswarw_precip_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarw_precip_stats.out 2>&1
+#0 19-22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarwmem2_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswarwmem2_precip_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarwmem2_precip_stats.out 2>&1
+#0 19-22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswfv3_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswfv3_precip_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswfv3_precip_stats.out 2>&1
+#0 19-22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hrrr_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hrrr_precip_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hrrr_precip_stats.out 2>&1
+#0 19-22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_namnest_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_namnest_precip_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_namnest_precip_stats.out 2>&1
+# ---- grid2obs PREP ----
+#0 0 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarw_grid2obs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswarw_grid2obs_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarw_grid2obs_prep.out 2>&1
+#0 0 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarwmem2_grid2obs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswarwmem2_grid2obs_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarwmem2_grid2obs_prep.out 2>&1
+#0 0 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswfv3_grid2obs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hireswfv3_grid2obs_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswfv3_grid2obs_prep.out 2>&1
+#0 0 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hrrr_grid2obs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_hrrr_grid2obs_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hrrr_grid2obs_prep.out 2>&1
+#0 0 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_namnest_grid2obs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/prep/jevs_namnest_grid2obs_prep.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_namnest_grid2obs_prep.out 2>&1
+# ---- grid2obs STATS ----
+#30 2,3,6,9,12,15,18,21 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarw_grid2obs_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswarw_grid2obs_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarw_grid2obs_stats.out 2>&1
+#30 2,3,6,9,12,15,18,21 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswarwmem2_grid2obs_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswarwmem2_grid2obs_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswarwmem2_grid2obs_stats.out 2>&1
+#30 2,3,6,9,12,15,18,21 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hireswfv3_grid2obs_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hireswfv3_grid2obs_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hireswfv3_grid2obs_stats.out 2>&1
+#30 2,3,6,9,12,15,18,21 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_hrrr_grid2obs_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_hrrr_grid2obs_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_hrrr_grid2obs_stats.out 2>&1
+#30 2,3,6,9,12,15,18,21 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/jevs_namnest_grid2obs_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MC/EVS/ecf/cam/stats/jevs_namnest_grid2obs_stats.ecf >> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/CAM_cycle/cron.out/test_jevs_namnest_grid2obs_stats.out 2>&1
 ### JEVS checkout for Marcel's PR45
 # started on: 20221220
 # turned off: 20230223
