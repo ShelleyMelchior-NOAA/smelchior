@@ -17,23 +17,15 @@ SHELL=/bin/bash -l
 ### RTOFS PR #115
 # started on: 20230519
 # turned off: 
-00 07 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/prep/jevs_rtofs_prep.ecf
+00 07 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_prep.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/prep/jevs_rtofs_prep.ecf
 14 01 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_ndbc_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_ndbc_stats.ecf 2>&1
-00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_argo_stats.ecf
-00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_ghrsst_stats.ecf
-00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_osisaf_stats.ecf
-00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smap_stats.ecf
-00 22 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smos_stats.ecf
-00 03 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_plots.ecf
-00 03 * * * qsub /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_headline_plots.ecf
-###
-### NAM/RAP precip + snow PR 116
-# started on: 20230519
-# turned off:
-10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_precip_stats.out 2>&1
-10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_precip_stats.out 2>&1
-10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_snowfall_stats.out 2>&1
-10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_snowfall_stats.out 2>&1
+00 22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_argo_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_argo_stats.ecf
+00 22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_ghrsst_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_ghrsst_stats.ecf
+00 22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_osisaf_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_osisaf_stats.ecf
+00 22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_smap_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smap_stats.ecf
+00 22 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_smos_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/stats/jevs_rtofs_smos_stats.ecf
+00 03 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_plots.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_plots.ecf
+00 03 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rtofs_headline_plots.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/GC/EVS/ecf/rtofs/plots/jevs_rtofs_headline_plots.ecf
 ###
 ### JSFCSHIP prod para for O&M support (VPPPGB)
 # started on: 20220927 
@@ -168,6 +160,14 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+### NAM/RAP precip + snow PR 116
+# started on: 20230519
+# turned off: 20230525
+#10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_precip_stats.out 2>&1
+#10 * * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_precip_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_precip_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_precip_stats.out 2>&1
+#10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_nam_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_nam_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_nam_snowfall_stats.out 2>&1
+#10 00,06,12,18 * * * qsub -o /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/jevs_rap_snowfall_stats.out /lfs/h2/emc/vpppg/noscrub/shelley.melchior/githubwkspc/forks/MR/EVS/ecf/mesoscale/stats/jevs_rap_snowfall_stats.ecf 1> /lfs/h2/emc/ptmp/shelley.melchior/EVS_out/cron_jevs_rap_snowfall_stats.out 2>&1
+###
 ### EVS PR #100 test (cam_radar_vx)
 # started on: 20230501
 # turned off: 20230510
