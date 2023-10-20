@@ -317,6 +317,18 @@ floating point numbers (w/ hundredths precision).
 .66
 
 -------------------------------------------------------------------------------
+fc
+--
+Similar to "history", will find the range of command numbers specified in your
+history
+> fc -l num1 num2
+
+> fc -l 234 250
+
+Similary, to see the past n commands in history
+> history n
+
+-------------------------------------------------------------------------------
 ps auxwww
 ---------
 To view all the processes currently being run by me:
