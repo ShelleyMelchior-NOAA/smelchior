@@ -222,6 +222,10 @@ sed "s/ [0-9][a-z]..../  /g"
      numeral followed by any letter and any 4 remaining characters with 2 blanks (spaces).
      See: obsproc_dump_post*/ush/bufr_datacount.sh
 
+sed '/pattern/d' path/to/file.name
+
+     This will delete the line that contains the pattern match.
+
 -------------------------------------------------------------------------------
 tee
 ---
