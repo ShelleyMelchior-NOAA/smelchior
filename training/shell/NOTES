@@ -222,6 +222,10 @@ sed "s/ [0-9][a-z]..../  /g"
      numeral followed by any letter and any 4 remaining characters with 2 blanks (spaces).
      See: obsproc_dump_post*/ush/bufr_datacount.sh
 
+sed -i '/pattern/d' path/to/file.name
+
+     This will delete the line that contains the pattern match.
+
 -------------------------------------------------------------------------------
 tee
 ---
@@ -315,6 +319,18 @@ floating point numbers (w/ hundredths precision).
 0
 > echo "scale=2; 2/3" | bc
 .66
+
+-------------------------------------------------------------------------------
+fc
+--
+Similar to "history", will find the range of command numbers specified in your
+history
+> fc -l num1 num2
+
+> fc -l 234 250
+
+Similary, to see the past n commands in history
+> history n
 
 -------------------------------------------------------------------------------
 ps auxwww
