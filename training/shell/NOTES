@@ -226,6 +226,10 @@ sed -i '/pattern/d' path/to/file.name
 
      This will delete the line that contains the pattern match.
 
+sed -i '/pattern1/d;/pattern2/d;/pattern3/d' path/to/file.name
+     
+     This will delete the lines that satisfy multiple pattern matches.
+
 -------------------------------------------------------------------------------
 tee
 ---
