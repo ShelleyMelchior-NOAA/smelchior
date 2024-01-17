@@ -37,6 +37,9 @@ binv
 ----
 usage:
 > binv [bufr file]
+UPDATE: the exec needs an input file entered manually, rather than brought in as a var.
+> binv.x
+[bufr file]
 
 output:
 Table/list to standard out indicating the datasets that make up the bufr file.
@@ -45,6 +48,7 @@ This output is similar to go_chkdat.
 
 source:
 /u/Jack.Woollen/bin
+/u/shelley.melchior/bin/
 
 -------------------------------------------------------------------------------
 cmpbqm
