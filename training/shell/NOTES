@@ -713,7 +713,7 @@ To find total size of specific file type within a directory
 
 -------------------------------------------------------------------------------
 lsquota (disk usage)
---
+-------
 To see the usage of the various disks on the system.
 
 > lsquota
