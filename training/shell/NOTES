@@ -373,8 +373,8 @@ Be in the tank directory where you wish to populate the archive data
 
 
 -------------------------------------------------------------------------------
-hpsstar
--------
+hpsstar / htar
+--------------
 This is a program that wraps around hsi to allow you to interface w/ vapor
 
 > hpsstar man
