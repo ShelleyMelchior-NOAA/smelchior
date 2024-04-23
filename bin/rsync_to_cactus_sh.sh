@@ -15,7 +15,7 @@ for dtg in ${dtgarr[@]}
 do
   echo $dtg
   echo "rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/shannon.shields/EVS_Data/evs/v1.0/prep/subseasonal/atmos.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSS/."
-  rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/shannon.shields/EVS_Data/evs/v1.0/prep/subseasonal/atmos.$dtg ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSS/.
+  rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/shannon.shields/EVS_Data/evs/v1.0/prep/subseasonal/atmos.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSS/.
 done
 
 #rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/shannon.shields/EVS_Data/evs/v1.0/prep/subseasonal/atmos.20240312 ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSS/.
