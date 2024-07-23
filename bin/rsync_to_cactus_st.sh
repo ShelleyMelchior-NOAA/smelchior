@@ -9,13 +9,21 @@
 
 module load rsync/3.2.2
 
-dtgarr="20240325"
-#dtgarr="20240309 20240310"
+#modelarr="cmce ecme gefs gfs naefs"
+modelarr="ccpa gdas gfs"
+#modelarr="atmos"
+#dtgarr="20210401 20210402"
+#dtgarr="20210401 20210402 20210403 20210404 20210405 20210406 20210407 20210408 20210409 20210410 20210411 20210412 20210413 20210414 20210415 20210416 20210417 20210418 20210419 20210420 20210421 20210422 20210423 20210424 20210425 20210426 20210427 20210428 20210429 20210430"
+dtgarr="20210403 20210404 20210405 20210406 20210407 20210408 20210409 20210410 20210411 20210412 20210413 20210414 20210415 20210416 20210417 20210418 20210419 20210420 20210421 20210422 20210423 20210424 20210425 20210426 20210427 20210428 20210429 20210430"
 for dtg in ${dtgarr[@]}
 do
-  echo $dtg
-  echo "rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/evs/v1.0/prep/global_ens/atmos.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/16dayprep/."
-  rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/evs/v1.0/prep/global_ens/atmos.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/16dayprep/.
+  for model in ${modelarr[@]}
+  do
+    echo $model
+    echo $dtg
+    echo "rsync -ahr -P /lfs/h2/emc/pgctemp/anl/$model.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/pgctemp/anl/."
+    rsync -ahr -P /lfs/h2/emc/pgctemp/anl/$model.$dtg cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/pgctemp/anl/.
+  done
 done
 
 #rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/metplusworkspace/EVS cdxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/EVS/.
