@@ -15,7 +15,15 @@ transfer_host="ddxfer.wcoss2.ncep.noaa.gov"
 # pseudo command
 # rsync -ahr -P /path/to/data/on/cactus/* ddxfer.wcoss2.ncep.noaa.gov:/path/to/data/on/dogwood
 
-rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/mallory.row/evs_global_det_atmos_test/dev/com/evs/v1.0/* ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/mallory.row/evs_global_det_atmos_test/dev/com/evs/v1.0/.
+dtgarr="20240320 20240319 20240318"
+for dtg in "${dtgarr[@]}"
+do
+  echo $dtg
+  echo "rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/evs/v1.0/prep/global_ens/atmos.$dtg/ ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/16dayprep/."
+  rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/evs/v1.0/prep/global_ens/atmos.$dtg/ ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/16dayprep/.
+done
+
+#rsync -ahr -P /lfs/h2/emc/vpppg/noscrub/steven.simon/evs/v1.0/prep/global_ens/atmos.20240320/ ddxfer.wcoss2.ncep.noaa.gov:/lfs/h2/emc/vpppg/noscrub/shelley.melchior/forSSi/16dayprep/.
 
 #transfer_host="dlogin01"
 #rsync -ahr -P /u/$USER/qstat.py $transfer_host:/u/$USER/.
