@@ -6,7 +6,7 @@
 echo $(date)
 
 url="https://noaa-gefs-pds.s3.amazonaws.com"
-dest="/lfs/h2/emc/pgctemp/gefs_forecasts/nodd_output"
+#dest="/lfs/h2/emc/pgctemp/gefs_forecasts/nodd_output"
 PDY=$1
 date_switch=20200922
 if [[ "$PDY" > "$date_switch" ]]; then
