@@ -33,9 +33,16 @@ do
           file_name=gep${mem}.t${cyc}z.pgrb2a.0p50.f${flead}
       else
           file_name=gep${mem}.t${cyc}z.pgrb2af${flead}
+	  if [[ "$flead" -lt 100 ]]; then
+	      flead2="0"$flead
+	  else
+	      flead2=$flead
+	  fi
+	  echo $flead2
+	  file_name2=gep${mem}.t${cyc}z.pgrb2a.0p50.f${flead2}
       fi
-      echo "wget -O $dest/gefs.${PDY}/${cyc}/atmos/${file_name} $url/gefs.${PDY}/${cyc}/pgrb2a/${file_name}"
-      wget -O $dest/gefs.${PDY}/${cyc}/atmos/${file_name} $url/gefs.${PDY}/${cyc}/pgrb2a/${file_name} -q -o /dev/null
+      echo "wget -O $dest/gefs.${PDY}/${cyc}/atmos/${file_name2} $url/gefs.${PDY}/${cyc}/pgrb2a/${file_name}"
+      wget -O $dest/gefs.${PDY}/${cyc}/atmos/${file_name2} $url/gefs.${PDY}/${cyc}/pgrb2a/${file_name} -q -o /dev/null
     done  
   done
 done
