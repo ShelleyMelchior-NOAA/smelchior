@@ -1,4 +1,9 @@
 SHELL=/bin/bash -l
+# 30 day login counter
+# started on: 12/2/2024
+# turned off:
+08 12 * * * /u/shelley.melchior/count30days.sh > /u/shelley.melchior/count30days.log
+###
 ### Make sure /lfs/h2/emc/[ps]tmp/shelley.melchior/CRON is present via a mkdir every 10 minutes throughout the day
 # ---------------
 00,10,20,30,40,50 * * * * mkdir -p /lfs/h2/emc/ptmp/shelley.melchior/CRON  > /dev/null 2>&1
@@ -60,6 +65,19 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+### WPC PGC
+#33 18 19 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep01.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep01.log 2>&1
+#34 18 19 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep02.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep02.log 2>&1
+#36 18 19 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep03.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep03.log 2>&1
+#59 19 19 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep04.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep04.log 2>&1
+#59 19 19 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep05.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep05.log 2>&1
+#07 01 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep06.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep06.log 2>&1
+#13 01 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep07.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep07.log 2>&1
+#05 12 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep08.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep08.log 2>&1
+#09 01 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep09.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep09.log 2>&1
+#15 01 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep10.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep10.log 2>&1
+#10 01 20 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep11.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep11.log 2>&1
+###
 ### JOBSPROC_RAP prod para for WCOSS2
 # started on: 20220212 (dump, dump_post, prep, prep_post)
 # turned off: 20240831
