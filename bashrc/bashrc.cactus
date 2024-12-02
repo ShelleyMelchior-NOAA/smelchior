@@ -12,6 +12,9 @@ export PATH=./:$PATH:/usr/bin:/usr/sbin:/etc:$HOME/bin
 # prevent escaping of command line vars
 shopt -u progcomp
 
+# touch login file for 30-day counter script
+touch /u/shelley.melchior/login
+
 # aliases
 alias cancom='cd /lfs/h1/ops/canned/com'
 alias candcom='cd /lfs/h1/ops/canned/dcom'
