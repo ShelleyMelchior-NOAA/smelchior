@@ -1,7 +1,7 @@
-# Counter to keep track of the passage of 30 days.
+# Counter to keep track of the passage of 20 days.
 # Upon login, .bashrc will touch /u/shelley.melchior/login.
 # This script ($0) will look at mtime for login file and count days elapsed
-# between current time and mtime. If that difference eclipses 30 days, an
+# between current time and mtime. If that difference eclipses 20 days, an
 # email will be sent to me reminding me to log into WCOSS2 - cactus.
 
 workdir=/u/shelley.melchior
@@ -21,11 +21,11 @@ diff=$(expr $now - $mtime)
 diff=$(expr $diff / 86400) #convert from seconds since 1970 to days
 echo "You logged in $diff days ago."
 
-# compose and send email if $diff >= 30 days
-if [ $diff -ge 30 ]
+# compose and send email if $diff >= 20 days
+if [ $diff -ge 20 ]
 then
   sbj="ALERT: log into $server (cactus)"
-  body="You logged in $diff days ago (>30). Time to log into $server (cactus) to reset the counter!"
+  body="You logged in $diff days ago (>20). Time to log into $server (cactus) to reset the counter!"
   echo $body | mail -s "$sbj" $addy
   echo "email sent: login reminder"
 fi
