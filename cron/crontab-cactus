@@ -2,7 +2,7 @@ SHELL=/bin/bash -l
 # 30 day login counter
 # started on: 12/2/2024
 # turned off:
-08 12 * * * /u/shelley.melchior/count30days.sh > /u/shelley.melchior/count30days.log
+08 12 * * * /u/shelley.melchior/count20days.sh > /u/shelley.melchior/count20days.log
 ###
 ### Make sure /lfs/h2/emc/[ps]tmp/shelley.melchior/CRON is present via a mkdir every 10 minutes throughout the day
 # ---------------
