@@ -11,21 +11,25 @@ addy=shelley.melchior@noaa.gov
 
 # get mtime from last touch of $loginfile (seconds since 1970)
 mtime=$(date -r $loginfile +%s)
-#mtime=$(date -d "May 12" +%s) # force bogus date for testing
+mtimefull=$(date -r $loginfile)
+#mtime=$(date -d "May 12 2024" +%s) # force bogus date for testing
 
 # get current time (seconds since 1970)
 now=$(date +%s)
+nowfull=$(date)
 
 # calculate date difference
 diff=$(expr $now - $mtime)
 diff=$(expr $diff / 86400) #convert from seconds since 1970 to days
-echo "You logged in $diff days ago."
+echo "Today is $nowfull."
+echo "You logged in $diff days ago on:"
+echo "$(date -d "$diff days ago")"
 
 # compose and send email if $diff >= 20 days
-if [ $diff -ge 20 ]
-then
+#if [ $diff -ge 20 ]
+#then
   sbj="ALERT: log into $server (cactus)"
-  body="You logged in $diff days ago (>20). Time to log into $server (cactus) to reset the counter!"
+  body="Today is $nowfull. You logged in $diff days ago (>20), which was $(date -d "$diff days ago"). Time to log into $server (cactus) to reset the counter!"
   echo $body | mail -s "$sbj" $addy
   echo "email sent: login reminder"
-fi
+#fi
