@@ -1,9 +1,4 @@
 SHELL=/bin/bash -l
-# 20 day login counter
-# # started on: 12/2/2024
-# # turned off:
-08 12 * * * /u/shelley.melchior/count20days.sh > /u/shelley.melchior/count20days.log
-###
 ### Make sure /lfs/h2/emc/[ps]tmp/shelley.melchior/CRON is present via a mkdir every 10 minutes throughout the day
 # ---------------
 00,10,20,30,40,50 * * * * mkdir -p /lfs/h2/emc/ptmp/shelley.melchior/CRON  > /dev/null 2>&1
@@ -183,6 +178,13 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+# 20 day login counter
+# # started on: 12/02/2024
+# # turned off: 03/06/2025
+# Didn't work as expected b/c .bashrc is sourced every 10 minutes b/c of a diffrent cron process.
+# This action resets my login counter each time, so it never advances beyond 0 days.
+#08 12 * * * /u/shelley.melchior/count20days.sh > /u/shelley.melchior/count20days.log
+###
 # Test for SSi
 #33 15 * * * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/hpss_scripts/wrapper.sh 20220101 20220201 1> /lfs/h2/emc/vpppg/noscrub/shelley.melchior/hpss_scripts/here 2>&1
 # ---------------
