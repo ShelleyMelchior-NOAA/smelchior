@@ -678,6 +678,12 @@ To format a designated date string:
 > date -d "May 12" +%s
 
 -------------------------------------------------------------------------------
+qdel
+----
+To delete all user submitted jobs at once:
+> qdel qselect -u $USER
+
+-------------------------------------------------------------------------------
 bjobs
 ----
 To view wide format with no columnar truncating:
@@ -757,6 +763,14 @@ For example,
 > compath.py /com/nam/prod/nam.20161020
 
 NOTE: "module load prod_util" is required to run this w/o leading path
+
+-------------------------------------------------------------------------------
+sysconfig
+---------
+Command to see which machine is configured as production and which machine is
+configured as development
+alias in my .bashrc for:
+> cat /lfs/h1/ops/prod/config/prodmachinefile
 
 -------------------------------------------------------------------------------
 getsystem.pl
