@@ -29,17 +29,6 @@ SHELL=/bin/bash -l
 47 2,8,14,20 * * * jtyp=gfs cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33e2e /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.nr-33.v1.1 > /dev/null 2>&1
 50 5,11,17,23 * * * jtyp=gdas cyc=`date --date="-5 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=nr33e2e /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.nr-33.v1.1 > /dev/null 2>&1
 ###
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
-## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
-# started on: 20220324
-# turned off:
-### -----------------------------
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
-###
 ### JOBSPROC_GLOBAL_DUMP_POST trigger for making 48-hour old aircft and aircar dumps which are 100% non-restricted
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
@@ -59,10 +48,21 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
+## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
+# started on: 20220324
+# turned off: 20251215
+### -----------------------------
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
+###
 ### 20 day login counter
-# started on: 12/2/2024
+# started on: 12/02/2024
 # turned off: 03/06/2025
-# Didn't work as expected b/c .bashrc is sourced every 10 minutes b/c of a different cront process.
+# Didn't work as expected b/c .bashrc is sourced every 10 minutes b/c of a different cron process.
 # This action resets my login counter each time, so it never advances beyond 0 days.
 #08 12 * * * /u/shelley.melchior/count20days.sh > /u/shelley.melchior/count20days.log
 ###
