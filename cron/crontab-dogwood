@@ -23,104 +23,6 @@ SHELL=/bin/bash -l
 40 01,13 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw4.pbs > /dev/null 2>&1
 20 02,05,08,14,17,20 * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=sfcship /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrw5.pbs > /dev/null 2>&1
 ###
-### JOBSPROC_MODS prod para for WCOSS2
-# runs daily at 14:30
-# started on: 20220119
-# turned off:
-# ---------------
-30 14 * * * jtyp=mods cyc=14 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jmods.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_DUMP_MONITOR prod para for WCOSS2
-# runs hourly at HH:30
-# started on: 20220209
-# turned off:
-# ---------------
-30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jdump_monitor.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_GLOBAL prod para for WCOSS2
-# started on: 20220211 (dump, dump_post, prep, prep_post)
-# turned off:
-# ---------------
-47 2,8,14,20 * * * jtyp=gfs cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
-50 5,11,17,23 * * * jtyp=gdas cyc=`date --date="-5 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_RAP prod para for WCOSS2
-# started on: 20220212 (dump, dump_post, prep, prep_post)
-# turned off:
-# ---------------
-00 7,19 * * * jtyp=rap_p cyc=`date --date="-4 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date="-3 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-00 9,21 * * * jtyp=rap_p cyc=`date --date="-1 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-#---
-26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-#---
-26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-#---
-58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
-###
-## JOBSPROC_RTMA prod para for WCOSS2
-# runs hourly at HH:30 for cycle time HH
-# started on: 20220124 (dump, dump_post, prep, prep_post)
-# turned off:
-# ---------------
-08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
-23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
-30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
-38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
-53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_URMA prod para for WCOSS2
-# runs hourly at HH:30 for cycle time HH-6
-# started on: 20220124 (dump, dump_post, prep, prep_post)
-# turned off:
-# ---------------
-30 6-23 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
-30 0-5 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_CDAS prod para for WCOSS2
-# started on: 20220217 (dump, dump_post, prep1, prep1_post, prep2, pre2_post)
-# turned off:
-# ---------------
-10 16,22 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
-10 04,10 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_NAM prod para for WCOSS2
-# started on: 20220215 (dump, dump2, dump_post, prep, prep_post)
-# turned off:
-# ---------------
-18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-15 1,7,13,19 * * * jtyp=nam cyc=`date --date="-1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-41 3,9,15 * * * jtyp=nam cyc=`date --date="+3 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-01 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-00 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-30 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-23 5,11,17 * * * jtyp=nam cyc=`date --date="+1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-41 21 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm06 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-01 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm05 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-00 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm04 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-30 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm03 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-23 23 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm02 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
-###
-### JOBSPROC_AIRNOW prod para for WCOSS2
-# runs daily at 21:00
-# started on: 20220120
-# turned off:
-# ---------------
-00 21 * * * jtyp=airnow cyc=12 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jairnow_dump.wc2.pbs > /dev/null 2>&1
-###
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
-### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
-## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
-# started on: 20220324
-# turned off:
-### -----------------------------
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
-26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
-###
 ### JOBSPROC_GLOBAL_DUMP_POST trigger for making 48-hour old aircft and aircar dumps which are 100% non-restricted
 ### For Daryl Kleist, Doug Schuster, and Thomas Cram at UCAR.
 ### Kate Friedman is archiving in GDA; should set sites on operations soon
@@ -140,6 +42,104 @@ SHELL=/bin/bash -l
 #############################################################
 # OFF #### OFF #### OFF #### OFF #### OFF #### OFF #### OFF #
 #############################################################
+### JOBSPROC_AIRNOW prod para for WCOSS2
+# runs daily at 21:00
+# started on: 20220120
+# turned off: 20251215
+# ---------------
+#00 21 * * * jtyp=airnow cyc=12 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jairnow_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_NAM prod para for WCOSS2
+# started on: 20220215 (dump, dump2, dump_post, prep, prep_post)
+# turned off: 20251215
+# ---------------
+#18 0,6,12,18 * * * jtyp=nam cyc=`date +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm01 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#15 1,7,13,19 * * * jtyp=nam cyc=`date --date="-1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm00 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#41 3,9,15 * * * jtyp=nam cyc=`date --date="+3 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm06 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#01 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm05 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#00 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm04 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#30 4,10,16 * * * jtyp=nam cyc=`date --date="+2 hours" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm03 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#23 5,11,17 * * * jtyp=nam cyc=`date --date="+1 hour" +\%H` PDY=`date +\%Y\%m\%d` tmmark=tm02 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#41 21 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm06 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#01 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm05 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#00 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm04 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#30 22 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm03 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+#23 23 * * * jtyp=nam cyc=00 PDY=`date --date="+1 day" +\%Y\%m\%d` tmmark=tm02 desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jnam_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_CDAS prod para for WCOSS2
+# started on: 20220217 (dump, dump_post, prep1, prep1_post, prep2, pre2_post)
+# turned off: 20251215
+# ---------------
+#10 16,22 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
+#10 04,10 * * * jtyp=cdas cyc=`date --date="-16 hour" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jcdas_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_URMA prod para for WCOSS2
+# runs hourly at HH:30 for cycle time HH-6
+# started on: 20220124 (dump, dump_post, prep, prep_post)
+# turned off: 20251215
+# ---------------
+#30 6-23 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
+#30 0-5 * * * jtyp=urma cyc=`date --date="-6 hours" +\%H` PDY=`date --date="-1 day" +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jurma_dump.wc2.pbs > /dev/null 2>&1
+###
+## JOBSPROC_RTMA prod para for WCOSS2
+# runs hourly at HH:30 for cycle time HH
+# started on: 20220124 (dump, dump_post, prep, prep_post)
+# turned off: 20251215
+# ---------------
+#08 * * * * jtyp=rtma cyc=`date +\%H` cycM=00 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
+#23 * * * * jtyp=rtma cyc=`date +\%H` cycM=15 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
+#30 * * * * jtyp=rtma cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
+#38 * * * * jtyp=rtma cyc=`date +\%H` cycM=30 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
+#53 * * * * jtyp=rtma cyc=`date +\%H` cycM=45 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrtma_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_RAP prod para for WCOSS2
+# started on: 20220212 (dump, dump_post, prep, prep_post)
+# turned off: 20251215
+# ---------------
+#00 7,19 * * * jtyp=rap_p cyc=`date --date="-4 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#00 7,8,19,20 * * * jtyp=rap_p cyc=`date --date="-3 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#00 8,9,20,21 * * * jtyp=rap_p cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#00 9,21 * * * jtyp=rap_p cyc=`date --date="-1 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+#26 0,12 * * * jtyp=rap_e cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+#26 1-11 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#26 13-23 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+#---
+#58 0,12 * * * jtyp=rap cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jrap_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_GLOBAL prod para for WCOSS2
+# started on: 20220211 (dump, dump_post, prep, prep_post)
+# turned off: 20251215
+# ---------------
+#47 2,8,14,20 * * * jtyp=gfs cyc=`date --date="-2 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
+#50 5,11,17,23 * * * jtyp=gdas cyc=`date --date="-5 hours" +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_DUMP_MONITOR prod para for WCOSS2
+# runs hourly at HH:30
+# started on: 20220209
+# turned off: 20251215
+# ---------------
+#30 * * * * jtyp=dump_monitor cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jdump_monitor.wc2.pbs > /dev/null 2>&1
+###
+### JOBSPROC_MODS prod para for WCOSS2
+# runs daily at 14:30
+# started on: 20220119
+# turned off: 20251215
+# ---------------
+#30 14 * * * jtyp=mods cyc=14 PDY=`date +\%Y\%m\%d` desc=wc2para /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jmods.wc2.pbs > /dev/null 2>&1
+###
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-6.00,+0.50] time window) hrlyGDAS
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-3.00,+0.50] time window) hrlyGDAS2
+### Submit hourly GDAS DUMPS at RAP cyc:26 cut-off time (types dumped over [-0.50,+0.50] time window) hrlyGDAS3
+## (requested by Jeffrey Whitaker, Daryl Kleist, Jacob Carley, Donnie Lippi)
+# started on: 20220324
+# turned off: 20251215
+### -----------------------------
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly2 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly2 > /dev/null 2>&1
+#26 * * * * jtyp=gdas cyc=`date +\%H` PDY=`date +\%Y\%m\%d` desc=GDAShrly3 /u/shelley.melchior/bin/cycqsub /lfs/h2/emc/obsproc/noscrub/shelley.melchior/triggers/jglobal_dump.wc2.pbs.hrly3 > /dev/null 2>&1
+###
 ### WPC PGC
 #50 11 8 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep12.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep12.log 2>&1
 #39 19 16 9 * sh /lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/AV-scripts/run_pgc_prep11.sh 1>/lfs/h2/emc/vpppg/noscrub/shelley.melchior/pgc/Logs/run_pgc_prep11.log 2>&1
