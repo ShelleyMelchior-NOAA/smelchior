@@ -35,8 +35,8 @@ export cyc=%CC%
 
 userROOT=/lfs/h2/emc/obsproc/noscrub/$USER
 
-export sfcship_ver_pckg=v1.1.0
-export sfcship_ver=v1.1
+export sfcship_ver_pckg=v1.2.0
+export sfcship_ver=v1.2
 export HOMEsfcship=$PACKAGEROOT/sfcship.${sfcship_ver_pckg}  # NCO prod
 #export HOMEsfcship=$userROOT/install/sfcship                # local/dev
 
